@@ -563,7 +563,10 @@
 
   // ---- Dispatcher ---------------------------------------------------------------------------------------------------
 
-  const RENDERERS = { line, bar, kpi, gauge, donut, dependency, blast, rto };
+  // Scenario slides carry timeline events in `data`, like every other chart type.
+  const timelineChart = (c, p) => timeline({ title: c.title, events: (c.data && c.data.events) || [] }, p.lang);
+
+  const RENDERERS = { line, bar, kpi, gauge, donut, dependency, blast, rto, timeline: timelineChart };
 
   /** Render a projected chart. Unknown types return null (the stage falls back to bars). */
   function chart(c, p) {
@@ -572,6 +575,6 @@
   }
 
   BK.graphics.chart = chart;
-  BK.graphics.charts = Object.assign({ timeline, niceTicks, xLabel }, RENDERERS);
+  BK.graphics.charts = Object.assign({}, RENDERERS, { timeline, niceTicks, xLabel });
   BK.graphics.dependencyFromServices = dependencyFromServices;
 })();

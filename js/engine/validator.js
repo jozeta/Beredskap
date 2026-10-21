@@ -134,6 +134,11 @@
       const publicDefault = injects.filter((x) => !x.branchOnly && !x.optional && (x.visibility || "public") === "public");
       if (!publicDefault.length) issue(list, "stageContent", w, "no mandatory public inject");
 
+      // Chart types must have a stage renderer (the stage would otherwise fall back to bars).
+      (s.charts || []).forEach((c) => {
+        if (!BK.data.options.chartTypes.includes(c.type)) issue(list, "enum", w + " › " + c.id, "chart type " + c.type);
+      });
+
       injects.forEach((x) => {
         const iw = w + " › " + x.id;
         unique("inject", x.id, iw);

@@ -419,6 +419,11 @@ kbd {
 .c-unit { font-size: 22px; }
 .c-label { fill: var(--ink); font-size: 30px; font-weight: 500; }
 .c-label--sm { font-size: 24px; }
+/* Timeline event list at projector scale (the operator sizes live in app.css). */
+.stage .c-tl-list { font-size: 28px; gap: 12px; padding-left: 1.6em; }
+.stage .c-tl-list__item { grid-template-columns: 20px minmax(150px, max-content) minmax(260px, max-content) 1fr; gap: 20px; }
+.stage .c-tl-list__item .c-swatch { width: 18px; height: 18px; }
+.stage .c-tl-list__item .c-swatch--diamond { width: 15px; height: 15px; }
 .c-value { fill: var(--ink); font-size: 30px; font-weight: 600; font-variant-numeric: tabular-nums; }
 .c-hero { fill: var(--ink); font-size: 120px; font-weight: 600; font-variant-numeric: tabular-nums; }
 .c-hero--sm { font-size: 88px; }
