@@ -68,6 +68,13 @@
   --danger-soft: #F4E1DE;
   --info-soft: #E4E8F1;
 
+  /* Categorical series (data identity; never status). Validated with the dataviz
+     palette checker against #FFFFFF and #F5F6F3: lightness, chroma, CVD ΔE ≥ 8, contrast. */
+  --series-1: #2A6CB0;
+  --series-2: #C2672B;
+  --series-3: #0F9080;
+  --series-4: #8A5AA8;
+
   --shadow: 0 1px 2px rgba(28, 40, 51, 0.06), 0 4px 16px rgba(28, 40, 51, 0.06);
 }
 
@@ -92,6 +99,12 @@
   --warn-soft: #3A3020;
   --danger-soft: #3D2524;
   --info-soft: #262F43;
+
+  /* Categorical series, stepped for the dark surfaces #18222B and #11161B (validated). */
+  --series-1: #4A8BD0;
+  --series-2: #CC6F38;
+  --series-3: #1E9E8C;
+  --series-4: #9C70C4;
 
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.25);
 }
@@ -119,6 +132,12 @@
     --warn-soft: #3A3020;
     --danger-soft: #3D2524;
     --info-soft: #262F43;
+
+  /* Categorical series, stepped for the dark surfaces #18222B and #11161B (validated). */
+  --series-1: #4A8BD0;
+  --series-2: #CC6F38;
+  --series-3: #1E9E8C;
+  --series-4: #9C70C4;
 
     --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.25);
   }

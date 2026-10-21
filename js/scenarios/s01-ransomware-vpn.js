@@ -61,8 +61,8 @@
       categories: days,
       categoryUnit: "days",
       series: [
-        { id: "day", label: { en: "Daytime (06–22)", sv: "Dagtid (06–22)" }, values: days.map(() => 1 + ctx.rng.int(0, 1)), tone: "info" },
-        { id: "night", label: { en: "Night (22–06)", sv: "Natt (22–06)" }, values: days.map((d) => (d >= -5 ? 2 + ctx.rng.int(0, 3) : 0)), tone: "danger" }
+        { id: "day", label: { en: "Daytime (06–22)", sv: "Dagtid (06–22)" }, values: days.map(() => 1 + ctx.rng.int(0, 1)) },
+        { id: "night", label: { en: "Night (22–06)", sv: "Natt (22–06)" }, values: days.map((d) => (d >= -5 ? 2 + ctx.rng.int(0, 3) : 0)) }
       ]
     };
   }
@@ -547,6 +547,20 @@
             caption: { en: "Days before T+0. Night-time sessions begin five days before the encryption.", sv: "Dagar före T+0. Nattliga sessioner börjar fem dygn före krypteringen." },
             unit: { en: "sessions", sv: "sessioner" },
             data: vpnSignIns
+          },
+          {
+            id: "c3-blast", type: "blast",
+            title: { en: "Known reach of the attacker so far", sv: "Angriparens kända räckvidd hittills" },
+            caption: { en: "Rings show when each system was reached. The domain controller has not yet been assessed.", sv: "Ringarna visar när varje system nåddes. Domänkontrollanten är ännu inte bedömd." },
+            // Status reflects what forensics knows at this stage — not the ground truth revealed later.
+            data: () => ({
+              center: { label: "{{asset.vpnGateway}}", status: "compromised" },
+              rings: [
+                { label: { en: "Day −5", sv: "Dag −5" }, nodes: [{ label: { en: "Contractor account", sv: "Konsultkontot" }, status: "compromised" }, { label: "{{asset.jumpHost}}", status: "compromised" }] },
+                { label: { en: "Day −3", sv: "Dag −3" }, nodes: [{ label: "{{asset.backupAdmin}}", status: "compromised" }, { label: "{{asset.backupServer}}", status: "down" }, { label: "{{asset.domainController}}", status: "unknown" }] },
+                { label: { en: "Day 0", sv: "Dag 0" }, nodes: [{ label: "{{asset.fileServer}}", status: "down" }, { label: "{{asset.fileServer2}}", status: "down" }, { label: { en: "Workstations", sv: "Arbetsstationer" }, status: "degraded" }] }
+              ]
+            })
           }
         ],
         questions: {
@@ -932,7 +946,7 @@
           {
             id: "c6-deps", type: "dependency",
             title: { en: "What {{org.shortName}}'s services depend on", sv: "Vad tjänsterna hos {{org.shortName}} är beroende av" },
-            caption: { en: "Every service depends on identity, which is still compromised.", sv: "Alla tjänster är beroende av identitetsmiljön, som fortfarande är komprometterad." },
+            caption: { en: "Services that depend on identity cannot be trusted until it has been rebuilt.", sv: "Tjänster som är beroende av identitetsmiljön går inte att lita på förrän den har byggts om." },
             data: dependencies
           }
         ],

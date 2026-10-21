@@ -214,7 +214,7 @@
             "div",
             { class: "pres-slide-notes" },
             el("h3", { class: "eyebrow", text: t("presenter.slideNotes") }),
-            c.badge(t("presenter.trueReliability", { value: t("reliability." + f.slideNotes.reliability) }), f.slideNotes.reliability === "confirmed" ? "ok" : "warn", f.slideNotes.reliability === "confirmed" ? "check" : "warning"),
+            c.badge(t("presenter.trueReliability", { value: t("reliability." + f.slideNotes.reliability) }), f.slideNotes.reliability === "confirmed" ? "ok" : "warn", f.slideNotes.reliability === "confirmed" ? "verified" : f.slideNotes.reliability),
             f.slideNotes.facilitatorNote ? el("p", { text: f.slideNotes.facilitatorNote }) : null,
             f.slideNotes.expectedResponse ? el("p", null, el("strong", { text: t("editor.expected") + ": " }), f.slideNotes.expectedResponse) : null,
             f.slideNotes.tests.length ? el("p", { class: "muted small", text: t("presenter.tests", { list: f.slideNotes.tests.join("; ") }) }) : null
@@ -285,7 +285,7 @@
                   { class: "pres-inject__head" },
                   el("span", { class: "tabular muted", text: i.time }),
                   c.badge(t("presenter.state." + i.state), i.state === "released" ? "ok" : i.state === "skipped" ? "neutral" : "info"),
-                  c.badge(t("reliability." + i.reliability), i.reliability === "confirmed" ? "ok" : "warn"),
+                  c.badge(t("reliability." + i.reliability), i.reliability === "confirmed" ? "ok" : "warn", i.reliability === "confirmed" ? "verified" : i.reliability),
                   i.visibility !== "public" ? c.badge(t("visibility.facilitator"), "danger", "warning") : null,
                   i.optional ? c.badge(t("editor.optional"), "neutral") : null,
                   i.moved ? c.badge(t("presenter.moved"), "info") : null,

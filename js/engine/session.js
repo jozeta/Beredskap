@@ -436,6 +436,7 @@
           scenarioTitle: L(inst.scenarioTitle, lang),
           orgName: e.org.name,
           category: t("category." + inst.category, null, lang),
+          categoryId: inst.category,
           emblem: inst.emblem,
           seed: inst.seed,
           date: BK.i18n.fmt.date(new Date(sess.createdAt), lang),
