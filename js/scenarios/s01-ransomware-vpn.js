@@ -387,6 +387,17 @@
             tests: ["lo4"]
           },
           {
+            id: "i2-5", at: 85, type: "email", source: "insurer",
+            severity: "medium", reliability: "confirmed", visibility: "role:legal",
+            headline: { en: "Policy clause 7.3", sv: "Försäkringsvillkor 7.3" },
+            content: {
+              en: "Only you have read this clause: the insurer may reduce or refuse cover if a known critical vulnerability was left unpatched for more than 14 days.",
+              sv: "Bara du har läst den här klausulen: försäkringsbolaget kan sätta ned eller neka ersättning om en känd kritisk sårbarhet har lämnats opatchad i mer än 14 dagar."
+            },
+            facilitatorNote: { en: "Role card for legal. It becomes explosive in stage 3, when the three-week-old unpatched VPN node is found. Watch whether legal shares it.", sv: "Rollkort till juristen. Det blir laddat i skede 3, när den tre veckor gamla opatchade VPN-noden hittas. Se om juristen delar det med gruppen." },
+            tests: ["lo4"]
+          },
+          {
             id: "i2-spread", at: 75, type: "edrAlert", source: "edr", branchOnly: true,
             severity: "critical", reliability: "confirmed", visibility: "public",
             headline: { en: "Encryption spreading to workstations", sv: "Krypteringen sprider sig till arbetsstationer" },
@@ -527,6 +538,16 @@
               sv: "{{asset.backupAdmin}} loggade in interaktivt på {{asset.jumpHost}} {{time.T-4320|datetime}}. Kontot ska aldrig logga in interaktivt. Natten innan kördes verktyg för att dumpa inloggningsuppgifter på samma server."
             },
             tests: ["lo2"]
+          },
+          {
+            id: "i3-role", at: 225, type: "employeeReport", source: "itOps",
+            severity: "medium", reliability: "confirmed", visibility: "role:itOps",
+            content: {
+              en: "You remember now: patching the secondary VPN node was postponed from the last change window. The change ticket is still open in your queue.",
+              sv: "Nu minns du: patchningen av den sekundära VPN-noden sköts upp från det senaste ändringsfönstret. Ändringsärendet ligger fortfarande öppet i din kö."
+            },
+            facilitatorNote: { en: "Role card for IT operations. It contradicts the disputed claim that the VPN was patched. Note whether the person corrects the record.", sv: "Rollkort till IT-driften. Det motsäger det omstridda påståendet att VPN:en var patchad. Notera om personen rättar uppgiften." },
+            tests: ["lo1"]
           },
           {
             id: "i3-4", at: 230, type: "chat", source: "person.itOps",

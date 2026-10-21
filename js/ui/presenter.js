@@ -7,7 +7,7 @@
  * inject release controls, the discussion timer, pacing status, the decision
  * log and the jump-to-stage list. Synced with the stage through BK.sync.
  *
- * Re-renders on every change; typed decision drafts live in module state and
+ * Re-renders on every change; typed drafts live in BK.ui.facilitation and
  * focus is restored by element id, so remote updates never eat input.
  */
 (function () {
@@ -19,7 +19,7 @@
   const t = BK.t;
   const S = () => BK.engine.session;
 
-  const view = { ctrl: null, root: null, cleanup: [], drafts: {}, lastRev: null };
+  const view = { ctrl: null, root: null, cleanup: [], open: {}, lastRev: null };
 
   // ---- Start flow ------------------------------------------------------------------------------------
 
@@ -129,6 +129,7 @@
           onChange: (v) => view.ctrl.dispatch({ type: "theme", value: v })
         }),
         c.button({ label: t("presenter.openStage"), icon: "fullscreen", size: "sm", onClick: () => openStageWindow(sess.id) }),
+        c.button({ label: t("presenter.debrief"), icon: "notes", kind: sess.status === "ended" ? "primary" : "secondary", size: "sm", href: "#/debrief/" + encodeURIComponent(sess.id) }),
         c.button({ label: t("presenter.end"), icon: "flag", kind: "danger", size: "sm", onClick: endExercise, disabled: sess.status === "ended" })
       )
     );
@@ -229,41 +230,35 @@
   }
 
   function decisionCard(sess, f) {
-    if (!f.decision) return null;
-    const d = f.decision;
-    const log = f.decisionLog || {};
-    const draft = view.drafts[d.id] || (view.drafts[d.id] = { option: log.option || "", text: log.text || "" });
-    const save = () => {
-      view.ctrl.dispatch({ type: "decision", decisionId: d.id, entry: { option: draft.option || null, text: draft.text.trim(), owner: d.authority } });
-      BK.ui.toast(t("presenter.decisionSaved"), "ok");
-    };
-    return c.card(
-      { class: "card pres-card" },
-      el("h2", { text: t("presenter.decision") }),
-      el("p", { class: "pres-decision__q", text: d.question }),
-      d.options.length
-        ? c.segmented({
-            label: t("presenter.decisionOption"),
-            name: "pr-opt-" + d.id,
-            wrap: true,
-            className: "pres-decision-options",
-            value: draft.option,
-            options: [{ value: "", label: t("presenter.noOption") }].concat(d.options.map((o) => ({ value: o.key, label: o.key + " — " + o.text }))),
-            onChange: (v) => (draft.option = v)
-          })
-        : null,
-      c.field({
-        id: "pr-dec-text-" + d.id,
-        label: t("presenter.decisionText"),
-        control: el("textarea", { class: "input textarea", rows: 3, maxlength: 2000, value: draft.text, on: { input: (e) => (draft.text = e.target.value) } })
-      }),
-      el(
-        "div",
-        { class: "actions" },
-        c.button({ label: t("presenter.saveDecision"), icon: "save", kind: "primary", size: "sm", onClick: save }),
-        log.at ? el("span", { class: "muted small", text: t("presenter.decisionRecorded", { time: BK.i18n.fmt.time(new Date(log.at)) }) }) : null
-      )
+    if (!f.decision || !f.stage) return null;
+    const stage = sess.instance.stages[f.stage.index];
+    return c.card({ class: "card pres-card" }, el("h2", { text: t("presenter.decision") }), BK.ui.facilitation.decisionForm(sess, view.ctrl.dispatch, stage.decision));
+  }
+
+  /** Foldable facilitation panels; open/closed state survives re-renders. */
+  function fold(key, title, count, ...content) {
+    return el(
+      "details",
+      { class: "card pres-card pres-fold", open: !!view.open[key], on: { toggle: (e) => (view.open[key] = e.target.open) } },
+      el("summary", null, el("h2", { text: title }), count != null ? c.badge(String(count), "neutral") : null),
+      content
     );
+  }
+
+  function facilitationCards(sess) {
+    const F = BK.ui.facilitation;
+    const d = view.ctrl.dispatch;
+    const assessed = Object.keys(sess.objectives).length;
+    return [
+      fold("obs", t("presenter.observations"), sess.observations.length, F.observationForm(sess, d), F.observationList(sess, d)),
+      fold("obj", t("presenter.objectives"), assessed + "/" + sess.instance.objectives.length, F.objectivesEditor(sess, d)),
+      fold("notes", t("presenter.notesField"), null, F.notesEditor(sess, d))
+    ];
+  }
+
+  function roleName(roleId) {
+    const r = BK.data.roles.get(roleId);
+    return r ? BK.loc(r.label) : roleId;
   }
 
   function injectsCard(f) {
@@ -286,7 +281,8 @@
                   el("span", { class: "tabular muted", text: i.time }),
                   c.badge(t("presenter.state." + i.state), i.state === "released" ? "ok" : i.state === "skipped" ? "neutral" : "info"),
                   c.badge(t("reliability." + i.reliability), i.reliability === "confirmed" ? "ok" : "warn", i.reliability === "confirmed" ? "verified" : i.reliability),
-                  i.visibility !== "public" ? c.badge(t("visibility.facilitator"), "danger", "warning") : null,
+                  i.visibility === "facilitator" ? c.badge(t("visibility.facilitator"), "danger", "eye-off") : null,
+                  i.visibility.startsWith("role:") ? c.badge(t("visibility.role", { role: roleName(i.visibility.slice(5)) }), "info", "user") : null,
                   i.optional ? c.badge(t("editor.optional"), "neutral") : null,
                   i.moved ? c.badge(t("presenter.moved"), "info") : null,
                   i.branch ? c.badge(t("presenter.branch"), "accent") : null,
@@ -361,7 +357,7 @@
           "div",
           { class: "pres-main" },
           navCard(sess, f),
-          el("div", { class: "pres-side" }, timerCard(sess), notesCard(f), decisionCard(sess, f), injectsCard(f), roleCard(f), factsCard(f))
+          el("div", { class: "pres-side" }, timerCard(sess), notesCard(f), decisionCard(sess, f), injectsCard(f), roleCard(f), facilitationCards(sess), factsCard(f))
         )
       )
     );
@@ -387,7 +383,7 @@
     render(root, ctx) {
       view.root = el("div", { class: "presenter-root" });
       root.appendChild(view.root);
-      view.drafts = {};
+      view.open = {};
       view.ctrl = BK.sync.open(ctx.params.sessionId, draw);
       if (!view.ctrl) {
         root.appendChild(c.card(null, c.emptyState("info", t("stage.notFound"), c.button({ label: t("notFound.home"), href: "#/" }))));
