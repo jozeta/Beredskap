@@ -32,7 +32,7 @@
                     el(
                       "div",
                       { class: "list__main" },
-                      el("span", { class: "list__title", text: s.title || s.id }),
+                      el("span", { class: "list__title", text: BK.loc(s.title) || s.id }),
                       el("span", { class: "muted small", text: s.updatedAt ? BK.i18n.fmt.dateTime(new Date(s.updatedAt), lang) : "" })
                     )
                   )
