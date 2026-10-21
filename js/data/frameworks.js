@@ -1,0 +1,163 @@
+/*
+ * frameworks.js — Reference names for framework mappings used in debriefs:
+ * MITRE ATT&CK (Enterprise + ICS) techniques, NIST CSF 2.0 functions and
+ * categories, and ISO/IEC 27001:2022 Annex A controls.
+ *
+ * Names are the official English titles in both languages; translating them
+ * would make them harder to look up. NIST CSF function names get Swedish
+ * labels because they are commonly used in Swedish in their own right.
+ */
+(function () {
+  "use strict";
+
+  const BK = window.BK;
+
+  const mitre = {
+    T1003: "OS Credential Dumping",
+    T1021: "Remote Services",
+    T1041: "Exfiltration Over C2 Channel",
+    T1048: "Exfiltration Over Alternative Protocol",
+    T1053: "Scheduled Task/Job",
+    T1059: "Command and Scripting Interpreter",
+    T1070: "Indicator Removal",
+    T1071: "Application Layer Protocol",
+    T1072: "Software Deployment Tools",
+    T1078: "Valid Accounts",
+    T1098: "Account Manipulation",
+    T1105: "Ingress Tool Transfer",
+    T1110: "Brute Force",
+    T1114: "Email Collection",
+    T1133: "External Remote Services",
+    T1136: "Create Account",
+    T1190: "Exploit Public-Facing Application",
+    T1195: "Supply Chain Compromise",
+    "T1195.002": "Compromise Software Supply Chain",
+    T1199: "Trusted Relationship",
+    T1213: "Data from Information Repositories",
+    T1219: "Remote Access Software",
+    T1485: "Data Destruction",
+    T1486: "Data Encrypted for Impact",
+    T1490: "Inhibit System Recovery",
+    T1491: "Defacement",
+    "T1491.002": "External Defacement",
+    T1496: "Resource Hijacking",
+    T1498: "Network Denial of Service",
+    T1499: "Endpoint Denial of Service",
+    T1528: "Steal Application Access Token",
+    T1530: "Data from Cloud Storage",
+    T1534: "Internal Spearphishing",
+    T1539: "Steal Web Session Cookie",
+    T1552: "Unsecured Credentials",
+    T1554: "Compromise Host Software Binary",
+    T1556: "Modify Authentication Process",
+    T1557: "Adversary-in-the-Middle",
+    T1561: "Disk Wipe",
+    T1562: "Impair Defenses",
+    "T1562.001": "Impair Defenses: Disable or Modify Tools",
+    "T1564.008": "Hide Artifacts: Email Hiding Rules",
+    T1566: "Phishing",
+    "T1566.002": "Phishing: Spearphishing Link",
+    T1567: "Exfiltration Over Web Service",
+    "T1567.002": "Exfiltration Over Web Service: Exfiltration to Cloud Storage",
+    T1589: "Gather Victim Identity Information",
+    T1621: "Multi-Factor Authentication Request Generation",
+    T1656: "Impersonation",
+    T1484: "Domain or Tenant Policy Modification",
+    "T1484.002": "Domain or Tenant Policy Modification: Trust Modification",
+    T1586: "Compromise Accounts",
+    T1584: "Compromise Infrastructure",
+    "T1584.002": "Compromise Infrastructure: DNS Server",
+    T1588: "Obtain Capabilities",
+    T0816: "Device Restart/Shutdown (ICS)",
+    T0827: "Loss of Control (ICS)",
+    T0831: "Manipulation of Control (ICS)",
+    T0866: "Exploitation of Remote Services (ICS)",
+    T0880: "Loss of Safety (ICS)",
+    T0886: "Remote Services (ICS)"
+  };
+
+  const nistFunctions = {
+    GV: { en: "Govern", sv: "Styra" },
+    ID: { en: "Identify", sv: "Identifiera" },
+    PR: { en: "Protect", sv: "Skydda" },
+    DE: { en: "Detect", sv: "Upptäcka" },
+    RS: { en: "Respond", sv: "Hantera" },
+    RC: { en: "Recover", sv: "Återställa" }
+  };
+
+  const nistCsf = {
+    "GV.OC": "Organizational Context",
+    "GV.RM": "Risk Management Strategy",
+    "GV.RR": "Roles, Responsibilities, and Authorities",
+    "GV.PO": "Policy",
+    "GV.OV": "Oversight",
+    "GV.SC": "Cybersecurity Supply Chain Risk Management",
+    "ID.AM": "Asset Management",
+    "ID.RA": "Risk Assessment",
+    "ID.IM": "Improvement",
+    "PR.AA": "Identity Management, Authentication, and Access Control",
+    "PR.AT": "Awareness and Training",
+    "PR.DS": "Data Security",
+    "PR.PS": "Platform Security",
+    "PR.IR": "Technology Infrastructure Resilience",
+    "DE.CM": "Continuous Monitoring",
+    "DE.AE": "Adverse Event Analysis",
+    "RS.MA": "Incident Management",
+    "RS.AN": "Incident Analysis",
+    "RS.CO": "Incident Response Reporting and Communication",
+    "RS.MI": "Incident Mitigation",
+    "RC.RP": "Incident Recovery Plan Execution",
+    "RC.CO": "Incident Recovery Communication"
+  };
+
+  const iso27001 = {
+    "A.5.5": "Contact with authorities",
+    "A.5.6": "Contact with special interest groups",
+    "A.5.7": "Threat intelligence",
+    "A.5.15": "Access control",
+    "A.5.16": "Identity management",
+    "A.5.17": "Authentication information",
+    "A.5.18": "Access rights",
+    "A.5.19": "Information security in supplier relationships",
+    "A.5.20": "Addressing information security within supplier agreements",
+    "A.5.21": "Managing information security in the ICT supply chain",
+    "A.5.22": "Monitoring, review and change management of supplier services",
+    "A.5.23": "Information security for use of cloud services",
+    "A.5.24": "Information security incident management planning and preparation",
+    "A.5.25": "Assessment and decision on information security events",
+    "A.5.26": "Response to information security incidents",
+    "A.5.27": "Learning from information security incidents",
+    "A.5.28": "Collection of evidence",
+    "A.5.29": "Information security during disruption",
+    "A.5.30": "ICT readiness for business continuity",
+    "A.5.31": "Legal, statutory, regulatory and contractual requirements",
+    "A.5.34": "Privacy and protection of PII",
+    "A.5.37": "Documented operating procedures",
+    "A.6.3": "Information security awareness, education and training",
+    "A.6.5": "Responsibilities after termination or change of employment",
+    "A.6.8": "Information security event reporting",
+    "A.7.11": "Supporting utilities",
+    "A.8.2": "Privileged access rights",
+    "A.8.4": "Access to source code",
+    "A.8.5": "Secure authentication",
+    "A.8.6": "Capacity management",
+    "A.8.7": "Protection against malware",
+    "A.8.8": "Management of technical vulnerabilities",
+    "A.8.9": "Configuration management",
+    "A.8.12": "Data leakage prevention",
+    "A.8.13": "Information backup",
+    "A.8.14": "Redundancy of information processing facilities",
+    "A.8.15": "Logging",
+    "A.8.16": "Monitoring activities",
+    "A.8.20": "Networks security",
+    "A.8.22": "Segregation of networks",
+    "A.8.23": "Web filtering",
+    "A.8.24": "Use of cryptography",
+    "A.8.25": "Secure development life cycle",
+    "A.8.28": "Secure coding",
+    "A.8.31": "Separation of development, test and production environments",
+    "A.8.32": "Change management"
+  };
+
+  BK.data.frameworks = { mitre, nistFunctions, nistCsf, iso27001 };
+})();

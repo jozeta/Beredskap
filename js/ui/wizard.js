@@ -19,7 +19,7 @@
   const opts = BK.data.options;
 
   let draft = null;
-  let ui = { advancedOpen: false, stagesTouched: false, customDuration: false };
+  let ui = { advancedOpen: false, stagesTouched: false, customDuration: false, jurisdictionTouched: false };
   let rootEl = null;
 
   // ---- Draft model ------------------------------------------------------------
@@ -223,6 +223,8 @@
           options: BK.i18n.LANGS.map((l) => ({ value: l, label: t("lang." + l) })),
           onChange: (v) => {
             draft.lang = v;
+            // Until the operator picks one, jurisdiction (and so currency and regulator) follows the language.
+            if (!ui.jurisdictionTouched) draft.jurisdiction = v === "sv" ? "se" : "eu";
             rerender(); // title placeholder follows the exercise language
           }
         })
@@ -437,7 +439,10 @@
           name: "wz-jurisdiction",
           value: draft.jurisdiction,
           options: opts.jurisdictions.map((j) => ({ value: j, label: t("jurisdiction." + j) })),
-          onChange: (v) => (draft.jurisdiction = v)
+          onChange: (v) => {
+            draft.jurisdiction = v;
+            ui.jurisdictionTouched = true;
+          }
         }),
         c.segmented({
           label: t("wizard.density"),
@@ -547,7 +552,7 @@
       if (!draft || (requested && requested !== draft.scenarioId)) {
         const id = requested && (requested === "random" || BK.scenarios.get(requested)) ? requested : "random";
         draft = defaultDraft(id);
-        ui = { advancedOpen: false, stagesTouched: false, customDuration: false };
+        ui = { advancedOpen: false, stagesTouched: false, customDuration: false, jurisdictionTouched: false };
         applyScenarioDefaults();
       }
       build(root);

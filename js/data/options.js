@@ -45,7 +45,36 @@
 
     // Stage bounds from the spec; individual templates narrow these.
     minStages: 3,
-    maxStages: 10
+    maxStages: 10,
+
+    // ---- Scenario vocabulary (spec 6) ----
+    injectTypes: [
+      "ticket", "siemAlert", "edrAlert", "authLog", "networkEvidence", "logExcerpt", "backupReport",
+      "forensicFinding", "threatIntel", "advisory", "email", "phishingEmail", "employeeReport",
+      "executiveMessage", "chat", "phoneTranscript", "sms", "customerComplaint", "supplierNotice",
+      "mediaEnquiry", "newsHeadline", "socialPost", "regulatorLetter", "ransomNote", "statusPage",
+      "impactReport"
+    ],
+    severities: ["info", "low", "medium", "high", "critical"],
+    reliabilities: ["confirmed", "unverified", "misleading", "disputed"],
+    // Twist kinds: "cause" and "scope" change understanding of the incident (validator needs ≥ 2).
+    twistKinds: ["cause", "scope", "impact", "authority"],
+    startWindows: ["any", "business-hours", "friday-evening", "weekend", "night", "holiday-eve", "monday-morning"],
+    actorTypes: ["criminal", "state", "hacktivist", "insider", "unknown"],
+    capabilityTiers: ["low", "medium", "high"],
+    sources: [
+      "serviceDesk", "soc", "edr", "siem", "itOps", "backupSystem", "irRetainer", "threatIntel", "csirt",
+      "vendor", "media", "regulator", "police", "customer", "supplier", "employee", "attacker", "insurer",
+      "bank", "msp", "socialMedia", "management", "forensics", "facilities"
+    ]
+  };
+
+  // Ordering helpers for difficulty gating ("minDifficulty") and severity sorting.
+  BK.data.options.difficultyRank = function (d) {
+    return Math.max(0, BK.data.options.difficulties.indexOf(d));
+  };
+  BK.data.options.severityRank = function (s) {
+    return Math.max(0, BK.data.options.severities.indexOf(s));
   };
 
   /** Archetype letter (A–F) for a template archetype string, or the string itself if unknown. */

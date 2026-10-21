@@ -38,7 +38,7 @@
         ? el(
             "div",
             { class: "resume" },
-            el("p", { class: "resume__title", text: active.title || active.id }),
+            el("p", { class: "resume__title", text: BK.loc(active.title) || active.id }),
             c.button({ label: t("dashboard.resume.action"), icon: "play", kind: "primary", href: "#/presenter/" + encodeURIComponent(active.id) })
           )
         : c.emptyState("clock", t("dashboard.resume.empty"))
@@ -62,7 +62,7 @@
                 el(
                   "div",
                   { class: "list__main" },
-                  el("span", { class: "list__title", text: ex.title || ex.id }),
+                  el("span", { class: "list__title", text: BK.loc(ex.title) || ex.id }),
                   el("span", {
                     class: "muted small",
                     text: [ex.seed, ex.updatedAt ? BK.i18n.fmt.dateTime(new Date(ex.updatedAt), lang) : ""].filter(Boolean).join(" · ")
