@@ -103,17 +103,21 @@
     return data;
   }
 
-  /** Wrap and write a value. Returns true on success, false on failure (status event emitted). */
-  function set(key, value) {
+  /**
+   * Wrap and write a value. Returns true on success, false on failure (status event emitted).
+   * opts.silent skips the "saving/saved" status events (used for presence heartbeats).
+   */
+  function set(key, value, opts) {
+    const silent = opts && opts.silent;
     const envelope = { v: SCHEMA, savedAt: new Date().toISOString(), data: value };
-    emitStatus("saving");
+    if (!silent) emitStatus("saving");
     try {
       backend.set(PREFIX + key, JSON.stringify(envelope));
     } catch (err) {
       emitStatus("error", isQuotaError(err) ? "quota" : "write");
       return false;
     }
-    emitStatus(available ? "saved" : "memory");
+    if (!silent) emitStatus(available ? "saved" : "memory");
     return true;
   }
 

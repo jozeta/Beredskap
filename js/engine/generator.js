@@ -518,7 +518,7 @@
       const data = typeof chart.data === "function" ? chart.data(chartCtx) : chart.data || null;
       const markers =
         chart.markers === "injects"
-          ? injects.filter((i) => i.visibility === "public").map((i) => ({ at: i.at, label: i.headline || i.content, severity: i.severity }))
+          ? injects.filter((i) => i.visibility === "public").map((i) => ({ injectId: i.id, at: i.at, label: i.headline || i.content, severity: i.severity }))
           : [];
       return {
         id: chart.id,
