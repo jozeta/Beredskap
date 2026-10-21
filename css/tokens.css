@@ -1,0 +1,131 @@
+/*
+ * tokens.css — Design tokens for the "Nordic" design system: colours (light and
+ * dark), spacing, type scale, radii, motion.
+ *
+ * Themes apply to any [data-theme] scope, not just :root, so the operator UI
+ * (<html data-theme>) and the stage root (its own data-theme) are independent.
+ * "system" follows prefers-color-scheme; the dark media block is guarded by
+ * :not([data-theme="light"]) so an explicit light choice always wins.
+ */
+
+/* ---- Theme-independent tokens ---------------------------------------------- */
+:root {
+  --font: "Inter", "Segoe UI Variable", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "Cascadia Mono", "SF Mono", Menlo, Consolas, monospace;
+
+  /* Operator type scale: 14 / 16 / 20 / 28 / 40 */
+  --fs-sm: 14px;
+  --fs-md: 16px;
+  --fs-lg: 20px;
+  --fs-xl: 28px;
+  --fs-2xl: 40px;
+
+  /* 8px spacing grid (with one half step for tight UI) */
+  --s-half: 4px;
+  --s1: 8px;
+  --s2: 16px;
+  --s3: 24px;
+  --s4: 32px;
+  --s5: 48px;
+  --s6: 64px;
+
+  --radius: 10px;
+  --radius-sm: 6px;
+  --radius-pill: 999px;
+
+  --hairline: 1px;
+  --focus-ring: 2px;
+
+  --dur: 240ms;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  --content-max: 1200px;
+}
+
+/* ---- Light (default) ---------------------------------------------------------- */
+:root,
+[data-theme="light"],
+[data-theme="system"] {
+  color-scheme: light;
+  --bg: #F5F6F3;
+  --surface: #FFFFFF;
+  --surface-2: #ECEDE8;
+  --ink: #1C2833;
+  --ink-muted: #5E6B75;
+  --line: #D8DDDC;
+  --accent: #2F5B72;
+  --ok: #2E6E4E;
+  --warn: #94660A;
+  --danger: #A8362B;
+  --info: #5D6F96;
+
+  /* Text placed ON a filled accent/semantic surface */
+  --on-accent: #FFFFFF;
+  /* Soft tints for badges and notices (derived, low-chroma) */
+  --accent-soft: #E1EAEE;
+  --ok-soft: #E0EDE5;
+  --warn-soft: #F4EAD5;
+  --danger-soft: #F4E1DE;
+  --info-soft: #E4E8F1;
+
+  --shadow: 0 1px 2px rgba(28, 40, 51, 0.06), 0 4px 16px rgba(28, 40, 51, 0.06);
+}
+
+/* ---- Dark (explicit) ------------------------------------------------------------ */
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #11161B;
+  --surface: #18222B;
+  --surface-2: #202D38;
+  --ink: #EEF2F5;
+  --ink-muted: #A3B0BA;
+  --line: #33424E;
+  --accent: #85B7CF;
+  --ok: #8DC0A0;
+  --warn: #E0B160;
+  --danger: #E8807A;
+  --info: #A6B6D8;
+
+  --on-accent: #11161B;
+  --accent-soft: #1F3542;
+  --ok-soft: #1E3329;
+  --warn-soft: #3A3020;
+  --danger-soft: #3D2524;
+  --info-soft: #262F43;
+
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+/* ---- Dark (system preference) ------------------------------------------------------ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]),
+  [data-theme="system"] {
+    color-scheme: dark;
+    --bg: #11161B;
+    --surface: #18222B;
+    --surface-2: #202D38;
+    --ink: #EEF2F5;
+    --ink-muted: #A3B0BA;
+    --line: #33424E;
+    --accent: #85B7CF;
+    --ok: #8DC0A0;
+    --warn: #E0B160;
+    --danger: #E8807A;
+    --info: #A6B6D8;
+
+    --on-accent: #11161B;
+    --accent-soft: #1F3542;
+    --ok-soft: #1E3329;
+    --warn-soft: #3A3020;
+    --danger-soft: #3D2524;
+    --info-soft: #262F43;
+
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.25);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur: 0ms;
+  }
+}
