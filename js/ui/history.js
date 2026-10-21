@@ -34,7 +34,8 @@
                       { class: "list__main" },
                       el("span", { class: "list__title", text: BK.loc(s.title) || s.id }),
                       el("span", { class: "muted small", text: s.updatedAt ? BK.i18n.fmt.dateTime(new Date(s.updatedAt), lang) : "" })
-                    )
+                    ),
+                    c.button({ label: t("dashboard.recent.open"), icon: "play", kind: "ghost", size: "sm", href: "#/presenter/" + encodeURIComponent(s.id) })
                   )
                 )
               )
