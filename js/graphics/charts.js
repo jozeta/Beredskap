@@ -1,5 +1,5 @@
 /*
- * charts.js — SVG chart renderers for the stage (and the debrief in phase 5).
+ * charts.js — SVG chart renderers for the stage, the debrief and the printed report.
  *
  * Renderers: line/area with inject markers, bar (stacked), KPI tiles, gauge,
  * donut, service-dependency diagram, blast-radius network map, RTO/RPO vs

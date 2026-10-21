@@ -365,7 +365,7 @@ body.is-bare .main { max-width: none; padding: 0; }
   padding: 0 12px;
   background: var(--surface);
   color: var(--ink);
-  border: var(--hairline) solid var(--line);
+  border: var(--hairline) solid var(--line-strong);
   border-radius: var(--radius-sm);
   font: inherit;
 }
@@ -704,7 +704,7 @@ fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
 .emblem-badge { fill: var(--surface); }
 .emblem { width: 64px; height: 64px; background: transparent; }
 
-/* ---- Phase 5: print root, facilitation forms, editor, history ---------------------------- */
+/* ---- Print root, facilitation forms, editor, history ---------------------------- */
 #print-root { display: none; }
 
 .fx-form { display: grid; gap: 10px; }

@@ -173,20 +173,6 @@
     }
   }
 
-  // ---- Placeholder views for routes built in later phases ------------------------------
-
-  function notBuiltView(titleKey) {
-    return {
-      title: () => t(titleKey),
-      render(root) {
-        root.append(
-          BK.ui.c.pageHeader(t(titleKey)),
-          BK.ui.c.card(null, BK.ui.c.emptyState("info", t("common.notBuilt.body"), BK.ui.c.button({ label: t("notFound.home"), href: "#/" })))
-        );
-      }
-    };
-  }
-
   const notFound = {
     title: () => t("notFound.title"),
     render(root) {
@@ -202,10 +188,10 @@
     r("#/", BK.ui.dashboard);
     r("#/library", BK.ui.library);
     r("#/new", BK.ui.wizard);
-    r("#/edit/:instanceId", BK.ui.editor || notBuiltView("common.notBuilt.title"));
-    r("#/presenter/:sessionId", BK.ui.presenter || notBuiltView("common.notBuilt.title"));
-    r("#/stage/:sessionId", BK.ui.stage || notBuiltView("common.notBuilt.title"));
-    r("#/debrief/:sessionId", BK.ui.debrief || notBuiltView("common.notBuilt.title"));
+    r("#/edit/:instanceId", BK.ui.editor);
+    r("#/presenter/:sessionId", BK.ui.presenter);
+    r("#/stage/:sessionId", BK.ui.stage);
+    r("#/debrief/:sessionId", BK.ui.debrief);
     r("#/history", BK.ui.history);
     r("#/settings", BK.ui.settings);
   }
@@ -228,6 +214,12 @@
       lastStatus = payload;
       renderStatus(payload);
       if (payload.state === "error") BK.ui.toast(t(payload.detail === "quota" ? "error.quota" : "error.write"), "danger");
+    });
+
+    // The skip link must not change the hash: "#main" would be routed as a page.
+    document.getElementById("skip-link").addEventListener("click", (e) => {
+      e.preventDefault();
+      document.getElementById("main").focus();
     });
 
     registerRoutes();

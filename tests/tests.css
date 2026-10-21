@@ -11,3 +11,4 @@ li { padding: 2px 0; font-family: var(--font-mono); font-size: 14px; }
 .summary { font-size: 20px; font-weight: 600; padding: 12px 16px; border-radius: 10px; }
 .summary.is-pass { background: var(--ok-soft); color: var(--ok); }
 .summary.is-fail { background: var(--danger-soft); color: var(--danger); }
+.skip { color: var(--warn); }

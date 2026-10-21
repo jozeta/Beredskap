@@ -57,9 +57,13 @@
       const fresh = BK.store.get(key, null);
       if (fresh && fresh.rev !== current.rev) {
         current = fresh;
-        onChange(current);
+        if (ready) onChange(current);
       }
     }
+
+    // onChange only fires once open() has returned: the caller renders the initial
+    // state itself from get(), and its handlers may need the returned controller.
+    let ready = false;
 
     function dispatch(cmd) {
       const latest = BK.store.get(key, current) || current;
@@ -68,7 +72,7 @@
       current = next;
       BK.store.set(key, current);
       if (channel) channel.postMessage({ type: "update", sessionId, rev: current.rev });
-      onChange(current);
+      if (ready) onChange(current);
       return current;
     }
 
@@ -113,6 +117,7 @@
       window.removeEventListener("storage", onStorage);
     }
 
+    ready = true;
     return { get: () => current, dispatch, close, recovered };
   }
 

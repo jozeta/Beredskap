@@ -1,7 +1,8 @@
 /*
  * scenarios.test.js — Every registered scenario: validation, determinism,
  * hidden-fact progressive disclosure at every stage count, and the stage
- * confidentiality sweep. Runs over the whole library, so new scenarios are
+ * confidentiality sweep (projection JSON, rendered text and attributes, both
+ * languages, one playthrough per branch option). Runs over the whole library, so new scenarios are
  * covered automatically.
  */
 (function () {
@@ -26,6 +27,56 @@
       });
     });
     return parts.join("\n");
+  }
+
+  /** Every facilitator-only string longer than 12 characters, both languages. */
+  function facilitatorStrings(inst) {
+    const out = [];
+    const add = (v) => v && ["en", "sv"].forEach((l) => v[l] && v[l].length > 12 && out.push(v[l]));
+    inst.stages.forEach((st) => {
+      add(st.facilitator.notes);
+      add(st.facilitator.expected);
+      (st.facilitator.hints || []).forEach(add);
+      st.injects.concat(st.branchInjects).forEach((i) => {
+        add(i.facilitatorNote);
+        add(i.expectedResponse);
+      });
+      if (st.decision) {
+        (st.decision.evaluation || []).forEach(add);
+        Object.values(st.decision.tradeoffs || {}).forEach(add);
+        // knowns are deliberately absent: they restate facts the room already has.
+        (st.decision.uncertainties || []).forEach(add);
+      }
+    });
+    inst.hiddenFacts.forEach((h) => add(h.text));
+    return out;
+  }
+
+  /**
+   * Decision choices for successive playthroughs so that every branch fires at
+   * least once: pass k picks the k-th option any branch listens for.
+   */
+  function branchChoices(inst) {
+    const byDecision = {};
+    inst.stages.forEach((st) =>
+      st.branches.forEach((b) => {
+        const list = (byDecision[b.when.decision] = byDecision[b.when.decision] || []);
+        const opt = b.when.option || "";
+        if (!list.includes(opt)) list.push(opt);
+      })
+    );
+    const passes = Math.max(1, ...Object.values(byDecision).map((l) => l.length));
+    return Array.from({ length: passes }, (_, k) =>
+      Object.keys(byDecision).reduce((c, id) => ((c[id] = byDecision[id][Math.min(k, byDecision[id].length - 1)]), c), {})
+    );
+  }
+
+  /** Everything a stage viewer could perceive: rendered text plus every attribute value (aria-label, title, alt…). */
+  function stageSurface(p) {
+    const node = BK.ui.stageRenderer.renderCanvas(p, {});
+    const attrs = [];
+    [node].concat(Array.from(node.querySelectorAll("*"))).forEach((n) => Array.from(n.attributes).forEach((a) => attrs.push(a.value)));
+    return node.textContent + "\n" + attrs.join("\n");
   }
 
   suite("scenario library", () => {
@@ -60,28 +111,43 @@
       });
     });
 
-    test("no facilitator text reaches the stage in a full playthrough of every scenario", () => {
+    test("confidentiality: no facilitator text, hidden fact or unreleased inject reaches any projection or stage DOM, every scenario, every branch, both languages", () => {
+      const leaks = new Set();
+      const check = (ok, msg) => ok || leaks.add(msg);
       BK.scenarios.list().forEach((t) => {
-        const inst = Object.assign({ id: "ex-" + t.id }, generate(t, { stageCount: t.maxStages, injectDensity: "high", audience: "mixed" }));
-        let s = S().create(inst, 0);
-        const secrets = [];
-        inst.stages.forEach((st) => {
-          [st.facilitator.notes, st.facilitator.expected].concat(st.facilitator.hints || []).forEach((v) => v && secrets.push(v.en, v.sv));
-          st.injects.concat(st.branchInjects).forEach((i) => [i.facilitatorNote, i.expectedResponse].forEach((v) => v && secrets.push(v.en, v.sv)));
+        const inst = Object.assign({ id: "ex-" + t.id }, generate(t, { stageCount: t.maxStages, injectDensity: "high", audience: "mixed", difficulty: "advanced" }));
+        const secrets = facilitatorStrings(inst);
+        const injects = [];
+        inst.stages.forEach((st) => st.injects.concat(st.branchInjects).forEach((i) => injects.push(i)));
+        branchChoices(inst).forEach((choice, pass) => {
+          let s = S().create(inst, 0);
+          Object.keys(choice).forEach((decisionId) => (s = S().apply(s, { type: "decision", decisionId, entry: { option: choice[decisionId], text: "" } }, 0)));
+          const where = (p) => t.id + " pass " + pass + " at " + p.slide.id + " (" + p.lang + ")";
+          for (let i = 0; i < 600; i++) {
+            ["en", "sv"].forEach((lang) => {
+              const p = S().project(Object.assign({}, s, { lang }), 0);
+              const json = JSON.stringify(p);
+              const dom = stageSurface(p);
+              ["facilitatorNote", "expectedResponse", "hiddenFacts", '"groundTruth"', '"reliability"'].forEach((k) => check(!json.includes(k), k + " key in projection, " + where(p)));
+              secrets.forEach((x) => {
+                check(!json.includes(x), "facilitator text in projection, " + where(p) + ": " + x.slice(0, 40));
+                check(!dom.includes(x), "facilitator text on stage, " + where(p) + ": " + x.slice(0, 40));
+              });
+              if (p.slide.type !== "debrief") {
+                injects.forEach((inj) => {
+                  const st = s.injects[inj.id];
+                  if (st && st.state === "released") return;
+                  check(!dom.includes(inj.content[lang]), "unreleased inject " + inj.id + " visible, " + where(p));
+                });
+              }
+            });
+            if (S().locate(s).slide.type === "debrief") break;
+            s = S().apply(s, { type: "next" }, i);
+          }
+          assert.equal(S().locate(s).slide.type, "debrief", t.id + " playthrough did not finish");
         });
-        inst.hiddenFacts.forEach((h) => secrets.push(h.text.en, h.text.sv));
-        const host = document.createElement("div");
-        for (let i = 0; i < 600; i++) {
-          const p = S().project(s, 0);
-          host.textContent = "";
-          host.appendChild(BK.ui.stageRenderer.renderCanvas(p, {}));
-          const dom = host.textContent;
-          secrets.filter((x) => x && x.length > 12).forEach((x) => assert.ok(!dom.includes(x), t.id + " leaked at " + p.slide.id + ": " + x.slice(0, 40)));
-          if (S().locate(s).slide.type === "debrief") break;
-          s = S().apply(s, { type: "next" }, i);
-        }
-        assert.equal(S().locate(s).slide.type, "debrief", t.id + " playthrough did not finish");
       });
+      assert.ok(!leaks.size, leaks.size + " leak(s):\n" + Array.from(leaks).slice(0, 40).join("\n"));
     });
 
     test("every chart in every scenario renders in both languages", () => {

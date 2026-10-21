@@ -55,7 +55,7 @@
       if (s.decision) {
         (s.decision.evaluation || []).forEach(add);
         Object.values(s.decision.tradeoffs || {}).forEach(add);
-        (s.decision.knowns || []).forEach(add);
+        // knowns are deliberately absent: they restate facts the room already has.
         (s.decision.uncertainties || []).forEach(add);
       }
     });
@@ -266,6 +266,27 @@
       assert.equal(r.clock.runningSince, null);
       assert.equal(r.position.slideId, s.position.slideId);
       assert.equal(r.decisions.d1.option, "B");
+      BK.store.removeItem("session", s.id);
+      BK.store.remove("presence:" + s.id);
+    });
+
+    test("recovery never calls back before open() returns (presenter reload regression)", () => {
+      const s = forward(session(), 6);
+      s.clock.runningSince = Date.now() - 60000;
+      BK.store.putItem("session", s);
+      BK.store.remove("presence:" + s.id);
+      let ctrl = null;
+      let early = 0;
+      let calls = 0;
+      ctrl = BK.sync.open(s.id, () => {
+        calls++;
+        if (!ctrl) early++;
+      });
+      assert.ok(ctrl.recovered, "should recover");
+      assert.equal(early, 0, "onChange ran before the controller existed");
+      ctrl.dispatch({ type: "next" });
+      assert.equal(calls, 1, "later changes still notify");
+      ctrl.close();
       BK.store.removeItem("session", s.id);
       BK.store.remove("presence:" + s.id);
     });
