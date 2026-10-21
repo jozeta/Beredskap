@@ -2,7 +2,7 @@
  * wizard.js — New-exercise wizard (spec section 4).
  *
  * Every control writes into one `draft` params object. That object is the
- * contract with the generator: generate(template, params, seed) in phase 2.
+ * contract with the generator (BK.engine.generator.generateFromParams).
  * The draft lives in module state so a language switch or a re-render caused
  * by a dependent control (e.g. changing scenario) never loses input.
  *
@@ -519,11 +519,7 @@
     }
     const p = params();
     BK.store.set("wizardDraft", p);
-    if (BK.engine.generator && BK.engine.generator.generateFromParams) {
-      BK.engine.generator.generateFromParams(p);
-      return;
-    }
-    BK.ui.toast(t("wizard.engineMissing"), "info");
+    BK.engine.generator.generateFromParams(p);
   }
 
   function build(root) {

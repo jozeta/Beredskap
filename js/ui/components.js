@@ -79,10 +79,10 @@
   /**
    * <select> from [{ value, label }]. onChange receives the selected value.
    */
-  function select(options, value, onChange) {
+  function select(options, value, onChange, attrs) {
     return el(
       "select",
-      { class: "input", on: { change: (e) => onChange(e.target.value) } },
+      Object.assign({ class: "input", on: { change: (e) => onChange(e.target.value) } }, attrs),
       options.map((o) => el("option", { value: o.value, selected: String(o.value) === String(value), text: o.label }))
     );
   }

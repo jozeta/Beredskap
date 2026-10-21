@@ -53,11 +53,12 @@
   --ink: #1C2833;
   --ink-muted: #5E6B75;
   --line: #D8DDDC;
+  --line-strong: #7C878F; /* form-control borders: >= 3:1 on every surface (WCAG 1.4.11) */
   --accent: #2F5B72;
   --ok: #2E6E4E;
-  --warn: #94660A;
+  --warn: #8B6009;
   --danger: #A8362B;
-  --info: #5D6F96;
+  --info: #56678C;
 
   /* Text placed ON a filled accent/semantic surface */
   --on-accent: #FFFFFF;
@@ -87,6 +88,7 @@
   --ink: #EEF2F5;
   --ink-muted: #A3B0BA;
   --line: #33424E;
+  --line-strong: #6E7F8C;
   --accent: #85B7CF;
   --ok: #8DC0A0;
   --warn: #E0B160;
@@ -120,6 +122,7 @@
     --ink: #EEF2F5;
     --ink-muted: #A3B0BA;
     --line: #33424E;
+    --line-strong: #6E7F8C;
     --accent: #85B7CF;
     --ok: #8DC0A0;
     --warn: #E0B160;

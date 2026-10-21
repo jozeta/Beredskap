@@ -2,14 +2,16 @@
 <!--
   tests.html — In-browser test runner for Beredskap (spec section 16).
   Open directly from file:// or a static server. Uses its own storage prefix,
-  so running tests never touches real saved exercises.
+  so running tests never touches real saved exercises. The source self-check
+  (tests/hardening.test.js) reads the app's files and so needs a static server;
+  that is why this page, unlike index.html, allows connect-src 'self'.
 -->
 <html lang="en" data-theme="system">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="Content-Security-Policy"
-        content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; connect-src 'none'; base-uri 'none'">
+        content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; connect-src 'self'; base-uri 'none'">
   <title>Beredskap tests</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/tokens.css">
@@ -70,10 +72,19 @@
   <script src="js/scenarios/s19-zero-day-edge.js"></script>
   <script src="js/scenarios/s20-perfect-storm.js"></script>
   <script src="js/ui/router.js"></script>
+  <script src="js/ui/sync.js"></script>
   <script src="js/ui/dialog.js"></script>
   <script src="js/ui/components.js"></script>
-  <script src="js/ui/sync.js"></script>
+  <script src="js/ui/dashboard.js"></script>
+  <script src="js/ui/library.js"></script>
+  <script src="js/ui/wizard.js"></script>
+  <script src="js/ui/settings.js"></script>
+  <script src="js/ui/facilitation.js"></script>
+  <script src="js/ui/history.js"></script>
+  <script src="js/ui/editor.js"></script>
   <script src="js/ui/stage.js"></script>
+  <script src="js/ui/presenter.js"></script>
+  <script src="js/ui/debrief.js"></script>
 
   <script src="tests/runner.js"></script>
   <script src="tests/core.test.js"></script>
@@ -82,6 +93,8 @@
   <script src="tests/graphics.test.js"></script>
   <script src="tests/facilitation.test.js"></script>
   <script src="tests/scenarios.test.js"></script>
+  <script src="tests/a11y.test.js"></script>
+  <script src="tests/hardening.test.js"></script>
   <script src="tests/run.js"></script>
 </body>
 </html>

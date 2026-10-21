@@ -28,8 +28,9 @@
     return drafts[key];
   }
 
-  function textArea(id, value, onChange, rows) {
-    return el("textarea", { id, class: "input textarea", rows: rows || 2, maxlength: 4000, value: value || "", on: { input: (e) => onChange(e.target.value, false), change: (e) => onChange(e.target.value, true) } });
+  function textArea(id, value, onChange, rows, label) {
+    // `label` only for a textarea without a visible <label> (wrapped in c.field otherwise).
+    return el("textarea", { id, class: "input textarea", rows: rows || 2, maxlength: 4000, value: value || "", "aria-label": label || null, on: { input: (e) => onChange(e.target.value, false), change: (e) => onChange(e.target.value, true) } });
   }
 
   function textInput(id, value, onChange, extra) {
@@ -142,7 +143,7 @@
           el(
             "div",
             { class: "actions" },
-            c.select(OBS_STATUS.map((k) => ({ value: k, label: t("obs.st." + k) })), o.status || "open", (v) => dispatch({ type: "observationUpdate", id: o.id, patch: { status: v } })),
+            c.select(OBS_STATUS.map((k) => ({ value: k, label: t("obs.st." + k) })), o.status || "open", (v) => dispatch({ type: "observationUpdate", id: o.id, patch: { status: v } }), { "aria-label": t("obs.status") }),
             c.button({
               label: t("common.delete"),
               icon: "trash",
@@ -237,7 +238,7 @@
     return textArea("fx-notes", dr.text, (v, done) => {
       dr.text = v;
       if (done) dispatch({ type: "notes", text: v });
-    }, 4);
+    }, 4, t("presenter.notesField"));
   }
 
   BK.ui.facilitation = { decisionForm, observationForm, observationList, objectivesEditor, scorecardEditor, notesEditor, OBS_CATEGORIES, RATINGS };

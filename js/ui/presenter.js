@@ -71,16 +71,21 @@
 
   // ---- Pieces ------------------------------------------------------------------------------------------
 
+  // The scaled canvas is a visual copy of the room's slide (with its own h1), so it
+  // is hidden from assistive technology; the caption says which slide it is instead.
   function preview(p, label, cls) {
     const frame = el("div", { class: ["stage-frame", cls] });
+    let caption = label;
     if (p) {
       const canvas = BK.ui.stageRenderer.renderCanvas(p, { preview: true });
+      canvas.setAttribute("aria-hidden", "true");
       frame.appendChild(canvas);
       requestAnimationFrame(() => BK.ui.stageRenderer.fit(frame, canvas));
+      caption = label + " — " + t("presenter.slideOf", { n: p.progress.slideNumber, total: p.progress.slideCount, type: t("editor.slideType." + p.slide.type) });
     } else {
       frame.appendChild(el("p", { class: "stage-frame__empty", text: t("presenter.endOfDeck") }));
     }
-    return el("figure", { class: "preview" }, el("figcaption", { class: "eyebrow", text: label }), frame);
+    return el("figure", { class: "preview" }, el("figcaption", { class: "eyebrow" }, el("span", { text: label }), el("span", { class: "sr-only", text: caption.slice(label.length) })), frame);
   }
 
   function topBar(sess, f) {

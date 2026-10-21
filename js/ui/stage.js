@@ -9,8 +9,8 @@
  * and removed from the DOM when closed.
  *
  * Also exports BK.ui.runKeys, the keyboard/clicker map shared with the presenter.
- * Charts and artefacts are drawn with simple placeholders here; phase 4 replaces
- * them with the full SVG renderers (BK.graphics.*), which take precedence if loaded.
+ * Charts and artefacts come from BK.graphics; an inject type without a dedicated
+ * mock-up falls back to a plain text card (genericArtefact).
  */
 (function () {
   "use strict";
@@ -172,30 +172,9 @@
     return el("div", { class: "s-inject" }, custom || genericArtefact(inj, lang));
   };
 
-  // Placeholder chart rendering (phase 4 supplies BK.graphics.chart).
-  function fallbackChart(c, p) {
-    const d = c.data || {};
-    const fmt = (v, kind) => (kind === "currency" ? BK.i18n.fmt.currency(v, p.slide.currency, p.lang) : BK.i18n.fmt.number(v, p.lang));
-    if (c.type === "kpi") {
-      return el("div", { class: "s-kpis" }, (d.tiles || []).map((tile) => el("div", { class: ["s-kpi", "s-kpi--" + (tile.tone || "info")] }, el("span", { class: "s-kpi__value", text: fmt(tile.value, tile.format) }), el("span", { class: "s-kpi__label", text: tile.label }))));
-    }
-    let rows = [];
-    if (c.type === "line" && d.series && d.series[0]) rows = d.series[0].points.slice(-12).map((pt) => [String(pt[0]), pt[1]]);
-    else if (c.type === "bar" && d.series) rows = d.categories.map((cat, i) => [String(cat), d.series.reduce((sum, s) => sum + (s.values[i] || 0), 0)]);
-    else if (c.type === "donut") rows = (d.segments || []).map((sg) => [sg.label, sg.value]);
-    else if (c.type === "rto") rows = (d.services || []).map((sv) => [sv.name, sv.estimate]);
-    else if (c.type === "dependency") rows = (d.nodes || []).filter((n) => n.kind === "service").map((n) => [n.label, 1]);
-    const max = Math.max(1, ...rows.map((r) => r[1]));
-    return el(
-      "div",
-      { class: "s-bars" },
-      rows.map((r) => el("div", { class: "s-bar" }, el("span", { class: "s-bar__label", text: r[0] }), el("span", { class: "s-bar__track" }, el("span", { class: "s-bar__fill", style: { width: (100 * r[1]) / max + "%" } })), el("span", { class: "s-bar__value", text: BK.i18n.fmt.number(r[1], p.lang) })))
-    );
-  }
-
   R.data = (s, p, lang) => {
     const c = s.chart;
-    const drawn = BK.graphics && BK.graphics.chart ? BK.graphics.chart(c, p) : fallbackChart(c, p);
+    const drawn = BK.graphics.chart(c, p);
     return el(
       "div",
       { class: "s-data" },
@@ -504,7 +483,11 @@
 
   BK.ui.stage = {
     bare: true,
-    title: () => t("app.name"),
+    // The exercise title is public (it is on the title slide) and names the window on a projector.
+    title: (ctx) => {
+      const sess = BK.store.get("session:" + ctx.params.sessionId, null);
+      return sess ? BK.loc(sess.instance.title, sess.lang) : t("app.name");
+    },
     render(root, ctx) {
       view.lastKey = null;
       view.canvas = null;
@@ -538,6 +521,7 @@
       view.cleanup.forEach((fn) => fn());
       view.cleanup = [];
       view.ctrl = null;
+      document.documentElement.lang = BK.i18n.getLang(); // the stage set the session's language
     }
   };
 

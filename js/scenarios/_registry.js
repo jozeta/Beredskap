@@ -3,7 +3,7 @@
  *
  * Each scenario file calls register() with its template. Templates are frozen on
  * registration so nothing downstream can mutate authored content; operator edits
- * live on exercise instances instead. If the validator is loaded (phase 2+), every
+ * live on exercise instances instead. When the validator is loaded (always, in the app), every
  * template is validated on registration and problems are kept for the library.
  */
 (function () {

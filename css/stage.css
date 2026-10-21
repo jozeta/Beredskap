@@ -202,7 +202,7 @@
 .s-tl__body { display: grid; gap: 4px; font-size: 36px; }
 .s-tl__body small { font-size: 26px; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.06em; }
 
-/* ---- Inject artefact (generic; phase 4 adds type-specific mock-ups) -------------------------------------- */
+/* ---- Inject artefact (generic fallback; type-specific mock-ups below) -------------------------------------- */
 .s-inject { display: flex; align-items: center; justify-content: center; }
 .s-artefact {
   width: 1480px;
@@ -244,12 +244,6 @@
 .s-kpi--ok { border-top-color: var(--ok); }
 .s-kpi__value { font-size: 120px; font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
 .s-kpi__label { font-size: 32px; color: var(--ink-muted); }
-.s-bars { display: grid; gap: 12px; }
-.s-bar { display: grid; grid-template-columns: 360px 1fr 160px; gap: 24px; align-items: center; font-size: 26px; }
-.s-bar__label { color: var(--ink-muted); text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.s-bar__track { height: 28px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
-.s-bar__fill { display: block; height: 100%; background: var(--accent); border-radius: 999px; }
-.s-bar__value { font-variant-numeric: tabular-nums; font-weight: 600; }
 
 /* ---- Twist (high contrast) ------------------------------------------------------------------------------ */
 /* Accent field with its paired on-accent ink: ≥ 7:1 in both stage themes. */
@@ -376,7 +370,7 @@ kbd {
 .stage--preview .s-slide { animation: none; }
 
 /* ============================================================================================
-   Phase 4 — charts, artefacts and title artwork (stage scale: 1920×1080 canvas units)
+   Charts, artefacts and title artwork (stage scale: 1920×1080 canvas units)
    ============================================================================================ */
 
 /* ---- Title artwork & emblem ------------------------------------------------------------------ */

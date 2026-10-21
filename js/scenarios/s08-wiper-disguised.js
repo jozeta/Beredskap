@@ -421,7 +421,7 @@
           ["Keep all services running on paper with overtime.", "Håll alla tjänster igång på papper med övertid."],
           ["Let teams find their own solutions.", "Låt teamen hitta egna lösningar."]
         ], {
-          knowns: [["The rebuild will take {{num.weeks}} weeks.", "Ombyggnaden kommer att ta {{num.weeks}} veckor."]],
+          knowns: [["Estimated rebuild time: {{num.weeks}} weeks of manual operation.", "Beräknad tid för ombyggnad: {{num.weeks}} veckor med manuell drift."]],
           uncertainties: [["How long staff can sustain the pace.", "Hur länge personalen orkar hålla takten."]],
           tradeoffs: {
             operational: ["Reducing services is visible and unpopular.", "Att minska tjänster märks och är impopulärt."],
