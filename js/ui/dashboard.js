@@ -23,7 +23,8 @@
         { class: "actions" },
         c.button({ label: t("dashboard.quick.new"), icon: "plus", kind: "primary", href: "#/new" }),
         c.button({ label: t("dashboard.quick.surprise"), icon: "dice", href: "#/new?scenario=random" }),
-        c.button({ label: t("dashboard.quick.library"), icon: "book", kind: "ghost", href: "#/library" })
+        c.button({ label: t("dashboard.quick.library"), icon: "book", kind: "ghost", href: "#/library" }),
+        c.button({ label: t("import.button"), icon: "download", kind: "ghost", onClick: () => BK.ui.history.runImport() })
       ),
       el("p", { class: "muted small", text: t("dashboard.scenarioCount", { n: count }) })
     );

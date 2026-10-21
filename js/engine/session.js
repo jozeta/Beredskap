@@ -55,6 +55,7 @@
       decisions: {},
       observations: [],
       objectives: {},
+      scorecard: {},
       notes: "",
       paused: false,
       pausedTimers: null,
@@ -355,6 +356,29 @@
       case "decision":
         sess.decisions[cmd.decisionId] = Object.assign({}, sess.decisions[cmd.decisionId] || {}, cmd.entry, { at: new Date(at).toISOString() });
         sess.log.push({ at: new Date(at).toISOString(), type: "decision", decisionId: cmd.decisionId });
+        break;
+      case "observationAdd": {
+        const stageSlide = slide && slide.stageId ? slide.stageId : null;
+        sess.observations.push(Object.assign({ id: BK.dom.uid("obs"), createdAt: new Date(at).toISOString(), stageId: stageSlide, status: "open", priority: "medium" }, cmd.entry));
+        break;
+      }
+      case "observationUpdate": {
+        const o = sess.observations.find((x) => x.id === cmd.id);
+        if (o) Object.assign(o, cmd.patch, { id: o.id });
+        break;
+      }
+      case "observationRemove":
+        sess.observations = sess.observations.filter((x) => x.id !== cmd.id);
+        break;
+      case "objective":
+        sess.objectives[cmd.objectiveId] = { status: cmd.status, note: cmd.note || "", at: new Date(at).toISOString() };
+        break;
+      case "score":
+        sess.scorecard = sess.scorecard || {};
+        sess.scorecard[cmd.criterionId] = { rating: cmd.rating, comment: cmd.comment || "", at: new Date(at).toISOString() };
+        break;
+      case "notes":
+        sess.notes = String(cmd.text || "");
         break;
       case "recover":
         // Nobody was running the exercise: restore everything but leave timers paused.
@@ -711,7 +735,22 @@
     };
   }
 
+  /**
+   * Scorecard criteria: the template's evaluation criteria for every decision in
+   * the instance. A facilitator assessment — never a maturity or compliance score.
+   */
+  function criteria(instance) {
+    const out = [];
+    instance.stages.forEach((s) => {
+      if (!s.decision) return;
+      (s.decision.evaluation || []).forEach((text, i) => out.push({ id: s.decision.id + "-e" + (i + 1), decisionId: s.decision.id, stageId: s.id, text }));
+    });
+    return out;
+  }
+
   BK.engine.session = {
+    criteria,
+    findInject,
     create,
     apply,
     slides,

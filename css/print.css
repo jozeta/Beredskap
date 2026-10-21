@@ -1,3 +1,53 @@
 /*
- * print.css — Print styles for the facilitator guide, role cards and after-action report (built in phase 5).
+ * print.css — Print styles for the facilitator guide, role cards and the
+ * after-action report. When printing, only #print-root is shown; documents are
+ * black on white regardless of theme, with sensible page breaks.
  */
+@page { size: A4; margin: 16mm 14mm; }
+
+body.is-printing > *:not(#print-root) { display: none !important; }
+#print-root { display: block !important; }
+
+#print-root {
+  color: #111;
+  background: #fff;
+  font-family: var(--font);
+  font-size: 10.5pt;
+  line-height: 1.45;
+}
+/* Text prints black; chart graphics keep their colours (kinds must stay distinguishable). */
+#print-root *:not(svg):not(svg *):not(.c-swatch) { color: #111 !important; background: transparent !important; box-shadow: none !important; }
+#print-root .chart, #print-root .c-swatch { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+.p-doc h1 { font-size: 20pt; margin: 0 0 4pt; }
+.p-doc h2 { font-size: 13.5pt; margin: 14pt 0 6pt; border-bottom: 0.75pt solid #999; padding-bottom: 2pt; break-after: avoid; }
+.p-doc h3 { font-size: 11pt; margin: 10pt 0 4pt; break-after: avoid; }
+.p-doc p { margin: 0 0 6pt; }
+.p-doc ul, .p-doc ol { margin: 0 0 6pt; padding-left: 14pt; }
+.p-head { margin-bottom: 12pt; }
+.p-brand { font-size: 9pt; letter-spacing: 0.12em; text-transform: uppercase; color: #555 !important; margin: 0 0 4pt; }
+.p-confidential { font-weight: 700; border: 1.5pt solid #111; padding: 4pt 8pt; margin: 0 0 8pt; display: inline-block; }
+.p-sub { color: #555 !important; font-size: 9.5pt; }
+.p-twist { border-left: 3pt solid #111; padding-left: 8pt; }
+
+.p-table { width: 100%; border-collapse: collapse; margin: 4pt 0 8pt; font-size: 9pt; }
+.p-table th, .p-table td { border: 0.5pt solid #bbb; padding: 3pt 5pt; text-align: left; vertical-align: top; }
+.p-table th { font-weight: 700; background: #eee !important; }
+.p-table tr { break-inside: avoid; }
+
+.p-stage { break-before: page; }
+.p-decision { border: 0.75pt solid #999; padding: 6pt 8pt; margin: 6pt 0; break-inside: avoid; }
+.p-chart svg { width: 100%; height: auto; }
+.p-chart .c-tl-list { font-size: 9pt; }
+
+/* Role cards: two per page, with cut lines. */
+.p-cards .p-card {
+  border: 1pt dashed #777;
+  padding: 10pt 12pt;
+  margin: 0 0 10mm;
+  min-height: 120mm;
+  break-inside: avoid;
+}
+.p-card__kicker { font-size: 8.5pt; letter-spacing: 0.12em; text-transform: uppercase; margin: 0; }
+.p-card h2 { border: 0; margin-top: 2pt; font-size: 16pt; }
+.p-private { border: 1.5pt solid #111; padding: 6pt 8pt; margin: 6pt 0; }

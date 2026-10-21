@@ -514,28 +514,42 @@
   function timeline(spec, lang) {
     const events = (spec.events || []).slice().sort((a, b) => a.at - b.at);
     const W = VW;
-    const H = 520;
+    const H = 260;
     const s = root(spec.title || "", t("chart.timelineDesc", { n: events.length }, lang), W, H);
     if (!events.length) return figure("timeline", [s]);
     const left = 60;
     const right = W - 60;
-    // Rank-based spacing: long quiet stretches (days of dwell time) would otherwise squash the busy hours.
+    // Rank-based spacing: days of quiet dwell time would otherwise squash the busy hours.
     const sx = (i) => left + (i / Math.max(1, events.length - 1)) * (right - left);
     const axisY = H / 2;
     s.appendChild(svg("line", { class: "c-axis", x1: left, x2: right, y1: axisY, y2: axisY }));
+    // Numbered marks only; the readable labels live in the list below the chart, so
+    // nothing collides however many events there are.
     events.forEach((e, i) => {
       const x = sx(i);
       const above = e.kind !== "attacker";
-      const lane = i % 3;
-      const yLabel = above ? axisY - 60 - lane * 52 : axisY + 80 + lane * 52;
       const g = svg("g", { class: ["c-tl", "c-tl--" + e.kind] });
-      g.appendChild(svg("title", { text: (e.atLabel || xLabel(e.at, "minutes")) + " — " + e.label }));
-      g.appendChild(svg("line", { class: "c-tl__stem", x1: x, x2: x, y1: axisY, y2: yLabel + (above ? 10 : -30) }));
+      g.appendChild(svg("title", { text: (i + 1) + ". " + (e.atLabel || xLabel(e.at, "minutes")) + " — " + e.label }));
+      g.appendChild(svg("line", { class: "c-tl__stem", x1: x, x2: x, y1: axisY, y2: above ? axisY - 46 : axisY + 46 }));
       if (e.kind === "decision") g.appendChild(svg("rect", { class: "c-tl__mark", x: x - 11, y: axisY - 11, width: 22, height: 22, transform: "rotate(45 " + x + " " + axisY + ")" }));
       else g.appendChild(svg("circle", { class: "c-tl__mark", cx: x, cy: axisY, r: 10 }));
-      g.appendChild(svg("text", { class: "c-label c-label--sm", x, y: yLabel, "text-anchor": i === 0 ? "start" : i === events.length - 1 ? "end" : "middle", text: truncate(e.label, 26) }));
+      g.appendChild(svg("text", { class: "c-label c-label--sm c-tl__num", x, y: above ? axisY - 58 : axisY + 76, "text-anchor": "middle", text: String(i + 1) }));
       s.appendChild(g);
     });
+    const list = el(
+      "ol",
+      { class: "c-tl-list" },
+      events.map((e) =>
+        el(
+          "li",
+          { class: "c-tl-list__item c-tl--" + e.kind },
+          el("span", { class: ["c-swatch", e.kind === "decision" && "c-swatch--diamond"], "aria-hidden": "true" }),
+          el("span", { class: "c-tl-list__time", text: e.atLabel || xLabel(e.at, "minutes") }),
+          el("span", { class: "c-tl-list__kind", text: t("chart.tl." + e.kind, null, lang) }),
+          el("span", { class: "c-tl-list__text", text: e.label })
+        )
+      )
+    );
     return figure("timeline", [
       legend([
         { label: t("chart.tl.attacker", null, lang), cls: "c-tl-attacker" },
@@ -543,7 +557,7 @@
         { label: t("chart.tl.decision", null, lang), cls: "c-tl-decision", shape: "diamond" }
       ]),
       s,
-      dataTable(spec.title || "", ["", "", ""], events.map((e) => [e.atLabel || xLabel(e.at, "minutes"), t("chart.tl." + e.kind, null, lang), e.label]))
+      list
     ]);
   }
 
