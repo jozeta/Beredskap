@@ -62,6 +62,7 @@
     T1589: "Gather Victim Identity Information",
     T1621: "Multi-Factor Authentication Request Generation",
     T1656: "Impersonation",
+    T1657: "Financial Theft",
     T1484: "Domain or Tenant Policy Modification",
     "T1484.002": "Domain or Tenant Policy Modification: Trust Modification",
     T1586: "Compromise Accounts",

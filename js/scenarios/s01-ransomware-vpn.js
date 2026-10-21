@@ -243,8 +243,8 @@
             severity: "medium", reliability: "misleading", visibility: "public",
             optional: true, difficulties: ["intermediate", "advanced", "executive"],
             content: {
-              en: "It's just the nightly sync job again — we had exactly this in the spring. Please don't touch the network, the night shift needs {{org.service.primary|lcfirst}} from {{time.T+90|clock}}.",
-              sv: "Det är bara nattsynken igen – vi hade exakt samma sak i våras. Rör inte nätverket, nattskiftet behöver {{org.service.primary|lcfirst}} från {{time.T+90|clock}}."
+              en: "It's just the nightly sync job again — we had exactly this in the spring. Please don't touch the network, the night shift needs every system up from {{time.T+90|clock}}.",
+              sv: "Det är bara nattsynken igen – vi hade exakt samma sak i våras. Rör inte nätverket, nattskiftet behöver alla system från {{time.T+90|clock}}."
             },
             tests: ["lo1", "lo4"],
             facilitatorNote: { en: "Intentionally misleading reassurance from the business side. Watch whether the group verifies it or lets it delay containment.", sv: "Medvetet vilseledande lugnande besked från verksamheten. Se om gruppen kontrollerar påståendet eller låter det fördröja isoleringen." }

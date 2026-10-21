@@ -749,3 +749,5 @@ fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
 .c-tl-list__item .c-swatch--diamond { width: 10px; height: 10px; }
 .c-tl-list__time { font-variant-numeric: tabular-nums; color: var(--ink-muted); }
 .c-tl-list__kind { color: var(--ink-muted); }
+/* Card rows stretch to align actions; the objective list itself must not spread out. */
+.scenario-card .bullets { align-content: start; }
