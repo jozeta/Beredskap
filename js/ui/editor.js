@@ -17,10 +17,10 @@
   const t = BK.t;
 
   const RELIABILITY = {
-    confirmed: { tone: "ok", icon: "check" },
-    unverified: { tone: "warn", icon: "info" },
-    misleading: { tone: "danger", icon: "warning" },
-    disputed: { tone: "info", icon: "cross" }
+    confirmed: { tone: "ok", icon: "verified" },
+    unverified: { tone: "warn", icon: "unverified" },
+    misleading: { tone: "danger", icon: "misleading" },
+    disputed: { tone: "info", icon: "disputed" }
   };
   const SEVERITY = { info: "neutral", low: "neutral", medium: "info", high: "warn", critical: "danger" };
 

@@ -101,6 +101,29 @@
     return node;
   }
 
+  /**
+   * Reference a 64×64 scenario emblem (<use href="#e-name">). Falls back to the
+   * shield icon for unknown names so a template typo never breaks a page.
+   */
+  function emblem(name, opts) {
+    const o = opts || {};
+    const known = BK.icons && BK.icons.hasEmblem && BK.icons.hasEmblem(name);
+    if (!known) return svgIcon("shield", { size: o.size || 48, label: o.label, className: o.className });
+    const size = o.size || 48;
+    const node = svg("svg", {
+      class: ["icon", "emblem-svg", o.className],
+      width: size,
+      height: size,
+      viewBox: "0 0 64 64",
+      focusable: "false",
+      "aria-hidden": o.label ? null : "true",
+      role: o.label ? "img" : null,
+      "aria-label": o.label || null
+    });
+    node.appendChild(svg("use", { href: "#e-" + name }));
+    return node;
+  }
+
   function clear(node) {
     while (node.firstChild) node.removeChild(node.firstChild);
     return node;
@@ -131,5 +154,5 @@
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
-  BK.dom = { el, svg, text, svgIcon, clear, mount, uid, download, SVG_NS };
+  BK.dom = { el, svg, text, svgIcon, emblem, clear, mount, uid, download, SVG_NS };
 })();

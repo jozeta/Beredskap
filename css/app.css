@@ -699,3 +699,7 @@ fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
 .question-list li { display: grid; gap: 4px; }
 .decision-preview__q { font-weight: 600; font-size: var(--fs-lg); }
 .options { margin: var(--s1) 0 0; padding-left: 1.6em; display: grid; gap: 4px; }
+
+/* Emblem badge sits on the surface so the badge icon reads over the main icon. */
+.emblem-badge { fill: var(--surface); }
+.emblem { width: 64px; height: 64px; background: transparent; }

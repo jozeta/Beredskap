@@ -37,8 +37,7 @@
   }
 
   function emblem(tpl, size) {
-    const name = tpl.emblem && BK.icons.has(tpl.emblem) ? tpl.emblem : "shield";
-    return el("div", { class: "emblem", dataset: { category: tpl.category } }, svgIcon(name, { size: size || 32 }));
+    return el("div", { class: "emblem", dataset: { category: tpl.category } }, BK.dom.emblem(tpl.emblem, { size: size || 56 }));
   }
 
   function archetypeBadge(tpl) {

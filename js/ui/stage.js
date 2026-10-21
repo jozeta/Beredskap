@@ -36,8 +36,7 @@
   }
 
   function emblem(name, size) {
-    const icon = name && BK.icons.has(name) ? name : "shield";
-    return el("div", { class: "s-emblem" }, svgIcon(icon, { size: size || 96 }));
+    return el("div", { class: "s-emblem" }, BK.dom.emblem(name, { size: size || 160 }));
   }
 
   function kicker(text) {
@@ -54,7 +53,7 @@
       { class: "s-title" },
       BK.graphics && BK.graphics.artwork ? BK.graphics.artwork(s, p) : el("div", { class: "s-title__art", "aria-hidden": "true" }),
       el("p", { class: "s-banner", text: s.banner }),
-      emblem(s.emblem, 120),
+      emblem(s.emblem, 168),
       el("h1", { class: "s-title__heading", text: s.title }),
       s.title !== s.scenarioTitle ? el("p", { class: "s-title__sub", text: s.scenarioTitle }) : null,
       el("p", { class: "s-title__org", text: s.orgName }),
@@ -97,9 +96,8 @@
           "section",
           null,
           el("h2", { class: "s-h2", text: t("stage.services", null, lang) }),
-          BK.graphics && BK.graphics.dependencyFromServices
-            ? BK.graphics.dependencyFromServices(s.services)
-            : el("ul", { class: "s-services" }, s.services.map((sv) => el("li", null, el("strong", { text: sv.name }), el("span", { text: sv.deps.map((d) => d.label).join(" · ") }))))
+          // A list, not the diagram: at half width the diagram's text would be too small to project.
+          el("ul", { class: "s-services" }, s.services.map((sv) => el("li", null, el("strong", { text: sv.name }), el("span", { text: sv.deps.map((d) => d.label).join(" · ") }))))
         ),
         el(
           "section",
