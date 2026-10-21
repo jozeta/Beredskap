@@ -58,6 +58,7 @@
     severities: ["info", "low", "medium", "high", "critical"],
     reliabilities: ["confirmed", "unverified", "misleading", "disputed"],
     // Twist kinds: "cause" and "scope" change understanding of the incident (validator needs ≥ 2).
+    chartTypes: ["line", "bar", "kpi", "gauge", "donut", "dependency", "blast", "rto", "timeline"],
     twistKinds: ["cause", "scope", "impact", "authority"],
     startWindows: ["any", "business-hours", "friday-evening", "weekend", "night", "holiday-eve", "monday-morning"],
     actorTypes: ["criminal", "state", "hacktivist", "insider", "unknown"],

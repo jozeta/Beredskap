@@ -289,7 +289,7 @@
    * In-scenario start time honouring the template's start window. The year is
    * fixed internally so generation is reproducible; scenario text never shows it.
    */
-  function buildClock(rng, window) {
+  function buildClock(rng, window, startTime) {
     const minuteIn = (h0, m0, h1, m1) => {
       const from = h0 * 60 + m0;
       const to = h1 * 60 + m1;
@@ -314,6 +314,9 @@
       case "holiday-eve": date = rng.pick(HOLIDAY_EVES); time = minuteIn(13, 0, 17, 0); break;
       default: date = dayIn(rng.int(0, 6)); time = minuteIn(7, 0, 20, 0);
     }
+    // A template may pin the exact start time (e.g. a title that names "03:00").
+    const pinned = /^(\d{2}):(\d{2})$/.exec(startTime || "");
+    if (pinned) time = [Number(pinned[1]), Number(pinned[2])];
     return { y: date[0], m: date[1], d: date[2], h: time[0], mi: time[1], window: window || "any" };
   }
 
@@ -548,7 +551,7 @@
     const actor = buildActor(root.fork("actor"), template);
     const suppliers = buildSuppliers(root.fork("suppliers"));
     const assets = buildAssets(root.fork("assets"), org, actor);
-    const clock = buildClock(root.fork("clock"), template.constraints && template.constraints.startWindow);
+    const clock = buildClock(root.fork("clock"), template.constraints && template.constraints.startWindow, template.constraints && template.constraints.startTime);
     const entities = { org, people, actor, suppliers, assets, clock };
     const vars = buildVariables(root.fork("numbers"), template, p, currency, entities);
 
