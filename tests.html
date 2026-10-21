@@ -1,0 +1,40 @@
+<!doctype html>
+<!--
+  tests.html — In-browser test runner for Beredskap (spec section 16).
+  Open directly from file:// or a static server. Uses its own storage prefix,
+  so running tests never touches real saved exercises.
+-->
+<html lang="en" data-theme="system">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; connect-src 'none'; base-uri 'none'">
+  <title>Beredskap tests</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="tests/tests.css">
+</head>
+<body>
+  <h1>Beredskap — tests</h1>
+  <div id="results"></div>
+
+  <script src="tests/setup.js"></script>
+  <script src="js/core/namespace.js"></script>
+  <script src="js/core/store.js"></script>
+  <script src="js/core/rng.js"></script>
+  <script src="js/core/i18n.js"></script>
+  <script src="js/core/theme.js"></script>
+  <script src="js/core/dom.js"></script>
+  <script src="js/data/options.js"></script>
+  <script src="js/data/roles.js"></script>
+  <script src="js/data/environments.js"></script>
+  <script src="js/graphics/icons.js"></script>
+  <script src="js/scenarios/_registry.js"></script>
+  <script src="js/ui/router.js"></script>
+
+  <script src="tests/runner.js"></script>
+  <script src="tests/core.test.js"></script>
+  <script src="tests/run.js"></script>
+</body>
+</html>
