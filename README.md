@@ -1,7 +1,10 @@
 # Beredskap
 
 Tabletop exercises for cyber crises, in English and Swedish. Beredskap generates a
-realistic, internally consistent exercise from one of 20 scenario templates. It
+realistic, internally consistent exercise from one of 30 scenario templates in two
+formats: 20 **discussion** exercises (stages, injects, a timed discussion, a
+decision) and 10 **branching** exercises, which work like the old gamebooks: every
+page ends in a choice of 2–4 options and the story goes where the room takes it. It
 projects the exercise on a 16:9 stage while the facilitator steers from a private
 presenter view. It also records decisions and observations, and it produces a
 debrief and an after-action report.
@@ -57,8 +60,9 @@ any 16:9 size.
 
 ### 2.1 From zero to running (about one minute)
 
-1. **Library** (`#/library`). Browse the 20 scenarios. You can filter by
-   category and by structure (archetype A–F), or search. A card's preview shows
+1. **Library** (`#/library`). Browse the 30 scenarios. You can filter by
+   category, structure (archetype A–F) and format (discussion or branching), or
+   search. A card's preview shows
    the summary, learning objectives, stage titles and framework references. It
    never shows hidden facts.
 2. **New exercise** (`#/new`). Pick a scenario, or *Surprise me*, then choose
@@ -72,7 +76,10 @@ any 16:9 size.
    - discussion time, inject release and decision mode;
    - the seed.
 
-   Every control changes the generated exercise.
+   Every control changes the generated exercise. For a branching scenario,
+   *Run as* (choice after choice, or with discussion stops) and *Length*
+   (short or long, with the expected minutes and number of choices) replace
+   duration and stage count.
 3. **Preview and edit** (`#/edit/:id`). This is a private outline of everything:
    - every inject, with its reliability and visibility badges;
    - hidden facts, with the stage that reveals them;
@@ -118,7 +125,35 @@ any 16:9 size.
 - **Recovery.** Every change autosaves. If a window is closed or reloaded,
   reopening it restores the exact slide and the logs, with timers paused.
 
-### 2.3 Debrief and exports
+### 2.3 Running a branching exercise
+
+- **Pages and choices.** The stage shows a page (its gamebook number, "§ 212",
+  and a few lines of story), any artefacts on it, and then the choice: 2–4
+  options, numbered. When the options lead to different pages, each shows
+  "turn to § N". The room argues it out; you record the choice with the
+  presenter's *Choose* buttons or the keys `1`–`4` on the choice slide. *Next*
+  does not move past an unmade choice.
+- **Consequences.** Options set consequences (for example "Sessions revoked
+  early") that change later pages, which options are offered, and which ending
+  the room reaches. A page that reacts to an earlier choice says so on stage
+  ("Because you revoked the sessions…"), and has its own page number.
+- **Presenter.** For each option the presenter shows *why it matters*, the page
+  it leads to and the consequences it sets, plus *what a strong team weighs*
+  for the choice as a whole. It also lists the consequences in play and the
+  route so far. *Undo last choice* (with a confirmation) steps back one choice
+  after a misclick.
+- **Length and mode.** Short runs take about 30 minutes and 10–11 choices;
+  long runs add decision points to the same story (12–16 choices, 40–45
+  minutes). With discussion stops, some pages first show 1–2 questions with
+  the discussion timer.
+- **Endings.** Every branching exercise has five endings on a scale from
+  *Contained* to *Disaster*. The scale is for discussion, never a score. The
+  stage debrief shows the route through the whole map: the room's path drawn
+  strong, unvisited pages as numbers only. The operator debrief adds the page
+  titles, every choice with the options not taken and where they led, and the
+  endings that were not reached.
+
+### 2.4 Debrief and exports
 
 - **Debrief** (`#/debrief/:id`). This view collects:
   - the summary, plus learning objectives with their status;
@@ -147,7 +182,7 @@ any 16:9 size.
   and default duration. You can also export all raw data, or clear it with a
   double confirmation.
 
-### 2.4 Language and theme
+### 2.5 Language and theme
 
 The UI, the stage and the exports are fully bilingual (EN/SV). On stage, `L`
 switches language live. Names, numbers and times stay identical, because both
@@ -167,7 +202,8 @@ in a field or a dialog is open. A presentation clicker (PageUp/PageDown, arrows,
 | → · Space · PageDown | Next step (reveal the next item, or go to the next slide) |
 | ← · PageUp | Previous step |
 | Home · End | First · last slide |
-| 1–9, 0 | Jump to stage 1–10 |
+| 1–9, 0 | Jump to stage 1–10 (discussion exercises) |
+| 1–4 | Choose option 1–4 on a choice slide (branching exercises) |
 | T · Shift+T | Start/pause · reset the discussion timer |
 | + · − | Add · remove one minute |
 | P | Pause/resume the whole exercise |
@@ -191,9 +227,9 @@ tests.html          in-browser test runner
 css/                tokens (light/dark), app, stage (1920×1080 canvas), presenter, print
 js/core/            namespace (window.BK), store, rng, i18n, theme, safe DOM builders
 js/data/            options/vocabulary, roles, sectors, environments, name pools, frameworks
-js/engine/          template resolver, generator, validator, pacing, slide compiler, session, edit
-js/graphics/        icon sprite + emblems, SVG charts, inject artefact mock-ups, title artwork
-js/scenarios/       _registry, _helpers, s01 … s20 (one file per scenario)
+js/engine/          template resolver, generator, validator, pacing, slide compiler, branching, session, edit
+js/graphics/        icon sprite + emblems, SVG charts, route map, inject artefact mock-ups, title artwork
+js/scenarios/       _registry, _helpers, s01 … s20 (discussion), b01 … b10 (branching), one file each
 js/io/              export (JSON/Markdown/CSV), import (validation), print
 js/ui/              router, sync, dialog, components, and one module per view
 js/app.js           boot: preferences, shell, routes, storage-problem banner
@@ -327,15 +363,50 @@ decisions{ id: entry }, observations[], objectives{}, scorecard{}, notes, log[],
 The session carries its own copy of the instance, so a run is self-contained.
 `rev` increases on every change and drives sync.
 
+### Branching template, instance and session
+
+A branching template has `format: "branching"`. It shares identity, text,
+objectives, frameworks, `constraints`, `variables`, `roles` and `debrief` (no
+`assumptionsVsReality` needed) with the discussion format, and replaces
+`stages`, `hiddenFacts`, `groundTruth` and `resolution` with:
+
+| Field | Meaning |
+|---|---|
+| `start` | Id of the first page (always shown as § 1) |
+| `flags{ id: { en, sv } }` | A label for every consequence an option can set |
+| `pages[]` | The map; each page has exactly one of `choice`, `route` or `ending` |
+
+A **page** has `id`, `title`, `narrative`, and optionally `variants[]{ if,
+narrative, because? }` (the first whose condition holds replaces the
+narrative), `injects[]`, `chart`, `discuss[]` (questions for discussion stops),
+`facilitator{ notes }`, `clock`, and `long: true` with `skipTo` (shown in long
+runs only; short runs go straight to `skipTo`). Then one of:
+- `choice{ question, strong, options[]{ key, text, to, why, set[], requires?, hides? } }`;
+- `route[]{ if?, to }`: an invisible page that sends the room on by
+  consequences (used to pick the ending);
+- `ending{ grade: 1–5, label, summary }`.
+
+Conditions are a flag (`"notified"`), a negation (`"!denied"`) or an array of
+both (all must hold).
+
+The **instance** adds `pages[].num` (seeded page numbers; each variant gets its
+own), `settings.mode` (`pure | hybrid`), `settings.length` (`short | long`),
+`flagLabels` and `pacing.choiceRange`. `stages`, `hiddenFacts` and `slides`
+are empty: the slide list is computed from the route. The **session** adds
+`route[]{ pageId, num, option, auto?, at }` and `flags[]`. A choice is also
+written to `decisions[pageId]`, so the decision log and exports work for both
+formats.
+
 ### Export envelope
 
 ```json
-{ "schema": "beredskap.exercise", "schemaVersion": 1, "kind": "exercise | session",
+{ "schema": "beredskap.exercise", "schemaVersion": 2, "kind": "exercise | session",
   "app": { "name": "Beredskap", "version": "…" }, "exportedAt": "…",
   "exercise": { … }, "session": { … } | null }
 ```
 
-File names look like `beredskap-<templateId>-<seed>-<yyyy-mm-dd>[-suffix].<ext>`.
+Schema version 2 added the branching format. Version 1 files still import and
+are treated as discussion exercises. File names look like `beredskap-<templateId>-<seed>-<yyyy-mm-dd>[-suffix].<ext>`.
 Import checks the schema version, types, string lengths, array sizes, ids and
 references, and drops prototype-pollution keys. It either stores a complete new
 copy or changes nothing.
@@ -459,14 +530,46 @@ The validator enforces these rules for every stage count from `minStages` to
 - Role-only injects (`visibility: "role:<id>"`) go to role cards and the
   presenter view, never to the stage.
 
+### Authoring a branching exercise
+
+Start from `b01-lost-laptop.js`; its header comment describes the map. The
+helpers keep pages short:
+
+```js
+const { L, q, inj, act, kpi, pg, ask, opt, end, vr, rt } = BK.scenarios.h;
+// pg("c4", ["Title", "Titel"], ["Narrative", "Berättelse"], { injects, chart, discuss, variants, long, skipTo, choice | route | ending })
+// ask(["Question", "Fråga"], ["What a strong team weighs", "…"], [opt(…), opt(…)])
+// opt(["Option text", "Alternativ"], "c5", ["Why it matters", "…"], { set: "flag", requires: "flag", hides: "!flag" })
+// vr("flag", ["Narrative when flag is set", "…"], ["Because …", "Eftersom …"])
+// rt([[["a", "b"], "e1"], ["a", "e2"], [null, "e3"]])
+// end(1, ["Ending label", "…"], ["Summary", "…"])
+```
+
+The validator enforces the map rules for both lengths:
+- every page is reachable, there are no cycles, every path reaches an ending;
+- every choice offers 2–4 options under every reachable combination of flags;
+- every complete path has 8–12 choices in a short run and 12–20 in a long one;
+- 3–5 endings, with at least one grade 1 and one grade 4 or 5;
+- at least one break-away (an option whose whole subtree no sibling shares)
+  and at least one page where branches rejoin;
+- every flag that is checked is set somewhere, and every flag set has a label;
+- every option has a `why` note and every choice a `strong` note.
+
+Make consequences visible: a flag should change a later page (`variants`), an
+option (`requires`/`hides`) or the ending (`route`). Keep each page to 1–3
+sentences and options under about 90 characters. The confidentiality test
+checks that no `why`, `strong`, facilitator note, flag label or unvisited
+page's text ever reaches the stage, so do not repeat them word for word in
+page text.
+
 ---
 
 ## 7. Testing
 
 Open `tests.html`. The runner has no dependencies. It reports *passed*,
 *failed* and *skipped* separately and never counts a skipped test as passed.
-Current result: **161 passed, 0 failed** when served over HTTP. From `file://`
-the result is 158 passed and 3 skipped; the skipped three are the source-reading
+Current result: **178 passed, 0 failed** when served over HTTP. From `file://`
+the result is 175 passed and 3 skipped; the skipped three are the source-reading
 tests.
 
 | Suite | Covers |
@@ -476,9 +579,10 @@ tests.
 | session | navigation bounds, step reveal, timers pause/resume, branches, skip/postpone/release, live language switch, s01 confidentiality sweep (projection + DOM), recovery after reload with timers paused, sync regression, clicker and control keys, shortcuts disabled while typing |
 | graphics | every icon and emblem exists, charts have titles, descriptions, data tables and legends, every artefact type renders and stays inert with hostile content, deterministic artwork |
 | facilitation | decision/observation/objective/scorecard logs, report contents, Markdown and CSV (BOM, separators, formula guard), JSON round-trip, malformed and hostile imports rejected or inert, prototype pollution dropped, editor operations, print outputs |
-| scenario library | all 20 templates validate; unique ids/emblems/categories; determinism; hidden facts at every stage count; **confidentiality**: a full playthrough per branch option for every scenario, in both languages, checking the projection JSON and the rendered text and attributes for facilitator text, hidden facts and unreleased injects; every chart renders in both languages |
+| scenario library | all templates validate; unique ids/emblems/categories; determinism; no unresolved placeholder in any generated text; hidden facts at every stage count; **confidentiality**: a full playthrough per branch option for every scenario, in both languages, checking the projection JSON and the rendered text and attributes for facilitator text, hidden facts and unreleased injects; every chart renders in both languages |
 | accessibility | every operator view (empty and populated) and every stage slide of every scenario, in both languages: accessible names, labels, unique ids, valid references, no positive tabindex, heading order, SVG text alternatives; dialog focus handling; WCAG AA contrast of the colour tokens in both themes |
-| layout | every slide of every scenario (two seeds, every audience, both languages) laid out at the native 1920×1080 canvas after the stage's own fitting step: nothing leaves the slide area (and so runs over the progress rail), no chart text leaves its chart, no text is clipped; with a test that a planted overflow is caught |
+| layout | every slide of every scenario (two seeds, every audience, both languages; branching scenarios along playthroughs that take every option) laid out at the native 1920×1080 canvas after the stage's own fitting step: nothing leaves the slide area (and so runs over the progress rail), no chart text leaves its chart, no text is clipped; with a test that a planted overflow is caught |
+| branching | map rules (each with a failing fixture), landing resolution, path lengths and endings of every branching scenario, determinism and page numbers, length and mode effects, choose/undo/digit keys/next-blocking, scorecard criteria, **confidentiality** along playthroughs that take every option (both lengths, both languages: no facilitator text, flag label or unvisited page reaches the projection or the stage DOM), import/export round trip, tampered routes rejected, version-1 files still import |
 | hardening | source self-check (no `eval(`, `new Function`, string timers, `innerHTML =` outside `icons.js`, network APIs or external URLs; with a test that the rules detect planted violations); `index.html` CSP and no inline script/handlers; `tests.html` loads the same scripts as `index.html`; nothing loaded from the network during the run |
 
 For a quick check from the command line, the same source scan can be run with
