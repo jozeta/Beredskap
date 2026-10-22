@@ -14,6 +14,7 @@
 
   const mitre = {
     T1003: "OS Credential Dumping",
+    T1553: "Subvert Trust Controls",
     T1005: "Data from Local System",
     T1020: "Automated Exfiltration",
     T1056: "Input Capture",
@@ -133,6 +134,7 @@
 
   const iso27001 = {
     "A.5.5": "Contact with authorities",
+    "A.5.9": "Inventory of information and other associated assets",
     "A.5.8": "Information security in project management",
     "A.5.10": "Acceptable use of information and other associated assets",
     "A.5.14": "Information transfer",

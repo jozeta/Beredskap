@@ -195,7 +195,12 @@
     pos: ["card", "bug"],
     water: ["droplet", "power"],
     "sim-swap": ["sim", "key"],
-    blackout: ["power", "users"]
+    blackout: ["power", "users"],
+    "cloud-wipe": ["cloud-off", "trash"],
+    visitor: ["users", "lock"],
+    disclosure: ["bug", "megaphone"],
+    merger: ["link", "shield-alert"],
+    certificate: ["verified", "clock"]
   };
 
   function emblemMarkup(main, badge) {
