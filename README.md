@@ -1,8 +1,8 @@
 # Beredskap
 
 Tabletop exercises for cyber crises, in English and Swedish. Beredskap generates a
-realistic, internally consistent exercise from one of 30 scenario templates in two
-formats: 20 **discussion** exercises (stages, injects, a timed discussion, a
+realistic, internally consistent exercise from one of 35 scenario templates in two
+formats: 25 **discussion** exercises (stages, injects, a timed discussion, a
 decision) and 10 **branching** exercises, which work like the old gamebooks: every
 page ends in a choice of 2–4 options and the story goes where the room takes it. It
 projects the exercise on a 16:9 stage while the facilitator steers from a private
@@ -60,7 +60,7 @@ any 16:9 size.
 
 ### 2.1 From zero to running (about one minute)
 
-1. **Library** (`#/library`). Browse the 30 scenarios. You can filter by
+1. **Library** (`#/library`). Browse the 35 scenarios. You can filter by
    category, structure (archetype A–F) and format (discussion or branching), or
    search. A card's preview shows
    the summary, learning objectives, stage titles and framework references. It
@@ -229,7 +229,7 @@ js/core/            namespace (window.BK), store, rng, i18n, theme, safe DOM bui
 js/data/            options/vocabulary, roles, sectors, environments, name pools, frameworks
 js/engine/          template resolver, generator, validator, pacing, slide compiler, branching, session, edit
 js/graphics/        icon sprite + emblems, SVG charts, route map, inject artefact mock-ups, title artwork
-js/scenarios/       _registry, _helpers, s01 … s20 (discussion), b01 … b10 (branching), one file each
+js/scenarios/       _registry, _helpers, s01 … s25 (discussion), b01 … b10 (branching), one file each
 js/io/              export (JSON/Markdown/CSV), import (validation), print
 js/ui/              router, sync, dialog, components, and one module per view
 js/app.js           boot: preferences, shell, routes, storage-problem banner

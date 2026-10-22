@@ -17,7 +17,8 @@
       "devsecops", "hacktivism", "multi-incident", "healthcare", "network-identity",
       "vulnerability", "executive-compound",
       // branching exercises
-      "data-loss", "saas-provider", "api-abuse", "brand-hijack", "ai-abuse", "extortion", "payment-card", "water-utility", "sim-swap", "regional-crisis"
+      "data-loss", "saas-provider", "api-abuse", "brand-hijack", "ai-abuse", "extortion", "payment-card", "water-utility", "sim-swap", "regional-crisis",
+      "cloud-destruction", "physical-intrusion", "vulnerability-disclosure", "acquisition", "certificate-expiry"
     ],
 
     // Spec section 13. Template `archetype` strings map to a letter for display and filtering.

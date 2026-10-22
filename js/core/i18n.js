@@ -124,6 +124,11 @@
       "category.water-utility": "Water and utilities",
       "category.sim-swap": "SIM swap",
       "category.regional-crisis": "Regional crisis",
+      "category.cloud-destruction": "Cloud destruction",
+      "category.physical-intrusion": "Physical intrusion",
+      "category.vulnerability-disclosure": "Vulnerability disclosure",
+      "category.acquisition": "Acquisition / M&A",
+      "category.certificate-expiry": "Certificates / PKI",
 
       "archetype.A": "Obvious incident, hidden secondary attack",
       "archetype.B": "Ambiguous start",
@@ -968,6 +973,11 @@
       "category.water-utility": "Vatten och försörjning",
       "category.sim-swap": "SIM-kapning",
       "category.regional-crisis": "Regional kris",
+      "category.cloud-destruction": "Molnförstörelse",
+      "category.physical-intrusion": "Fysiskt intrång",
+      "category.vulnerability-disclosure": "Sårbarhetsrapport",
+      "category.acquisition": "Förvärv",
+      "category.certificate-expiry": "Certifikat / PKI",
 
       "archetype.A": "Uppenbar incident, dold sekundär attack",
       "archetype.B": "Otydlig början",
