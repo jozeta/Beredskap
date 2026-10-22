@@ -52,8 +52,10 @@
     return el("span", { class: ["badge", "badge--" + (tone || "neutral")] }, icon ? svgIcon(icon, { size: 14 }) : null, el("span", { text: label }));
   }
 
+  /** Empty state with a small line drawing (falls back to the icon if illustrations are not loaded). */
   function emptyState(icon, message, action) {
-    return el("div", { class: "empty" }, svgIcon(icon, { size: 32 }), el("p", { text: message }), action || null);
+    const art = BK.graphics && BK.graphics.illustration ? BK.graphics.illustration.empty(icon) : svgIcon(icon, { size: 32 });
+    return el("div", { class: "empty" }, art, el("p", { text: message }), action || null);
   }
 
   function card(attrs, ...children) {

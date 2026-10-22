@@ -560,7 +560,11 @@ kbd {
 
 /* ---- Branching (gamebook) slides ------------------------------------------------------------------------- */
 /* The page number is the gamebook motif: large, quiet, set apart from the story. */
-.s-page { display: grid; grid-template-columns: 360px 1fr; gap: 80px; align-items: start; }
+.s-page { display: grid; grid-template-columns: 380px 1fr; gap: 96px; align-items: center; }
+.s-page__side { display: grid; gap: 48px; align-content: center; }
+.s-page__emblem { color: var(--accent); opacity: 0.16; }
+.s-page__emblem .emblem-svg { width: 220px; height: 220px; }
+.s-page .s-narrative { font-size: calc(50px * var(--fit, 1)); line-height: 1.4; }
 .s-page__num {
   display: flex;
   align-items: baseline;
@@ -682,3 +686,30 @@ kbd {
 .rm-label { fill: var(--ink-muted); font-size: 22px; font-weight: 600; }
 .rm-node.is-visited .rm-label { fill: var(--ink); }
 .stage--preview .s-path, .stage--preview .s-path.is-picked { animation: none; }
+
+/* Ending: text on the left, a seal in the grade's tone on the right. */
+.s-ending { display: grid; grid-template-columns: 1fr 420px; gap: 80px; align-items: center; }
+.s-ending__text { display: flex; flex-direction: column; min-width: 0; }
+.s-ending__seal {
+  --tone: var(--warn);
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 28px;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  border: 14px solid var(--tone);
+  background: color-mix(in srgb, var(--tone) 12%, var(--bg));
+  animation: s-seal 600ms var(--ease) both;
+}
+.s-ending--1 .s-ending__seal { --tone: var(--ok); }
+.s-ending--2 .s-ending__seal { --tone: var(--info); }
+.s-ending--3 .s-ending__seal { --tone: var(--warn); }
+.s-ending--4 .s-ending__seal, .s-ending--5 .s-ending__seal { --tone: var(--danger); }
+.s-ending__pips { display: flex; gap: 14px; }
+.s-ending__pips i { width: 22px; height: 22px; border-radius: 50%; border: 3px solid var(--tone); }
+.s-ending__pips i.is-on { background: var(--tone); }
+.s-ending__word { font-size: calc(52px * var(--fit, 1)); font-weight: 700; color: var(--ink); letter-spacing: -0.01em; }
+@keyframes s-seal { from { opacity: 0; transform: scale(0.92) rotate(-6deg); } }
+.stage--preview .s-ending__seal { animation: none; }

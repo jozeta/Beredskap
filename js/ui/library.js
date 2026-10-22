@@ -39,8 +39,19 @@
     return !q || searchText(tpl).includes(q);
   }
 
+  /** Emblem on a disc tinted with the category's hue (decorative identity, same as the title artwork). */
   function emblem(tpl, size) {
-    return el("div", { class: "emblem", dataset: { category: tpl.category } }, BK.dom.emblem(tpl.emblem, { size: size || 56 }));
+    const hue = (BK.graphics.CATEGORY_HUE && BK.graphics.CATEGORY_HUE[tpl.category]) || "accent";
+    return el("div", { class: "emblem", dataset: { category: tpl.category }, style: { "--hue": "var(--" + hue + ")" } }, BK.dom.emblem(tpl.emblem, { size: size || 56 }));
+  }
+
+  /** One quiet line of facts: format, size and length. */
+  function metaLine(tpl) {
+    if (tpl.format !== "branching") {
+      return el("p", { class: "scenario-card__meta" }, svgIcon("timeline", { size: 16 }), el("span", { text: t("branch.formatDiscussion") + " · " + t("library.meta.stages", { min: tpl.minStages, max: tpl.maxStages }) }));
+    }
+    const st = BK.engine.branching.stats(tpl.pages, tpl.start);
+    return el("p", { class: "scenario-card__meta scenario-card__meta--branching" }, svgIcon("route", { size: 16 }), el("span", { text: t("branch.format") + " · " + t("library.meta.branching", { min: st.short[0], max: st.long[1], endings: st.endings }) }));
   }
 
   function archetypeBadge(tpl) {
@@ -63,30 +74,15 @@
     const problems = BK.scenarios.problems(tpl.id);
     return el(
       "article",
-      { class: "card scenario-card" },
+      { class: ["card", "scenario-card", tpl.format === "branching" && "scenario-card--branching"] },
       el(
         "div",
         { class: "scenario-card__head" },
         emblem(tpl),
-        el(
-          "div",
-          null,
-          el("h2", { class: "scenario-card__title", text: BK.loc(tpl.title) }),
-          el(
-            "div",
-            { class: "badges" },
-            c.badge(t("category." + tpl.category), "accent"),
-            archetypeBadge(tpl),
-            sizeBadges(tpl)
-          )
-        )
+        el("div", { class: "scenario-card__heading" }, el("p", { class: "eyebrow scenario-card__category", text: t("category." + tpl.category) }), el("h2", { class: "scenario-card__title", text: BK.loc(tpl.title) }))
       ),
       el("p", { class: "scenario-card__summary", text: BK.loc(tpl.summary) }),
-      el("h3", { class: "eyebrow", text: t("library.objectives") }),
-      el("ul", { class: "bullets" }, (tpl.learningObjectives || []).slice(0, 3).map((lo) => el("li", { text: BK.loc(lo.text) }))),
-      tpl.mitre && tpl.mitre.length
-        ? el("p", { class: "mono small muted" }, el("span", { class: "sr-only", text: t("library.attack") + ": " }), tpl.mitre.join(" · "))
-        : null,
+      metaLine(tpl),
       problems.length ? c.badge(t("library.invalid", { n: problems.length }), "danger", "warning") : null,
       el(
         "div",
@@ -111,7 +107,7 @@
     const body = el(
       "div",
       { class: "stack" },
-      el("div", { class: "scenario-card__head" }, emblem(tpl, 40), el("div", { class: "badges" }, c.badge(t("category." + tpl.category), "accent"), archetypeBadge(tpl))),
+      el("div", { class: "scenario-card__head" }, emblem(tpl, 40), el("div", { class: "badges" }, c.badge(t("category." + tpl.category), "accent"), archetypeBadge(tpl), sizeBadges(tpl))),
       el("p", { text: BK.loc(tpl.summary) }),
       el("h3", { class: "eyebrow", text: t("library.objectives") }),
       el("ul", { class: "bullets" }, (tpl.learningObjectives || []).map((lo) => el("li", { text: BK.loc(lo.text) }))),
@@ -178,7 +174,9 @@
 
   BK.ui.library = {
     title: () => t("library.title"),
-    render(root) {
+    render(root, ctx) {
+      // The dashboard's format cards link here with ?format=.
+      if (ctx && ctx.query && ["discussion", "branching"].includes(ctx.query.format)) state.format = ctx.query.format;
       const all = BK.scenarios.list();
       const results = el("div", { class: "results" });
       root.append(c.pageHeader(t("library.title"), t("library.intro")), filters(() => renderResults(results, all)), results);

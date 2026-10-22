@@ -27,8 +27,9 @@ body {
   color: var(--ink);
   font-family: var(--font);
   font-size: var(--fs-md);
-  line-height: 1.5;
+  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 h1,
@@ -39,7 +40,7 @@ h3 {
   line-height: 1.2;
   letter-spacing: -0.01em;
 }
-h1 { font-size: var(--fs-2xl); }
+h1 { font-size: var(--fs-2xl); font-weight: 650; letter-spacing: -0.022em; line-height: 1.1; }
 h2 { font-size: var(--fs-lg); }
 h3 { font-size: var(--fs-md); }
 
@@ -129,7 +130,9 @@ h1:focus { outline: none; } /* programmatic focus after navigation only */
   position: sticky;
   top: 0;
   z-index: 10;
-  background: var(--surface);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  -webkit-backdrop-filter: saturate(1.4) blur(10px);
+  backdrop-filter: saturate(1.4) blur(10px);
   border-bottom: var(--hairline) solid var(--line);
 }
 .app-header__inner {
@@ -264,6 +267,7 @@ body.is-bare .main { max-width: none; padding: 0; }
   background: var(--surface);
   border: var(--hairline) solid var(--line);
   border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
 }
 .card--hero { box-shadow: var(--shadow); }
 
@@ -622,6 +626,7 @@ fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0ms !important;
+    animation-delay: 0ms !important;
     transition-duration: 0ms !important;
   }
 }
@@ -757,3 +762,141 @@ fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
 .routemap-wrap .routemap { min-width: 720px; width: 100%; height: auto; }
 .variant { display: grid; gap: 6px; padding-left: var(--s2); border-left: 3px solid var(--line); }
 .stage-preview__num { min-width: 2.6em; }
+
+/* ==== Refinements and motion (part 4: calm, editorial) ===================================== */
+
+/* Route entrance: the new view rises in once, its first blocks lightly staggered.
+   app.js sets .is-entering on <main> for each navigation only, never on re-renders. */
+.main.is-entering > * { animation: rise var(--dur-3) var(--ease) both; }
+.main.is-entering > *:nth-child(2) { animation-delay: 40ms; }
+.main.is-entering > *:nth-child(3) { animation-delay: 80ms; }
+.main.is-entering > *:nth-child(n + 4) { animation-delay: 120ms; }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } }
+@keyframes pop { 0% { transform: scale(0.6); opacity: 0; } 100% { transform: none; opacity: 1; } }
+
+/* Buttons: quiet transitions and a tactile press. */
+.btn { transition: background-color var(--dur-1) var(--ease), color var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease), box-shadow var(--dur-2) var(--ease), transform var(--dur-1) var(--ease), filter var(--dur-1) var(--ease); }
+.btn:active:not(:disabled) { transform: translateY(1px) scale(0.98); }
+.btn--primary { box-shadow: 0 1px 2px color-mix(in srgb, var(--accent) 30%, transparent); }
+.btn--primary:hover:not(:disabled) { box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 28%, transparent); }
+.nav__link, .lang-switch__btn, .segmented__label, .input { transition: background-color var(--dur-2) var(--ease), color var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease); }
+.save-status[data-tone="ok"] .icon { animation: pop var(--dur-3) var(--ease-emph); }
+
+/* Dialogs scale in from just below; the backdrop fades. */
+.dialog[open] { animation: dialog-in var(--dur-3) var(--ease-emph); border-radius: var(--radius-lg); box-shadow: var(--shadow-lift); }
+.dialog[open]::backdrop { animation: fade-in var(--dur-3) var(--ease); }
+@keyframes dialog-in { from { opacity: 0; transform: translateY(10px) scale(0.98); } }
+@keyframes fade-in { from { opacity: 0; } }
+
+/* Interactive cards lift a little on hover and focus. */
+.card--interactive, .format-card, .scenario-card {
+  transition: transform var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease);
+}
+.format-card:hover, .format-card:focus-visible, .scenario-card:hover, .scenario-card:focus-within {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lift);
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--line));
+}
+
+/* ---- Dashboard hero ---------------------------------------------------------------------- */
+.hero {
+  position: relative;
+  display: grid;
+  min-height: 380px;
+  margin-bottom: var(--s5);
+  overflow: hidden;
+  border: var(--hairline) solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+.hero__art { position: absolute; inset: 0; }
+.hero__art .ill { display: block; width: 100%; height: 100%; }
+/* A scrim keeps the text on the left readable over the landscape. */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(90deg, var(--surface) 30%, color-mix(in srgb, var(--surface) 70%, transparent) 55%, transparent 80%);
+}
+.hero__body { position: relative; z-index: 2; display: grid; gap: var(--s2); align-content: center; max-width: 620px; padding: var(--s5); }
+.hero__eyebrow { color: var(--accent); }
+.hero__title { font-size: clamp(32px, 4.2vw, 48px); max-width: 16ch; }
+.hero__lead { font-size: var(--fs-lg); }
+.hero__stats { display: flex; flex-wrap: wrap; gap: var(--s2) var(--s4); margin: var(--s2) 0 0; padding: 0; list-style: none; }
+.hero__stat { display: grid; }
+.hero__stat strong { font-size: var(--fs-xl); font-weight: 650; line-height: 1.1; letter-spacing: -0.02em; }
+.hero__stat span { font-size: var(--fs-sm); color: var(--ink-muted); }
+
+/* Illustration colours: theme tokens only. */
+.ill-sky-top { stop-color: var(--surface); }
+.ill-sky-bottom { stop-color: var(--accent-soft); }
+.ill-star { fill: var(--accent); opacity: 0.35; }
+.ill-moon { fill: var(--accent); opacity: 0.22; }
+.ill-moon-halo { fill: var(--accent); opacity: 0.08; }
+.ill-ridge { stroke: none; }
+.ill-ridge--far { fill: var(--accent); opacity: 0.1; }
+.ill-ridge--mid { fill: var(--accent); opacity: 0.18; }
+.ill-ridge--near { fill: var(--accent); opacity: 0.3; }
+.ill-route { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 1; animation: ill-draw 1600ms var(--ease) 200ms both; }
+.ill-route--tail { animation-delay: 1500ms; animation-duration: 500ms; }
+.ill-branch { fill: none; stroke: var(--accent); stroke-width: 2; stroke-dasharray: 4 7; opacity: 0.5; }
+.ill-node { fill: var(--surface); stroke: var(--accent); stroke-width: 3; transform-box: fill-box; transform-origin: center; animation: pop var(--dur-3) var(--ease-emph) both; animation-delay: calc(var(--i, 0) * 180ms + 300ms); }
+.ill-node--last { fill: var(--accent); }
+.ill-ending { fill: var(--ok); opacity: 0.85; }
+/* Visible by default; the animation only reveals it (nothing is lost where animations don't run). */
+@keyframes ill-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+
+/* Empty states: small line drawings in muted ink with one accent detail. */
+.ill--empty { width: 160px; height: 96px; color: var(--ink-muted); }
+.ill-line { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ill-fill { fill: var(--surface); }
+.ill-faint { opacity: 0.45; }
+.ill-dash { stroke-dasharray: 3 6; }
+.ill-accent-line { fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.ill-accent-fill { fill: var(--accent); }
+.ill-mark { fill: var(--accent); font-size: 30px; font-weight: 700; font-family: var(--font); }
+.empty p { max-width: 36ch; }
+
+/* ---- Dashboard: formats, session, recent -------------------------------------------------- */
+.formats { display: grid; gap: var(--s2); margin-bottom: var(--s5); }
+.format-card { gap: var(--s1); color: inherit; text-decoration: none; }
+.format-card__icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin-bottom: var(--s1);
+  border-radius: 14px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.format-card--branching .format-card__icon { background: color-mix(in srgb, var(--series-4) 14%, var(--surface)); color: var(--series-4); }
+.format-card__title { font-size: var(--fs-lg); }
+.format-card__body { color: var(--ink-muted); max-width: 52ch; }
+.format-card__more { display: inline-flex; align-items: center; gap: 6px; margin-top: var(--s1); color: var(--accent); font-weight: 600; font-size: var(--fs-sm); }
+.format-card__more .icon { transition: transform var(--dur-2) var(--ease); }
+.format-card:hover .format-card__more .icon { transform: translateX(3px); }
+.grid--dashboard { align-items: start; }
+.resume__who { display: flex; align-items: center; gap: var(--s2); min-width: 0; }
+.resume__who .emblem-svg { color: var(--accent); flex: none; }
+.list__emblem { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); }
+.list__item--link { justify-content: flex-start; padding-left: var(--s1); padding-right: var(--s1); margin: 0 calc(-1 * var(--s1)); border-radius: var(--radius-sm); transition: background-color var(--dur-2) var(--ease); }
+.list__item--link .list__main { flex: 1; }
+.list__item--link:hover { background: var(--surface-2); }
+
+/* ---- Library cards ----------------------------------------------------------------------- */
+.scenario-card { grid-template-rows: auto 1fr auto auto; gap: var(--s2); }
+.scenario-card__heading { display: grid; gap: 4px; min-width: 0; }
+.scenario-card__category { color: var(--ink-muted); }
+.scenario-card .emblem { background: color-mix(in srgb, var(--hue, var(--accent)) 14%, var(--surface)); color: var(--hue, var(--accent)); }
+.scenario-card__title { margin-bottom: 0; line-height: 1.25; }
+.scenario-card__summary { align-self: start; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.scenario-card__meta { display: flex; align-items: center; gap: 8px; margin: 0; padding-top: 12px; border-top: var(--hairline) solid var(--line); font-size: var(--fs-sm); color: var(--ink-muted); }
+.scenario-card__meta--branching .icon { color: var(--series-4); }
+
+@media (max-width: 760px) {
+  .hero::before { background: linear-gradient(180deg, var(--surface) 55%, color-mix(in srgb, var(--surface) 60%, transparent) 100%); }
+  .hero__body { padding: var(--s3); }
+}

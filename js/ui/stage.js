@@ -249,7 +249,12 @@
     el(
       "div",
       { class: "s-page" },
-      el("p", { class: "s-page__num", "aria-label": t("branch.pageNum", { n: s.num }, lang) }, el("span", { class: "s-page__mark", "aria-hidden": "true", text: "§" }), el("span", { text: String(s.num) })),
+      el(
+        "div",
+        { class: "s-page__side" },
+        el("p", { class: "s-page__num", "aria-label": t("branch.pageNum", { n: s.num }, lang) }, el("span", { class: "s-page__mark", "aria-hidden": "true", text: "§" }), el("span", { text: String(s.num) })),
+        el("div", { class: "s-page__emblem", "aria-hidden": "true" }, BK.dom.emblem(s.emblem, { size: 220 }))
+      ),
       el("div", { class: "s-page__body" }, kicker(t("branch.choiceN", { n: s.choiceNumber }, lang)), el("h1", { class: "s-h1", text: s.title }), s.because ? el("p", { class: "s-page__because" }, svgIcon("link", { size: 32 }), el("span", { text: s.because })) : null, el("p", { class: "s-narrative", text: s.narrative }))
     );
 
@@ -288,11 +293,17 @@
     el(
       "div",
       { class: ["s-ending", "s-ending--" + s.grade] },
-      kicker(t("branch.ending", null, lang) + " · " + t("branch.pageNum", { n: s.num }, lang)),
-      el("h1", { class: "s-h1 s-ending__label", text: s.label }),
-      el("p", { class: "s-narrative s-ending__summary", text: s.summary }),
-      gradeScale(s.scale, s.grade),
-      el("p", { class: "s-muted", text: t("branch.choicesMade", { n: s.choices }, lang) })
+      el(
+        "div",
+        { class: "s-ending__text" },
+        kicker(t("branch.ending", null, lang) + " · " + t("branch.pageNum", { n: s.num }, lang)),
+        el("h1", { class: "s-h1 s-ending__label", text: s.label }),
+        el("p", { class: "s-narrative s-ending__summary", text: s.summary }),
+        gradeScale(s.scale, s.grade),
+        el("p", { class: "s-muted", text: t("branch.choicesMade", { n: s.choices }, lang) })
+      ),
+      // A seal in the grade's tone, with the grade word: never colour alone, never a score.
+      el("div", { class: "s-ending__seal", "aria-hidden": "true" }, el("span", { class: "s-ending__pips" }, [1, 2, 3, 4, 5].map((g) => el("i", { class: g <= s.grade ? "is-on" : null }))), el("span", { class: "s-ending__word", text: s.gradeLabel }))
     );
 
   function branchingDebrief(s, p, lang) {
