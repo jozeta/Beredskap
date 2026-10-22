@@ -568,3 +568,27 @@ Extend tests.html. Do not replace it. New suites:
 - How fit classes are chosen, and when an artefact splits onto a continuation
   slide.
 - Whether `unchoose` also has a presenter keyboard shortcut.
+
+## 11. Decisions made while building part 2
+
+These refine §5 and were made during the build (my calls).
+
+- **`strong` is per choice, `why` is per option.** "What a strong team weighs"
+  belongs to the decision as a whole, so each choice has one; every option has
+  its own `why`. Scorecard criteria come from the `strong` note of each choice
+  made.
+- **Variants are passages.** A page variant that matches the room's flags gets
+  its own page number, so a consequence shows up as a different page ("turn to
+  § 42" vs "turn to § 94"). When every offered option still lands on the same
+  passage, the stage hides the "turn to" labels instead of giving that away.
+- **Choosing from the presenter works on any slide of the current page**; the
+  digit keys only work on the choice slide itself.
+- **Flags have labels** (`flags{}` in the template) so the presenter, the
+  debrief and the guide can show "Sessions revoked early" instead of an id.
+- **Endings sit in the last column of the route map**, like the back pages of a
+  gamebook, with their grade word beside the mark.
+- **Route pages** (`route[]`) are used to pick the ending from the flags; they
+  never appear on stage or get a visible number.
+- **Chained placeholder formatters** (`{{time.T+0|weekday|cap}}`) are now
+  supported by the template engine. They had rendered raw in two discussion
+  scenarios (s14, s18); a new test checks that no generated text keeps a `{{`.
