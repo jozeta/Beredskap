@@ -63,6 +63,7 @@
   // ---- Template ---------------------------------------------------------------------------
 
   function validateTemplate(tpl) {
+    if (tpl.format === "branching") return validateBranchingTemplate(tpl);
     const list = [];
     const o = opts();
     const where = (s) => tpl.id + (s ? " › " + s : "");
@@ -255,6 +256,108 @@
     return list;
   }
 
+  /** Inject checks shared by both formats (stage and page injects). */
+  function checkInject(x, iw, ctx, list) {
+    const o = opts();
+    if (!o.injectTypes.includes(x.type)) issue(list, "enum", iw, "type " + x.type);
+    if (x.severity && !o.severities.includes(x.severity)) issue(list, "enum", iw, "severity " + x.severity);
+    if (x.reliability && !o.reliabilities.includes(x.reliability)) issue(list, "enum", iw, "reliability " + x.reliability);
+    const vis = x.visibility || "public";
+    if (!(vis === "public" || vis === "facilitator" || /^role:\w+$/.test(vis))) issue(list, "enum", iw, "visibility " + vis);
+    if (vis.startsWith("role:")) ctx.checkRole(vis.slice(5), iw);
+    if ((x.reliability === "misleading" || x.reliability === "disputed") && !isBilingual(x.facilitatorNote)) issue(list, "misleadingNote", iw);
+    if (x.pressure && !o.pressures.includes(x.pressure)) issue(list, "enum", iw, "pressure " + x.pressure);
+    if (x.pressure && !x.optional && !x.substitute) issue(list, "pressureSubstitute", iw, x.pressure);
+    if (x.source && x.source.startsWith("person.")) ctx.checkRole(x.source.slice(7), iw);
+    else if (x.source && !o.sources.includes(x.source)) issue(list, "enum", iw, "source " + x.source);
+    ctx.checkRole(x.fallbackRole, iw);
+    if (!isBilingual(x.content) && !(x.variants && x.variants.every((v) => isBilingual(v.content)))) issue(list, "stageContent", iw, "content");
+    (x.tests || []).forEach((lo) => {
+      if (!ctx.loIds.has(lo)) issue(list, "reference", iw, "tests " + lo);
+    });
+  }
+
+  /** Branching (gamebook) templates: shared checks plus the map rules in branching.js. */
+  function validateBranchingTemplate(tpl) {
+    const list = [];
+    const o = opts();
+    const where = (s) => tpl.id + (s ? " › " + s : "");
+    ["id", "version", "category", "archetype", "title", "summary", "learningObjectives", "roles", "start", "pages", "debrief", "flags"].forEach((f) => {
+      if (tpl[f] == null) issue(list, "field", where(), f);
+    });
+    if (list.length) return list;
+    if (!o.categories.includes(tpl.category)) issue(list, "enum", where("category"), tpl.category);
+    if (!Object.values(o.archetypes).includes(tpl.archetype)) issue(list, "enum", where("archetype"), tpl.archetype);
+
+    const roles = new Set(tpl.roles);
+    tpl.roles.forEach((r) => BK.data.roles.get(r) || issue(list, "role", where("roles"), r));
+    const checkRole = (r, w) => {
+      if (r && !roles.has(r)) issue(list, "role", w, r);
+    };
+    const loIds = new Set(tpl.learningObjectives.map((lo) => lo.id));
+    const ctx = { checkRole, loIds };
+    const injectIds = new Set();
+
+    tpl.pages.forEach((pg) => {
+      const w = where(pg.id);
+      if (!isBilingual(pg.title) || !isBilingual(pg.narrative)) issue(list, "stageContent", w, "title/narrative");
+      (pg.injects || []).forEach((x) => {
+        const iw = w + " › " + x.id;
+        if (injectIds.has(x.id)) issue(list, "duplicateId", iw, x.id);
+        injectIds.add(x.id);
+        if (x.requires || x.reveals || x.branchOnly) issue(list, "branching", iw, "requires/reveals/branchOnly are not used in branching exercises");
+        checkInject(x, iw, ctx, list);
+      });
+      if (pg.chart && !o.chartTypes.includes(pg.chart.type)) issue(list, "enum", w + " › " + pg.chart.id, "chart type " + pg.chart.type);
+      (pg.discuss || []).forEach((q) => (q.roles || []).forEach((r) => checkRole(r, w + " › discuss")));
+      if (pg.choice) {
+        if (!isBilingual(pg.choice.strong)) issue(list, "branching", w, "choice needs a strong-team note");
+        pg.choice.options.forEach((op) => isBilingual(op.why) || issue(list, "branching", w + " › " + op.key, "option needs a why note"));
+      }
+    });
+
+    BK.engine.branching.validateMap(tpl, (code, w, detail) => issue(list, code, w, detail));
+
+    const fw = BK.data.frameworks;
+    (tpl.mitre || []).forEach((id) => fw.mitre[id] || issue(list, "framework", where("mitre"), id));
+    ((tpl.frameworks && tpl.frameworks.nistCsf) || []).forEach((id) => fw.nistCsf[id] || issue(list, "framework", where("nistCsf"), id));
+    ((tpl.frameworks && tpl.frameworks.iso27001) || []).forEach((id) => fw.iso27001[id] || issue(list, "framework", where("iso27001"), id));
+    if (!(tpl.mitre || []).length) issue(list, "field", where(), "mitre");
+    ((tpl.debrief && tpl.debrief.suggestedActions) || []).forEach((a) => checkRole(a.ownerRole, where("debrief")));
+    ["keyLessons", "strengthsToLookFor", "commonGaps", "suggestedActions"].forEach((k) => ((tpl.debrief || {})[k] || []).length || issue(list, "field", where("debrief"), k));
+
+    checkLanguages(stripFunctions(tpl), tpl.id, list);
+    if (!list.length && BK.engine.generator) probeBranching(tpl, list);
+    return list;
+  }
+
+  const BRANCH_PROBES = [
+    { length: "short", mode: "pure", audience: "technical", difficulty: "advanced", injectDensity: "high" },
+    { length: "long", mode: "hybrid", audience: "executive", difficulty: "introductory", injectDensity: "low", pressuresOff: true },
+    { length: "long", mode: "hybrid", audience: "mixed", difficulty: "intermediate", injectDensity: "normal" }
+  ];
+
+  function probeBranching(tpl, list) {
+    BRANCH_PROBES.forEach((pp, i) => {
+      const params = Object.assign({}, pp, { seed: "PROBE-" + (2000 + i), jurisdiction: ["se", "eu", "generic"][i], environment: BK.data.environments.ids[i % BK.data.environments.ids.length] });
+      if (pp.pressuresOff) params.pressures = { media: false, regulator: false, lawEnforcement: false, suppliers: false, customers: false };
+      let inst;
+      try {
+        inst = BK.engine.generator.generate(tpl, params);
+      } catch (err) {
+        issue(list, "generate", tpl.id + " › probe " + (i + 1), err.message);
+        return;
+      }
+      validateInstance(inst).forEach((x) => list.push(Object.assign({}, x, { where: tpl.id + " › probe " + (i + 1) + " › " + x.where })));
+      if (i === 0) {
+        const ctx = { entities: inst.entities, vars: inst.vars, clock: inst.entities.clock, currency: inst.currency, environment: params.environment, jurisdiction: params.jurisdiction };
+        BK.engine.template.collectPlaceholders(stripFunctions(tpl)).forEach((path) => {
+          if (BK.engine.template.lookup(path, ctx) === BK.engine.template.MISSING) issue(list, "placeholder", tpl.id, path);
+        });
+      }
+    });
+  }
+
   function stripFunctions(v) {
     if (typeof v === "function") return undefined;
     if (Array.isArray(v)) return v.map(stripFunctions);
@@ -314,6 +417,7 @@
     const list = [];
     const o = opts();
     (inst.unresolved || []).forEach((p) => issue(list, "placeholder", "", p));
+    if (inst.format === "branching") return validateBranchingInstance(inst, list);
 
     const n = (inst.stages || []).length;
     if (n < o.minStages || n > o.maxStages) issue(list, "stageCount", "", n);
@@ -386,6 +490,23 @@
 
     checkLanguages(
       { title: inst.title, summary: inst.summary, stages: inst.stages.map((s) => ({ title: s.title, narrative: s.narrative, twist: s.twist, injects: s.injects.map((x) => ({ content: x.content, headline: x.headline })), questions: s.questions.map((q) => ({ text: q.text })) })) },
+      "",
+      list
+    );
+    return list;
+  }
+
+  /** Branching instance: people, map still sound for its length, languages. */
+  function validateBranchingInstance(inst, list) {
+    const names = new Set();
+    Object.values(inst.entities.people).forEach((p) => {
+      if (names.has(p.name)) issue(list, "duplicateId", "people", p.name);
+      names.add(p.name);
+    });
+    const a = BK.engine.branching.analyse(inst.pages, inst.start, inst.settings.length);
+    a.problems.forEach((p) => issue(list, "branching", inst.settings.length, p));
+    checkLanguages(
+      { title: inst.title, summary: inst.summary, pages: inst.pages.map((p) => ({ title: p.title, narrative: p.narrative, injects: p.injects.map((x) => ({ content: x.content, headline: x.headline })) })) },
       "",
       list
     );

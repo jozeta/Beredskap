@@ -751,3 +751,9 @@ fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
 .c-tl-list__kind { color: var(--ink-muted); }
 /* Card rows stretch to align actions; the objective list itself must not spread out. */
 .scenario-card .bullets { align-content: start; }
+
+/* ---- Branching: page map in the editor and debrief ------------------------------------------- */
+.routemap-wrap { overflow-x: auto; }
+.routemap-wrap .routemap { min-width: 720px; width: 100%; height: auto; }
+.variant { display: grid; gap: 6px; padding-left: var(--s2); border-left: 3px solid var(--line); }
+.stage-preview__num { min-width: 2.6em; }

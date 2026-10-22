@@ -15,7 +15,9 @@
       "ransomware", "fraud", "ddos", "insider", "supply-chain", "cloud-privacy", "identity",
       "malware", "availability", "third-party", "ot-ics", "edr-soc", "social-engineering",
       "devsecops", "hacktivism", "multi-incident", "healthcare", "network-identity",
-      "vulnerability", "executive-compound"
+      "vulnerability", "executive-compound",
+      // branching exercises
+      "data-loss", "saas-provider", "api-abuse", "brand-hijack", "ai-abuse", "extortion", "payment-card", "water-utility", "sim-swap", "regional-crisis"
     ],
 
     // Spec section 13. Template `archetype` strings map to a letter for display and filtering.

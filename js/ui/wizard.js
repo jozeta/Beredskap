@@ -51,6 +51,8 @@
       discussionMinutes: null,
       injectRelease: "manual",
       decisionMode: "options",
+      mode: "pure",
+      length: "short",
       seed: BK.rng.newSeed()
     };
   }
@@ -196,6 +198,44 @@
     );
   }
 
+  /** Branching scenarios: run mode and length replace duration and stage count. */
+  function branchingFields(tpl) {
+    const B = BK.engine.branching;
+    const est = (length, mode) => B.estimate(tpl.pages, tpl.start, length, mode);
+    const now = est(draft.length, draft.mode);
+    return el(
+      "div",
+      { class: "form-grid" },
+      c.segmented({
+        label: t("wizard.mode"),
+        name: "wz-mode",
+        value: draft.mode,
+        wrap: true,
+        options: ["pure", "hybrid"].map((m) => ({ value: m, label: t("branch.mode." + m) })),
+        hint: t("wizard.modeHint"),
+        onChange: (v) => {
+          draft.mode = v;
+          rerender();
+        }
+      }),
+      c.segmented({
+        label: t("wizard.length"),
+        name: "wz-length",
+        value: draft.length,
+        wrap: true,
+        options: ["short", "long"].map((l) => {
+          const e = est(l, draft.mode);
+          return { value: l, label: t("branch.length." + l), hint: t("wizard.lengthOption", { label: t("branch.length." + l), n: e.minutes, min: e.min, max: e.max }) };
+        }),
+        onChange: (v) => {
+          draft.length = v;
+          rerender();
+        }
+      }),
+      el("p", { class: "field__hint", text: t("wizard.branchingDuration", { n: now.minutes }) })
+    );
+  }
+
   function themeOptions() {
     return BK.theme.MODES.map((m) => ({ value: m, label: t("theme." + m) }));
   }
@@ -237,7 +277,7 @@
         options: opts.difficulties.map((d) => ({ value: d, label: t("difficulty." + d), hint: t("difficulty." + d + ".hint") })),
         onChange: (v) => (draft.difficulty = v)
       }),
-      el("div", { class: "form-grid" }, durationField(), stagesField()),
+      tpl && tpl.format === "branching" ? branchingFields(tpl) : el("div", { class: "form-grid" }, durationField(), stagesField()),
       c.segmented({
         label: t("wizard.audience"),
         name: "wz-audience",
@@ -465,7 +505,7 @@
       ),
       rolesField(),
       objectivesField(),
-      el(
+      template() && template().format === "branching" ? el("div", { class: "form-grid" }, seedField()) : el(
         "div",
         { class: "form-grid" },
         c.field({

@@ -43,6 +43,17 @@
     BK.router.refresh();
   }
 
+  /** Branching runs: format, length/mode and the ending reached. */
+  function branchBadges(sess) {
+    if (sess.instance.format !== "branching") return null;
+    const B = BK.engine.branching;
+    const last = B.page(sess.instance, sess.route[sess.route.length - 1].pageId);
+    return [
+      c.badge(t("branch.format") + " · " + t("branch.length." + sess.instance.settings.length) + " · " + t("branch.mode." + sess.instance.settings.mode), "info", "route"),
+      last && last.ending ? c.badge(B.gradeLabel(last.ending.grade) + " · " + BK.loc(last.ending.label), last.ending.grade <= 2 ? "ok" : last.ending.grade === 3 ? "warn" : "danger", "flag") : null
+    ];
+  }
+
   function row(sess, lang) {
     const exercise = Object.assign({ id: sess.exerciseId }, sess.instance);
     const decided = Object.keys(sess.decisions).length;
@@ -59,6 +70,7 @@
           c.badge(t("history.status." + sess.status), STATUS_TONE[sess.status], STATUS_ICON[sess.status]),
           sess.archived ? c.badge(t("history.archived"), "neutral") : null,
           sess.imported ? c.badge(t("history.imported"), "info") : null,
+          branchBadges(sess),
           el("span", { class: "muted small", text: BK.i18n.fmt.dateTime(new Date(sess.createdAt), lang) + " · " + t("history.decisions", { n: decided }) + " · " + t("history.observations", { n: sess.observations.length }) })
         )
       ),

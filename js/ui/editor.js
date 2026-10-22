@@ -117,6 +117,7 @@
   function stageCountControl(ex) {
     const tpl = BK.scenarios.get(ex.templateId);
     if (!tpl) return null;
+    if (ex.format === "branching") return branchingControls(ex);
     const opts = [];
     for (let n = tpl.minStages; n <= tpl.maxStages; n++) opts.push({ value: String(n), label: t("editor.stagesCount", { n }) });
     const sel = c.select(opts, String(ex.stages.length), (v) => regenerate({ stageCount: Number(v) }, "editor.regenTitle", "editor.regenBody"));
@@ -124,6 +125,18 @@
     sel.id = "ed-stage-count";
     sel.classList.add("input--sm", "input--auto");
     return sel;
+  }
+
+  /** Branching: length and run mode regenerate the exercise, like the stage count does. */
+  function branchingControls(ex) {
+    const make = (id, label, values, current, key) => {
+      const sel = c.select(values.map((v) => ({ value: v, label: t(key + v) })), current, (v) => regenerate({ [id]: v }, "editor.regenTitle", "editor.regenBody"));
+      sel.setAttribute("aria-label", label);
+      sel.id = "ed-" + id;
+      sel.classList.add("input--sm", "input--auto");
+      return sel;
+    };
+    return [make("length", t("wizard.length"), ["short", "long"], ex.settings.length, "branch.length."), make("mode", t("wizard.mode"), ["pure", "hybrid"], ex.settings.mode, "branch.mode.")];
   }
 
   // ---- Header -------------------------------------------------------------------------------------------
@@ -151,9 +164,11 @@
         c.badge(t("category." + ex.category), "accent"),
         c.badge(t("difficulty." + p.difficulty), "neutral"),
         c.badge(t("audience." + p.audience), "neutral", "users"),
-        c.badge(t("editor.stagesCount", { n: ex.stages.length }), "neutral", "timeline"),
+        ex.format === "branching"
+          ? [c.badge(t("branch.format"), "info", "route"), c.badge(t("branch.choiceRange", { min: ex.pacing.choiceRange[0], max: ex.pacing.choiceRange[1] }), "neutral", "decision")]
+          : c.badge(t("editor.stagesCount", { n: ex.stages.length }), "neutral", "timeline"),
         c.badge(t("common.minutes", { n: ex.pacing.totalMinutes }), "neutral", "clock"),
-        c.badge(t("editor.slidesCount", { n: ex.slides.length }), "neutral"),
+        ex.format === "branching" ? null : c.badge(t("editor.slidesCount", { n: ex.slides.length }), "neutral"),
         c.badge(t("editor.seed", { seed: ex.seed }), "neutral", "dice"),
         ex.edited ? c.badge(t("editor.edited"), "warn", "edit") : null,
         ex.imported ? c.badge(t("history.imported"), "info") : null
@@ -234,7 +249,14 @@
         el("h3", { class: "eyebrow", text: t("editor.actor") }),
         el("p", null, el("strong", { text: e.actor.name }), " · " + L(e.actor.type) + " · " + L(e.actor.motivation))
       ),
-      section(
+      ex.format === "branching"
+        ? section(
+            t("editor.pacing"),
+            el("p", { text: t("wizard.lengthOption", { n: ex.pacing.totalMinutes, min: ex.pacing.choiceRange[0], max: ex.pacing.choiceRange[1] }) + " · " + t("branch.length." + ex.settings.length) + " · " + t("branch.mode." + ex.settings.mode) }),
+            el("h3", { class: "eyebrow", text: t("editor.objectives") }),
+            el("ul", { class: "bullets" }, ex.objectives.map((o) => el("li", { text: L(o.text) })))
+          )
+        : section(
         t("editor.pacing"),
         el(
           "ol",
@@ -469,6 +491,86 @@
     );
   }
 
+  // ---- Branching pages --------------------------------------------------------------------------------------
+
+  /** The page map (with titles on hover/focus) and one card per page; text is editable, structure is not. */
+  function branchingPages(ex) {
+    const B = BK.engine.branching;
+    const map = B.mapGraph(ex, [], state.lang, null);
+    const titles = {};
+    ex.pages.forEach((pg) => (titles[pg.num] = L(pg.title)));
+    const byId = {};
+    ex.pages.forEach((pg) => (byId[pg.id] = pg));
+    const numOf = (id) => (byId[id] ? byId[id].num : "?");
+    const shown = ex.pages.filter((pg) => !(ex.settings.length === "short" && pg.long));
+    return [
+      el("h2", { class: "section-title", text: t("editor.pageMap") }),
+      c.card({ class: "card preview-section" }, el("div", { class: "routemap-wrap" }, BK.graphics.routeMap(map, { lang: state.lang, title: t("editor.pageMap"), titles })), el("p", { class: "muted small", text: t("editor.structureLocked") })),
+      el("h2", { class: "section-title", text: t("editor.pages") }),
+      el("div", { class: "stack" }, shown.map((pg) => pageCard(ex, pg, ex.pages.indexOf(pg), numOf)))
+    ];
+  }
+
+  function pageCard(ex, pg, pi, numOf) {
+    const p = ["pages", pi];
+    const kind = pg.ending ? c.badge(t("editor.ending", { grade: BK.engine.branching.gradeLabel(pg.ending.grade, state.lang) }), "accent", "flag") : pg.route ? c.badge(t("editor.routePage"), "neutral", "route") : null;
+    const open = state.openStages[pg.id] !== undefined ? state.openStages[pg.id] : pg.id === ex.start;
+    return el(
+      "details",
+      { class: "card stage-preview", open, on: { toggle: (e) => (state.openStages[pg.id] = e.target.open) } },
+      el(
+        "summary",
+        null,
+        el("span", { class: "stage-preview__num tabular", text: "§" + pg.num }),
+        el("span", { class: "stage-preview__title" }, el("strong", { text: pg.ending ? L(pg.ending.label) : L(pg.title) })),
+        kind,
+        pg.long ? c.badge(t("editor.longOnly"), "info") : null,
+        svgIcon("chevron-down", { className: "advanced__chevron" })
+      ),
+      el("div", { class: "stack" }, pageBody(ex, pg, p, numOf))
+    );
+  }
+
+  function pageBody(ex, pg, p, numOf) {
+    return [
+      pg.route
+        ? el("p", { class: "muted small", text: pg.route.map((r) => (r.if ? [].concat(r.if).join(" + ") : "—") + " → § " + numOf(r.to)).join(" · ") })
+        : null,
+      pg.ending
+        ? [editable(ex, p.concat("ending", "label"), { className: "decision-preview__q", label: t("editor.ending", { grade: "" }) }), editable(ex, p.concat("ending", "summary"), { rows: 3, label: t("editor.text") })]
+        : pg.route
+          ? null
+          : [
+              state.editMode ? editable(ex, p.concat("title"), { label: t("editor.stageTitle"), className: "editable--title" }) : null,
+              editable(ex, p.concat("narrative"), { rows: 3, label: t("editor.narrative") }),
+              pg.variants.map((v, vi) => el("div", { class: "variant" }, c.badge("§ " + v.num + " · " + [].concat(v.if).join(" + "), "neutral"), editable(ex, p.concat("variants", vi, "narrative"), { rows: 2, label: t("editor.text") })))
+            ],
+      pg.injects.length ? el("ul", { class: "bullets" }, pg.injects.map((i) => el("li", { text: t("injectType." + i.type) + " — " + (L(i.headline) || L(i.content)) }))) : null,
+      pg.choice
+        ? el(
+            "div",
+            { class: "decision-preview" },
+            editable(ex, p.concat("choice", "question"), { className: "decision-preview__q", label: t("editor.decision") }),
+            el(
+              "ol",
+              { class: "options" },
+              pg.choice.options.map((o, oi) =>
+                el(
+                  "li",
+                  null,
+                  editable(ex, p.concat("choice", "options", oi, "text"), { label: t("presenter.decisionOption") + " " + o.key }),
+                  el("p", { class: "muted small", text: "→ § " + numOf(o.to) + (o.set.length ? " · " + t("presenter.setsFlags", { list: o.set.map((f) => BK.engine.branching.flagLabel(ex, f, state.lang)).join(", ") }) : "") }),
+                  el("div", { class: "small" }, el("strong", { text: t("editor.whyNote") + ": " }), editable(ex, p.concat("choice", "options", oi, "why"), { label: t("editor.whyNote") }))
+                )
+              )
+            ),
+            el("div", { class: "small" }, el("strong", { text: t("editor.strongNote") + ": " }), editable(ex, p.concat("choice", "strong"), { label: t("editor.strongNote") }))
+          )
+        : null,
+      pg.facilitator && pg.facilitator.notes ? el("div", { class: "facilitator-text" }, editable(ex, p.concat("facilitator", "notes"), { rows: 2, label: t("editor.facilitator") })) : null
+    ];
+  }
+
   // ---- View -----------------------------------------------------------------------------------------------
 
   function build(root) {
@@ -484,14 +586,14 @@
       state.openStages = {};
     }
     const issues = BK.engine.validator.validateInstance(ex);
-    root.append(
+    // append() takes nodes only: flatten the format-specific parts and drop empty slots.
+    const parts = [
       header(ex, issues),
       state.editMode ? editable(ex, ["title"], { label: t("wizard.exerciseTitle"), className: "editable--title" }) : null,
       el("h2", { class: "section-title", text: t("editor.overview") }),
-      overview(ex),
-      truth(ex),
-      el("div", { class: "stack" }, ex.stages.map((s, si) => stageCard(ex, s, si)))
-    );
+      overview(ex)
+    ].concat(ex.format === "branching" ? branchingPages(ex) : [truth(ex), el("div", { class: "stack" }, ex.stages.map((s, si) => stageCard(ex, s, si)))]);
+    root.append(...parts.filter(Boolean));
   }
 
   BK.ui.editor = {

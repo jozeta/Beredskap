@@ -148,7 +148,14 @@
     flag: '<path d="M5.5 20.5V4M5.5 4.5h11l-2.5 4 2.5 4h-11"/>',
     hourglass:
       '<path d="M6.5 3.5h11M6.5 20.5h11"/>' +
-      '<path d="M7.5 3.5c0 4 4.5 5.5 4.5 8.5s-4.5 4.5-4.5 8.5M16.5 3.5c0 4-4.5 5.5-4.5 8.5s4.5 4.5 4.5 8.5"/>'
+      '<path d="M7.5 3.5c0 4 4.5 5.5 4.5 8.5s-4.5 4.5-4.5 8.5M16.5 3.5c0 4-4.5 5.5-4.5 8.5s4.5 4.5 4.5 8.5"/>',
+    laptop: '<rect x="5" y="5" width="14" height="10" rx="1.5"/><path d="M3 18.5h18l-1.5-3.5h-15z"/>',
+    robot: '<rect x="5" y="8" width="14" height="10" rx="2"/><path d="M12 8V5M10.5 4.5h3"/><circle cx="9.5" cy="13" r="1.2"/><circle cx="14.5" cy="13" r="1.2"/><path d="M3 12v3M21 12v3"/>',
+    card: '<rect x="3" y="6" width="18" height="12" rx="1.5"/><path d="M3 10h18M6.5 14.5h4"/>',
+    droplet: '<path d="M12 3.5c3.5 4.2 6 7.4 6 10.5a6 6 0 0 1-12 0c0-3.1 2.5-6.3 6-10.5z"/><path d="M9 14.5a3 3 0 0 0 3 3"/>',
+    sim: '<path d="M7.5 3.5h6.5l4 4V19a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19V5a1.5 1.5 0 0 1 1.5-1.5z"/><rect x="9" y="11" width="6" height="6" rx="1"/>',
+    at: '<circle cx="12" cy="12" r="3.5"/><path d="M15.5 12v1.5a2.5 2.5 0 0 0 5 0V12a8.5 8.5 0 1 0-3.5 6.9"/>',
+    route: '<circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M8 18h6.5a3.5 3.5 0 0 0 0-7h-5a3.5 3.5 0 0 1 0-7H16"/>'
   };
 
 
@@ -178,7 +185,17 @@
     hospital: ["hospital", "skull-lock"],
     dns: ["dns", "globe"],
     "zero-day": ["shield-alert", "clock"],
-    storm: ["network", "cloud-off"]
+    storm: ["network", "cloud-off"],
+    laptop: ["laptop", "question"],
+    payroll: ["coins", "cloud-off"],
+    "api-scrape": ["phone", "database"],
+    "social-hijack": ["at", "lock"],
+    chatbot: ["robot", "eye"],
+    extortion: ["mail-alert", "scale"],
+    pos: ["card", "bug"],
+    water: ["droplet", "power"],
+    "sim-swap": ["sim", "key"],
+    blackout: ["power", "users"]
   };
 
   function emblemMarkup(main, badge) {

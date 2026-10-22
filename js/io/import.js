@@ -87,11 +87,13 @@
   function checkExercise(ex) {
     need(isObj(ex), "shape", "exercise");
     need(ex.schema === BK.config.schemaId, "schema");
-    need(typeof ex.templateId === "string" && /^s\d{2}-[a-z0-9-]{1,60}$/.test(ex.templateId), "shape", "templateId");
+    need(typeof ex.templateId === "string" && /^[sb]\d{2}-[a-z0-9-]{1,60}$/.test(ex.templateId), "shape", "templateId");
     need(typeof ex.templateVersion === "number", "shape", "templateVersion");
     need(typeof ex.seed === "string" && ex.seed.length <= 60, "shape", "seed");
     need(isObj(ex.params) && isObj(ex.settings) && isObj(ex.pacing) && isObj(ex.entities), "shape", "params/settings/pacing/entities");
     need(isObj(ex.entities.org) && isObj(ex.entities.people) && isObj(ex.entities.clock), "shape", "entities");
+    if (ex.format === "branching") return checkBranchingExercise(ex);
+    need(ex.format == null || ex.format === "discussion", "shape", "format");
     need(Array.isArray(ex.stages) && ex.stages.length >= 3 && ex.stages.length <= 10, "shape", "stages");
     need(Array.isArray(ex.slides) && Array.isArray(ex.hiddenFacts) && Array.isArray(ex.objectives), "shape", "slides/hiddenFacts/objectives");
     need(Array.isArray(ex.pacing.stages) && ex.pacing.stages.length === ex.stages.length, "shape", "pacing");
@@ -123,6 +125,84 @@
     if (issues.length) fail("invalid", issues.slice(0, 3).map((x) => BK.engine.validator.format(x, "en")).join("; "));
   }
 
+  /** Branching exercises: pages, options, routes and endings must be well-formed and consistent. */
+  function checkBranchingExercise(ex) {
+    need(Array.isArray(ex.pages) && ex.pages.length >= 3 && ex.pages.length <= 200, "shape", "pages");
+    need(Array.isArray(ex.objectives) && isObj(ex.flagLabels || {}), "shape", "objectives/flags");
+    need(["short", "long"].includes(ex.settings.length) && ["pure", "hybrid"].includes(ex.settings.mode), "shape", "settings");
+    const ids = new Set(ex.pages.map((pg) => pg.id));
+    need(ids.has(ex.start), "reference", "start");
+    const flag = (f) => need(typeof f === "string" && /^!?[A-Za-z0-9]{1,40}$/.test(f), "shape", "flag");
+    const cond = (c) => c == null || [].concat(c).forEach(flag);
+    ex.pages.forEach((pg) => {
+      checkId(pg.id, "page");
+      need(typeof pg.num === "number" && Array.isArray(pg.injects) && Array.isArray(pg.variants), "shape", "page " + pg.id);
+      pg.variants.forEach((v) => cond(v.if));
+      pg.injects.forEach((x) => {
+        checkId(x.id, "inject");
+        need(typeof x.type === "string" && typeof x.visibility === "string", "shape", "inject " + x.id);
+        need(x.visibility === "public" || x.visibility === "facilitator" || /^role:\w+$/.test(x.visibility), "shape", "visibility " + x.id);
+      });
+      const kinds = [pg.choice, pg.route, pg.ending].filter(Boolean).length;
+      need(kinds === 1, "shape", "page kind " + pg.id);
+      if (pg.choice) {
+        need(Array.isArray(pg.choice.options) && pg.choice.options.length >= 2 && pg.choice.options.length <= 4, "shape", "options " + pg.id);
+        pg.choice.options.forEach((o) => {
+          need(/^[A-D]$/.test(o.key) && ids.has(o.to) && Array.isArray(o.set), "reference", "option " + pg.id);
+          o.set.forEach(flag);
+          cond(o.requires);
+          cond(o.hides);
+        });
+      }
+      if (pg.route) {
+        need(Array.isArray(pg.route) && pg.route.length > 0, "shape", "route " + pg.id);
+        pg.route.forEach((r) => {
+          need(ids.has(r.to), "reference", "route " + pg.id);
+          cond(r.if);
+        });
+      }
+      if (pg.ending) need([1, 2, 3, 4, 5].includes(pg.ending.grade), "shape", "ending " + pg.id);
+      if (pg.long) need(ids.has(pg.skipTo), "reference", "skipTo " + pg.id);
+    });
+    ex.objectives.forEach((o) => checkId(o.id, "objective"));
+    Object.values(ex.entities.people).forEach((p) => need(isObj(p) && typeof p.name === "string", "shape", "people"));
+    const issues = BK.engine.validator.validateInstance(ex);
+    if (issues.length) fail("invalid", issues.slice(0, 3).map((x) => BK.engine.validator.format(x, "en")).join("; "));
+  }
+
+  /** Branching sessions: the route walks real pages by offered options, flags come from those options. */
+  function checkBranchingSession(ses, ex) {
+    const B = BK.engine.branching;
+    need(Array.isArray(ses.route) && ses.route.length >= 1 && Array.isArray(ses.flags), "shape", "route");
+    const pages = new Set(ex.pages.map((pg) => pg.id));
+    ses.route.forEach((r) => {
+      need(isObj(r) && pages.has(r.pageId), "reference", "route page");
+      need(r.option == null || /^[A-D]$/.test(r.option), "shape", "route option");
+      need(r.num == null || typeof r.num === "number", "shape", "route num");
+    });
+    // Replay: every recorded option must have been offered and lead where the route goes next.
+    const byId = {};
+    ex.pages.forEach((pg) => (byId[pg.id] = pg));
+    let flags = [];
+    const visited = ses.route.filter((r) => !r.auto);
+    visited.forEach((r, i) => {
+      if (!r.option) return need(i === visited.length - 1, "reference", "route gap");
+      const pg = byId[r.pageId];
+      need(!!pg.choice, "reference", "route choice");
+      const opt = B.offered(pg.choice, flags).find((o) => o.key === r.option);
+      need(!!opt, "reference", "route option");
+      flags = flags.concat(opt.set.filter((f) => !flags.includes(f)));
+      const target = B.resolveTarget(byId, opt.to, flags, ex.settings.length);
+      need(!!target && visited[i + 1] && target.pageId === visited[i + 1].pageId, "reference", "route order");
+    });
+    need(flags.length === ses.flags.length && flags.every((f) => ses.flags.includes(f)), "reference", "flags");
+    const choicePages = new Set(visited.filter((r) => r.option).map((r) => r.pageId));
+    Object.keys(ses.decisions).forEach((id) => {
+      need(choicePages.has(id), "reference", "decision " + id);
+      Object.values(ses.decisions[id]).forEach((v) => need(v === null || typeof v === "string" || typeof v === "number", "shape", "decision field " + id));
+    });
+  }
+
   function checkSession(ses, ex) {
     need(isObj(ses), "shape", "session");
     need(isObj(ses.position) && typeof ses.position.slideId === "string" && typeof ses.position.step === "number", "shape", "position");
@@ -131,9 +211,11 @@
     need(isObj(ses.injects) && isObj(ses.decisions) && isObj(ses.objectives) && Array.isArray(ses.observations), "shape", "session maps");
     need(isObj(ses.clock) && typeof ses.clock.elapsedMs === "number" && isObj(ses.timer), "shape", "clocks");
 
+    const branching = ex.format === "branching";
+    if (branching) checkBranchingSession(ses, ex);
     const injectIds = new Set();
-    ex.stages.forEach((s) => s.injects.concat(s.branchInjects).forEach((x) => injectIds.add(x.id)));
-    const stageIds = new Set(ex.stages.map((s) => s.id));
+    (branching ? ex.pages : ex.stages).forEach((s) => s.injects.concat(s.branchInjects || []).forEach((x) => injectIds.add(x.id)));
+    const stageIds = new Set((branching ? ex.pages : ex.stages).map((s) => s.id));
     Object.keys(ses.injects).forEach((id) => {
       need(injectIds.has(id), "reference", "inject " + id);
       const st = ses.injects[id];
@@ -141,7 +223,7 @@
     });
 
     const decisionIds = new Set(ex.stages.filter((s) => s.decision).map((s) => s.decision.id));
-    Object.keys(ses.decisions).forEach((id) => {
+    if (!branching) Object.keys(ses.decisions).forEach((id) => {
       need(decisionIds.has(id), "reference", "decision " + id);
       Object.values(ses.decisions[id]).forEach((v) => need(v === null || typeof v === "string" || typeof v === "number", "shape", "decision field " + id));
     });
@@ -149,7 +231,7 @@
     const objectiveIds = new Set(ex.objectives.map((o) => o.id));
     Object.keys(ses.objectives).forEach((id) => need(objectiveIds.has(id), "reference", "objective " + id));
 
-    const criteria = new Set(BK.engine.session.criteria(ex).map((c) => c.id));
+    const criteria = new Set(BK.engine.session.criteria(ex, ses).map((c) => c.id));
     Object.keys(ses.scorecard || {}).forEach((id) => need(criteria.has(id), "reference", "criterion " + id));
 
     ses.observations.forEach((o) => {

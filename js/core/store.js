@@ -17,8 +17,10 @@
   const SCHEMA = BK.config.schemaVersion;
 
   // Migrations from older envelope versions: { fromVersion: (data, key) => newData }.
-  // Empty in v1; listed here so later schema bumps have an obvious home.
-  const migrations = {};
+  const migrations = {
+    // v1 → v2 only added the branching format; v1 data is all discussion format and needs no change.
+    1: (data) => data
+  };
 
   const memory = new Map(); // Fallback backend when localStorage is unusable.
   const corrupt = []; // { key, raw, reason } for entries that failed to parse.

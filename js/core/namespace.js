@@ -19,7 +19,8 @@
       storagePrefix: "beredskap:",
       channelName: "beredskap",
       schemaId: "beredskap.exercise",
-      schemaVersion: 1,
+      // 2: exercises may be format "branching" (pages, route, flags); a missing format means discussion.
+      schemaVersion: 2,
       // Dev mode: add ?debug to the URL to get console reports (e.g. missing i18n keys).
       debug: /[?&]debug\b/.test(window.location.search)
     },

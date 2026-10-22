@@ -43,6 +43,11 @@
     return el("p", { class: "s-kicker", text });
   }
 
+  /** "Stage 2 of 8" in a discussion exercise, "§ 212" on a page of a branching one. */
+  function whereLabel(s, p, lang) {
+    return s.num != null ? t("branch.pageNum", { n: s.num }, lang) : t("stage.stageOf", { n: s.stageNumber, total: p.progress.stageCount }, lang);
+  }
+
   // ---- Slide renderers (projection → DOM). Each receives (slide, p, lang). ------------------------
 
   const R = {};
@@ -65,7 +70,10 @@
       "div",
       { class: "s-briefing" },
       el("h1", { class: "s-h1", text: t("stage.briefing", null, lang) }),
-      el("p", { class: "s-lead", text: t("stage.duration", { n: s.minutes, stages: s.stageCount }, lang) }),
+      el(
+        "p",
+        { class: "s-lead", text: s.choiceRange ? t("stage.durationBranching", { n: s.minutes, min: s.choiceRange[0], max: s.choiceRange[1] }, lang) : t("stage.duration", { n: s.minutes, stages: s.stageCount }, lang) }
+      ),
       el(
         "div",
         { class: "s-cols" },
@@ -73,10 +81,10 @@
         el(
           "section",
           null,
-          el("h2", { class: "s-h2", text: t("stage.rules", null, lang) }),
+          el("h2", { class: "s-h2", text: t(s.choiceRange ? "stage.howItWorks" : "stage.rules", null, lang) }),
           el("ul", { class: "s-list s-list--small" }, s.rules.map((r) => el("li", { text: r }))),
-          el("h2", { class: "s-h2", text: t("stage.rounds", null, lang) }),
-          el("ol", { class: "s-rounds" }, s.rounds.map((r) => el("li", { text: r })))
+          s.rounds.length ? el("h2", { class: "s-h2", text: t("stage.rounds", null, lang) }) : null,
+          s.rounds.length ? el("ol", { class: "s-rounds" }, s.rounds.map((r) => el("li", { text: r }))) : null
         )
       )
     );
@@ -179,7 +187,7 @@
     return el(
       "div",
       { class: "s-data" },
-      el("div", { class: "s-data__top" }, kicker(t("stage.stageOf", { n: s.stageNumber, total: p.progress.stageCount }, lang)), el("span", { class: "s-data-label", text: s.label })),
+      el("div", { class: "s-data__top" }, kicker(whereLabel(s, p, lang)), el("span", { class: "s-data-label", text: s.label })),
       el("h1", { class: "s-h2 s-data__title", text: c.title }),
       el("div", { class: "s-data__chart" }, drawn),
       c.caption ? el("p", { class: "s-muted", text: c.caption + (c.unit ? " (" + c.unit + ")" : "") }) : null
@@ -199,7 +207,7 @@
     el(
       "div",
       { class: "s-discussion" },
-      el("div", { class: "s-discussion__top" }, kicker(t("stage.discussion", null, lang) + " · " + t("stage.stageOf", { n: s.stageNumber, total: p.progress.stageCount }, lang)), timerBlock(p)),
+      el("div", { class: "s-discussion__top" }, kicker(t("stage.discussion", null, lang) + " · " + whereLabel(s, p, lang)), timerBlock(p)),
       el(
         "ol",
         { class: "s-questions" },
@@ -235,6 +243,70 @@
       s.authority ? el("p", { class: "s-muted", text: t("stage.decisionAuthority", { name: s.authority }, lang) + (s.authorityNotPresent ? " — " + t("editor.roleNotPresent", null, lang) : "") }) : null
     );
 
+  // ---- Branching (gamebook) slides ----------------------------------------------------------------
+
+  R.page = (s, p, lang) =>
+    el(
+      "div",
+      { class: "s-page" },
+      el("p", { class: "s-page__num", "aria-label": t("branch.pageNum", { n: s.num }, lang) }, el("span", { class: "s-page__mark", "aria-hidden": "true", text: "§" }), el("span", { text: String(s.num) })),
+      el("div", { class: "s-page__body" }, kicker(t("branch.choiceN", { n: s.choiceNumber }, lang)), el("h1", { class: "s-h1", text: s.title }), s.because ? el("p", { class: "s-page__because" }, svgIcon("link", { size: 32 }), el("span", { text: s.because })) : null, el("p", { class: "s-narrative", text: s.narrative }))
+    );
+
+  R.choice = (s, p, lang) =>
+    el(
+      "div",
+      { class: ["s-choice", s.chosen && "is-chosen"] },
+      kicker(t("branch.decide", null, lang) + " · " + t("branch.pageNum", { n: s.num }, lang)),
+      el("h1", { class: "s-h2 s-choice__q", text: s.question }),
+      el(
+        "ol",
+        { class: ["s-paths", "s-paths--" + s.options.length] },
+        s.options.map((o, i) =>
+          el(
+            "li",
+            { class: ["s-path", s.chosen === o.key && "is-picked", s.chosen && s.chosen !== o.key && "is-dimmed"], style: { "--i": String(i) } },
+            el("span", { class: "s-path__key", text: String(i + 1) }),
+            el("span", { class: "s-path__text", text: o.text }),
+            o.to != null ? el("span", { class: "s-path__turn", text: t("branch.turnTo", { n: o.to }, lang) }) : null
+          )
+        )
+      ),
+      s.chosen ? null : el("p", { class: "s-muted s-choice__hint", text: t("branch.choiceHint", null, lang) })
+    );
+
+  /** Five-step scale from "Contained" to "Disaster", the reached grade marked; words, never a score. */
+  function gradeScale(scale, grade) {
+    return el(
+      "ol",
+      { class: "s-grades" },
+      scale.map((g) => el("li", { class: ["s-grade", "s-grade--" + g.grade, g.grade === grade && "is-reached"], "aria-current": g.grade === grade ? "true" : null, text: g.label }))
+    );
+  }
+
+  R.ending = (s, p, lang) =>
+    el(
+      "div",
+      { class: ["s-ending", "s-ending--" + s.grade] },
+      kicker(t("branch.ending", null, lang) + " · " + t("branch.pageNum", { n: s.num }, lang)),
+      el("h1", { class: "s-h1 s-ending__label", text: s.label }),
+      el("p", { class: "s-narrative s-ending__summary", text: s.summary }),
+      gradeScale(s.scale, s.grade),
+      el("p", { class: "s-muted", text: t("branch.choicesMade", { n: s.choices }, lang) })
+    );
+
+  function branchingDebrief(s, p, lang) {
+    return el(
+      "div",
+      { class: "s-debrief s-debrief--branching" },
+      kicker(t("stage.debrief", null, lang)),
+      el("h1", { class: "s-h2", text: s.ending ? s.ending.label + " · " + s.ending.gradeLabel : t("stage.debrief", null, lang) }),
+      el("div", { class: "s-routemap" }, BK.graphics.routeMap(s.map, { lang, title: t("branch.mapTitle", null, lang), choices: s.choices })),
+      el("ul", { class: "s-list s-list--small s-debrief__lessons" }, s.lessons.slice(0, 3).map((x) => el("li", { text: x }))),
+      el("p", { class: "s-mono s-muted", text: s.mitre.map((m) => m.id).join(" · ") + " — " + s.seedLine })
+    );
+  }
+
   R.recap = (s, p, lang) =>
     el(
       "div",
@@ -252,7 +324,7 @@
     );
 
   R.debrief = (s, p, lang) =>
-    el(
+    s.format === "branching" ? branchingDebrief(s, p, lang) : el(
       "div",
       { class: "s-debrief" },
       el("h1", { class: "s-h1", text: t("stage.debrief", null, lang) }),
@@ -281,6 +353,15 @@
 
   function rail(p, lang) {
     const g = p.progress;
+    if (g.branching) {
+      return el(
+        "footer",
+        { class: "s-rail s-rail--branching" },
+        el("span", { class: "s-rail__page", text: g.page != null ? t("branch.pageNum", { n: g.page }, lang) : "" }),
+        el("span", { class: "s-rail__choices", text: t("branch.choicesMade", { n: g.choices }, lang) }),
+        wordmark()
+      );
+    }
     return el(
       "footer",
       { class: "s-rail" },
@@ -404,8 +485,10 @@
     ["L", "shortcuts.lang"], ["D", "shortcuts.theme"], ["Esc", "shortcuts.esc"], ["?", "shortcuts.help"]
   ];
 
-  function shortcutList(lang) {
-    return el("dl", { class: "shortcut-list" }, SHORTCUTS.map(([keys, label]) => [el("dt", null, keys.split(" ").map((x) => el("kbd", { text: x }))), el("dd", { text: t(label, null, lang) })]));
+  /** Help list; in a branching run the digits choose an option instead of jumping to a stage. */
+  function shortcutList(lang, branching) {
+    const list = branching ? SHORTCUTS.map((x) => (x[1] === "shortcuts.jump" ? ["1 2 3 4", "shortcuts.choose"] : x)) : SHORTCUTS;
+    return el("dl", { class: "shortcut-list" }, list.map(([keys, label]) => [el("dt", null, keys.split(" ").map((x) => el("kbd", { text: x }))), el("dd", { text: t(label, null, lang) })]));
   }
 
   // ---- Fullscreen --------------------------------------------------------------------------------
@@ -464,7 +547,7 @@
     view.overlay =
       kind === "private"
         ? privateOverlay(sess)
-        : el("aside", { class: "help-overlay", role: "dialog", "aria-label": t("shortcuts.title", null, sess.lang) }, el("h2", { text: t("shortcuts.title", null, sess.lang) }), shortcutList(sess.lang));
+        : el("aside", { class: "help-overlay", role: "dialog", "aria-label": t("shortcuts.title", null, sess.lang) }, el("h2", { text: t("shortcuts.title", null, sess.lang) }), shortcutList(sess.lang, sess.instance.format === "branching"));
     view.overlay.dataset.kind = kind;
     view.viewport.appendChild(view.overlay);
   }

@@ -50,6 +50,7 @@
   // ---- Facilitator guide --------------------------------------------------------------------------
 
   function guide(ex, lang) {
+    if (ex.format === "branching") return branchingGuide(ex, lang);
     const e = ex.entities;
     const stageNo = (id) => ex.stages.findIndex((s) => s.id === id) + 1;
     const doc = el(
@@ -138,6 +139,95 @@
     return doc;
   }
 
+  /** Branching guide: the whole map, every page with its options, why each matters and where it leads. */
+  function branchingGuide(ex, lang) {
+    const B = BK.engine.branching;
+    const e = ex.entities;
+    const byId = {};
+    ex.pages.forEach((pg) => (byId[pg.id] = pg));
+    const where = (id) => {
+      const pg = byId[id];
+      if (!pg) return "?";
+      if (pg.ending) return "§ " + pg.num + " · " + L(pg.ending.label, lang);
+      if (pg.route) return "§ " + pg.num + " (" + t("editor.routePage", null, lang) + ")";
+      return "§ " + pg.num + " · " + L(pg.title, lang);
+    };
+    const flags = (list) => list.map((f) => B.flagLabel(ex, f, lang)).join(", ");
+    const cond = (c) => (c == null ? "" : [].concat(c).map((x) => (x.charAt(0) === "!" ? "¬ " : "") + B.flagLabel(ex, x.replace(/^!/, ""), lang)).join(" + "));
+    const titles = {};
+    ex.pages.forEach((pg) => (titles[pg.num] = pg.ending ? L(pg.ending.label, lang) : L(pg.title, lang)));
+    const doc = el(
+      "article",
+      { class: "p-doc", lang },
+      header(L(ex.title, lang) + " — " + t("guide.title", null, lang), e.org.name + " · " + t("report.meta", { seed: ex.seed, id: ex.templateId, version: ex.templateVersion, date: BK.i18n.fmt.date(new Date(), lang) }, lang), true, lang),
+      el("p", { text: L(ex.summary, lang) }),
+      el("p", { class: "p-sub", text: t("branch.length." + ex.settings.length, null, lang) + " · " + t("branch.mode." + ex.settings.mode, null, lang) + " · " + t("wizard.lengthOption", { n: ex.pacing.totalMinutes, min: ex.pacing.choiceRange[0], max: ex.pacing.choiceRange[1] }, lang) }),
+      el("h2", { text: t("report.objectives", null, lang) }),
+      list(ex.objectives.map((o) => L(o.text, lang))),
+      el("h2", { text: t("editor.people", null, lang) }),
+      table([t("editor.role", null, lang), t("editor.person", null, lang), t("editor.present", null, lang)], Object.values(e.people).map((p) => [L(p.roleLabel, lang), p.name, p.present ? "✓" : "—"])),
+      el("h2", { text: t("editor.pageMap", null, lang) }),
+      el("div", { class: "p-chart" }, BK.graphics.routeMap(B.mapGraph(ex, [], lang, null), { lang, title: t("editor.pageMap", null, lang), titles })),
+      el("h2", { text: t("branch.endings", { n: ex.pages.filter((p) => p.ending).length }, lang) }),
+      table(["§", t("csv.text", null, lang), ""], ex.pages.filter((p) => p.ending).sort((a, b) => a.ending.grade - b.ending.grade).map((p) => [p.num, L(p.ending.label, lang) + " — " + L(p.ending.summary, lang), B.gradeLabel(p.ending.grade, lang)]))
+    );
+    ex.pages
+      .filter((pg) => !pg.ending && !(ex.settings.length === "short" && pg.long))
+      .forEach((pg) => {
+        const sec = el(
+          "section",
+          { class: "p-stage" },
+          el("h2", { text: where(pg.id) + (pg.long ? " (" + t("editor.longOnly", null, lang) + ")" : "") }),
+          pg.route
+            ? table([t("presenter.flags", null, lang), "→"], pg.route.map((r) => [cond(r.if) || "—", where(r.to)]))
+            : [
+                el("p", { text: L(pg.narrative, lang) }),
+                pg.variants.map((v) => el("p", { class: "p-twist" }, el("strong", { text: "§ " + v.num + " · " + cond(v.if) + ": " }), L(v.narrative, lang))),
+                pg.injects.length
+                  ? table(
+                      [t("csv.type", null, lang), t("csv.reliability", null, lang), t("csv.text", null, lang), t("editor.facilitatorNote", null, lang)],
+                      pg.injects.map((x) => [t("injectType." + x.type, null, lang), t("reliability." + x.reliability, null, lang), (L(x.headline, lang) ? L(x.headline, lang) + " — " : "") + L(x.content, lang), L(x.facilitatorNote, lang)])
+                    )
+                  : null,
+                pg.discuss ? [el("h3", { text: t("editor.questions", null, lang) }), list(pg.discuss.questions.map((q) => L(q.text, lang)))] : null,
+                pg.choice
+                  ? el(
+                      "div",
+                      { class: "p-decision" },
+                      el("h3", { text: t("presenter.choice", null, lang) + ": " + L(pg.choice.question, lang) }),
+                      table(
+                        ["", t("report.field.option", null, lang), t("presenter.choiceWhy", null, lang), "→"],
+                        pg.choice.options.map((o) => [
+                          o.key,
+                          L(o.text, lang) + (o.requires ? " [" + cond(o.requires) + "]" : "") + (o.hides ? " [¬ " + cond(o.hides) + "]" : ""),
+                          L(o.why, lang),
+                          where(o.to) + (o.set.length ? " · " + t("presenter.setsFlags", { list: flags(o.set) }, lang) : "")
+                        ])
+                      ),
+                      el("p", null, el("strong", { text: t("presenter.choiceStrong", null, lang) + ": " }), L(pg.choice.strong, lang))
+                    )
+                  : null,
+                pg.facilitator && pg.facilitator.notes ? el("p", null, el("strong", { text: t("editor.facilitator", null, lang) + ": " }), L(pg.facilitator.notes, lang)) : null
+              ]
+        );
+        doc.appendChild(sec);
+      });
+    doc.appendChild(
+      el(
+        "section",
+        { class: "p-stage" },
+        el("h2", { text: t("editor.debrief", null, lang) }),
+        el("h3", { text: t("report.lessons", null, lang) }),
+        list((ex.debrief.keyLessons || []).map((x) => L(x, lang))),
+        el("h3", { text: t("guide.strengths", null, lang) }),
+        list((ex.debrief.strengthsToLookFor || []).map((x) => L(x, lang))),
+        el("h3", { text: t("guide.gaps", null, lang) }),
+        list((ex.debrief.commonGaps || []).map((x) => L(x, lang)))
+      )
+    );
+    return doc;
+  }
+
   // ---- Role cards ---------------------------------------------------------------------------------
 
   /** Per-role content: questions aimed at the role, decisions it owns, role-only injects. */
@@ -148,6 +238,12 @@
         const questions = [];
         const decisions = [];
         const privateInfo = [];
+        // Branching: discussion stops and role-only injects, labelled by page number.
+        (ex.pages || []).forEach((pg) => {
+          const at = "§ " + pg.num;
+          ((pg.discuss && pg.discuss.questions) || []).filter((q) => q.roles.includes(p.role)).forEach((q) => questions.push(at + " · " + L(q.text, lang)));
+          pg.injects.filter((x) => x.visibility === "role:" + p.role).forEach((x) => privateInfo.push({ stage: at, text: (L(x.headline, lang) ? L(x.headline, lang) + ": " : "") + L(x.content, lang) }));
+        });
         ex.stages.forEach((s, i) => {
           s.questions.filter((q) => q.roles.includes(p.role)).forEach((q) => questions.push(t("roles.stage", { n: i + 1 }, lang) + " · " + L(q.text, lang)));
           if (s.decision && s.decision.authority === p.role) decisions.push(t("roles.stage", { n: i + 1 }, lang) + " · " + L(s.decision.question, lang));
@@ -170,7 +266,7 @@
           el("h2", { text: c.roleLabel }),
           el("p", { class: "p-sub", text: c.name + " · " + c.title + " · " + ex.entities.org.name }),
           c.privateInfo.length
-            ? el("div", { class: "p-private" }, el("h3", { text: t("roles.private", null, lang) }), c.privateInfo.map((x) => el("p", null, el("strong", { text: t("roles.stage", { n: x.stage }, lang) + ": " }), x.text)))
+            ? el("div", { class: "p-private" }, el("h3", { text: t("roles.private", null, lang) }), c.privateInfo.map((x) => el("p", null, el("strong", { text: (typeof x.stage === "string" ? x.stage : t("roles.stage", { n: x.stage }, lang)) + ": " }), x.text)))
             : null,
           el("h3", { text: t("roles.decisions", null, lang) }),
           c.decisions.length ? list(c.decisions) : el("p", { class: "p-sub", text: t("roles.none", null, lang) }),
@@ -194,15 +290,31 @@
       el("p", { text: r.summary }),
       el("h2", { text: t("report.objectives", null, l) }),
       table([t("library.objectives", null, l), t("obs.status", null, l), t("obs.note", null, l)], r.objectives.map((o) => [o.text, t("report.status." + o.status, null, l), o.note])),
-      el("h2", { text: t("report.groundTruth", null, l) }),
-      el("p", { text: r.rootCause }),
-      el("h2", { text: t("report.timeline", null, l) }),
-      el("div", { class: "p-chart" }, timeline),
-      el("h2", { text: t("report.decisions", null, l) }),
-      table(
-        [t("csv.stage", null, l), t("csv.question", null, l), t("report.field.option", null, l), t("report.field.text", null, l), t("report.field.rationale", null, l), t("report.field.dissent", null, l)],
-        r.decisions.map((d) => [d.stage, d.question, d.recorded ? d.option : t("report.notRecorded", null, l), d.text, d.rationale, d.dissent])
-      ),
+      r.branch
+        ? [
+            el("h2", { text: t("report.endingReached", null, l) }),
+            el("p", { text: r.branch.ending ? r.branch.ending.label + " (" + r.branch.ending.gradeLabel + ") — " + r.branch.ending.summary : t("report.noEnding", null, l) }),
+            el("h2", { text: t("report.route", null, l) }),
+            el("div", { class: "p-chart" }, BK.graphics.routeMap(r.branch.map, { lang: l, title: t("report.route", null, l), choices: r.decisions.length, titles: r.branch.titles })),
+            el("h2", { text: t("report.choices", null, l) }),
+            table(
+              ["#", "§", t("csv.question", null, l), t("report.field.option", null, l), t("presenter.choiceWhy", null, l), t("report.notTaken", null, l)],
+              r.decisions.map((d) => [d.stage, d.num, d.question, d.option, d.why, d.notTaken.map((n) => n.key + " — " + n.text).join(" · ")])
+            ),
+            el("h3", { text: t("report.otherEndings", null, l) }),
+            list(r.branch.otherEndings.map((e) => e.label + " (" + e.gradeLabel + ")"))
+          ]
+        : [
+            el("h2", { text: t("report.groundTruth", null, l) }),
+            el("p", { text: r.rootCause }),
+            el("h2", { text: t("report.timeline", null, l) }),
+            el("div", { class: "p-chart" }, timeline),
+            el("h2", { text: t("report.decisions", null, l) }),
+            table(
+              [t("csv.stage", null, l), t("csv.question", null, l), t("report.field.option", null, l), t("report.field.text", null, l), t("report.field.rationale", null, l), t("report.field.dissent", null, l)],
+              r.decisions.map((d) => [d.stage, d.question, d.recorded ? d.option : t("report.notRecorded", null, l), d.text, d.rationale, d.dissent])
+            )
+          ],
       el("h2", { text: t("report.assumptions", null, l) }),
       table([t("stage.assumed", null, l), t("stage.reality", null, l)], r.assumptions.map((a) => [a.assumption, a.reality])),
       el("h2", { text: t("report.observations", null, l) }),

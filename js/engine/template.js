@@ -26,7 +26,8 @@
 
   const BK = window.BK;
   const LANGS = ["en", "sv"];
-  const PATTERN = /\{\{\s*([^}|]+?)\s*(?:\|\s*(\w+)\s*)?\}\}/g;
+  // {{path}} or {{path|f}} or a chain {{path|weekday|cap}}: formatters apply left to right.
+  const PATTERN = /\{\{\s*([^}|]+?)\s*((?:\|\s*\w+\s*)*)\}\}/g;
 
   // ---- Jurisdiction references --------------------------------------------------------
 
@@ -185,16 +186,18 @@
   /** Resolve one string for one language. Missing paths are collected into `missing`. */
   function resolveString(str, lang, ctx, missing) {
     if (typeof str !== "string" || str.indexOf("{{") === -1) return str;
-    return str.replace(PATTERN, (whole, path, formatter) => {
+    return str.replace(PATTERN, (whole, path, chain) => {
       const value = lookup(path.trim(), ctx);
       if (value === MISSING) {
         missing.add(path.trim());
         return "⟦" + path.trim() + "⟧";
       }
-      const out = format(value, formatter, lang, ctx);
+      const formatters = chain.split("|").map((f) => f.trim()).filter(Boolean);
+      let out = format(value, formatters[0], lang, ctx);
+      for (let i = 1; i < formatters.length && out !== null; i++) out = format(out, formatters[i], lang, ctx);
       if (out === null) {
-        missing.add(path.trim() + "|" + formatter);
-        return "⟦" + path.trim() + "|" + formatter + "⟧";
+        missing.add(path.trim() + chain.replace(/\s+/g, ""));
+        return "⟦" + path.trim() + chain.replace(/\s+/g, "") + "⟧";
       }
       return out;
     });

@@ -19,6 +19,8 @@
 
   const BK = window.BK;
   const t = (key, vars, lang) => BK.t(key, vars, lang);
+  const B = () => BK.engine.branching;
+  const isBranching = (sess) => sess.instance.format === "branching";
 
   // Inject types that carry a system-assigned severity (shown on stage); human messages do not.
   const SYSTEM_TYPES = new Set(["siemAlert", "edrAlert", "authLog", "networkEvidence", "logExcerpt", "backupReport", "ticket", "forensicFinding", "threatIntel", "advisory", "statusPage"]);
@@ -33,13 +35,15 @@
     const t0 = now || Date.now();
     const instance = clone(exercise);
     const injects = {};
-    instance.stages.forEach((s) =>
+    const branching = instance.format === "branching";
+    (branching ? instance.pages : instance.stages).forEach((s) =>
       s.injects.forEach((i) => {
         if (i.enabled !== false) injects[i.id] = { state: "pending", stageId: s.id, releasedAt: null };
       })
     );
-    const first = instance.slides[0];
-    return {
+    const first = branching ? { id: "title" } : instance.slides[0];
+    const startPage = branching ? B().landing(instance, instance.start, []).pageId : null;
+    return Object.assign({
       id: BK.dom.uid("ses"),
       kind: "session",
       exerciseId: exercise.id,
@@ -65,7 +69,7 @@
       recoveredAt: null,
       log: [{ at: new Date(t0).toISOString(), type: "start" }],
       instance
-    };
+    }, branching ? { route: [{ pageId: startPage, at: new Date(t0).toISOString(), option: null, num: B().passageNum(B().page(instance, startPage), []) }], flags: [] } : {});
   }
 
   // ---- Clocks -----------------------------------------------------------------------------
@@ -111,8 +115,8 @@
   }
 
   function findInject(sess, id) {
-    for (const s of sess.instance.stages) {
-      const hit = s.injects.find((i) => i.id === id) || s.branchInjects.find((i) => i.id === id);
+    for (const s of isBranching(sess) ? sess.instance.pages : sess.instance.stages) {
+      const hit = s.injects.find((i) => i.id === id) || (s.branchInjects || []).find((i) => i.id === id);
       if (hit) return hit;
     }
     return null;
@@ -140,6 +144,7 @@
 
   /** Effective slide list with index. Recomputed from the instance and session state. */
   function slides(sess) {
+    if (isBranching(sess)) return B().slides(sess);
     const audience = sess.instance.settings.audience;
     const wanted = BK.engine.slides.injectSlideWanted;
     const out = [];
@@ -173,6 +178,7 @@
 
   /** Number of reveal steps on a slide (0 = no steps). */
   function stepCount(sess, slide) {
+    if (isBranching(sess)) return B().stepCount(sess, slide);
     if (slide.type === "timeline") return publicStageInjects(sess, slide.stageId).length;
     if (slide.type === "discussion") {
       const s = stageById(sess, slide.stageId);
@@ -206,7 +212,11 @@
     if (!slide) return;
     if (slide.type === "inject") release(sess, slide.injectId, now);
     if (slide.type === "timeline") publicStageInjects(sess, slide.stageId).slice(0, sess.position.step).forEach((i) => release(sess, i.id, now));
-    if (slide.type === "discussion" && sess.timer.stageId !== slide.stageId) {
+    if (slide.type === "discussion" && slide.pageId && sess.timer.stageId !== slide.pageId) {
+      const pg = B().page(sess.instance, slide.pageId);
+      const ms = ((pg.discuss && pg.discuss.minutes) || 4) * 60000;
+      sess.timer = { stageId: slide.pageId, durationMs: ms, remainingMs: ms, runningSince: null };
+    } else if (slide.type === "discussion" && !slide.pageId && sess.timer.stageId !== slide.stageId) {
       const stage = stageById(sess, slide.stageId);
       const ms = (stage.discussionMinutes || 5) * 60000;
       sess.timer = { stageId: slide.stageId, durationMs: ms, remainingMs: ms, runningSince: null };
@@ -233,6 +243,7 @@
    *  timerToggle | timerReset | timerAdd{ms} | pauseToggle | screen{value} | langToggle | lang{value}
    *  themeToggle | theme{value} | release{injectId} | postpone{injectId} | skip{injectId} | unskip{injectId}
    *  decision{decisionId, entry} | recover | end
+   *  choose{option} | unchoose                      (branching exercises only)
    */
   function apply(prev, cmd, now) {
     const sess = clone(prev);
@@ -255,7 +266,36 @@
       }
       case "first": moveTo(sess, list, 0, true); break;
       case "last": moveTo(sess, list, list.length - 1, true); break;
+      case "choose":
+      case "unchoose": {
+        // cmd.option is the option key; cmd.nth (1-based, offered order) is accepted too.
+        if (!isBranching(sess) || ended) break;
+        // Choosing works from any slide of the current page (the presenter's buttons); undo works anywhere.
+        if (cmd.type === "choose" && !(slide && slide.pageId === sess.route[sess.route.length - 1].pageId)) break;
+        let key = cmd.option;
+        if (cmd.type === "choose" && cmd.nth) {
+          const opt = B().offered(B().page(sess.instance, slide.pageId).choice, sess.flags)[cmd.nth - 1];
+          key = opt && opt.key;
+        }
+        const target = cmd.type === "choose" ? B().choose(sess, key, at) : B().unchoose(sess, at);
+        if (!target) break;
+        const fresh = slides(sess);
+        const i = fresh.findIndex((x) => x.id === target);
+        if (i >= 0) moveTo(sess, fresh, i, true);
+        break;
+      }
       case "gotoStage": {
+        // A branching run has no stages: the digit keys choose option 1–4 on a choice slide instead.
+        if (isBranching(sess)) {
+          if (ended || cmd.index > 3 || !(slide && slide.type === "choice" && slide.pageId === sess.route[sess.route.length - 1].pageId)) break;
+          const pg = B().page(sess.instance, slide.pageId);
+          const opt = B().offered(pg.choice, sess.flags)[cmd.index];
+          const target = opt && B().choose(sess, opt.key, at);
+          const fresh = target && slides(sess);
+          const i = fresh ? fresh.findIndex((x) => x.id === target) : -1;
+          if (i >= 0) moveTo(sess, fresh, i, true);
+          break;
+        }
         const stage = sess.instance.stages[cmd.index];
         if (!stage) break;
         const target = list.findIndex((s) => s.stageId === stage.id);
@@ -452,6 +492,10 @@
     const e = inst.entities;
     const stage = slide.stageId ? stageById(sess, slide.stageId) : null;
     const base = { type: slide.type, id: slide.id, step };
+    if (isBranching(sess)) {
+      const own = B().slideContent(sess, slide, step, lang, base);
+      if (own) return own;
+    }
 
     switch (slide.type) {
       case "title":
@@ -471,8 +515,9 @@
           objectives: inst.objectives.map((o) => L(o.text, lang)),
           minutes: inst.pacing.totalMinutes,
           stageCount: inst.stages.length,
-          rules: [1, 2, 3, 4].map((n) => t("stage.rule" + n, null, lang)),
-          rounds: [1, 2, 3, 4].map((n) => t("stage.round" + n, null, lang))
+          choiceRange: inst.pacing.choiceRange || null,
+          rules: [1, 2, 3, 4].map((n) => t((isBranching(sess) ? "stage.branchRule" : "stage.rule") + n, null, lang)),
+          rounds: isBranching(sess) ? [] : [1, 2, 3, 4].map((n) => t("stage.round" + n, null, lang))
         });
       case "context": {
         const platform = BK.data.sectors.PLATFORM;
@@ -515,13 +560,15 @@
       }
       case "inject": {
         const inj = findInject(sess, slide.injectId);
-        return Object.assign(base, { stageNumber: stageNumber(sess, slide.stageId), inject: publicInject(inj, lang) });
+        return Object.assign(base, { stageNumber: stageNumber(sess, slide.stageId), num: slide.pageId ? B().seenNum(sess, slide.pageId) : null, inject: publicInject(inj, lang) });
       }
       case "data": {
-        const chart = stage.charts.find((c) => c.id === slide.chartId);
+        const pg = slide.pageId ? B().page(inst, slide.pageId) : null;
+        const chart = pg ? pg.chart : stage.charts.find((c) => c.id === slide.chartId);
         const released = (id) => sess.injects[id] && sess.injects[id].state === "released";
         return Object.assign(base, {
-          stageNumber: stageNumber(sess, stage.id),
+          stageNumber: pg ? 0 : stageNumber(sess, stage.id),
+          num: pg ? B().seenNum(sess, pg.id) : null,
           label: t("stage.exerciseData", null, lang),
           chart: {
             id: chart.id,
@@ -589,6 +636,7 @@
   }
 
   function progress(sess, list, idx, lang) {
+    if (isBranching(sess)) return B().progress(sess, list, idx);
     const slide = list[idx];
     const stage = slide && slide.stageId ? stageById(sess, slide.stageId) : null;
     return {
@@ -648,6 +696,7 @@
     const lang = langArg || sess.lang;
     const inst = sess.instance;
     const { slide, idx, list } = locate(sess);
+    if (isBranching(sess)) return branchingFacilitatorView(sess, now, lang, list, idx, slide);
     const stage = slide && slide.stageId ? stageById(sess, slide.stageId) : null;
     const stageIdx = stage ? stage.index : -1;
     const elapsedMin = elapsedMs(sess, now) / 60000;
@@ -735,11 +784,61 @@
     };
   }
 
+  /** Shared parts (inject notes and release list) plus the branching panel. */
+  function branchingFacilitatorView(sess, now, lang, list, idx, slide) {
+    const inst = sess.instance;
+    const pg = slide && slide.pageId ? B().page(inst, slide.pageId) : null;
+    let slideNotes = null;
+    if (slide && slide.type === "inject") {
+      const inj = findInject(sess, slide.injectId);
+      slideNotes = {
+        reliability: inj.reliability,
+        facilitatorNote: L(inj.facilitatorNote, lang),
+        expectedResponse: L(inj.expectedResponse, lang),
+        tests: inj.tests.map((id) => {
+          const o = inst.objectives.find((x) => x.id === id);
+          return o ? L(o.text, lang) : id;
+        })
+      };
+    }
+    const injects = pg
+      ? pg.injects.map((i) => {
+          const st = sess.injects[i.id] || { state: "pending" };
+          return {
+            id: i.id,
+            time: L(i.atLabel, lang),
+            label: L(i.headline, lang) || L(i.content, lang),
+            type: i.type,
+            visibility: i.visibility,
+            reliability: i.reliability,
+            optional: false,
+            state: st.state,
+            moved: false,
+            branch: false,
+            hasSlide: list.some((s) => s.injectId === i.id),
+            suggested: false
+          };
+        })
+      : [];
+    const roleInjects = pg
+      ? pg.injects
+          .filter((i) => i.visibility.startsWith("role:"))
+          .map((i) => {
+            const person = inst.entities.people[i.visibility.slice(5)];
+            return { id: i.id, role: person ? L(person.roleLabel, lang) + " — " + person.name : i.visibility.slice(5), content: L(i.content, lang) };
+          })
+      : [];
+    const base = { lang, slideIndex: idx, slideCount: list.length, slideType: slide && slide.type, stage: null, slideNotes, decision: null, decisionLog: null, hiddenFacts: [], injects, roleInjects };
+    return B().facilitatorView(sess, now, lang, list, idx, base);
+  }
+
   /**
    * Scorecard criteria: the template's evaluation criteria for every decision in
-   * the instance. A facilitator assessment — never a maturity or compliance score.
+   * the instance (branching: one per choice made, so the session is needed).
+   * A facilitator assessment — never a maturity or compliance score.
    */
-  function criteria(instance) {
+  function criteria(instance, session) {
+    if (instance.format === "branching") return B().criteria(instance, session);
     const out = [];
     instance.stages.forEach((s) => {
       if (!s.decision) return;
@@ -763,6 +862,7 @@
     elapsedMs,
     timerRemaining,
     stageInjects,
-    hasRunningTimers: (s) => !!(s.clock.runningSince || s.timer.runningSince)
+    hasRunningTimers: (s) => !!(s.clock.runningSince || s.timer.runningSince),
+    isBranching
   };
 })();

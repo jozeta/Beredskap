@@ -56,7 +56,8 @@
       return { id: o.id, text: L(o.text, lang), status: st.status || "notAssessed", note: st.note || "" };
     });
 
-    const decisions = inst.stages
+    const branching = inst.format === "branching";
+    const decisions = branching ? branchDecisions(session, lang) : inst.stages
       .filter((s) => s.decision)
       .map((s) => {
         const d = s.decision;
@@ -80,13 +81,17 @@
       });
 
     const injects = [];
-    inst.stages.forEach((s) =>
-      s.injects.concat(s.branchInjects).forEach((i) => {
+    const pageNo = (id) => {
+      const i = session.route ? session.route.filter((r) => !r.auto).findIndex((r) => r.pageId === id) : -1;
+      return i >= 0 ? i + 1 : "";
+    };
+    (branching ? inst.pages : inst.stages).forEach((s) =>
+      s.injects.concat(s.branchInjects || []).forEach((i) => {
         const st = session.injects[i.id];
         if (!st) return;
         injects.push({
           id: i.id,
-          stage: stageNo(st.stageId || s.id),
+          stage: branching ? pageNo(s.id) : stageNo(st.stageId || s.id),
           time: L(i.atLabel, lang),
           at: i.at,
           type: t("injectType." + i.type, null, lang),
@@ -103,13 +108,13 @@
 
     const observations = (session.observations || []).map((o) => Object.assign({}, o, { stage: o.stageId ? stageNo(o.stageId) : "" }));
 
-    const timeline = inst.groundTruth.attackerTimeline
+    const timeline = (branching ? [] : inst.groundTruth.attackerTimeline)
       .map((e) => ({ at: e.at, atLabel: L(e.atLabel, lang), label: L(e.text, lang), kind: "attacker" }))
       .concat(injects.filter((i) => i.stateId === "released").map((i) => ({ at: i.at, atLabel: i.time, label: i.headline, kind: "inject" })))
-      .concat(decisions.filter((d) => d.recorded).map((d) => ({ at: d.scenarioAt, atLabel: t("editor.stageN", { n: d.stage }, lang), label: d.option || d.text || d.question, kind: "decision" })))
+      .concat(decisions.filter((d) => d.recorded).map((d) => ({ at: d.scenarioAt, atLabel: branching ? "§ " + d.num : t("editor.stageN", { n: d.stage }, lang), label: d.option || d.text || d.question, kind: "decision" })))
       .sort((a, b) => a.at - b.at);
 
-    const lastStage = S.locate(session).slide && S.locate(session).slide.stageId ? stageNo(S.locate(session).slide.stageId) : inst.stages.length;
+    const lastStage = branching ? 0 : S.locate(session).slide && S.locate(session).slide.stageId ? stageNo(S.locate(session).slide.stageId) : inst.stages.length;
     // "Never surfaced" only when that is actually true: the reveal belongs to the
     // debrief, or the exercise ended before reaching the reveal stage.
     const ended = session.status === "ended";
@@ -129,9 +134,9 @@
       .map((o) => ({ text: o.action, owner: o.owner ? roleLabel(o.owner, lang) : "", priority: o.priority || "medium", due: o.due || "", status: o.status || "open", fromObservation: true }))
       .concat((inst.debrief.suggestedActions || []).map((a) => ({ text: L(a.text, lang), owner: roleLabel(a.ownerRole, lang), priority: a.priority || "medium", due: "", status: "suggested", fromObservation: false })));
 
-    const scorecard = S.criteria(inst).map((c) => {
+    const scorecard = S.criteria(inst, session).map((c) => {
       const sc = (session.scorecard || {})[c.id] || {};
-      return { id: c.id, stage: stageNo(c.stageId), text: L(c.text, lang), rating: sc.rating || "", comment: sc.comment || "" };
+      return { id: c.id, stage: branching ? pageNo(c.pageId) : stageNo(c.stageId), text: L(c.text, lang), rating: sc.rating || "", comment: sc.comment || "" };
     });
 
     const elapsedMin = Math.round(S.elapsedMs(session, Date.now()) / 60000);
@@ -146,13 +151,14 @@
       date: BK.i18n.fmt.date(new Date(session.createdAt), lang),
       plannedMin: inst.pacing.totalMinutes,
       actualMin: elapsedMin,
-      stageCount: inst.stages.length,
+      stageCount: branching ? decisions.length : inst.stages.length,
       seed: inst.seed,
       templateId: inst.templateId,
       templateVersion: inst.templateVersion,
       objectives,
-      rootCause: L(inst.groundTruth.rootCause, lang),
-      attackerTimeline: inst.groundTruth.attackerTimeline.map((e) => ({ at: L(e.atLabel, lang), text: L(e.text, lang) })),
+      rootCause: branching ? "" : L(inst.groundTruth.rootCause, lang),
+      attackerTimeline: branching ? [] : inst.groundTruth.attackerTimeline.map((e) => ({ at: L(e.atLabel, lang), text: L(e.text, lang) })),
+      branch: branching ? branchSummary(session, lang) : null,
       hiddenFacts,
       timeline,
       injects,
@@ -168,6 +174,68 @@
       scorecard,
       resolution: inst.resolution ? L(inst.resolution.text, lang) : "",
       notes: session.notes || ""
+    };
+  }
+
+  // ---- Branching report parts ---------------------------------------------------------------------------
+
+  /** One row per choice made: what was chosen, why it mattered, and what was not taken. */
+  function branchDecisions(session, lang) {
+    const B = BK.engine.branching;
+    const inst = session.instance;
+    return session.route
+      .filter((r) => r.option)
+      .map((r, i) => {
+        const pg = B.page(inst, r.pageId);
+        const flags = B.flagsAt(session, pg.id);
+        const offered = B.offered(pg.choice, flags);
+        const landingTitle = (o) => {
+          const target = B.landing(inst, o.to, flags.concat(o.set || []));
+          const lp = target && B.page(inst, target.pageId);
+          return lp ? (lp.ending ? L(lp.ending.label, lang) : L(lp.title, lang)) : "";
+        };
+        const chosen = offered.find((o) => o.key === r.option) || pg.choice.options.find((o) => o.key === r.option);
+        return {
+          id: pg.id,
+          stage: i + 1,
+          num: B.seenNum(session, pg.id),
+          stageTitle: L(pg.title, lang),
+          question: L(pg.choice.question, lang),
+          recorded: true,
+          option: chosen ? chosen.key + " — " + L(chosen.text, lang) : r.option,
+          why: chosen ? L(chosen.why, lang) : "",
+          strong: L(pg.choice.strong, lang),
+          notTaken: offered.filter((o) => o.key !== r.option).map((o) => ({ key: o.key, text: L(o.text, lang), leadsTo: landingTitle(o) })),
+          text: "",
+          rationale: "",
+          dissent: "",
+          openQuestions: "",
+          owner: "",
+          at: r.chosenAt || null,
+          scenarioAt: pg.clock || 0
+        };
+      });
+  }
+
+  /** Ending reached, endings not reached and the map (with page titles, operator-only). */
+  function branchSummary(session, lang) {
+    const B = BK.engine.branching;
+    const inst = session.instance;
+    const last = B.page(inst, session.route[session.route.length - 1].pageId);
+    const titles = {};
+    const map = B.mapGraph(inst, session.route, lang, session);
+    inst.pages.forEach((pg) => (titles[pg.num] = pg.ending ? L(pg.ending.label, lang) : L(pg.title, lang)));
+    session.route.filter((r) => !r.auto).forEach((r) => (titles[B.seenNum(session, r.pageId)] = L(B.page(inst, r.pageId).title, lang)));
+    const ending = (pg) => ({ num: pg.num, label: L(pg.ending.label, lang), summary: L(pg.ending.summary, lang), grade: pg.ending.grade, gradeLabel: B.gradeLabel(pg.ending.grade, lang) });
+    return {
+      mode: inst.settings.mode,
+      length: inst.settings.length,
+      ending: last && last.ending ? ending(last) : null,
+      otherEndings: inst.pages.filter((pg) => pg.ending && pg !== last).map(ending).sort((a, b) => a.grade - b.grade),
+      route: session.route.filter((r) => !r.auto).map((r) => ({ num: B.seenNum(session, r.pageId), title: L(B.page(inst, r.pageId).title, lang), option: r.option || "" })),
+      map,
+      titles,
+      flags: (session.flags || []).map((f) => B.flagLabel(inst, f, lang))
     };
   }
 
@@ -202,13 +270,22 @@
     h(2, t("report.objectives", null, l));
     r.objectives.forEach((o) => li(o.text + " — **" + t("report.status." + o.status, null, l) + "**" + (o.note ? " (" + o.note + ")" : "")));
 
-    h(2, t("report.groundTruth", null, l));
-    out.push(r.rootCause, "");
-    r.attackerTimeline.forEach((e) => li(e.at + ": " + e.text));
+    if (r.branch) {
+      h(2, t("report.endingReached", null, l));
+      out.push(r.branch.ending ? "**" + r.branch.ending.label + "** (" + r.branch.ending.gradeLabel + ") — " + r.branch.ending.summary : t("report.noEnding", null, l));
+      h(3, t("report.route", null, l));
+      out.push(r.branch.route.map((x) => "§ " + x.num + (x.option ? " (" + x.option + ")" : "")).join(" → "));
+      h(3, t("report.otherEndings", null, l));
+      r.branch.otherEndings.forEach((e) => li(e.label + " (" + e.gradeLabel + ")"));
+    } else {
+      h(2, t("report.groundTruth", null, l));
+      out.push(r.rootCause, "");
+      r.attackerTimeline.forEach((e) => li(e.at + ": " + e.text));
+    }
 
     h(2, t("report.decisions", null, l));
     r.decisions.forEach((d) => {
-      h(3, t("editor.stageN", { n: d.stage }, l) + " · " + d.question);
+      h(3, (r.branch ? t("report.choiceN", { n: d.stage }, l) + " · § " + d.num : t("editor.stageN", { n: d.stage }, l)) + " · " + d.question);
       if (!d.recorded) return out.push(t("report.notRecorded", null, l));
       if (d.option) li(t("report.field.option", null, l) + ": " + d.option);
       if (d.text) li(t("report.field.text", null, l) + ": " + d.text);
@@ -216,6 +293,8 @@
       if (d.dissent) li(t("report.field.dissent", null, l) + ": " + d.dissent);
       if (d.openQuestions) li(t("report.field.openQuestions", null, l) + ": " + d.openQuestions);
       if (d.owner) li(t("report.field.owner", null, l) + ": " + d.owner);
+      if (d.why) li(t("presenter.choiceWhy", null, l) + ": " + d.why);
+      (d.notTaken || []).forEach((n) => li(t("report.notTaken", null, l) + ": " + n.key + " — " + n.text + (n.leadsTo ? " → " + n.leadsTo : "")));
       return null;
     });
 
@@ -239,7 +318,7 @@
 
     h(2, t("report.scorecard", null, l));
     out.push("*" + t("report.scorecardNote", null, l) + "*", "");
-    r.scorecard.forEach((sc) => li(t("editor.stageN", { n: sc.stage }, l) + " · " + sc.text + " — " + (sc.rating ? t("report.rating." + sc.rating, null, l) : t("report.rating.none", null, l)) + (sc.comment ? " (" + sc.comment + ")" : "")));
+    r.scorecard.forEach((sc) => li((r.branch ? t("report.choiceN", { n: sc.stage }, l) : t("editor.stageN", { n: sc.stage }, l)) + " · " + sc.text + " — " + (sc.rating ? t("report.rating." + sc.rating, null, l) : t("report.rating.none", null, l)) + (sc.comment ? " (" + sc.comment + ")" : "")));
 
     h(2, t("report.frameworks", null, l));
     r.frameworks.mitre.forEach((m) => li("MITRE ATT&CK " + m.id + " — " + (m.name || "")));

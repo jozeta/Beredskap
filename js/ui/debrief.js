@@ -36,6 +36,38 @@
     );
   }
 
+  // ---- Branching sections -------------------------------------------------------------------------------
+
+  function endingSection(b, l) {
+    return section(
+      t("report.endingReached", null, l),
+      b.ending
+        ? [el("p", null, c.badge(b.ending.gradeLabel, b.ending.grade <= 2 ? "ok" : b.ending.grade === 3 ? "warn" : "danger", "flag"), " ", el("strong", { text: b.ending.label })), el("p", { text: b.ending.summary })]
+        : el("p", { class: "muted", text: t("report.noEnding", null, l) }),
+      el("h3", { class: "eyebrow", text: t("report.otherEndings", null, l) }),
+      el("ul", { class: "bullets" }, b.otherEndings.map((e) => el("li", null, el("strong", { text: e.label }), " — " + e.gradeLabel))),
+      b.flags.length ? [el("h3", { class: "eyebrow", text: t("presenter.flags", null, l) }), el("div", { class: "badges" }, b.flags.map((f) => c.badge(f, "accent")))] : null
+    );
+  }
+
+  /** Every choice: the option taken and why it mattered, and the roads not taken. */
+  function choicesSection(r, l) {
+    return section(
+      t("report.choices", null, l),
+      table(
+        ["#", "§", t("csv.question", null, l), t("report.field.option", null, l), t("presenter.choiceWhy", null, l), t("report.notTaken", null, l)],
+        r.decisions.map((d) => [
+          String(d.stage),
+          String(d.num),
+          d.question,
+          d.option,
+          d.why,
+          d.notTaken.length ? el("ul", { class: "bullets" }, d.notTaken.map((n) => el("li", null, n.key + " — " + n.text, n.leadsTo ? el("span", { class: "muted", text: " → " + n.leadsTo }) : null))) : "—"
+        ])
+      )
+    );
+  }
+
   function exportsBar(sess) {
     const ex = Object.assign({ id: sess.exerciseId }, sess.instance);
     const io = BK.io.export;
@@ -86,7 +118,7 @@
         "div",
         { class: "grid grid--overview" },
         section(t("report.objectives", null, l), F().objectivesEditor(sess, dispatch, l)),
-        section(
+        r.branch ? endingSection(r.branch, l) : section(
           t("report.groundTruth", null, l),
           el("p", { text: r.rootCause }),
           el("h3", { class: "eyebrow", text: t("editor.hiddenFacts", null, l) }),
@@ -109,9 +141,11 @@
         )
       ),
 
-      section(t("report.timeline", null, l), BK.graphics.charts.timeline({ title: t("report.timeline", null, l), events: r.timeline }, l)),
+      r.branch
+        ? section(t("report.route", null, l), el("div", { class: "routemap-wrap" }, BK.graphics.routeMap(r.branch.map, { lang: l, title: t("report.route", null, l), choices: r.decisions.length, titles: r.branch.titles })))
+        : section(t("report.timeline", null, l), BK.graphics.charts.timeline({ title: t("report.timeline", null, l), events: r.timeline }, l)),
 
-      section(
+      r.branch ? choicesSection(r, l) : section(
         t("report.decisions", null, l),
         table(
           [t("csv.stage", null, l), t("csv.question", null, l), t("report.field.option", null, l), t("report.field.text", null, l), t("report.field.rationale", null, l), t("report.field.dissent", null, l), t("report.field.owner", null, l)],
