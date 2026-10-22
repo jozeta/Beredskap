@@ -73,7 +73,7 @@
 
   // The scaled canvas is a visual copy of the room's slide (with its own h1), so it
   // is hidden from assistive technology; the caption says which slide it is instead.
-  function preview(p, label, cls) {
+  function preview(p, label, cls, emptyText) {
     const frame = el("div", { class: ["stage-frame", cls] });
     let caption = label;
     if (p) {
@@ -86,7 +86,7 @@
       });
       caption = label + " — " + t("presenter.slideOf", { n: p.progress.slideNumber, total: p.progress.slideCount, type: t("editor.slideType." + p.slide.type) });
     } else {
-      frame.appendChild(el("p", { class: "stage-frame__empty", text: t("presenter.endOfDeck") }));
+      frame.appendChild(el("p", { class: "stage-frame__empty", text: emptyText || t("presenter.endOfDeck") }));
     }
     return el("figure", { class: "preview" }, el("figcaption", { class: "eyebrow" }, el("span", { text: label }), el("span", { class: "sr-only", text: caption.slice(label.length) })), frame);
   }
@@ -167,8 +167,8 @@
       el(
         "div",
         { class: "pres-nav__lower" },
-        preview(next, t("presenter.next"), "stage-frame--next"),
-        el(
+        preview(next, t("presenter.next"), "stage-frame--next", f.branching && f.branching.choice && f.branching.choice.current && !f.branching.choice.chosen ? t("presenter.awaitingChoice") : null),
+        f.branching ? routeList(f.branching) : el(
           "nav",
           { class: "pres-stages", "aria-label": t("presenter.stages") },
           el("h2", { class: "eyebrow", text: t("presenter.stages") }),
@@ -190,6 +190,93 @@
           )
         )
       )
+    );
+  }
+
+  // ---- Branching (gamebook) panels ---------------------------------------------------------------------
+
+  /** Route so far: page numbers and the option taken on each. */
+  function routeList(b) {
+    return el(
+      "nav",
+      { class: "pres-stages pres-route", "aria-label": t("presenter.route") },
+      el("h2", { class: "eyebrow", text: t("presenter.route") }),
+      el(
+        "ol",
+        null,
+        b.route.map((r, i) =>
+          el(
+            "li",
+            { class: ["pres-stage", i === b.route.length - 1 && "is-current"], "aria-current": i === b.route.length - 1 ? "step" : null },
+            el("span", { class: "pres-stage__num", text: "§" + r.num }),
+            el("span", { text: r.title }),
+            r.option ? c.badge(r.option, "neutral") : null
+          )
+        )
+      )
+    );
+  }
+
+  /** The choice on the current slide's page: one button per offered option, with its facilitator notes. */
+  function choiceCard(sess, b) {
+    if (!b.choice) return null;
+    const ch = b.choice;
+    const choose = (key) => () => view.ctrl.dispatch({ type: "choose", option: key });
+    return c.card(
+      { class: "card pres-card pres-choice" },
+      el("h2", { text: t("presenter.choice") + " · § " + b.page.num }),
+      el("p", { class: "pres-decision__q", text: ch.question }),
+      el(
+        "ol",
+        { class: "pres-options" },
+        ch.options.map((o, i) =>
+          el(
+            "li",
+            { class: ["pres-option", ch.chosen === o.key && "is-chosen", ch.chosen && ch.chosen !== o.key && "is-dimmed"] },
+            el(
+              "div",
+              { class: "pres-option__head" },
+              ch.current
+                ? c.button({ label: t("presenter.chooseBtn", { n: i + 1 }), kind: "primary", size: "sm", onClick: choose(o.key), disabled: sess.paused })
+                : c.badge(String(i + 1), ch.chosen === o.key ? "accent" : "neutral"),
+              el("strong", { class: "pres-option__text", text: o.text })
+            ),
+            el("p", { class: "small" }, el("span", { class: "muted", text: t("presenter.choiceWhy") + ": " }), o.why),
+            el(
+              "p",
+              { class: "small muted" },
+              o.ending ? t("presenter.landsOnEnding", { grade: o.ending }) : t("presenter.landsOn", { n: o.to, title: o.toTitle }),
+              o.sets.length ? " · " + t("presenter.setsFlags", { list: o.sets.join(", ") }) : ""
+            )
+          )
+        )
+      ),
+      ch.strong ? el("p", { class: "notice small" }, el("strong", { text: t("presenter.choiceStrong") + ": " }), ch.strong) : null,
+      ch.chosen ? el("p", { class: "small muted", text: ch.current ? "" : t("presenter.chosen", { n: ch.options.findIndex((o) => o.key === ch.chosen) + 1 }) }) : null,
+      !ch.current && !ch.chosen ? el("p", { class: "small muted", text: t("presenter.notCurrentChoice") }) : null
+    );
+  }
+
+  /** Page notes, the ending (when reached) and the consequences in play, with undo. */
+  function branchCard(sess, b) {
+    const pg = b.page;
+    const undo = async () => {
+      const ok = await BK.ui.dialog.confirm({ title: t("presenter.undoTitle"), message: t("presenter.undoBody", { n: b.lastChoice.num, option: b.lastChoice.option }), confirmLabel: t("presenter.undo") });
+      if (ok) view.ctrl.dispatch({ type: "unchoose" });
+    };
+    return c.card(
+      { class: "card pres-card" },
+      el("h2", { text: pg ? "§ " + pg.num + " · " + pg.title : t("presenter.route") }),
+      el("p", { class: "muted small", text: t("presenter.choiceProgress", { n: b.choicesMade, min: b.range[0], max: b.range[1] }) }),
+      pg && pg.ending
+        ? el("div", { class: "notice" }, el("strong", { text: t("presenter.endingReached") + ": " + pg.ending.label + " · " + pg.ending.gradeLabel }), el("p", { class: "small", text: pg.ending.summary }))
+        : null,
+      pg && pg.notes ? el("p", { text: pg.notes }) : null,
+      pg && pg.expected ? el("p", null, el("strong", { text: t("editor.expected") + ": " }), pg.expected) : null,
+      pg && pg.hints.length ? el("ul", { class: "bullets" }, pg.hints.map((h) => el("li", { text: h }))) : null,
+      el("h3", { class: "eyebrow", text: t("presenter.flags") }),
+      b.flags.length ? el("div", { class: "badges" }, b.flags.map((f) => c.badge(f, "accent"))) : el("p", { class: "muted small", text: t("presenter.noFlags") }),
+      b.canUndo ? el("div", { class: "actions" }, c.button({ label: t("presenter.undo"), icon: "prev", size: "sm", kind: "ghost", onClick: undo })) : null
     );
   }
 
@@ -365,7 +452,19 @@
           "div",
           { class: "pres-main" },
           navCard(sess, f),
-          el("div", { class: "pres-side" }, timerCard(sess), notesCard(f), decisionCard(sess, f), injectsCard(f), roleCard(f), facilitationCards(sess), factsCard(f))
+          f.branching
+            ? el(
+                "div",
+                { class: "pres-side" },
+                choiceCard(sess, f.branching),
+                branchCard(sess, f.branching),
+                notesCard(f),
+                sess.instance.settings.mode === "hybrid" ? timerCard(sess) : null,
+                f.injects.length ? injectsCard(f) : null,
+                roleCard(f),
+                facilitationCards(sess)
+              )
+            : el("div", { class: "pres-side" }, timerCard(sess), notesCard(f), decisionCard(sess, f), injectsCard(f), roleCard(f), facilitationCards(sess), factsCard(f))
         )
       )
     );

@@ -196,7 +196,7 @@
 
   function scorecardEditor(sess, dispatch, lang) {
     const stageNo = (id) => sess.instance.stages.findIndex((s) => s.id === id) + 1;
-    const crit = BK.engine.session.criteria(sess.instance);
+    const crit = BK.engine.session.criteria(sess.instance, sess);
     return el(
       "div",
       { class: "fx-scorecard" },
@@ -211,7 +211,7 @@
           return el(
             "li",
             { class: "fx-objective" },
-            el("p", { class: "fx-objective__text" }, el("span", { class: "muted small", text: t("editor.stageN", { n: stageNo(cr.stageId) }) + " · " }), BK.loc(cr.text, lang)),
+            el("p", { class: "fx-objective__text" }, el("span", { class: "muted small", text: (cr.pageId ? "§ " + cr.num : t("editor.stageN", { n: stageNo(cr.stageId) })) + " · " }), BK.loc(cr.text, lang)),
             c.segmented({
               label: t("report.rating.label"),
               name: "fx-score-" + cr.id,

@@ -79,6 +79,9 @@
     return node.textContent + "\n" + attrs.join("\n");
   }
 
+  // Stage-based checks apply to discussion exercises; branching ones have their own suite.
+  const discussion = () => BK.scenarios.list().filter((t) => t.format !== "branching");
+
   suite("scenario library", () => {
     test("every template passes validation", () => {
       BK.scenarios.list().forEach((t) => {
@@ -99,7 +102,7 @@
     });
 
     test("hidden facts never appear in public text before their reveal stage, at every stage count", () => {
-      BK.scenarios.list().forEach((t) => {
+      discussion().forEach((t) => {
         for (let n = t.minStages; n <= t.maxStages; n++) {
           const inst = generate(t, { stageCount: n, injectDensity: "high", difficulty: "advanced" });
           inst.hiddenFacts.forEach((hf) => {
@@ -114,7 +117,7 @@
     test("confidentiality: no facilitator text, hidden fact or unreleased inject reaches any projection or stage DOM, every scenario, every branch, both languages", () => {
       const leaks = new Set();
       const check = (ok, msg) => ok || leaks.add(msg);
-      BK.scenarios.list().forEach((t) => {
+      discussion().forEach((t) => {
         const inst = Object.assign({ id: "ex-" + t.id }, generate(t, { stageCount: t.maxStages, injectDensity: "high", audience: "mixed", difficulty: "advanced" }));
         const secrets = facilitatorStrings(inst);
         const injects = [];
@@ -150,6 +153,21 @@
       assert.ok(!leaks.size, leaks.size + " leak(s):\n" + Array.from(leaks).slice(0, 40).join("\n"));
     });
 
+    test("no generated text, in any scenario or format, keeps an unresolved placeholder", () => {
+      const bad = [];
+      const scan = (v, path, id) => {
+        if (typeof v === "string") {
+          if (/\{\{|⟦/.test(v)) bad.push(id + " " + path + ": " + v.slice(0, 60));
+        } else if (Array.isArray(v)) v.forEach((x, i) => scan(x, path + "[" + i + "]", id));
+        else if (v && typeof v === "object") Object.keys(v).forEach((k) => scan(v[k], path + "." + k, id));
+      };
+      BK.scenarios.list().forEach((t) => {
+        const params = t.format === "branching" ? { length: "long", mode: "hybrid", injectDensity: "high" } : { stageCount: t.maxStages, injectDensity: "high" };
+        ["se", "eu"].forEach((jurisdiction) => scan(generate(t, Object.assign({ jurisdiction }, params)), "", t.id));
+      });
+      assert.ok(!bad.length, bad.length + " unresolved:\n" + bad.slice(0, 20).join("\n"));
+    });
+
     test("every chart in every scenario renders in both languages", () => {
       // Localise a chart the way the audience projection does: { en, sv } -> string.
       const localise = (v, lang) =>
@@ -161,8 +179,8 @@
               : Object.keys(v).reduce((o, k) => ((o[k] = localise(v[k], lang)), o), {})
           : v;
       BK.scenarios.list().forEach((t) => {
-        const inst = generate(t, { stageCount: t.maxStages, audience: "technical" });
-        inst.stages.forEach((st) =>
+        const inst = generate(t, { stageCount: t.maxStages, audience: "technical", length: "long" });
+        (inst.format === "branching" ? inst.pages.filter((pg) => pg.chart).map((pg) => ({ charts: [pg.chart] })) : inst.stages).forEach((st) =>
           st.charts.forEach((c) =>
             ["en", "sv"].forEach((lang) => {
               const node = BK.graphics.chart(Object.assign(localise(c, lang), { markers: [] }), { lang, slide: { currency: inst.currency } });

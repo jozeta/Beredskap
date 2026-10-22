@@ -99,3 +99,21 @@
 /* Decision options carry full sentences: one per row. */
 .pres-decision-options .segmented--wrap { grid-template-columns: 1fr; }
 .pres-decision-options .segmented__label { min-height: 36px; }
+
+/* ---- Branching: choice and route panels ------------------------------------------------------- */
+.pres-options { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s1); }
+.pres-option {
+  display: grid;
+  gap: 4px;
+  padding: 12px 14px;
+  border: var(--hairline) solid var(--line);
+  border-radius: var(--radius-sm);
+  transition: border-color var(--dur) var(--ease), background-color var(--dur) var(--ease), opacity var(--dur) var(--ease);
+}
+.pres-option p { margin: 0; }
+.pres-option__head { display: flex; align-items: center; gap: var(--s1); }
+.pres-option__text { flex: 1; min-width: 0; }
+.pres-option.is-chosen { border-color: var(--accent); background: var(--accent-soft); }
+.pres-option.is-dimmed { opacity: 0.6; }
+.pres-route .pres-stage { cursor: default; }
+.pres-route .pres-stage__num { min-width: 3.2em; width: auto; padding: 0 6px; }

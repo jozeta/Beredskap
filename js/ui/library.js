@@ -16,7 +16,9 @@
   const opts = BK.data.options;
 
   // Filter state survives re-renders (e.g. language switch) during the session.
-  const state = { query: "", category: "", archetype: "" };
+  const state = { query: "", category: "", archetype: "", format: "" };
+
+  const formatOf = (tpl) => (tpl.format === "branching" ? "branching" : "discussion");
 
   /** Lower-cased haystack in both languages so search works regardless of UI language. */
   function searchText(tpl) {
@@ -32,6 +34,7 @@
   function matches(tpl) {
     if (state.category && tpl.category !== state.category) return false;
     if (state.archetype && opts.archetypeLetter(tpl.archetype) !== state.archetype) return false;
+    if (state.format && formatOf(tpl) !== state.format) return false;
     const q = state.query.trim().toLowerCase();
     return !q || searchText(tpl).includes(q);
   }
@@ -43,6 +46,17 @@
   function archetypeBadge(tpl) {
     const letter = opts.archetypeLetter(tpl.archetype);
     return c.badge(letter + " · " + t("archetype." + letter), "neutral");
+  }
+
+  /** Stage range for discussion exercises; format, choices and endings for branching ones. */
+  function sizeBadges(tpl) {
+    if (tpl.format !== "branching") return c.badge(t("common.stageRange", { min: tpl.minStages, max: tpl.maxStages }), "neutral", "timeline");
+    const st = BK.engine.branching.stats(tpl.pages, tpl.start);
+    return [
+      c.badge(t("branch.format"), "info", "route"),
+      c.badge(t("branch.choiceRange", { min: st.short[0], max: st.long[1] }), "neutral", "decision"),
+      c.badge(t("branch.endings", { n: st.endings }), "neutral", "flag")
+    ];
   }
 
   function scenarioCard(tpl) {
@@ -63,7 +77,7 @@
             { class: "badges" },
             c.badge(t("category." + tpl.category), "accent"),
             archetypeBadge(tpl),
-            c.badge(t("common.stageRange", { min: tpl.minStages, max: tpl.maxStages }), "neutral", "timeline")
+            sizeBadges(tpl)
           )
         )
       ),
@@ -83,6 +97,16 @@
     );
   }
 
+  /** Branching preview: the size of the map, never the pages themselves (they are the surprise). */
+  function mapOutline(tpl) {
+    const st = BK.engine.branching.stats(tpl.pages, tpl.start);
+    const range = (r) => r[0] + "–" + r[1];
+    return [
+      el("h3", { class: "eyebrow", text: t("library.mapOutline") }),
+      el("p", { text: t("library.mapSummary", { pages: tpl.pages.filter((p) => !p.route).length, endings: st.endings, short: range(st.short), long: range(st.long) }) })
+    ];
+  }
+
   function preview(tpl) {
     const body = el(
       "div",
@@ -91,8 +115,7 @@
       el("p", { text: BK.loc(tpl.summary) }),
       el("h3", { class: "eyebrow", text: t("library.objectives") }),
       el("ul", { class: "bullets" }, (tpl.learningObjectives || []).map((lo) => el("li", { text: BK.loc(lo.text) }))),
-      el("h3", { class: "eyebrow", text: t("library.stagesOutline") }),
-      el("ol", { class: "bullets" }, (tpl.stages || []).map((s) => el("li", { text: BK.loc(s.title) }))),
+      tpl.format === "branching" ? mapOutline(tpl) : [el("h3", { class: "eyebrow", text: t("library.stagesOutline") }), el("ol", { class: "bullets" }, (tpl.stages || []).map((s) => el("li", { text: BK.loc(s.title) })))],
       el("h3", { class: "eyebrow", text: t("library.attack") }),
       el("p", { class: "mono small", text: (tpl.mitre || []).join(" · ") })
     );
@@ -141,7 +164,15 @@
       { class: "toolbar" },
       c.field({ label: t("library.search"), control: search, className: "field--grow" }),
       c.field({ label: t("library.category"), control: c.select(categoryOptions, state.category, (v) => { state.category = v; onChange(); }) }),
-      c.field({ label: t("library.archetype"), control: c.select(archetypeOptions, state.archetype, (v) => { state.archetype = v; onChange(); }) })
+      c.field({ label: t("library.archetype"), control: c.select(archetypeOptions, state.archetype, (v) => { state.archetype = v; onChange(); }) }),
+      c.field({
+        label: t("library.format"),
+        control: c.select(
+          [{ value: "", label: t("library.allFormats") }, { value: "discussion", label: t("branch.formatDiscussion") }, { value: "branching", label: t("branch.format") }],
+          state.format,
+          (v) => { state.format = v; onChange(); }
+        )
+      })
     );
   }
 

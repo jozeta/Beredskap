@@ -47,6 +47,8 @@
     discussionMinutes: null,
     injectRelease: "manual",
     decisionMode: "options",
+    mode: "pure", // branching: "pure" (choice after choice) | "hybrid" (discussion stops)
+    length: "short", // branching: "short" | "long"
     seed: "FJORD-1000"
   };
 
@@ -57,7 +59,13 @@
     p.participantNames = p.participantNames || {};
     p.seed = BK.rng.normalizeSeed(p.seed) || DEFAULT_PARAMS.seed;
     p.scenarioId = template.id;
-    p.stageCount = clampStages(template, p.stageCount || suggestStages(template, p.durationMinutes));
+    if (template.format === "branching") {
+      p.stageCount = null;
+      p.mode = p.mode === "hybrid" ? "hybrid" : "pure";
+      p.length = p.length === "long" ? "long" : "short";
+    } else {
+      p.stageCount = clampStages(template, p.stageCount || suggestStages(template, p.durationMinutes));
+    }
     if (!Array.isArray(p.roles) || p.roles.length === 0) p.roles = template.roles.slice();
     return p;
   }
@@ -538,6 +546,142 @@
 
   const HINT_POLICY = { introductory: "offer", intermediate: "onRequest", advanced: "withhold", executive: "onRequest" };
 
+  function buildObjectives(template, p, ctx, missing) {
+    const R = T();
+    const deselected = new Set(p.objectives.deselected || []);
+    return (template.learningObjectives || [])
+      .filter((lo) => !deselected.has(lo.id))
+      .map((lo) => ({ id: lo.id, text: R.resolveText(lo.text, ctx, missing), custom: false }))
+      .concat(
+        (p.objectives.custom || [])
+          .filter((t) => String(t).trim())
+          .map((t, i) => ({ id: "custom-" + (i + 1), text: { en: String(t), sv: String(t) }, custom: true }))
+      );
+  }
+
+  function buildFrameworks(template) {
+    const fw = BK.data.frameworks;
+    return {
+      mitre: (template.mitre || []).map((id) => ({ id, name: fw.mitre[id] || null })),
+      nistCsf: ((template.frameworks && template.frameworks.nistCsf) || []).map((id) => ({ id, name: fw.nistCsf[id] || null })),
+      iso27001: ((template.frameworks && template.frameworks.iso27001) || []).map((id) => ({ id, name: fw.iso27001[id] || null }))
+    };
+  }
+
+  // ---- 6b. Branching (gamebook) instance -------------------------------------------------------
+
+  /**
+   * Pages instead of stages (branching.js has the map logic). Shared entity,
+   * placeholder and inject handling is the same as for discussion exercises;
+   * page numbers are a seeded draw so the stage shows non-sequential "§ N".
+   */
+  function generateBranching(template, p, g) {
+    const R = T();
+    const { root, ctx, entities, vars, currency, missing } = g;
+    const people = entities.people;
+    const B = BK.engine.branching;
+
+    const numRng = root.fork("page-numbers");
+    const pool = numRng.shuffle(Array.from({ length: 399 }, (_, i) => i + 2));
+    let next = 0;
+    const num = (pg) => (pg.id === template.start ? 1 : pool[next++]);
+
+    const pages = template.pages.map((pg) => {
+      const pseudoStage = { id: pg.id, injects: pg.injects || [] };
+      const injects = candidateInjects(pseudoStage, p, root).map((raw) => buildInject(applyVariant(raw, root), ctx, people, pg.id, missing));
+      const chart = pg.chart ? buildCharts({ id: pg.id, clock: pg.clock || 0, charts: [pg.chart] }, ctx, entities, vars, root, injects, missing)[0] : null;
+      const questions = (pg.discuss || [])
+        .filter((q) => !q.audience || p.audience === "mixed" || q.audience === p.audience)
+        .map((q, i) => {
+          const roles = q.roles || [];
+          const present = roles.filter((r) => people[r] && people[r].present);
+          return { id: pg.id + "-q" + (i + 1), text: R.resolveText(q.text, ctx, missing), roles, targets: present.map((r) => people[r].name), roleNotPresent: roles.length > 0 && present.length === 0 };
+        });
+      return {
+        id: pg.id,
+        num: num(pg),
+        clock: pg.clock || 0,
+        long: !!pg.long,
+        skipTo: pg.skipTo || null,
+        title: R.resolveText(pg.title, ctx, missing),
+        narrative: R.resolveText(pg.narrative, ctx, missing),
+        // A variant is its own gamebook passage, with its own number.
+        variants: (pg.variants || []).map((v) => ({ if: v.if, num: pool[next++], narrative: R.resolveText(v.narrative, ctx, missing), because: v.because ? R.resolveText(v.because, ctx, missing) : null })),
+        injects,
+        chart,
+        discuss: questions.length ? { questions, minutes: pg.discussMinutes || 4 } : null,
+        facilitator: pg.facilitator ? R.resolveDeep(pg.facilitator, ctx, missing) : null,
+        choice: pg.choice
+          ? {
+              question: R.resolveText(pg.choice.question, ctx, missing),
+              strong: R.resolveDeep(pg.choice.strong || null, ctx, missing),
+              options: pg.choice.options.map((o) => ({
+                key: o.key,
+                text: R.resolveText(o.text, ctx, missing),
+                to: o.to,
+                set: (o.set || []).slice(),
+                requires: o.requires == null ? null : o.requires,
+                hides: o.hides == null ? null : o.hides,
+                why: R.resolveDeep(o.why || null, ctx, missing)
+              }))
+            }
+          : null,
+        route: pg.route ? pg.route.map((r) => ({ if: r.if == null ? null : r.if, to: r.to })) : null,
+        ending: pg.ending ? { grade: pg.ending.grade, label: R.resolveText(pg.ending.label, ctx, missing), summary: R.resolveText(pg.ending.summary, ctx, missing) } : null
+      };
+    });
+
+    const est = B.estimate(pages, template.start, p.length, p.mode);
+    const range = { min: est.min, max: est.max };
+    const total = est.minutes;
+    const discussMinutes = 4;
+
+    const instance = {
+      schema: BK.config.schemaId,
+      schemaVersion: BK.config.schemaVersion,
+      format: "branching",
+      templateId: template.id,
+      templateVersion: template.version,
+      seed: p.seed,
+      params: p,
+      title: p.title && p.title.trim() ? { en: p.title.trim(), sv: p.title.trim() } : R.resolveText(template.title, ctx, missing),
+      scenarioTitle: R.resolveText(template.title, ctx, missing),
+      summary: R.resolveText(template.summary, ctx, missing),
+      category: template.category,
+      archetype: template.archetype,
+      emblem: template.emblem,
+      currency,
+      entities,
+      vars,
+      objectives: buildObjectives(template, p, ctx, missing),
+      frameworks: buildFrameworks(template),
+      start: template.start,
+      pages,
+      flagLabels: R.resolveDeep(template.flags || {}, ctx, missing),
+      // Discussion-format fields stay present (empty) so shared code never meets undefined.
+      stages: [],
+      hiddenFacts: [],
+      groundTruth: null,
+      resolution: null,
+      debrief: R.resolveDeep(template.debrief || {}, ctx, missing),
+      settings: {
+        audience: p.audience,
+        difficulty: p.difficulty,
+        injectRelease: "manual",
+        decisionMode: "options",
+        stageTheme: p.stageTheme,
+        lang: p.lang,
+        mode: p.mode,
+        length: p.length,
+        discussMinutes
+      },
+      pacing: { totalMinutes: total, stages: [], choiceRange: [range.min, range.max] },
+      slides: [],
+      unresolved: Array.from(missing).sort()
+    };
+    return instance;
+  }
+
   // ---- 7. Whole instance ----------------------------------------------------------------------
 
   function generate(template, rawParams) {
@@ -557,6 +701,8 @@
 
     const ctx = { entities, vars, clock, currency, environment: p.environment, jurisdiction: p.jurisdiction };
     const missing = new Set();
+
+    if (template.format === "branching") return generateBranching(template, p, { root, ctx, entities, vars, currency, missing });
 
     const selected = selectStages(template, p.stageCount);
     const revealAt = remapReveals(template, selected);
@@ -605,22 +751,8 @@
       };
     });
 
-    const deselected = new Set(p.objectives.deselected || []);
-    const objectives = (template.learningObjectives || [])
-      .filter((lo) => !deselected.has(lo.id))
-      .map((lo) => ({ id: lo.id, text: R.resolveText(lo.text, ctx, missing), custom: false }))
-      .concat(
-        (p.objectives.custom || [])
-          .filter((t) => String(t).trim())
-          .map((t, i) => ({ id: "custom-" + (i + 1), text: { en: String(t), sv: String(t) }, custom: true }))
-      );
-
-    const fw = BK.data.frameworks;
-    const frameworks = {
-      mitre: (template.mitre || []).map((id) => ({ id, name: fw.mitre[id] || null })),
-      nistCsf: ((template.frameworks && template.frameworks.nistCsf) || []).map((id) => ({ id, name: fw.nistCsf[id] || null })),
-      iso27001: ((template.frameworks && template.frameworks.iso27001) || []).map((id) => ({ id, name: fw.iso27001[id] || null }))
-    };
+    const objectives = buildObjectives(template, p, ctx, missing);
+    const frameworks = buildFrameworks(template);
 
     const gt = template.groundTruth || {};
     const instance = {

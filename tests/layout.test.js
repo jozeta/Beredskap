@@ -1,7 +1,7 @@
 /*
  * layout.test.js — Stage layout sweep: every slide of every scenario is laid
  * out at the canvas's native 1920×1080 size (EN and SV, every audience, two
- * seeds) and checked for content that leaves the slide area (and so runs over
+ * seeds; branching exercises along playthroughs that take every option) and checked for content that leaves the slide area (and so runs over
  * the progress rail), text that leaves its chart, and text cut off by a
  * clipping box. Also checks the operator views for horizontal page scroll at
  * phone, tablet and desktop widths.
@@ -74,14 +74,9 @@
     return h;
   }
 
-  /** Walk one session through every slide (and every progressive step), calling fn(projection). */
+  /** Walk every slide and reveal step (branching: coverage playthroughs), calling fn(projection) per language. */
   function walk(inst, fn) {
-    let s = S().create(inst, T0);
-    for (let i = 0; i < 800; i++) {
-      ["en", "sv"].forEach((lang) => fn(S().project(Object.assign({}, s, { lang }), T0)));
-      if (S().locate(s).slide.type === "debrief") break;
-      s = S().apply(s, { type: "next" }, T0 + i);
-    }
+    window.BKTest.walk.any(inst, T0, (s) => ["en", "sv"].forEach((lang) => fn(S().project(Object.assign({}, s, { lang }), T0))), 6);
   }
 
   suite("layout", () => {
@@ -111,7 +106,7 @@
         BK.scenarios.list().forEach((tpl) =>
           SEEDS.forEach((seed) =>
             AUDIENCES.forEach((audience) => {
-              const inst = Object.assign({ id: "ex-layout-" + tpl.id }, BK.engine.generator.generate(tpl, { seed, stageCount: tpl.maxStages, audience, injectDensity: "high", difficulty: "advanced" }));
+              const inst = Object.assign({ id: "ex-layout-" + tpl.id }, BK.engine.generator.generate(tpl, { seed, stageCount: tpl.maxStages, audience, injectDensity: "high", difficulty: "advanced", length: "long", mode: "hybrid" }));
               walk(inst, (p) => {
                 h.textContent = "";
                 const canvas = BK.ui.stageRenderer.renderCanvas(p, { preview: true });

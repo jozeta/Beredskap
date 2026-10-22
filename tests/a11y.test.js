@@ -222,23 +222,20 @@
       }
     });
 
-    test("every stage slide of every scenario passes the audit in both languages", () => {
+    test("every stage slide of every scenario passes the audit in both languages (branching: two playthroughs)", () => {
       const host = document.createElement("div");
       document.body.appendChild(host);
       try {
         BK.scenarios.list().forEach((tpl) => {
-          const inst = Object.assign({ id: "ex-a11y-" + tpl.id }, BK.engine.generator.generate(tpl, { seed: "A11Y-0002", stageCount: tpl.maxStages, audience: "technical", injectDensity: "high" }));
-          let s = S().create(inst, T0);
-          for (let i = 0; i < 600; i++) {
+          const inst = Object.assign({ id: "ex-a11y-" + tpl.id }, BK.engine.generator.generate(tpl, { seed: "A11Y-0002", stageCount: tpl.maxStages, audience: "technical", injectDensity: "high", length: "long", mode: "hybrid" }));
+          // Branching: two playthroughs reach every slide type (page, choice, ending, map).
+          window.BKTest.walk.any(inst, T0, (s) =>
             LANGS.forEach((lang) => {
               const p = S().project(Object.assign({}, s, { lang }), T0);
               host.textContent = "";
               host.appendChild(BK.ui.stageRenderer.renderCanvas(p, {}));
               assertClean(audit(host), tpl.id + " " + p.slide.id + " (" + lang + ")");
-            });
-            if (S().locate(s).slide.type === "debrief") break;
-            s = S().apply(s, { type: "next" }, T0 + i);
-          }
+            }), 2);
         });
       } finally {
         host.remove();

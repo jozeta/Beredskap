@@ -16,7 +16,8 @@
     fraud: "series-4", "social-engineering": "series-4", identity: "series-4", insider: "series-4",
     ddos: "series-2", availability: "series-2", "network-identity": "series-2", vulnerability: "series-2", "ot-ics": "series-2",
     "supply-chain": "series-3", "third-party": "series-3", "cloud-privacy": "series-3", devsecops: "series-3",
-    "edr-soc": "accent", hacktivism: "accent", "multi-incident": "accent"
+    "edr-soc": "accent", hacktivism: "accent", "multi-incident": "accent",
+    "data-loss": "series-4", "saas-provider": "series-3", "api-abuse": "series-2", "brand-hijack": "accent", "ai-abuse": "series-4", "extortion": "danger", "payment-card": "series-3", "water-utility": "series-2", "sim-swap": "series-4", "regional-crisis": "accent"
   };
 
   const W = 1920;

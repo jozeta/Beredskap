@@ -32,8 +32,8 @@
       assert.deepEqual(missing, []);
     });
 
-    test("20 scenario emblems exist and s01's emblem is one of them", () => {
-      assert.equal(BK.icons.emblems.length, 20);
+    test("an emblem for every scenario, and s01's emblem is one of them", () => {
+      assert.ok(BK.icons.emblems.length >= BK.scenarios.count(), BK.icons.emblems.length + " emblems for " + BK.scenarios.count() + " scenarios");
       assert.ok(BK.icons.hasEmblem(BK.scenarios.get("s01-ransomware-vpn").emblem));
     });
 

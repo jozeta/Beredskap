@@ -14,6 +14,15 @@
  *   act(["en","sv"], ownerRole, priority)    suggested action
  *   avr(["assumed"], ["reality"], stageId)   assumption vs reality
  *   kpi([{ id, label: [en, sv], value: (v) => n, format, tone }])   chart data function
+ *
+ * Branching (gamebook) pages:
+ *   pg(id, ["title"], ["narrative"], extra)  page; extra: choice, route, ending, injects, chart,
+ *                                            discuss, variants, long, skipTo, clock, facilitator
+ *   ask(["question"], ["strong team"], [opt…])   choice; keys A–D by position
+ *   opt(["text"], to, ["why"], extra)        option; extra: set (flag or [flags]), requires, hides
+ *   end(grade, ["label"], ["summary"])       ending, grade 1 (contained) … 5 (disaster)
+ *   vr(cond, ["narrative"], ["because"]?)    narrative variant when cond holds ("flag", "!flag", [..])
+ *   rt([[cond, to], …, [null, to]])          route page: first matching rule wins
  */
 (function () {
   "use strict";
@@ -88,5 +97,36 @@
     };
   }
 
-  BK.scenarios.h = { L, q, ch, inj, dec, fac, act, avr, kpi, line };
+  // ---- Branching pages ----
+
+  function pg(id, title, narrative, extra) {
+    const p = Object.assign({ id, title: L(title), narrative: L(narrative) }, extra || {});
+    if (p.ending && !p.choice && !p.route) delete p.choice;
+    return p;
+  }
+
+  function ask(question, strong, options) {
+    const keys = ["A", "B", "C", "D"];
+    return { question: L(question), strong: L(strong), options: options.map((o, i) => Object.assign({ key: keys[i] }, o)) };
+  }
+
+  function opt(text, to, why, extra) {
+    const e = Object.assign({}, extra || {});
+    if (e.set != null) e.set = [].concat(e.set);
+    return Object.assign({ text: L(text), to, why: L(why) }, e);
+  }
+
+  function end(grade, label, summary) {
+    return { grade, label: L(label), summary: L(summary) };
+  }
+
+  function vr(cond, narrative, because) {
+    return { if: cond, narrative: L(narrative), because: because ? L(because) : null };
+  }
+
+  function rt(rules) {
+    return rules.map(([cond, to]) => ({ if: cond, to }));
+  }
+
+  BK.scenarios.h = { L, q, ch, inj, dec, fac, act, avr, kpi, line, pg, ask, opt, end, vr, rt };
 })();
