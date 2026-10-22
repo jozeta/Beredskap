@@ -29,15 +29,21 @@
   --s5: 48px;
   --s6: 64px;
 
-  --radius: 10px;
-  --radius-sm: 6px;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-lg: 18px;
   --radius-pill: 999px;
 
   --hairline: 1px;
   --focus-ring: 2px;
 
+  /* Motion: three durations, one standard and one emphasised easing. */
   --dur: 240ms;
+  --dur-1: 120ms;
+  --dur-2: 200ms;
+  --dur-3: 320ms;
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-emph: cubic-bezier(0.16, 1, 0.3, 1);
 
   --content-max: 1200px;
 }
@@ -77,6 +83,8 @@
   --series-4: #8A5AA8;
 
   --shadow: 0 1px 2px rgba(28, 40, 51, 0.06), 0 4px 16px rgba(28, 40, 51, 0.06);
+  --shadow-sm: 0 1px 2px rgba(28, 40, 51, 0.05);
+  --shadow-lift: 0 2px 4px rgba(28, 40, 51, 0.06), 0 12px 28px rgba(28, 40, 51, 0.10);
 }
 
 /* ---- Dark (explicit) ------------------------------------------------------------ */
@@ -109,6 +117,8 @@
   --series-4: #9C70C4;
 
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.25);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --shadow-lift: 0 2px 4px rgba(0, 0, 0, 0.3), 0 14px 32px rgba(0, 0, 0, 0.35);
 }
 
 /* ---- Dark (system preference) ------------------------------------------------------ */
@@ -143,11 +153,16 @@
   --series-4: #9C70C4;
 
     --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.25);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
+    --shadow-lift: 0 2px 4px rgba(0, 0, 0, 0.3), 0 14px 32px rgba(0, 0, 0, 0.35);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   :root {
     --dur: 0ms;
+    --dur-1: 0ms;
+    --dur-2: 0ms;
+    --dur-3: 0ms;
   }
 }

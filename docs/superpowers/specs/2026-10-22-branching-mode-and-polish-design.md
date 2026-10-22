@@ -592,3 +592,20 @@ These refine §5 and were made during the build (my calls).
 - **Chained placeholder formatters** (`{{time.T+0|weekday|cap}}`) are now
   supported by the template engine. They had rendered raw in two discussion
   scenarios (s14, s18); a new test checks that no generated text keeps a `{{`.
+
+## 12. What part 4 delivered
+
+- Motion tokens (`--dur-1/2/3`, `--ease-emph`), a view entrance on navigation
+  only, button press feedback, card lift on hover, dialogs scaling in, the
+  save check popping in; all switched off under reduced motion (delays too).
+- Refined type (heavier, tighter headings, 1.55 body), larger radii, a soft
+  card shadow, a translucent sticky header.
+- `js/graphics/illustrations.js`: the dashboard hero landscape with a route of
+  decision points, and line drawings for empty states; theme tokens only.
+- Dashboard rebuilt: hero with actions and counts, the two formats as cards
+  linking to a filtered library, emblems on recent exercises and the session.
+- Library cards decluttered: category eyebrow, emblem on a category-tinted
+  disc, a four-line summary and one line of facts; objectives and ATT&CK
+  moved to the preview.
+- Stage: page slides centre the story with the page number and the scenario
+  emblem; ending slides add a seal in the grade's tone with the grade word.

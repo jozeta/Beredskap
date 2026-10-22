@@ -146,6 +146,19 @@
     BK.dom.mount(banner, svgIcon("warning"), el("span", { text: t("error.storageUnavailable") }));
   }
 
+  // ---- View entrance ------------------------------------------------------------------
+
+  let enterTimer = null;
+  /** Mark <main> for the entrance animation on navigation only (re-renders keep still). */
+  function enterView() {
+    const main = document.getElementById("main");
+    clearTimeout(enterTimer);
+    main.classList.remove("is-entering");
+    void main.offsetWidth; // restart the animation when navigating between two views of the same kind
+    main.classList.add("is-entering");
+    enterTimer = setTimeout(() => main.classList.remove("is-entering"), 700);
+  }
+
   // ---- Language -------------------------------------------------------------------
 
   function setLanguage(lang) {
@@ -210,6 +223,7 @@
     });
     BK.events.on("theme", renderShell);
     BK.events.on("route", renderShell);
+    BK.events.on("route", enterView);
     BK.events.on("store:status", (payload) => {
       lastStatus = payload;
       renderStatus(payload);
