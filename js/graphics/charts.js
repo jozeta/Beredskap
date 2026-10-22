@@ -24,7 +24,7 @@
 
   const VW = 1680; // viewBox width: the stage chart area at 1:1
   const VH = 600;
-  const PAD = { top: 40, right: 48, bottom: 72, left: 120 };
+  const PAD = { top: 72, right: 48, bottom: 72, left: 120 }; // top leaves room for the unit and peak labels inside the frame
 
   const STATUS_TONES = new Set(["ok", "warn", "danger", "info"]);
 
@@ -105,7 +105,8 @@
       g.appendChild(svg("line", { class: "c-grid", x1: PAD.left, x2: PAD.left + plotW, y1: y, y2: y }));
       g.appendChild(svg("text", { class: "c-tick", x: PAD.left - 16, y: y + 9, "text-anchor": "end", text: fmtNum(v, lang) }));
     });
-    if (unit) g.appendChild(svg("text", { class: "c-tick c-unit", x: PAD.left - 16, y: scaleY(ticks[ticks.length - 1]) - 28, "text-anchor": "end", text: unit }));
+    // Left-aligned above the axis, so a long unit never runs out of the frame.
+    if (unit) g.appendChild(svg("text", { class: "c-tick c-unit", x: 0, y: scaleY(ticks[ticks.length - 1]) - 36, text: unit }));
   }
 
   /** x tick label: minutes → "T−60", days/nights → "−3 d". */
@@ -254,7 +255,8 @@
           el(
             "div",
             { class: ["s-kpi", "s-kpi--" + (tile.tone || "info")], role: "listitem" },
-            el("span", { class: "s-kpi__value", text: fmt(tile.value, tile.format) }),
+            // --chars lets a long value scale down inside its own tile instead of shrinking the slide.
+            el("span", { class: "s-kpi__value", style: { "--chars": String(fmt(tile.value, tile.format).length) }, text: fmt(tile.value, tile.format) }),
             el("span", { class: "s-kpi__label" }, BK.dom.svgIcon(TONE_ICON[tile.tone] || "info", { size: 32 }), el("span", { text: tile.label }))
           )
         )
@@ -448,14 +450,17 @@
       s.appendChild(g);
       // The starting point is named in the legend: the space under the centre belongs to ring labels.
       const lg = svg("g", { class: ["c-chip", STATUS_CLASS[d.center.status] || "c-danger"] });
+      // Two lines (label, then name), so a long name stays inside the frame.
+      lg.appendChild(svg("title", { text: t("chart.origin", { name: d.center.label }, lang) }));
       lg.appendChild(svg("circle", { class: "c-blast-center", cx: VW - 351, cy: 52, r: 15 }));
-      lg.appendChild(svg("text", { class: "c-label c-label--sm", x: VW - 322, y: 61, text: t("chart.origin", { name: d.center.label }, lang) }));
+      lg.appendChild(svg("text", { class: "c-label c-label--sm", x: VW - 322, y: 61, text: t("chart.originLabel", null, lang) }));
+      lg.appendChild(svg("text", { class: "c-tick", x: VW - 322, y: 97, text: truncate(d.center.label, 22) }));
       s.appendChild(lg);
     }
 
     // Status legend (text label beside every colour, never colour alone).
     const statuses = Array.from(new Set([d.center && d.center.status].concat(...rings.map((r) => r.nodes.map((n) => n.status))).filter(Boolean)));
-    statuses.forEach((st, i) => statusChip(s, VW - 351, 120 + i * 56, st, lang));
+    statuses.forEach((st, i) => statusChip(s, VW - 351, 156 + i * 56, st, lang));
 
     const rows = [].concat(...rings.map((r) => r.nodes.map((n) => [r.label, n.label, t("chart.status." + (n.status || "unknown"), null, lang)])));
     return figure("blast", [s, dataTable(c.title, ["", "", ""], rows)]);

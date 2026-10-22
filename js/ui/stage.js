@@ -123,7 +123,8 @@
       { class: "s-timeline" },
       kicker(t("stage.stageOf", { n: s.stageNumber, total: p.progress.stageCount }, lang) + " · " + s.clock),
       el("h1", { class: "s-h1", text: t("stage.timeline", null, lang) }),
-      s.earlierCount ? el("p", { class: "s-muted", text: t("stage.earlier", { n: s.earlierCount }, lang) }) : null,
+      // settle() may fold more of the oldest items into this count when they do not fit.
+      el("p", { class: "s-muted s-tl__earlier", hidden: !s.earlierCount, dataset: { n: String(s.earlierCount || 0) }, text: t("stage.earlier", { n: s.earlierCount }, lang) }),
       el(
         "ol",
         { class: "s-tl" },
@@ -311,6 +312,35 @@
     return canvas;
   }
 
+  // Text scale steps tried, largest first, when a slide's content does not fit.
+  const FIT_STEPS = [1, 0.92, 0.85, 0.78, 0.72];
+
+  /**
+   * Make a rendered, attached canvas fit its slide area: step the text scale down
+   * until nothing overflows. A timeline that still does not fit folds its oldest
+   * items into the "earlier events" count, newest kept. Content is never clipped.
+   */
+  function settle(canvas) {
+    const slide = canvas.querySelector(".s-slide");
+    const root = slide && slide.firstElementChild;
+    if (!root || !canvas.isConnected) return;
+    const over = () => root.scrollHeight > root.clientHeight + 1 || root.scrollWidth > root.clientWidth + 1;
+    for (const f of FIT_STEPS) {
+      slide.style.setProperty("--fit", String(f));
+      if (!over()) return;
+    }
+    const earlier = root.querySelector(".s-tl__earlier");
+    const items = Array.from(root.querySelectorAll(".s-tl__item"));
+    let hiddenCount = 0;
+    while (earlier && over() && items.length - hiddenCount > 2) {
+      items[hiddenCount].hidden = true;
+      hiddenCount += 1;
+      const n = Number(earlier.dataset.n) + hiddenCount;
+      earlier.hidden = false;
+      earlier.textContent = t("stage.earlier", { n }, canvas.getAttribute("lang"));
+    }
+  }
+
   /** Scale a canvas to fit a container (letterboxed, centred). */
   function fit(container, canvas) {
     const scale = Math.min(container.clientWidth / W, container.clientHeight / H) || 0.1;
@@ -454,6 +484,7 @@
     view.canvas = canvas;
     document.documentElement.lang = p.lang;
     fit(view.viewport, canvas);
+    settle(canvas);
     if (view.overlay && view.overlay.dataset.kind === "private") openOverlay("private");
   }
 
@@ -525,7 +556,7 @@
     }
   };
 
-  BK.ui.stageRenderer = { renderCanvas, fit, tick, fmtTimer, shortcutList, W, H };
+  BK.ui.stageRenderer = { renderCanvas, fit, settle, tick, fmtTimer, shortcutList, W, H };
   BK.ui.runKeys = runKeys;
   BK.ui.requestFullscreen = requestFullscreen;
 })();
