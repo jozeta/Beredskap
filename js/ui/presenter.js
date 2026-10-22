@@ -80,7 +80,10 @@
       const canvas = BK.ui.stageRenderer.renderCanvas(p, { preview: true });
       canvas.setAttribute("aria-hidden", "true");
       frame.appendChild(canvas);
-      requestAnimationFrame(() => BK.ui.stageRenderer.fit(frame, canvas));
+      requestAnimationFrame(() => {
+        BK.ui.stageRenderer.fit(frame, canvas);
+        BK.ui.stageRenderer.settle(canvas);
+      });
       caption = label + " — " + t("presenter.slideOf", { n: p.progress.slideNumber, total: p.progress.slideCount, type: t("editor.slideType." + p.slide.type) });
     } else {
       frame.appendChild(el("p", { class: "stage-frame__empty", text: t("presenter.endOfDeck") }));

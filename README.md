@@ -465,8 +465,8 @@ The validator enforces these rules for every stage count from `minStages` to
 
 Open `tests.html`. The runner has no dependencies. It reports *passed*,
 *failed* and *skipped* separately and never counts a skipped test as passed.
-Current result: **159 passed, 0 failed** when served over HTTP. From `file://`
-the result is 156 passed and 3 skipped; the skipped three are the source-reading
+Current result: **161 passed, 0 failed** when served over HTTP. From `file://`
+the result is 158 passed and 3 skipped; the skipped three are the source-reading
 tests.
 
 | Suite | Covers |
@@ -478,6 +478,7 @@ tests.
 | facilitation | decision/observation/objective/scorecard logs, report contents, Markdown and CSV (BOM, separators, formula guard), JSON round-trip, malformed and hostile imports rejected or inert, prototype pollution dropped, editor operations, print outputs |
 | scenario library | all 20 templates validate; unique ids/emblems/categories; determinism; hidden facts at every stage count; **confidentiality**: a full playthrough per branch option for every scenario, in both languages, checking the projection JSON and the rendered text and attributes for facilitator text, hidden facts and unreleased injects; every chart renders in both languages |
 | accessibility | every operator view (empty and populated) and every stage slide of every scenario, in both languages: accessible names, labels, unique ids, valid references, no positive tabindex, heading order, SVG text alternatives; dialog focus handling; WCAG AA contrast of the colour tokens in both themes |
+| layout | every slide of every scenario (two seeds, every audience, both languages) laid out at the native 1920×1080 canvas after the stage's own fitting step: nothing leaves the slide area (and so runs over the progress rail), no chart text leaves its chart, no text is clipped; with a test that a planted overflow is caught |
 | hardening | source self-check (no `eval(`, `new Function`, string timers, `innerHTML =` outside `icons.js`, network APIs or external URLs; with a test that the rules detect planted violations); `index.html` CSP and no inline script/handlers; `tests.html` loads the same scripts as `index.html`; nothing loaded from the network during the run |
 
 For a quick check from the command line, the same source scan can be run with
