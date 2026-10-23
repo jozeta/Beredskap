@@ -145,7 +145,7 @@
       ),
 
       custom ? null : r.branch
-        ? section(t("report.route", null, l), el("div", { class: "routemap-wrap" }, BK.graphics.routeMap(r.branch.map, { lang: l, title: t("report.route", null, l), choices: r.decisions.length, titles: r.branch.titles })))
+        ? section(t("report.route", null, l), el("div", { class: "routemap-wrap" }, BK.graphics.routeMap(r.branch.map, { lang: l, title: t("report.route", null, l), choices: r.decisions.length, titles: r.branch.titles, points: r.branch.points, spread: true })))
         : section(t("report.timeline", null, l), BK.graphics.charts.timeline({ title: t("report.timeline", null, l), events: r.timeline }, l)),
 
       custom ? null : r.branch ? choicesSection(r, l) : section(

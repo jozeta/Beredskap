@@ -247,6 +247,27 @@
     inst.pages.forEach((pg) => (titles[pg.num] = pg.ending ? L(pg.ending.label, lang) : L(pg.title, lang)));
     session.route.filter((r) => !r.auto).forEach((r) => (titles[B.seenNum(session, r.pageId)] = L(B.page(inst, r.pageId).title, lang)));
     const ending = (pg) => ({ num: pg.num, label: L(pg.ending.label, lang), summary: L(pg.ending.summary, lang), grade: pg.ending.grade, gradeLabel: B.gradeLabel(pg.ending.grade, lang) });
+    // Decision points on the map: what was on the table, and what the room picked (operator debrief only).
+    const onMap = new Set(map.nodes.map((n) => n.num));
+    const points = {};
+    inst.pages.forEach((pg) => {
+      if (!pg.choice) return;
+      const entry = session.route.find((r) => r.pageId === pg.id && !r.auto);
+      const num = entry ? B.seenNum(session, pg.id) : pg.num;
+      if (!onMap.has(num)) return;
+      const flags = entry ? B.flagsAt(session, pg.id) : [];
+      const leadsTo = (o) => {
+        const target = B.landing(inst, o.to, flags.concat(o.set || []));
+        const lp = target && B.page(inst, target.pageId);
+        return lp ? (lp.ending ? L(lp.ending.label, lang) : L(lp.title, lang)) : "";
+      };
+      points[num] = {
+        question: L(pg.choice.question, lang),
+        reached: !!entry,
+        chosen: entry && entry.option ? entry.option : null,
+        options: (entry ? B.offered(pg.choice, flags) : pg.choice.options).map((o) => ({ key: o.key, text: L(o.text, lang), leadsTo: leadsTo(o) }))
+      };
+    });
     return {
       mode: inst.settings.mode,
       length: inst.settings.length,
@@ -255,6 +276,7 @@
       route: session.route.filter((r) => !r.auto).map((r) => ({ num: B.seenNum(session, r.pageId), title: L(B.page(inst, r.pageId).title, lang), option: r.option || "" })),
       map,
       titles,
+      points,
       flags: (session.flags || []).map((f) => B.flagLabel(inst, f, lang))
     };
   }

@@ -1092,6 +1092,10 @@
       "builder.ph.label": "Label",
       "builder.ph.option": "Option",
       "builder.ph.field": "…",
+      "branch.tip.decision": "Decision point",
+      "branch.tip.chosen": "Chosen",
+      "branch.tip.notReached": "The room never reached this decision. These options were on the table.",
+      "branch.tip.notVisited": "Not visited on this run.",
       "error.validation": "The exercise cannot start until these problems are fixed:"
     },
 
@@ -2172,6 +2176,10 @@
       "builder.ph.label": "Etikett",
       "builder.ph.option": "Alternativ",
       "builder.ph.field": "…",
+      "branch.tip.decision": "Beslutspunkt",
+      "branch.tip.chosen": "Valt",
+      "branch.tip.notReached": "Rummet nådde aldrig det här beslutet. De här alternativen fanns.",
+      "branch.tip.notVisited": "Besöktes inte i den här genomgången.",
       "error.validation": "Övningen kan inte startas förrän de här problemen är åtgärdade:"
     }
   };
