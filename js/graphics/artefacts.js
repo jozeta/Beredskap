@@ -46,69 +46,176 @@
     return inj.roleNotPresent ? el("p", { class: "a-missing" }, svgIcon("warning", { size: 28 }), el("span", { text: t("editor.roleNotPresent", null, lang) })) : null;
   }
 
+  // ---- Shared pieces -------------------------------------------------------------------------------
+
+  // Organisations and channels get an icon avatar; initials are for people only.
+  const SOURCE_ICON = {
+    media: "newspaper", socialMedia: "at", employee: "user", customer: "user", attacker: "skull-lock", bank: "coins",
+    insurer: "shield", police: "shield", regulator: "scale", csirt: "shield", supplier: "package", vendor: "package",
+    msp: "package", management: "users", facilities: "factory", soc: "shield-alert", itOps: "server", serviceDesk: "notes",
+    irRetainer: "fingerprint", forensics: "fingerprint", threatIntel: "eye"
+  };
+
+  function avatar(inj, name, size) {
+    const cls = ["a-avatar", size && "a-avatar--" + size, inj.sourceKind === "attacker" && "a-avatar--hostile"];
+    const person = inj.sourceKind === "person" || (name && name !== inj.source);
+    if (person || !inj.sourceKind) return el("span", { class: cls, "aria-hidden": "true", text: initials(name || inj.source) });
+    return el("span", { class: cls, "aria-hidden": "true" }, svgIcon(SOURCE_ICON[inj.sourceKind] || "user", { size: size === "xl" ? 72 : size === "lg" ? 52 : 44 }));
+  }
+
+  /**
+   * Split narration from speech: 'Jack calls from the car: "I'm hearing…"' → lead + quote, and a
+   * fully quoted text → quote alone. A bubble or transcript shows the speech; the narration becomes
+   * a caption, so the room reads who is talking and what they say as two things.
+   */
+  function speech(text) {
+    const str = String(text || "").trim();
+    let m = str.match(/^([^“”"]{2,200}?):\s*[“”"]([^“”"]+)[”"][.!]?$/);
+    if (m) return { lead: m[1].trim(), quote: m[2].trim() };
+    m = str.match(/^[“”"]([^“”"]+)[”"]$/);
+    if (m) return { lead: null, quote: m[1].trim() };
+    return { lead: null, quote: str };
+  }
+
+  /** Optional two-way thread (meta.thread: [{ side: "in" | "out", name, text }]); null when absent. */
+  function thread(inj) {
+    const th = inj.meta && Array.isArray(inj.meta.thread) ? inj.meta.thread.filter((x) => x && x.text) : [];
+    return th.length ? th : null;
+  }
+
+  function who(inj) {
+    return inj.speaker || { name: inj.source || inj.typeLabel, title: "" };
+  }
+
   // ---- Renderers ---------------------------------------------------------------------------------
 
+  /** Mail window: subject first, then the sender row, then the body. */
   function email(inj, lang) {
     const m = inj.meta || {};
+    const sp = speech(inj.content);
+    const addr = m.from && m.from.indexOf("@") > 0 ? m.from : null;
+    const sender = inj.speaker ? inj.speaker.name : (m.from && !addr ? m.from : sp.lead || inj.source || inj.typeLabel);
+    const senderSub = inj.speaker ? [inj.speaker.title, addr].filter(Boolean).join(" · ") : addr || (sp.lead && sender !== inj.source ? inj.source : "");
     return el(
       "article",
-      { class: "a-card a-email" },
-      el("header", { class: "a-email__bar" }, svgIcon(inj.type === "phishingEmail" ? "mail-alert" : "mail", { size: 36 }), el("span", { text: inj.typeLabel }), el("span", { class: "a-time", text: inj.time })),
+      { class: ["a-card", "a-mail", inj.type === "phishingEmail" && "a-mail--suspect"] },
       el(
-        "dl",
-        { class: "a-email__head" },
-        el("dt", { text: t("stage.from", null, lang) }), el("dd", { text: m.from || inj.source || "" }),
-        m.to ? [el("dt", { text: t("stage.to", null, lang) }), el("dd", { text: m.to })] : null,
-        el("dt", { text: t("stage.subject", null, lang) }), el("dd", { class: "a-email__subject", text: m.subject || inj.headline || inj.typeLabel })
+        "header",
+        { class: "a-mail__chrome" },
+        el("span", { class: "a-mail__dots", "aria-hidden": "true" }, el("span"), el("span"), el("span")),
+        svgIcon(inj.type === "phishingEmail" ? "mail-alert" : "mail", { size: 30 }),
+        el("span", { text: inj.typeLabel }),
+        el("span", { class: "a-time", text: inj.time })
       ),
-      el("div", { class: "a-email__body" }, el("p", { text: inj.content })),
-      reliability(inj, lang),
-      roleMissing(inj, lang)
-    );
-  }
-
-  function chat(inj, lang) {
-    const who = inj.source || inj.typeLabel;
-    return el(
-      "article",
-      { class: "a-chat" },
-      el("p", { class: "a-kicker" }, svgIcon("sms", { size: 32 }), el("span", { text: inj.typeLabel })),
+      el("h2", { class: "a-mail__subject", text: m.subject || inj.headline || inj.typeLabel }),
       el(
         "div",
-        { class: "a-chat__msg" },
-        el("span", { class: "a-avatar", "aria-hidden": "true", text: initials(who) }),
+        { class: "a-mail__from" },
+        avatar(inj, inj.speaker ? inj.speaker.name : null),
         el(
           "div",
-          { class: "a-chat__bubble" },
-          el("p", { class: "a-chat__who" }, el("strong", { text: who }), el("span", { class: "a-time", text: inj.time })),
-          inj.headline ? el("p", { class: "a-chat__headline", text: inj.headline }) : null,
-          el("p", { class: "a-chat__text", text: inj.content })
+          { class: "a-mail__sender" },
+          el("strong", { text: sender }),
+          senderSub ? el("span", { text: senderSub }) : null,
+          m.to ? el("span", { text: t("stage.to", null, lang) + ": " + m.to }) : null
         )
       ),
+      el("div", { class: "a-mail__body" }, el("p", { text: sp.quote })),
+      m.attachment ? el("p", { class: "a-mail__attachment" }, svgIcon("paperclip", { size: 28 }), el("span", { text: m.attachment })) : null,
       reliability(inj, lang),
       roleMissing(inj, lang)
     );
   }
 
-  function sms(inj, lang) {
+  function message(inj, msg, first) {
+    const out = msg.side === "out";
+    return el(
+      "div",
+      { class: ["a-msg", out ? "a-msg--out" : "a-msg--in"] },
+      out ? null : avatar(inj, msg.name),
+      el(
+        "div",
+        { class: "a-msg__col" },
+        out && !msg.name ? null : el("p", { class: "a-msg__who" }, el("strong", { text: msg.name }), msg.title ? el("span", { text: msg.title }) : null, first ? el("span", { class: "a-time", text: inj.time }) : null),
+        el("p", { class: "a-msg__bubble", text: msg.text })
+      )
+    );
+  }
+
+  /** Team chat window: channel bar, messages (one, or a two-way thread), and an idle composer. */
+  function chat(inj, lang) {
+    const sp = speech(inj.content);
+    const w = who(inj);
+    const msgs = thread(inj) || [{ side: "in", name: w.name, title: w.title, text: sp.quote }];
     return el(
       "article",
-      { class: "a-sms" },
-      el("header", { class: "a-sms__head" }, el("span", { class: "a-avatar", "aria-hidden": "true", text: initials(inj.source) }), el("strong", { text: inj.source || inj.typeLabel })),
-      el("div", { class: "a-sms__thread" }, el("p", { class: "a-sms__bubble", text: inj.content }), el("span", { class: "a-time", text: inj.time })),
+      { class: "a-card a-chatwin" },
+      el("header", { class: "a-chatwin__bar" }, svgIcon(inj.type === "executiveMessage" ? "megaphone" : "sms", { size: 30 }), el("span", { text: inj.headline || inj.typeLabel }), thread(inj) ? el("span", { class: "a-time", text: inj.time }) : null),
+      el("div", { class: "a-chatwin__body" }, sp.lead && !thread(inj) ? el("p", { class: "a-sys", text: sp.lead }) : null, msgs.map((x, i) => message(inj, x, i === 0 && !thread(inj)))),
+      el("footer", { class: "a-chatwin__compose", "aria-hidden": "true" }, el("span", { text: t("art.composer", null, lang) }), svgIcon("send", { size: 30 })),
+      reliability(inj, lang),
+      roleMissing(inj, lang)
+    );
+  }
+
+  /** Phone held upright: status bar, contact, bubbles, composer. */
+  function sms(inj, lang) {
+    const sp = speech(inj.content);
+    const w = who(inj);
+    const th = thread(inj);
+    const bubbles = th || [{ side: "in", text: sp.quote }];
+    return el(
+      "article",
+      { class: "a-phone" },
+      el("div", { class: "a-phone__status", "aria-hidden": "true" }, el("span", { text: inj.time }), el("span", { class: "a-phone__notch" }), el("span", { class: "a-phone__bars" }, el("span"), el("span"), el("span"), el("span"))),
+      el("header", { class: "a-phone__contact" }, avatar(inj, inj.speaker ? w.name : null, "lg"), el("strong", { text: w.name }), el("span", { text: w.title || t("art.textMessage", null, lang) })),
+      el(
+        "div",
+        { class: "a-phone__thread" },
+        sp.lead && !th ? el("p", { class: "a-sys", text: sp.lead }) : null,
+        bubbles.map((b) => el("p", { class: ["a-phone__bubble", b.side === "out" ? "a-phone__bubble--out" : "a-phone__bubble--in"], text: b.text })),
+        el("span", { class: "a-phone__stamp", text: inj.time })
+      ),
+      el("footer", { class: "a-phone__compose", "aria-hidden": "true" }, el("span", { text: t("art.textMessage", null, lang) }), svgIcon("send", { size: 28 })),
       reliability(inj, lang)
     );
   }
 
+  /** Call screen: the caller on the left, the transcript on the right. */
   function call(inj, lang) {
+    const sp = speech(inj.content);
+    const w = who(inj);
+    const th = thread(inj);
     return el(
       "article",
-      { class: "a-card a-call" },
-      el("header", { class: "a-call__head" }, el("span", { class: "a-call__icon" }, svgIcon("phone", { size: 40 })), el("span", null, el("strong", { text: inj.typeLabel }), el("span", { class: "a-time", text: " · " + inj.time }))),
-      inj.source ? el("p", { class: "a-call__who", text: inj.source }) : null,
-      el("blockquote", { class: "a-call__quote", text: inj.content }),
-      reliability(inj, lang),
-      roleMissing(inj, lang)
+      { class: "a-card a-callscreen" },
+      el(
+        "div",
+        { class: "a-callscreen__caller" },
+        el("span", { class: "a-callscreen__ring" }, avatar(inj, inj.speaker ? w.name : null, "xl")),
+        el("strong", { class: "a-callscreen__name", text: w.name }),
+        w.title ? el("span", { class: "a-callscreen__title", text: w.title }) : null,
+        el("p", { class: "a-callscreen__state" }, svgIcon("phone", { size: 28 }), el("span", { text: inj.typeLabel + " · " + inj.time })),
+        el("span", { class: "a-callscreen__wave", "aria-hidden": "true" }, Array.from({ length: 14 }, () => el("span"))),
+        el(
+          "span",
+          { class: "a-callscreen__controls", "aria-hidden": "true" },
+          el("span", null, svgIcon("mic", { size: 32 })),
+          el("span", null, svgIcon("volume", { size: 32 })),
+          el("span", { class: "a-callscreen__end" }, svgIcon("phone-end", { size: 34 }))
+        )
+      ),
+      el(
+        "div",
+        { class: "a-callscreen__transcript" },
+        el("p", { class: "a-kicker", text: t("art.transcript", null, lang) }),
+        sp.lead && !th ? el("p", { class: "a-sys a-sys--start", text: sp.lead }) : null,
+        th
+          ? el("ol", { class: "a-callscreen__lines" }, th.map((x) => el("li", { class: x.side === "out" ? "is-out" : "is-in" }, el("strong", { text: x.name || (x.side === "out" ? "—" : w.name) }), el("span", { text: x.text }))))
+          : el("blockquote", { class: "a-callscreen__quote", text: sp.quote }),
+        reliability(inj, lang),
+        roleMissing(inj, lang)
+      )
     );
   }
 
@@ -123,14 +230,45 @@
     );
   }
 
+  /** Public post: optional context line, author, text (or a video frame with its caption), actions. */
   function social(inj, lang) {
-    const handle = inj.source || t("art.anonymous", null, lang);
+    const sp = speech(inj.content);
+    const m = inj.meta || {};
+    const generic = inj.sourceKind === "socialMedia" || !inj.source;
+    const author = m.author || (generic ? t("art.anonymous", null, lang) : inj.source);
+    const handle = m.handle || (m.author ? "@" + String(m.author).toLowerCase().replace(/[^a-z0-9åäö]+/g, "_").replace(/^_|_$/g, "").slice(0, 24) : null);
+    const video = sp.lead && sp.lead.match(/^(?:video|videoklipp|klipp|film)[,:\s]+(\d{1,2}:\d{2})[,:\s]*(.*)$/i);
+    const context = [inj.headline, video ? null : sp.lead].filter(Boolean).join(" · ");
     return el(
       "article",
-      { class: "a-card a-social" },
-      el("header", { class: "a-social__head" }, el("span", { class: "a-avatar", "aria-hidden": "true", text: initials(handle) }), el("span", null, el("strong", { text: handle }), el("small", { text: inj.time }))),
-      el("p", { class: "a-social__text", text: inj.content }),
-      el("footer", { class: "a-social__foot", "aria-hidden": "true" }, svgIcon("megaphone", { size: 28 }), svgIcon("link", { size: 28 }), svgIcon("eye", { size: 28 }))
+      { class: "a-card a-post" },
+      context ? el("p", { class: "a-post__context" }, svgIcon("repost", { size: 26 }), el("span", { text: context })) : null,
+      el(
+        "header",
+        { class: "a-post__head" },
+        avatar(inj, m.author || null, "lg"),
+        el("span", { class: "a-post__author" }, el("strong", { text: author }), el("span", { text: [handle, inj.time].filter(Boolean).join(" · ") })),
+        el("span", { class: "a-post__more", "aria-hidden": "true" }, svgIcon("more", { size: 32 }))
+      ),
+      video
+        ? el(
+            "figure",
+            { class: "a-post__video" },
+            el("span", { class: "a-post__play", "aria-hidden": "true" }, svgIcon("play", { size: 56 })),
+            el("span", { class: "a-post__duration", text: video[1] }),
+            el(
+              "figcaption",
+              null,
+              video[2] ? el("span", { class: "a-post__scene", text: video[2].charAt(0).toUpperCase() + video[2].slice(1) }) : null,
+              el("span", { class: "a-post__caption", text: (lang === "sv" ? "”" : "“") + sp.quote + "”" })
+            )
+          )
+        : el("p", { class: "a-post__text", text: sp.quote }),
+      el(
+        "footer",
+        { class: "a-post__actions", "aria-hidden": "true" },
+        [["reply", m.replies], ["repost", m.shares], ["heart", m.likes], ["eye", m.views]].map(([icon, n]) => el("span", null, svgIcon(icon, { size: 30 }), n ? el("span", { text: n }) : null))
+      )
     );
   }
 

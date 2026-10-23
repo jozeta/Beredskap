@@ -131,6 +131,36 @@
       assert.ok(!window.__pwned);
     });
 
+    test("narration and speech are split: the caption carries who, the bubble carries the words", () => {
+      ["chat", "phoneTranscript", "sms", "email", "socialPost"].forEach((type) => {
+        const node = BK.graphics.artefact(inj(type, { content: "The CEO calls from the car: “Is this serious?”" }), "en");
+        const said = node.querySelector(".a-msg__bubble, .a-callscreen__quote, .a-phone__bubble, .a-mail__body, .a-post__text");
+        assert.equal(said.textContent, "Is this serious?", type);
+        assert.ok(node.textContent.includes("The CEO calls from the car"), type + " lost the narration");
+      });
+      const plain = BK.graphics.artefact(inj("chat", { content: "No quote here: just a note." }), "en");
+      assert.equal(plain.querySelector(".a-msg__bubble").textContent, "No quote here: just a note.");
+    });
+
+    test("a two-way thread renders one turn per message, on its own side, and stays inert", () => {
+      const hostile = '<img src=x onerror="window.__pwned=1">';
+      const meta = { thread: [{ side: "out", name: "On call", text: "Was that you?" }, { side: "in", text: hostile }] };
+      ["chat", "sms", "phoneTranscript"].forEach((type) => {
+        const node = BK.graphics.artefact(inj(type, { meta }), "en");
+        assert.ok(node.textContent.includes("Was that you?") && node.textContent.includes(hostile), type);
+        assert.equal(node.querySelectorAll("img").length, 0, type);
+        assert.equal(node.querySelectorAll(".a-msg--out, .a-phone__bubble--out, .is-out").length, 1, type + " out turn");
+        assert.equal(node.querySelectorAll(".a-msg--in, .a-phone__bubble--in, .is-in").length, 1, type + " in turn");
+      });
+    });
+
+    test("people get initials, organisations an icon avatar", () => {
+      const person = BK.graphics.artefact(inj("chat", { sourceKind: "person", speaker: { name: "Ana Silva", title: "CISO" } }), "en");
+      const org = BK.graphics.artefact(inj("email", { sourceKind: "bank", source: "Bank", speaker: null }), "en");
+      assert.equal(person.querySelector(".a-avatar").textContent, "AS");
+      assert.ok(org.querySelector(".a-avatar svg"), "bank avatar is an icon");
+    });
+
     test("stated reliability is shown only when the source states it", () => {
       const a = BK.graphics.artefact(inj("threatIntel", { statedReliability: "Assessed as likely" }), "en");
       const b = BK.graphics.artefact(inj("threatIntel"), "en");

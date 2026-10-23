@@ -86,10 +86,17 @@
             "The bank portal shows the first transfer — {{num.tranchePct}} per cent of the amount — sent to a foreign account eleven minutes ago. The second is scheduled for this afternoon.",
             "Bankportalen visar den första överföringen – {{num.tranchePct}} procent av beloppet – skickad till ett utländskt konto för elva minuter sedan. Den andra är schemalagd till i eftermiddag."
           ], { tests: ["lo1"] }),
-          inj("i1-3", 20, "chat", "person.ceo", "medium", "misleading", [
+          inj("i1-3", 20, "sms", "person.ceo", "medium", "misleading", [
             "A text from the CEO's number: “Please keep this between us. Complete the second payment.”",
             "Ett sms från vd:ns nummer: ”Håll det här mellan oss. Genomför den andra betalningen.”"
-          ], { optional: true, difficulties: ["intermediate", "advanced", "executive"], facilitatorNote: ["Spoofed sender. Watch whether the group treats a familiar number as proof.", "Förfalskad avsändare. Se om gruppen behandlar ett välbekant nummer som bevis."], tests: ["lo2"] })
+          ], { optional: true, difficulties: ["intermediate", "advanced", "executive"], facilitatorNote: ["Spoofed sender. Watch whether the group treats a familiar number as proof.", "Förfalskad avsändare. Se om gruppen behandlar ett välbekant nummer som bevis."], tests: ["lo2"],
+            meta: {
+              thread: [
+                { side: "out", text: L(["The first payment has gone. Should I wait for the signed paperwork before the second?", "Den första betalningen har gått. Ska jag vänta på de undertecknade papperen innan den andra?"]) },
+                { side: "in", text: L(["Please keep this between us. Complete the second payment.", "Håll det här mellan oss. Genomför den andra betalningen."]) }
+              ]
+            }
+          })
         ],
         questions: {
           technical: [

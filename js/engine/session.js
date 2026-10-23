@@ -474,6 +474,16 @@
   }
 
   /** Public view of one inject: never reliability classification, notes, expected responses or tests. */
+  /** A person source as { name, title } so artefacts can lay the two out separately; null otherwise. */
+  function speaker(inj, lang) {
+    const label = L(inj.sourceLabel, lang);
+    if (!inj.sourceRole || !label) return null;
+    const cut = label.indexOf(", ");
+    // The label lower-cases a Swedish title to sit mid-sentence; on its own line it starts with a capital.
+    const title = cut > 0 ? label.slice(cut + 2) : "";
+    return { name: cut > 0 ? label.slice(0, cut) : label, title: title.charAt(0).toUpperCase() + title.slice(1) };
+  }
+
   function publicInject(inj, lang) {
     return {
       id: inj.id,
@@ -481,6 +491,8 @@
       typeLabel: t("injectType." + inj.type, null, lang),
       time: L(inj.atLabel, lang),
       source: L(inj.sourceLabel, lang),
+      sourceKind: inj.sourceRole ? "person" : inj.source || null,
+      speaker: speaker(inj, lang),
       headline: L(inj.headline, lang),
       content: L(inj.content, lang),
       meta: localiseDeep(inj.meta, lang),

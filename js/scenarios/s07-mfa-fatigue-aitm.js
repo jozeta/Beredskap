@@ -89,7 +89,15 @@
           inj("i1-2", 15, "sms", "employee", "medium", "confirmed", [
             "The administrator replies to the on-call text: “Sorry, my phone kept buzzing and I pressed yes to make it stop. Is something wrong?”",
             "Administratören svarar på jourens sms: ”Förlåt, telefonen slutade inte surra och jag tryckte ja för att få tyst på den. Är något fel?”"
-          ], { tests: ["lo4"] })
+          ], {
+            tests: ["lo4"],
+            meta: {
+              thread: [
+                { side: "out", name: L(["On call", "Jouren"]), text: L(["Your account approved 40 sign-in prompts in ten minutes. Was that you?", "Ditt konto har godkänt 40 inloggningsförfrågningar på tio minuter. Var det du?"]) },
+                { side: "in", text: L(["Sorry, my phone kept buzzing and I pressed yes to make it stop. Is something wrong?", "Förlåt, telefonen slutade inte surra och jag tryckte ja för att få tyst på den. Är något fel?"]) }
+              ]
+            }
+          })
         ],
         charts: [{
           id: "c1-prompts", type: "line", markers: "injects",
