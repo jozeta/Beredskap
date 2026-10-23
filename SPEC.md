@@ -260,6 +260,9 @@ BK.scenarios.register({
           id: "i1-2", at: 25, type: "chat", source: "person.serviceOwner",
           severity: "medium", reliability: "misleading", visibility: "public",
           content: { en: "It's just the nightly sync job again, we've seen this before.", sv: "..." },
+          // Optional, presentation only: a two-way conversation for chat, sms and phoneTranscript
+          // slides ("out" = our side, drawn on the right). `content` stays the text of record.
+          // meta: { thread: [{ side: "out", name: "{{person.itOps.name}}", text: {...} }, { side: "in", text: {...} }] },
           facilitatorNote: { en: "Intentionally misleading reassurance from the business side. Watch whether the group verifies it.", sv: "..." },
           optional: true
         }

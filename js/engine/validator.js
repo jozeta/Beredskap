@@ -152,6 +152,7 @@
       injects.forEach((x) => {
         const iw = w + " › " + x.id;
         unique("inject", x.id, iw);
+        checkThread(x, iw, list);
         if (!o.injectTypes.includes(x.type)) issue(list, "enum", iw, "type " + x.type);
         if (x.severity && !o.severities.includes(x.severity)) issue(list, "enum", iw, "severity " + x.severity);
         if (x.reliability && !o.reliabilities.includes(x.reliability)) issue(list, "enum", iw, "reliability " + x.reliability);
@@ -266,8 +267,20 @@
   }
 
   /** Inject checks shared by both formats (stage and page injects). */
+  /** meta.thread: a two-way conversation shown on the slide; each turn has a side and bilingual text. */
+  function checkThread(x, iw, list) {
+    const th = x.meta && x.meta.thread;
+    if (th == null) return;
+    if (!Array.isArray(th) || !th.length) return issue(list, "field", iw, "meta.thread");
+    th.forEach((turn, i) => {
+      if (!turn || (turn.side !== "in" && turn.side !== "out")) issue(list, "enum", iw + " › thread[" + i + "]", "side " + (turn && turn.side));
+      if (!turn || !isBilingual(turn.text)) issue(list, "language", iw + " › thread[" + i + "]", "text");
+    });
+  }
+
   function checkInject(x, iw, ctx, list) {
     const o = opts();
+    checkThread(x, iw, list);
     if (!o.injectTypes.includes(x.type)) issue(list, "enum", iw, "type " + x.type);
     if (x.severity && !o.severities.includes(x.severity)) issue(list, "enum", iw, "severity " + x.severity);
     if (x.reliability && !o.reliabilities.includes(x.reliability)) issue(list, "enum", iw, "reliability " + x.reliability);

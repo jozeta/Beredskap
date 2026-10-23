@@ -104,7 +104,16 @@
           inj("i1-4", 50, "phoneTranscript", "bank", "high", "confirmed", [
             "Your bank's fraud desk: “If you report it now we can ask the receiving bank to freeze what is left. Recalls work best within the first days — after that the money is usually gone.”",
             "Bankens bedrägeriavdelning: ”Om ni anmäler nu kan vi be mottagarbanken frysa det som finns kvar. Återkallelser fungerar bäst de första dagarna – sedan brukar pengarna vara borta.”"
-          ], { optional: true, tests: ["lo1"] })
+          ], {
+            optional: true,
+            tests: ["lo1"],
+            meta: {
+              thread: [
+                { side: "out", name: "{{person.cfo.name}}", text: L(["We paid a supplier invoice to a new bank account last week. We now think the account change was fraud.", "Vi betalade en leverantörsfaktura till ett nytt bankkonto förra veckan. Nu tror vi att kontobytet var ett bedrägeri."]) },
+                { side: "in", name: L(["Fraud desk", "Bedrägeriavdelningen"]), text: L(["If you report it now we can ask the receiving bank to freeze what is left. Recalls work best within the first days — after that the money is usually gone.", "Om ni anmäler nu kan vi be mottagarbanken frysa det som finns kvar. Återkallelser fungerar bäst de första dagarna – sedan brukar pengarna vara borta."]) }
+              ]
+            }
+          })
         ],
         questions: {
           technical: [
