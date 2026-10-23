@@ -239,7 +239,7 @@
 
   /**
    * Apply a command and return the next state. Commands:
-   *  next | prev | first | last | gotoStage{index} | gotoSlide{slideId} | gotoInject{injectId}
+   *  next | advance | prev | first | last | gotoStage{index} | gotoSlide{slideId} | gotoInject{injectId}
    *  timerToggle | timerReset | timerAdd{ms} | pauseToggle | screen{value} | langToggle | lang{value}
    *  themeToggle | theme{value} | release{injectId} | postpone{injectId} | skip{injectId} | unskip{injectId}
    *  decision{decisionId, entry} | recover | end
@@ -252,6 +252,14 @@
     const { list, idx, slide } = locate(sess);
 
     switch (cmd.type) {
+      case "advance":
+        // A click on the stage: once every question on a discussion slide is showing, the first
+        // click starts the countdown instead of leaving the slide; a click while it runs moves on.
+        if (slide && slide.type === "discussion" && !sess.paused && !ended && !sess.timer.runningSince && sess.position.step >= stepCount(sess, slide) && timerRemaining(sess, at) > 0) {
+          sess.timer.runningSince = at;
+          break;
+        }
+      // falls through
       case "next": {
         const n = stepCount(sess, slide);
         if (sess.position.step < n) sess.position.step++;

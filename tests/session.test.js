@@ -134,6 +134,33 @@
       assert.equal(s.timer.runningSince, null);
     });
 
+    test("a stage click on a fully revealed discussion starts the timer first, then moves on", () => {
+      let s = session();
+      while (current(s).type !== "discussion") s = S().apply(s, { type: "next" }, T0);
+      const slideId = current(s).id;
+      const steps = S().stepCount(s, current(s));
+      while (s.position.step < steps) {
+        s = S().apply(s, { type: "advance" }, T0);
+        assert.equal(s.timer.runningSince, null, "revealing questions does not start the timer");
+      }
+      s = S().apply(s, { type: "advance" }, T0 + 1000);
+      assert.equal(current(s).id, slideId, "the click after the last question stays on the slide");
+      assert.equal(s.timer.runningSince, T0 + 1000);
+      s = S().apply(s, { type: "advance" }, T0 + 5000);
+      assert.ok(current(s).id !== slideId, "a click while the countdown runs moves on");
+    });
+
+    test("a stage click moves on when the countdown has already run out", () => {
+      let s = session();
+      while (current(s).type !== "discussion") s = S().apply(s, { type: "next" }, T0);
+      const slideId = current(s).id;
+      s = S().apply(s, { type: "gotoSlide", slideId }, T0);
+      for (let i = 0; i < 20 && s.position.step < S().stepCount(s, current(s)); i++) s = S().apply(s, { type: "next" }, T0);
+      s = S().apply(s, { type: "timerAdd", ms: -s.timer.durationMs }, T0);
+      s = S().apply(s, { type: "advance" }, T0);
+      assert.ok(current(s).id !== slideId, "nothing left to count down");
+    });
+
     test("pause freezes both clocks and resume continues", () => {
       let s = session();
       while (current(s).type !== "discussion") s = S().apply(s, { type: "next" }, T0);
