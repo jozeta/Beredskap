@@ -129,12 +129,23 @@
     const x0 = Math.min(...xs);
     const x1 = Math.max(...xs);
     const yT = niceTicks(0, Math.max(1, ...ys), 5);
-    // Inject markers get their own label band above the plot so they never hit the data.
-    const markers = (c.markers || []).filter((m) => m.at >= x0 && m.at <= x1);
-    const top = PAD.top + (markers.length ? 76 : 0);
+    // Inject markers are numbered circles in a band above the plot; their labels go in an HTML key
+    // under the chart, which wraps by itself, so close markers can never stack text on text.
+    const markers = (c.markers || []).filter((m) => m.at >= x0 && m.at <= x1).sort((a, b) => a.at - b.at);
     const plotW = VW - PAD.left - PAD.right;
-    const plotH = VH - top - PAD.bottom;
     const sx = (v) => PAD.left + ((v - x0) / (x1 - x0 || 1)) * plotW;
+    const MARK_R = 16;
+    const MARK_ROW = 2 * MARK_R + 8;
+    const rowEnds = [];
+    const markRow = markers.map((m) => {
+      const x = sx(m.at);
+      let r = rowEnds.findIndex((end) => x - end >= 2 * MARK_R + 6);
+      if (r < 0) r = rowEnds.length;
+      rowEnds[r] = x;
+      return r;
+    });
+    const top = PAD.top + (markers.length ? 24 + rowEnds.length * MARK_ROW : 0);
+    const plotH = VH - top - PAD.bottom;
     const sy = (v) => top + plotH - ((v - yT.lo) / (yT.hi - yT.lo || 1)) * plotH;
 
     const peak = series[0] ? series[0].points.reduce((m, pt) => (pt[1] > m[1] ? pt : m), series[0].points[0]) : null;
@@ -149,17 +160,16 @@
     xt.forEach((v) => g.appendChild(svg("text", { class: "c-tick", x: sx(v), y: VH - PAD.bottom + 42, "text-anchor": "middle", text: xLabel(v, d.xUnit) })));
     g.appendChild(svg("line", { class: "c-axis", x1: PAD.left, x2: PAD.left + plotW, y1: sy(yT.lo), y2: sy(yT.lo) }));
 
-    // Inject markers (only released injects reach the projection). Labels alternate
-    // between two rows and anchor away from the right edge.
+    // Inject markers (only released injects reach the projection): lines first, then the numbered
+    // circles on top, so a line from an upper row passes behind a lower circle, not through its number.
+    const hot = (m) => m.severity === "critical" || m.severity === "high";
+    const cy = (i) => PAD.top + MARK_R + markRow[i] * MARK_ROW;
+    markers.forEach((m, i) => g.appendChild(svg("line", { class: "c-marker__line", x1: sx(m.at), x2: sx(m.at), y1: cy(i) + MARK_R, y2: sy(yT.lo) })));
     markers.forEach((m, i) => {
-      const x = sx(m.at);
-      const row = PAD.top - 14 + (i % 2) * 36;
-      const rightHalf = x > PAD.left + plotW * 0.6;
-      const mk = svg("g", { class: ["c-marker", m.severity === "critical" || m.severity === "high" ? "c-marker--hot" : null] });
+      const mk = svg("g", { class: ["c-marker", hot(m) && "c-marker--hot"] });
       mk.appendChild(svg("title", { text: xLabel(m.at, "minutes") + " — " + m.label }));
-      mk.appendChild(svg("line", { x1: x, x2: x, y1: row + 10, y2: sy(yT.lo) }));
-      mk.appendChild(svg("circle", { cx: x, cy: row + 2, r: 9 }));
-      mk.appendChild(svg("text", { class: "c-marker__label", x: rightHalf ? x - 18 : x + 18, y: row + 10, "text-anchor": rightHalf ? "end" : "start", text: truncate(m.label, 40) }));
+      mk.appendChild(svg("circle", { cx: sx(m.at), cy: cy(i), r: MARK_R }));
+      mk.appendChild(svg("text", { class: "c-marker__num", x: sx(m.at), y: cy(i) + 7, "text-anchor": "middle", text: String(i + 1) }));
       g.appendChild(mk);
     });
 
@@ -176,17 +186,37 @@
         hit.appendChild(svg("title", { text: ser.label + " · " + xLabel(pt[0], d.xUnit) + ": " + fmtNum(pt[1], lang) }));
         g.appendChild(hit);
       });
-      // Direct label at the peak of the first series only (selective).
+      // Direct label at the peak of the first series only (selective). Above the dot by default;
+      // beside it, turned away from the edge, when it sits at an edge of the plot or on a marker line.
       if (i === 0 && peak) {
-        g.appendChild(svg("circle", { class: ["c-dot", cls], cx: sx(peak[0]), cy: sy(peak[1]), r: 8 }));
-        g.appendChild(svg("text", { class: "c-value", x: sx(peak[0]) - 16, y: sy(peak[1]) - 18, "text-anchor": "end", text: fmtNum(peak[1], lang) }));
+        const px = sx(peak[0]);
+        const py = sy(peak[1]);
+        const nearEdge = px - PAD.left < 60 || PAD.left + plotW - px < 60;
+        const onMarker = markers.some((m) => Math.abs(sx(m.at) - px) < 40);
+        const right = px < PAD.left + plotW / 2;
+        g.appendChild(svg("circle", { class: ["c-dot", cls], cx: px, cy: py, r: 8 }));
+        g.appendChild(
+          nearEdge || onMarker
+            ? svg("text", { class: "c-value", x: right ? px + 18 : px - 18, y: py - 14, "text-anchor": right ? "start" : "end", text: fmtNum(peak[1], lang) })
+            : svg("text", { class: "c-value", x: px, y: py - 20, "text-anchor": "middle", text: fmtNum(peak[1], lang) })
+        );
       }
     });
 
     const rows = series.length ? series[0].points.map((pt) => [xLabel(pt[0], d.xUnit)].concat(series.map((ser) => fmtNum((ser.points.find((q) => q[0] === pt[0]) || [0, ""])[1], lang)))) : [];
+    const key = markers.length
+      ? el(
+          "ol",
+          { class: "c-markers" },
+          markers.map((m, i) =>
+            el("li", null, el("span", { class: ["c-markers__num", hot(m) && "c-markers__num--hot"], "aria-hidden": "true", text: String(i + 1) }), el("span", { class: "c-markers__time", text: xLabel(m.at, "minutes") }), el("span", { text: truncate(m.label, 90) }))
+          )
+        )
+      : null;
     return figure("line", [
       legend(series.map((ser, i) => ({ label: ser.label, cls: toneClass(ser, i), shape: "line" }))),
       s,
+      key,
       dataTable(c.title, [d.xUnit || ""].concat(series.map((ser) => ser.label)), rows)
     ]);
   }

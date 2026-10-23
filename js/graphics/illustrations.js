@@ -14,8 +14,8 @@
   const BK = window.BK;
   const { svg } = BK.dom;
 
-  function root(w, h, cls) {
-    return svg("svg", { class: ["ill", cls], viewBox: "0 0 " + w + " " + h, preserveAspectRatio: "xMidYMid slice", "aria-hidden": "true", focusable: "false" });
+  function root(w, h, cls, align) {
+    return svg("svg", { class: ["ill", cls], viewBox: "0 0 " + w + " " + h, preserveAspectRatio: (align || "xMidYMid") + " slice", "aria-hidden": "true", focusable: "false" });
   }
 
   /** Smooth closed ridge through points, filled down to the bottom edge. */
@@ -30,11 +30,15 @@
     return d + " L" + w + "," + h + " Z";
   }
 
-  /** Dashboard hero: dusk sky, three ridges, a moon and a route of decision points. */
+  /**
+   * Dashboard hero: dusk sky, three ridges, a moon and a route of decision points. Anchored to the
+   * right edge and cropped from the left, so the moon and the route stay in the right-hand part of the
+   * card at every width and never run under the text column on the left.
+   */
   function hero() {
     const W = 1200;
     const H = 360;
-    const s = root(W, H, "ill--hero");
+    const s = root(W, H, "ill--hero", "xMaxYMid");
     const gid = BK.dom.uid("ill-sky");
     const defs = svg("defs");
     const grad = svg("linearGradient", { id: gid, x1: 0, y1: 0, x2: 0, y2: 1 });
@@ -48,8 +52,8 @@
     [[90, 60], [180, 110], [260, 40], [420, 80], [530, 30], [640, 95], [760, 50], [880, 120], [1010, 70], [1120, 40], [340, 140], [700, 150]].forEach(([x, y], i) =>
       s.appendChild(svg("circle", { class: "ill-star", cx: x, cy: y, r: i % 3 === 0 ? 2.2 : 1.4 }))
     );
-    s.appendChild(svg("circle", { class: "ill-moon-halo", cx: 860, cy: 92, r: 62 }));
-    s.appendChild(svg("circle", { class: "ill-moon", cx: 860, cy: 92, r: 26 }));
+    s.appendChild(svg("circle", { class: "ill-moon-halo", cx: 1010, cy: 84, r: 56 }));
+    s.appendChild(svg("circle", { class: "ill-moon", cx: 1010, cy: 84, r: 24 }));
 
     const far = [[0, 210], [140, 170], [300, 200], [470, 150], [640, 190], [820, 140], [1000, 180], [1200, 150]];
     const mid = [[0, 260], [180, 220], [360, 250], [540, 205], [720, 245], [900, 215], [1080, 240], [1200, 225]];
@@ -58,18 +62,18 @@
     s.appendChild(svg("path", { class: "ill-ridge ill-ridge--mid", d: ridgePath(mid, W, H) }));
 
     // The route: decision points across the landscape, one branch, an ending mark.
-    const route = [[120, 238], [270, 196], [420, 222], [570, 178], [720, 214], [850, 172]];
+    const route = [[830, 236], [890, 200], [950, 224], [1010, 186], [1070, 212], [1120, 176]];
     let d = "M" + route[0].join(",");
     for (let i = 1; i < route.length; i++) {
       const [x1, y1] = route[i - 1];
       const [x2, y2] = route[i];
       d += " C" + (x1 + x2) / 2 + "," + y1 + " " + (x1 + x2) / 2 + "," + y2 + " " + x2 + "," + y2;
     }
-    s.appendChild(svg("path", { class: "ill-branch", d: "M420,222 C495,222 495,262 570,262 C645,262 645,214 720,214" }));
+    s.appendChild(svg("path", { class: "ill-branch", d: "M950,224 C980,224 980,256 1010,256 C1040,256 1040,212 1070,212" }));
     s.appendChild(svg("path", { class: "ill-route", d, pathLength: 1 }));
     route.forEach(([x, y], i) => s.appendChild(svg("circle", { class: ["ill-node", i === route.length - 1 && "ill-node--last"], cx: x, cy: y, r: i === route.length - 1 ? 9 : 7, style: { "--i": String(i) } })));
-    s.appendChild(svg("rect", { class: "ill-ending", x: 948, y: 146, width: 26, height: 26, rx: 7 }));
-    s.appendChild(svg("path", { class: "ill-route ill-route--tail", d: "M850,172 C900,172 900,159 948,159", pathLength: 1 }));
+    s.appendChild(svg("rect", { class: "ill-ending", x: 1150, y: 150, width: 22, height: 22, rx: 6 }));
+    s.appendChild(svg("path", { class: "ill-route ill-route--tail", d: "M1120,176 C1135,176 1135,161 1150,161", pathLength: 1 }));
 
     s.appendChild(svg("path", { class: "ill-ridge ill-ridge--near", d: ridgePath(near, W, H) }));
     return s;
