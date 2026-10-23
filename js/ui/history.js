@@ -76,13 +76,17 @@
       ),
       el(
         "div",
-        { class: "actions" },
-        sess.status !== "ended" ? c.button({ label: t("history.presenter"), icon: "play", size: "sm", href: "#/presenter/" + encodeURIComponent(sess.id) }) : null,
-        c.button({ label: t("history.debrief"), icon: "notes", size: "sm", kind: sess.status === "ended" ? "primary" : "secondary", href: "#/debrief/" + encodeURIComponent(sess.id) }),
-        c.button({ label: t("export.json"), icon: "download", size: "sm", kind: "ghost", onClick: () => BK.io.export.downloadJSON(exercise, sess) }),
-        c.button({ label: t("history.runAgain"), icon: "dice", size: "sm", kind: "ghost", onClick: () => BK.ui.startExercise(exercise) }),
-        c.button({ label: sess.archived ? t("history.unarchive") : t("history.archive"), size: "sm", kind: "ghost", onClick: () => save(Object.assign({}, sess, { archived: !sess.archived })) }),
-        c.button({ label: t("common.delete"), icon: "trash", size: "sm", kind: "ghost", onClick: () => remove(sess) })
+        { class: "actions history-item__actions" },
+        // Icon-only, always the same six in the same places; an action that does not apply is shown disabled.
+        // Each label shows as a tooltip and is the accessible name.
+        sess.status !== "ended"
+          ? c.button({ label: t("history.presenter"), icon: "play", iconOnly: true, size: "sm", href: "#/presenter/" + encodeURIComponent(sess.id) })
+          : c.button({ label: t("history.presenterEnded"), icon: "play", iconOnly: true, size: "sm", disabled: true }),
+        c.button({ label: t("history.debrief"), icon: "notes", iconOnly: true, size: "sm", href: "#/debrief/" + encodeURIComponent(sess.id) }),
+        c.button({ label: t("export.json"), icon: "download", iconOnly: true, size: "sm", onClick: () => BK.io.export.downloadJSON(exercise, sess) }),
+        c.button({ label: t("history.runAgain"), icon: "dice", iconOnly: true, size: "sm", onClick: () => BK.ui.startExercise(exercise) }),
+        c.button({ label: sess.archived ? t("history.unarchive") : t("history.archive"), icon: "archive", iconOnly: true, size: "sm", onClick: () => save(Object.assign({}, sess, { archived: !sess.archived })) }),
+        c.button({ label: t("common.delete"), icon: "trash", iconOnly: true, size: "sm", className: "btn--danger-hover", onClick: () => remove(sess) })
       )
     );
   }

@@ -30,7 +30,8 @@
     const common = {
       class: cls,
       "aria-label": opts.iconOnly ? opts.label : null,
-      title: opts.iconOnly ? opts.label : null,
+      // Icon-only buttons show their label as an instant tooltip on hover and keyboard focus (CSS, from data-tip).
+      "data-tip": opts.iconOnly ? opts.label : null,
       id: opts.id || null
     };
     if (opts.href) {

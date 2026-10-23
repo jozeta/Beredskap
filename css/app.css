@@ -328,6 +328,33 @@ body.is-bare .main { max-width: none; padding: 0; }
 .btn--icon { width: 44px; padding: 0; }
 .btn--sm { min-height: 36px; padding: 0 12px; }
 .btn--sm.btn--icon { width: 36px; padding: 0; }
+/* Instant tooltip for icon-only buttons: the label from data-tip, on mouse hover and keyboard focus.
+   display:none when idle so it never adds scrollable overflow. */
+.btn[data-tip] { position: relative; }
+.btn[data-tip]::after {
+  content: attr(data-tip);
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--ink);
+  color: var(--bg);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  line-height: 1.3;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: var(--shadow-sm);
+}
+.btn[data-tip]:hover::after, .btn[data-tip]:focus-visible::after { display: block; }
+.btn[data-tip]:disabled:hover::after { opacity: 0.9; }
+/* Keep the tooltip inside the row at the end of a button group. */
+.btn[data-tip]:last-child::after { left: auto; right: 0; transform: none; }
+.btn--danger-hover:hover { color: var(--danger); }
 .btn--lg { min-height: 52px; padding: 0 var(--s3); font-size: var(--fs-md); }
 
 /* ---- Badges ------------------------------------------------------------------------------- */
@@ -747,6 +774,10 @@ fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
 .strike { text-decoration: line-through; color: var(--ink-muted); }
 .history-item.is-archived { opacity: 0.7; }
 .history-item .badges { align-items: center; }
+/* Six equal icon buttons on one row, centred on the row's midline, never wrapping. */
+.history-item__actions { flex: none; flex-wrap: nowrap; gap: 6px; align-items: center; }
+.history-item__actions .btn { display: inline-grid; place-items: center; }
+.history-item__actions .btn:disabled { opacity: 0.35; }
 .debrief .chart-svg { max-height: 480px; }
 
 /* Charts outside the stage (debrief, print): operator-scale legend and the timeline event list. */

@@ -85,6 +85,19 @@
     T1656: "Impersonation",
     T1657: "Financial Theft",
     T1484: "Domain or Tenant Policy Modification",
+    T1572: "Protocol Tunneling",
+    T1489: "Service Stop",
+    "T1195.001": "Supply Chain Compromise: Compromise Software Dependencies and Development Tools",
+    "T1176": "Browser Extensions",
+    "T1074": "Data Staged",
+    "T1052": "Exfiltration Over Physical Medium",
+    "T1610": "Deploy Container",
+    "T1550.001": "Use Alternate Authentication Material: Application Access Token",
+    "T1059.007": "Command and Scripting Interpreter: JavaScript",
+    "T1531": "Account Access Removal",
+    "T1529": "System Shutdown/Reboot",
+    "T1659": "Content Injection",
+    "T1608": "Stage Capabilities",
     "T1484.002": "Domain or Tenant Policy Modification: Trust Modification",
     T1586: "Compromise Accounts",
     T1584: "Compromise Infrastructure",
@@ -133,6 +146,7 @@
   };
 
   const iso27001 = {
+    "A.5.4": "Management responsibilities",
     "A.5.5": "Contact with authorities",
     "A.5.9": "Inventory of information and other associated assets",
     "A.5.8": "Information security in project management",
@@ -195,7 +209,21 @@
     "A.8.25": "Secure development life cycle",
     "A.8.28": "Secure coding",
     "A.8.31": "Separation of development, test and production environments",
-    "A.8.32": "Change management"
+    "A.8.32": "Change management",
+    "A.5.11": "Return of assets",
+    "A.5.12": "Classification of information",
+    "A.5.13": "Labelling of information",
+    "A.5.33": "Protection of records",
+    "A.5.36": "Compliance with policies, rules and standards for information security",
+    "A.6.1": "Screening",
+    "A.6.2": "Terms and conditions of employment",
+    "A.6.4": "Disciplinary process",
+    "A.6.6": "Confidentiality or non-disclosure agreements",
+    "A.7.5": "Protecting against physical and environmental threats",
+    "A.8.17": "Clock synchronization",
+    "A.8.18": "Use of privileged utility programs",
+    "A.8.19": "Installation of software on operational systems",
+    "A.8.30": "Outsourced development"
   };
 
   BK.data.frameworks = { mitre, nistFunctions, nistCsf, iso27001 };
