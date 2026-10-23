@@ -18,7 +18,8 @@
     "supply-chain": "series-3", "third-party": "series-3", "cloud-privacy": "series-3", devsecops: "series-3",
     "edr-soc": "accent", hacktivism: "accent", "multi-incident": "accent",
     "data-loss": "series-4", "saas-provider": "series-3", "api-abuse": "series-2", "brand-hijack": "accent", "ai-abuse": "series-4", "extortion": "danger", "payment-card": "series-3", "water-utility": "series-2", "sim-swap": "series-4", "regional-crisis": "accent",
-    "cloud-destruction": "danger", "physical-intrusion": "series-4", "vulnerability-disclosure": "series-2", "acquisition": "series-3", "certificate-expiry": "accent"
+    "cloud-destruction": "danger", "physical-intrusion": "series-4", "vulnerability-disclosure": "series-2", "acquisition": "series-3", "certificate-expiry": "accent",
+    "policy-breach": "series-4", "misdirected-data": "series-3", "whistleblowing": "accent", "insider-data-theft": "series-4", "insider-sabotage": "danger", "cryptomining": "series-2", "resource-misuse": "series-2", "dependency-compromise": "series-3", "dependency-confusion": "series-3", "browser-extension": "series-4", "oauth-consent": "series-4", "supplier-outage": "series-3", "disaster-recovery": "series-2", "recovery-test": "accent", "time-sync": "series-2", "hybrid-threat": "danger", "agentic-ai": "series-4"
   };
 
   const W = 1920;

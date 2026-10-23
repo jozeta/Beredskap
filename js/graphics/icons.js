@@ -165,7 +165,8 @@
     repost: '<path d="M7 19.5L4.5 17 7 14.5"/><path d="M4.5 17H16a3.5 3.5 0 0 0 3.5-3.5V12M17 4.5L19.5 7 17 9.5"/><path d="M19.5 7H8a3.5 3.5 0 0 0-3.5 3.5V12"/>',
     heart: '<path d="M12 19.5s-7.5-4.3-7.5-9.5a4 4 0 0 1 7.5-2 4 4 0 0 1 7.5 2c0 5.2-7.5 9.5-7.5 9.5z"/>',
     send: '<path d="M4 11.5l16-7-5.5 15-3-6.5z"/><path d="M11.5 13l8.5-8.5"/>',
-    more: '<path d="M6 12h.01M12 12h.01M18 12h.01"/>'
+    more: '<path d="M6 12h.01M12 12h.01M18 12h.01"/>',
+    archive: '<rect x="3.5" y="4.5" width="17" height="4" rx="1"/><path d="M5 8.5v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-10M10 12.5h4"/>'
   };
 
 
@@ -210,7 +211,24 @@
     visitor: ["users", "lock"],
     disclosure: ["bug", "megaphone"],
     merger: ["link", "shield-alert"],
-    certificate: ["verified", "clock"]
+    certificate: ["verified", "clock"],
+    "shadow-ai": ["robot", "user-secret"],
+    "reply-all": ["mail", "users"],
+    "whistleblower": ["newspaper", "scale"],
+    "quiet-dba": ["database", "user-secret"],
+    "logic-bomb": ["hourglass", "code-branch"],
+    "cryptominer": ["coins", "cloud"],
+    "gpu-lab": ["gauge", "coins"],
+    "npm-package": ["package", "code-branch"],
+    "dependency-confusion": ["package", "question"],
+    "extension": ["globe", "user-secret"],
+    "oauth": ["key", "mail-alert"],
+    "supplier-ransom": ["route", "skull-lock"],
+    "region-down": ["cloud-off", "globe"],
+    "restore-day": ["database", "check"],
+    "time-sync": ["clock", "wifi-off"],
+    "grey-zone": ["flag", "network"],
+    "ai-agent": ["robot", "card"]
   };
 
   function emblemMarkup(main, badge) {
