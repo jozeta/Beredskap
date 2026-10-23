@@ -195,6 +195,9 @@
 .s-situation__top { display: flex; justify-content: space-between; align-items: baseline; }
 .s-clock { margin: 0; font-size: calc(44px * var(--fit, 1)); font-weight: 600; font-variant-numeric: tabular-nums; }
 .s-narrative { margin: 0; font-size: calc(46px * var(--fit, 1)); line-height: 1.45; max-width: 1560px; }
+.s-story { display: grid; gap: 0.6em; font-size: calc(46px * var(--fit, 1)); }
+.s-story .s-narrative { font-size: inherit; }
+.s-story--long { font-size: calc(40px * var(--fit, 1)); }
 
 /* ---- Timeline -------------------------------------------------------------------------------------- */
 .s-tl { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 24px; }
@@ -564,7 +567,9 @@ kbd {
 .s-page__side { display: grid; gap: 48px; align-content: center; }
 .s-page__emblem { color: var(--accent); opacity: 0.16; }
 .s-page__emblem .emblem-svg { width: 220px; height: 220px; }
-.s-page .s-narrative { font-size: calc(50px * var(--fit, 1)); line-height: 1.4; }
+.s-page .s-story { font-size: calc(48px * var(--fit, 1)); }
+.s-page .s-story--long { font-size: calc(40px * var(--fit, 1)); }
+.s-page .s-narrative { line-height: 1.42; }
 .s-page__num {
   display: flex;
   align-items: baseline;

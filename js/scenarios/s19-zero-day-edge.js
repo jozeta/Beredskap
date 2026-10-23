@@ -74,8 +74,8 @@
         clock: 0,
         title: L(["The advisory", "Säkerhetsmeddelandet"]),
         narrative: L([
-          "{{time.T+0|day}}, {{time.T+0|clock}}. A security advisory lands in the inbox of the network team at {{org.name}}.",
-          "{{time.T+0|day}}, klockan {{time.T+0|clock}}. Ett säkerhetsmeddelande landar i inkorgen hos nätverksteamet på {{org.name}}."
+          "{{time.T+0|day|cap}}, {{time.T+0|clock}}. A security advisory lands in the inbox of the network team at {{org.name}}. It concerns the remote-access appliance that connects staff and partners to the network from anywhere.\n\nAttackers around the world are already exploiting a critical flaw in it, and there is no patch. The appliance faces the internet by design. The first question is simple: have you already been hit?",
+          "{{time.T+0|day|cap}}, klockan {{time.T+0|clock}}. Ett säkerhetsmeddelande landar i nätverksteamets inkorg hos {{org.name}}. Det gäller enheten för fjärråtkomst som kopplar upp personal och partner mot nätverket var de än befinner sig.\n\nAngripare runt om i världen utnyttjar redan en kritisk brist i den, och det finns ingen rättning. Enheten är vänd mot internet av naturliga skäl. Den första frågan är enkel: har ni redan drabbats?"
         ]),
         injects: [
           inj("i1-1", 0, "advisory", "vendor", "critical", "confirmed", [
@@ -139,8 +139,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["The mitigation is a quick, painless fix.", "Den tillfälliga åtgärden är en snabb och smärtfri lösning."]),
         narrative: L([
-          "{{time.T+240|clock}}. The mitigation file arrives with release notes.",
-          "Klockan {{time.T+240|clock}}. Filen med den tillfälliga åtgärden kommer med versionsanteckningar."
+          "{{time.T+240|clock}}. The vendor has published a temporary mitigation while it works on a patch, and the network team has the file ready to apply.\n\nThe release notes are short, and one line in them changes the conversation. The mitigation protects the appliance, but it also takes away something many people rely on every day.",
+          "Klockan {{time.T+240|clock}}. Leverantören har publicerat en tillfällig åtgärd medan den arbetar på en rättning, och nätverksteamet har filen redo att installera.\n\nVersionsinformationen är kort, och en rad i den ändrar samtalet. Åtgärden skyddar enheten, men den tar också bort något som många är beroende av varje dag."
         ]),
         injects: [
           inj("i2-1", 240, "advisory", "vendor", "high", "confirmed", [
@@ -196,8 +196,8 @@
         assumptionChallenged: L(["We're racing to patch before the attackers get to us.", "Vi tävlar om att rätta innan angriparna når oss."]),
         reveals: ["hf-predate"],
         narrative: L([
-          "{{time.T+480|clock}}. The SOC runs the vendor's integrity checker and the published indicators.",
-          "Klockan {{time.T+480|clock}}. SOC kör leverantörens integritetskontroll och de publicerade indikatorerna."
+          "{{time.T+480|clock}}. The SOC runs the vendor's integrity checker on the appliance and searches for the published indicators of compromise.\n\nSo far, everyone has treated this as a race to protect the device before attackers reach it. The results show whether you were in that race at all.",
+          "Klockan {{time.T+480|clock}}. SOC kör leverantörens integritetskontroll på enheten och söker efter de publicerade indikatorerna på intrång.\n\nHittills har alla behandlat det här som en kapplöpning för att skydda enheten innan angriparna når den. Resultatet visar om ni över huvud taget var med i den kapplöpningen."
         ]),
         injects: [
           inj("i3-1", 480, "forensicFinding", "soc", "critical", "confirmed", [
@@ -260,8 +260,8 @@
         assumptionChallenged: L(["The mitigation closed the hole.", "Den tillfälliga åtgärden stängde hålet."]),
         reveals: ["hf-bypass"],
         narrative: L([
-          "{{time.T+900|clock}}. The SOC sees fresh activity on the device.",
-          "Klockan {{time.T+900|clock}}. SOC ser ny aktivitet på enheten."
+          "{{time.T+900|clock}}. The device has been cleaned as far as possible and the mitigation is in place. The team expected a quiet evening.\n\nInstead, the SOC sees fresh activity on the device: new requests, and a new file. Researchers online are discussing a variant of the exploit that appeared today.",
+          "Klockan {{time.T+900|clock}}. Enheten har rensats så långt det går och den tillfälliga åtgärden är på plats. Teamet räknade med en lugn kväll.\n\nI stället ser SOC ny aktivitet på enheten: nya anrop och en ny fil. Forskare på nätet diskuterar en variant av angreppet som dök upp i dag."
         ]),
         injects: [
           inj("i4-1", 900, "edrAlert", "soc", "critical", "confirmed", [
@@ -316,8 +316,8 @@
         twistKind: "authority",
         assumptionChallenged: L(["The CISO's recommendation will be followed.", "Säkerhetschefens rekommendation kommer att följas."]),
         narrative: L([
-          "{{time.T+1080|clock}}. The recommendation reaches executive management.",
-          "Klockan {{time.T+1080|clock}}. Rekommendationen når företagsledningen."
+          "{{time.T+1080|clock}}. The security team's recommendation reaches executive management: take the appliance offline until a real patch exists.\n\nIt is a clean recommendation, and an expensive one. Without the appliance, field staff and partners cannot connect at all, in the week of the year when they are needed most.",
+          "Klockan {{time.T+1080|clock}}. Säkerhetsteamets rekommendation når företagsledningen: koppla bort enheten tills det finns en riktig rättning.\n\nDet är en tydlig rekommendation, och en dyr. Utan enheten kan fältpersonal och partner inte ansluta alls, den vecka på året då de behövs mest."
         ]),
         injects: [
           inj("i5-1", 1080, "executiveMessage", "person.ceo", "high", "confirmed", [
@@ -374,8 +374,8 @@
         assumptionChallenged: L(["The compromise was limited to the appliance.", "Intrånget var begränsat till enheten."]),
         reveals: ["hf-ldap"],
         narrative: L([
-          "The next day. The responders review directory logs.",
-          "Nästa dag. Incidenthanterarna granskar katalogtjänstens loggar."
+          "The next day. The appliance question has been settled, one way or another. The responders now turn to the rest of the network and review the directory logs.\n\nThe appliance did not only connect users; it also checked their passwords against your directory, using an account of its own. Whoever controlled the box may have had that account too.",
+          "Nästa dag. Frågan om enheten är avgjord, på ett eller annat sätt. De som hanterar incidenten vänder sig nu mot resten av nätverket och går igenom katalogtjänstens loggar.\n\nEnheten kopplade inte bara upp användare; den kontrollerade också deras lösenord mot er katalogtjänst, med ett eget konto. Den som kontrollerade enheten kan också ha haft det kontot."
         ]),
         injects: [
           inj("i6-1", 1800, "authLog", "irRetainer", "critical", "confirmed", [
@@ -426,8 +426,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["Patching ends the problem.", "En rättning avslutar problemet."]),
         narrative: L([
-          "Five days after the advisory.",
-          "Fem dagar efter säkerhetsmeddelandet."
+          "Five days after the advisory, the vendor finally releases a patch. Operations wants remote access back to normal as soon as possible.\n\nThe vendor's notes come with an important caveat about devices that were compromised before the patch, and yours was one of them.",
+          "Fem dagar efter säkerhetsmeddelandet släpper leverantören till slut en rättning. Driften vill ha fjärråtkomsten tillbaka till det normala så snart som möjligt.\n\nLeverantörens anvisningar har en viktig reservation om enheter som komprometterades före rättningen, och er var en av dem."
         ]),
         injects: [
           inj("i7-1", 1440 * 5, "advisory", "vendor", "high", "confirmed", [
@@ -478,8 +478,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["This was a one-off.", "Det här var en engångshändelse."]),
         narrative: L([
-          "Two weeks later. The post-incident review.",
-          "Två veckor senare. Utvärderingen efter incidenten."
+          "Two weeks later. The post-incident review meets, with network, security, operations and procurement around the table.\n\nThe appliance is patched and rebuilt. The question now is whether this was bad luck, or a predictable result of how the organisation's edge was designed and bought.",
+          "Två veckor senare. Genomgången efter incidenten samlas, med nätverk, säkerhet, drift och inköp runt bordet.\n\nEnheten är rättad och ombyggd. Frågan nu är om det här var otur, eller ett förutsägbart resultat av hur organisationens gränsskydd utformades och köptes in."
         ]),
         injects: [
           inj("i8-1", 1440 * 14, "impactReport", "irRetainer", "medium", "confirmed", [

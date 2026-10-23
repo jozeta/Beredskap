@@ -29,6 +29,8 @@ body.is-printing > *:not(#print-root) { display: none !important; }
 .p-confidential { font-weight: 700; border: 1.5pt solid #111; padding: 4pt 8pt; margin: 0 0 8pt; display: inline-block; }
 .p-sub { color: #555 !important; font-size: 9.5pt; }
 .p-twist { border-left: 3pt solid #111; padding-left: 8pt; }
+/* Authored paragraph breaks (a blank line) survive in print. */
+.p-story { white-space: pre-line; }
 
 .p-table { width: 100%; border-collapse: collapse; margin: 4pt 0 8pt; font-size: 9pt; }
 .p-table th, .p-table td { border: 0.5pt solid #bbb; padding: 3pt 5pt; text-align: left; vertical-align: top; }

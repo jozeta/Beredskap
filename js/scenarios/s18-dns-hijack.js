@@ -22,8 +22,8 @@
     emblem: "dns",
     title: L(["Your Domain, Their Server", "Er domän, deras server"]),
     summary: L([
-      "Saturday morning: customers report certificate warnings and some can't reach you at all. It looks like the hosting provider has misconfigured something. It isn't the provider.",
-      "Lördag morgon: kunder rapporterar certifikatvarningar och en del når er inte alls. Det ser ut som att driftleverantören har konfigurerat något fel. Det är inte leverantören."
+      "On a quiet weekend, customers report certificate warnings and some can't reach you at all. It looks like the hosting provider has misconfigured something. It isn't the provider.",
+      "En lugn helg rapporterar kunder certifikatvarningar och en del når er inte alls. Det ser ut som att driftleverantören har konfigurerat något fel. Det är inte leverantören."
     ]),
     learningObjectives: [
       { id: "lo1", text: L(["Recognise a domain hijack early", "Känna igen en domänkapning tidigt"]) },
@@ -75,8 +75,8 @@
         clock: 0,
         title: L(["Certificate warnings", "Certifikatvarningar"]),
         narrative: L([
-          "{{time.T+0|weekday|cap}}, {{time.T+0|clock}}. The duty phone at {{org.name}} rings: customers can't log in to {{org.service.customer|lcfirst}}.",
-          "{{time.T+0|weekday|cap}}, klockan {{time.T+0|clock}}. Beredskapstelefonen hos {{org.name}} ringer: kunderna kan inte logga in i {{org.service.customer|lcfirst}}."
+          "{{time.T+0|weekday|cap}}, {{time.T+0|clock}}. A quiet weekend, until the duty phone at {{org.name}} rings: customers cannot log in to {{org.service.customer|lcfirst}}.\n\nSome see a browser warning that the site is not secure; for others it loads one minute and fails the next. From the office network everything looks normal. The hosting provider had maintenance this week, and it is tempting to wait until Monday.",
+          "{{time.T+0|weekday|cap}}, klockan {{time.T+0|clock}}. En lugn helg, tills jourtelefonen hos {{org.name}} ringer: kunder kan inte logga in i {{org.service.customer|lcfirst}}.\n\nEn del ser en varning i webbläsaren om att sajten inte är säker; för andra laddas den ena minuten och fungerar inte nästa. Från kontorsnätet ser allt normalt ut. Driftleverantören hade underhåll i veckan, och det är frestande att vänta till måndag."
         ]),
         injects: [
           inj("i1-1", 0, "customerComplaint", "customer", "medium", "unverified", [
@@ -136,8 +136,8 @@
         assumptionChallenged: L(["The hosting provider misconfigured something.", "Driftleverantören har konfigurerat något fel."]),
         reveals: ["hf-registrar"],
         narrative: L([
-          "{{time.T+60|clock}}. The network lead runs a lookup from a phone on mobile data.",
-          "Klockan {{time.T+60|clock}}. Nätverksansvarig gör en uppslagning från en telefon via mobildata."
+          "{{time.T+60|clock}}. The network lead wants to see what the outside world sees, so they run a lookup from a phone on mobile data instead of the office network.\n\nThe answer is not a hosting problem. The address book of the internet now sends people looking for {{org.domain}} somewhere you do not control.",
+          "Klockan {{time.T+60|clock}}. Nätverksansvarig vill se det som omvärlden ser, så hen gör en uppslagning från en telefon med mobildata i stället för kontorsnätet.\n\nSvaret är inget driftproblem. Internets adressbok skickar nu den som letar efter {{org.domain}} till ett ställe ni inte kontrollerar."
         ]),
         injects: [
           inj("i2-1", 60, "networkEvidence", "itOps", "critical", "confirmed", [
@@ -195,8 +195,8 @@
         assumptionChallenged: L(["This is only about the website.", "Det här handlar bara om webbplatsen."]),
         reveals: ["hf-mx"],
         narrative: L([
-          "{{time.T+150|clock}}. The SOC sees a wave of password resets.",
-          "Klockan {{time.T+150|clock}}. SOC ser en våg av lösenordsåterställningar."
+          "{{time.T+150|clock}}. The SOC notices a wave of password-reset activity, for staff and customer accounts alike.\n\nYour website is only part of what the domain does. Every email sent to an address at {{org.domain}} also depends on it, and that includes the emails that let people reset forgotten passwords.",
+          "Klockan {{time.T+150|clock}}. SOC ser en våg av lösenordsåterställningar, för både personal- och kundkonton.\n\nEr webbplats är bara en del av det domänen gör. Varje mejl till en adress på {{org.domain}} är också beroende av den, och det gäller även de mejl som låter folk återställa glömda lösenord."
         ]),
         injects: [
           inj("i3-1", 150, "authLog", "siem", "critical", "confirmed", [
@@ -257,8 +257,8 @@
         twistKind: "authority",
         assumptionChallenged: L(["We own our domain; recovery is a formality.", "Vi äger vår domän; återtagandet är en formalitet."]),
         narrative: L([
-          "{{time.T+300|clock}}. The registrar's weekend support finally answers.",
-          "Klockan {{time.T+300|clock}}. Registrarens helgsupport svarar till slut."
+          "{{time.T+300|clock}}. After hours of trying, the registrar's weekend support finally answers the phone.\n\nGetting the domain back should be simple: you have owned it for fifteen years. The registrar's rules say otherwise, and the person those rules point to is no longer anywhere near the company.",
+          "Klockan {{time.T+300|clock}}. Efter flera timmars försök svarar registrarens helgsupport till slut i telefon.\n\nAtt få tillbaka domänen borde vara enkelt: ni har ägt den i femton år. Registrarens regler säger något annat, och den person som reglerna pekar på finns inte längre i närheten av företaget."
         ]),
         injects: [
           inj("i4-1", 300, "phoneTranscript", "supplier", "high", "confirmed", [
@@ -310,8 +310,8 @@
         assumptionChallenged: L(["Customers will see a warning and stay away.", "Kunderna kommer att se en varning och hålla sig borta."]),
         reveals: ["hf-cert"],
         narrative: L([
-          "{{time.T+720|clock}}. The certificate warnings have stopped. That is not good news.",
-          "Klockan {{time.T+720|clock}}. Certifikatvarningarna har upphört. Det är inga goda nyheter."
+          "{{time.T+720|clock}}. The certificate warnings that customers reported this morning have stopped. Some in the room take it as a sign that things are improving.\n\nThe network lead does not. The warnings were the one thing that told customers something was wrong. Without them, the attacker's site looks exactly like yours.",
+          "Klockan {{time.T+720|clock}}. Certifikatvarningarna som kunderna rapporterade i morse har upphört. En del i rummet ser det som ett tecken på att det blir bättre.\n\nNätverksansvarig gör det inte. Varningarna var det enda som sa till kunderna att något var fel. Utan dem ser angriparens sajt exakt ut som er."
         ]),
         injects: [
           inj("i5-1", 720, "threatIntel", "threatIntel", "high", "confirmed", [
@@ -362,8 +362,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["Getting the domain back ends the incident.", "Att få tillbaka domänen avslutar incidenten."]),
         narrative: L([
-          "Two and a half days later. The registrar has restored your name servers.",
-          "Två och en halv dag senare. Registraren har återställt era namnservrar."
+          "Two and a half days later. The registrar has restored your name servers, and the domain points to your own systems again.\n\nIt feels like the end of the incident. But for two days the attacker received every email sent to your domain, and some of what they did in that time is still in place.",
+          "Två och en halv dag senare. Registraren har återställt era namnservrar, och domänen pekar på era egna system igen.\n\nDet känns som slutet på incidenten. Men i två dagar fick angriparen varje mejl som skickades till er domän, och en del av det de gjorde under den tiden finns fortfarande kvar."
         ]),
         injects: [
           inj("i6-1", 3600, "impactReport", "soc", "medium", "confirmed", [

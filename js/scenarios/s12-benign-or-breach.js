@@ -76,8 +76,8 @@
         clock: 0,
         title: L(["An alert on the business system", "Ett larm på affärssystemet"]),
         narrative: L([
-          "{{time.T+0|day}}, {{time.T+0|clock}}. The SOC analyst on duty sees a burst of lateral-movement detections on {{asset.erpServer}}, the server behind {{org.service.primary|lcfirst}}.",
-          "{{time.T+0|day}}, klockan {{time.T+0|clock}}. SOC-analytikern i tjänst ser en rad detektioner av lateral rörelse på {{asset.erpServer}}, servern bakom {{org.service.primary|lcfirst}}."
+          "{{time.T+0|day|cap}}, {{time.T+0|clock}}. The SOC analyst on the night shift sees a burst of lateral-movement detections on {{asset.erpServer}}, the server behind {{org.service.primary|lcfirst}}.\n\nIt looks like someone moving through the network and using credentials against a critical server. But there is also a change ticket: planned maintenance of that very server, tonight. Alerts during maintenance are common, and usually harmless.",
+          "{{time.T+0|day|cap}}, klockan {{time.T+0|clock}}. SOC-analytikern på nattskiftet ser en mängd larm om lateral förflyttning mot {{asset.erpServer}}, servern bakom {{org.service.primary|lcfirst}}.\n\nDet ser ut som att någon rör sig genom nätverket och använder inloggningsuppgifter mot en kritisk server. Men det finns också ett ändringsärende: planerat underhåll av just den servern, i natt. Larm under underhåll är vanliga, och oftast ofarliga."
         ]),
         injects: [
           inj("i1-1", 0, "edrAlert", "edr", "high", "confirmed", [
@@ -141,8 +141,8 @@
         twistKind: "cause",
         assumptionChallenged: L(["This is an attack.", "Det här är ett angrepp."]),
         narrative: L([
-          "{{time.T+40|clock}}. The application team lead joins the call, a little annoyed.",
-          "Klockan {{time.T+40|clock}}. Applikationsteamets ledare ansluter till samtalet, lite irriterad."
+          "{{time.T+40|clock}}. The application team lead joins the call, a little annoyed at being interrupted in the middle of the work.\n\nThey have a run log, named accounts and a clear explanation. Month-end close starts in a few hours and they want the server left alone. Almost everything the SOC has seen fits their story. Almost.",
+          "Klockan {{time.T+40|clock}}. Applikationsteamets ansvarige kopplar in sig i samtalet, lite irriterad över att bli avbruten mitt i arbetet.\n\nHen har en körlogg, namngivna konton och en tydlig förklaring. Månadsbokslutet börjar om några timmar och teamet vill att servern lämnas ifred. Nästan allt som SOC har sett stämmer med deras berättelse. Nästan."
         ]),
         injects: [
           inj("i2-1", 40, "chat", "itOps", "low", "confirmed", [
@@ -206,8 +206,8 @@
         assumptionChallenged: L(["All the activity has one explanation.", "All aktivitet har en och samma förklaring."]),
         reveals: ["hf-second"],
         narrative: L([
-          "{{time.T+100|clock}}. The analyst pulls identity logs and network flows for {{asset.workstationIt}}.",
-          "Klockan {{time.T+100|clock}}. Analytikern hämtar identitetsloggar och nätverksflöden för {{asset.workstationIt}}."
+          "{{time.T+100|clock}}. The analyst pulls identity logs and network flows for the one host that is not named in the change.\n\nIt is a workstation in the IT department, signed in with an account that has no part in tonight's work. The application team, asked directly, says it has nothing to do with them.",
+          "Klockan {{time.T+100|clock}}. Analytikern hämtar identitetsloggar och nätverksflöden för den enda dator som inte nämns i ändringen.\n\nDet är en arbetsstation på IT-avdelningen, inloggad med ett konto som inte har med nattens arbete att göra. Applikationsteamet, tillfrågat direkt, säger att det inte har något med dem att göra."
         ]),
         injects: [
           inj("i3-1", 100, "authLog", "siem", "critical", "confirmed", [
@@ -264,8 +264,8 @@
         assumptionChallenged: L(["Our monitoring would have caught this earlier.", "Vår bevakning hade upptäckt det här tidigare."]),
         reveals: ["hf-suppress"],
         narrative: L([
-          "{{time.T+240|clock}}. The SOC lead looks at why tonight was the first alert.",
-          "Klockan {{time.T+240|clock}}. SOC-ansvarig undersöker varför i natt var det första larmet."
+          "{{time.T+240|clock}}. The second actor is contained, for now. The SOC lead asks the uncomfortable question: if this has happened before, why is tonight the first alert anyone has seen?\n\nThe answer is in the SOC's own configuration, written to make the night shift's life easier.",
+          "Klockan {{time.T+240|clock}}. Den andra aktören är isolerad, för tillfället. SOC-ansvarig ställer den obekväma frågan: om det här har hänt förut, varför är i natt första gången någon ser ett larm?\n\nSvaret finns i SOC:s egen konfiguration, skriven för att göra nattskiftets arbete enklare."
         ]),
         injects: [
           inj("i4-1", 240, "forensicFinding", "soc", "high", "confirmed", [
@@ -330,8 +330,8 @@
         twistKind: "authority",
         assumptionChallenged: L(["Security decides what happens to a compromised system.", "Säkerhet bestämmer vad som händer med ett komprometterat system."]),
         narrative: L([
-          "{{time.T+330|clock}}. The CFO has been woken up and has a view.",
-          "Klockan {{time.T+330|clock}}. Ekonomichefen har väckts och har en åsikt."
+          "{{time.T+330|clock}}. The security team wants the business system offline while the investigation continues: nobody knows yet what the second actor touched.\n\nThe CFO has been woken up and has a different view. Month-end close starts within the hour, and it moves large sums of money on fixed deadlines.",
+          "Klockan {{time.T+330|clock}}. Säkerhetsteamet vill ha affärssystemet nedstängt medan utredningen pågår: ingen vet ännu vad den andra aktören rörde.\n\nEkonomichefen har väckts och har en annan uppfattning. Månadsbokslutet börjar inom en timme, och det flyttar stora summor pengar med fasta tidsgränser."
         ]),
         injects: [
           inj("i5-1", 330, "executiveMessage", "person.cfo", "high", "confirmed", [
@@ -383,8 +383,8 @@
         assumptionChallenged: L(["The actor only got as far as the business system.", "Aktören kom bara så långt som till affärssystemet."]),
         reveals: ["hf-payroll"],
         narrative: L([
-          "Midday. The SOC replays the account's history across all the suppressed windows.",
-          "Mitt på dagen. SOC spelar upp kontots historik under alla undertryckta fönster."
+          "Midday. Month-end is under way, one way or another. The SOC replays the second account's history across every suppressed maintenance window, going back weeks.\n\nUntil now, the room has treated tonight as an attempt that was caught in time. The replay shows what the account did on nights when nobody was watching.",
+          "Mitt på dagen. Månadsbokslutet pågår, på ett eller annat sätt. SOC spelar upp det andra kontots historik över varje undertryckt underhållsfönster, flera veckor bakåt.\n\nHittills har rummet behandlat natten som ett försök som stoppades i tid. Uppspelningen visar vad kontot gjorde de nätter då ingen tittade."
         ]),
         injects: [
           inj("i6-1", 720, "forensicFinding", "forensics", "high", "confirmed", [
@@ -448,8 +448,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["Fixing one rule fixes the problem.", "Att rätta en regel löser problemet."]),
         narrative: L([
-          "Two days later. The SOC presents what made this possible.",
-          "Två dagar senare. SOC presenterar vad som gjorde det här möjligt."
+          "Two days later. The immediate incident is handled, and the SOC presents what made it possible.\n\nIt was not one mistake but several small, reasonable-looking decisions: a muted alert, a calendar anyone could read, a credential nobody knew was for sale. The room has a budget for fixes, and it will not cover everything.",
+          "Två dagar senare. Den akuta incidenten är hanterad, och SOC redogör för vad som gjorde den möjlig.\n\nDet var inte ett misstag utan flera små beslut som såg rimliga ut: ett tystat larm, en kalender som alla kunde läsa, en inloggning som ingen visste var till salu. Rummet har en budget för åtgärder, och den räcker inte till allt."
         ]),
         injects: [
           inj("i7-1", 2880, "threatIntel", "threatIntel", "medium", "confirmed", [

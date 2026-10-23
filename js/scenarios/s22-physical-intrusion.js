@@ -74,8 +74,8 @@
         clock: 0,
         title: L(["A box behind the printer", "En låda bakom skrivaren"]),
         narrative: L([
-          "{{time.T+0|weekday|cap}}, {{time.T+0|clock}}. A cleaner at {{org.name}} reports a small black box with a network cable and a power adapter, plugged in behind the printer in reception.",
-          "{{time.T+0|weekday|cap}}, klockan {{time.T+0|clock}}. En lokalvårdare på {{org.name}} rapporterar en liten svart låda med nätverkskabel och nätadapter, inkopplad bakom skrivaren i receptionen."
+          "{{time.T+0|weekday|cap}}, {{time.T+0|clock}}. The working week has just started at {{org.name}}. A cleaner reports a small black box with a network cable and a power adapter, plugged in behind the printer in reception.\n\nThe light on it is blinking. Nobody remembers ordering anything like it, and it was not there last month. It could be a vendor's monitoring device, or it could be something much worse.",
+          "{{time.T+0|weekday|cap}}, klockan {{time.T+0|clock}}. Arbetsveckan har just börjat hos {{org.name}}. En städare rapporterar en liten svart låda med nätverkskabel och nätadapter, inkopplad bakom skrivaren i receptionen.\n\nLampan på den blinkar. Ingen minns att något sådant har beställts, och den fanns inte där förra månaden. Det kan vara en leverantörs övervakningsenhet, eller något mycket värre."
         ]),
         injects: [
           inj("i1-1", 0, "employeeReport", "facilities", "medium", "unverified", [
@@ -135,8 +135,8 @@
         assumptionChallenged: L(["It is a vendor's monitoring device.", "Det är en leverantörs övervakningsenhet."]),
         reveals: ["hf-device"],
         narrative: L([
-          "{{time.T+90|clock}}. {{person.networkLead.name}} and {{person.socLead.name}} look at the switch logs and the box itself.",
-          "Klockan {{time.T+90|clock}}. {{person.networkLead.name}} och {{person.socLead.name}} tittar på switchens loggar och på själva lådan."
+          "{{time.T+90|clock}}. The printer vendor has been asked, and does not recognise the box. {{person.networkLead.name}} and {{person.socLead.name}} look at the switch logs and open the box itself.\n\nWhat they find is not an office gadget. Someone built it on purpose, and it has been busy.",
+          "Klockan {{time.T+90|clock}}. Skrivarleverantören har tillfrågats och känner inte igen lådan. {{person.networkLead.name}} och {{person.socLead.name}} tittar på switchens loggar och öppnar själva lådan.\n\nDet de hittar är ingen kontorspryl. Någon har byggt den med avsikt, och den har varit flitig."
         ]),
         injects: [
           inj("i2-1", 90, "networkEvidence", "itOps", "high", "confirmed", [
@@ -192,8 +192,8 @@
         assumptionChallenged: L(["Our badge system keeps strangers out.", "Vårt passersystem håller främlingar ute."]),
         reveals: ["hf-visit"],
         narrative: L([
-          "{{time.T+240|clock}}. {{person.securityOfficer.name}} goes through the camera recordings for the day the box first appeared.",
-          "Klockan {{time.T+240|clock}}. {{person.securityOfficer.name}} går igenom kamerainspelningarna från dagen då lådan först dök upp."
+          "{{time.T+240|clock}}. The box has been there for days. Someone must have carried it in and plugged it in. {{person.securityOfficer.name}} goes through the camera recordings for the morning the box first appeared on the network.\n\nThe cameras at the staff entrance are good. It takes twenty minutes to find the moment.",
+          "Klockan {{time.T+240|clock}}. Lådan har funnits där i flera dagar. Någon måste ha burit in och kopplat in den. {{person.securityOfficer.name}} går igenom kamerainspelningarna från morgonen då lådan först dök upp i nätverket.\n\nKamerorna vid personalingången är bra. Det tar tjugo minuter att hitta ögonblicket."
         ]),
         injects: [
           inj("i3-1", 240, "impactReport", "facilities", "high", "confirmed", [
@@ -245,8 +245,8 @@
         assumptionChallenged: L(["It only mapped the network.", "Den kartlade bara nätverket."]),
         reveals: ["hf-second"],
         narrative: L([
-          "{{time.T+480|clock}}. The forensic team has a copy of the first box's storage.",
-          "Klockan {{time.T+480|clock}}. Den forensiska gruppen har en kopia av den första lådans lagring."
+          "{{time.T+480|clock}}. The forensic team has made a copy of the box's storage and gone through it. Meanwhile, a sweep team is walking through every room of the office.\n\nUntil now, the box has been treated as a spy: something that listened. The analysis shows whether it only listened, and the sweep shows whether it was alone.",
+          "Klockan {{time.T+480|clock}}. Forensikteamet har kopierat lådans lagring och gått igenom den. Samtidigt går ett sökteam igenom varje rum på kontoret.\n\nHittills har lådan behandlats som en spion: något som lyssnade. Analysen visar om den bara lyssnade, och genomsökningen visar om den var ensam."
         ]),
         injects: [
           inj("i4-1", 480, "forensicFinding", "forensics", "critical", "confirmed", [
@@ -310,8 +310,8 @@
         twistKind: "authority",
         assumptionChallenged: L(["Physical security is handled by the facilities company.", "Den fysiska säkerheten sköts av fastighetsföretaget."]),
         narrative: L([
-          "{{time.T+1440|weekday|cap}}. {{person.supplierManager.name}} reads the facilities contract with {{supplier.facilities}}.",
-          "{{time.T+1440|weekday|cap}}. {{person.supplierManager.name}} läser fastighetsavtalet med {{supplier.facilities}}."
+          "{{time.T+1440|weekday|cap}}. The immediate technical response is under way. The question now is how a stranger could walk in, plant devices and leave twice without anyone stopping them.\n\n{{person.supplierManager.name}} reads the contract with {{supplier.facilities}}, the company that runs reception and the staff entrance.",
+          "{{time.T+1440|weekday|cap}}. Den akuta tekniska hanteringen pågår. Frågan nu är hur en främling kunde gå in, placera ut enheter och gå därifrån två gånger utan att någon stoppade hen.\n\n{{person.supplierManager.name}} läser avtalet med {{supplier.facilities}}, företaget som sköter receptionen och personalingången."
         ]),
         injects: [
           inj("i5-1", 1440, "supplierNotice", "supplier", "medium", "disputed", [
@@ -348,8 +348,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["This is a technical incident with technical fixes.", "Det här är en teknisk incident med tekniska lösningar."]),
         narrative: L([
-          "{{time.T+2880|weekday|cap}}. {{person.hr.name}} asks for a plan before the rumours set.",
-          "{{time.T+2880|weekday|cap}}. {{person.hr.name}} ber om en plan innan ryktena sätter sig."
+          "{{time.T+2880|weekday|cap}}. The devices are gone, the passwords changed and the investigation is with the police. Inside the office, a different story has taken hold.\n\n{{person.hr.name}} asks for a plan before the rumours settle into the version everyone remembers. Two colleagues are at the centre of that version, and a local journalist has started asking questions.",
+          "{{time.T+2880|weekday|cap}}. Enheterna är borta, lösenorden bytta och utredningen ligger hos polisen. Inne på kontoret har en annan historia tagit form.\n\n{{person.hr.name}} vill ha en plan innan ryktena sätter sig i den version som alla kommer att minnas. Två kollegor står i centrum för den versionen, och en lokaljournalist har börjat ställa frågor."
         ]),
         injects: [
           inj("i6-1", 2880, "mediaEnquiry", "media", "medium", "confirmed", [

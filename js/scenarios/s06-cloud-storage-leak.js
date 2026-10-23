@@ -81,8 +81,8 @@
         clock: 0,
         title: L(["A call from the newsroom", "Ett samtal från redaktionen"]),
         narrative: L([
-          "{{time.T+0|day}}, {{time.T+0|clock}}. The communications team receives a call from an investigative reporter who says they have a file with names, addresses and phone numbers of people in {{org.name}}'s records. They plan to publish tomorrow and want a comment today.",
-          "{{time.T+0|day}}, klockan {{time.T+0|clock}}. Kommunikationsavdelningen får ett samtal från en granskande reporter som säger sig ha en fil med namn, adresser och telefonnummer till personer i {{org.name}}s register. De planerar att publicera i morgon och vill ha en kommentar i dag."
+          "{{time.T+0|day|cap}}, {{time.T+0|clock}}. The communications team receives a call from an investigative reporter. They say they have a file with names, addresses and phone numbers of people in {{org.name}}'s records, and they have called some of them to check.\n\nThey plan to publish tomorrow and want a comment today. Nobody in IT has seen any sign of a break-in. The instinct in the room is to deny it.",
+          "{{time.T+0|day|cap}}, klockan {{time.T+0|clock}}. Kommunikationsavdelningen får ett samtal från en granskande reporter. Hen säger sig ha en fil med namn, adresser och telefonnummer till personer i {{org.name}}s register, och hen har ringt några av dem för att kontrollera.\n\nHen planerar att publicera i morgon och vill ha en kommentar i dag. Ingen på IT har sett några tecken på intrång. Instinkten i rummet är att förneka."
         ]),
         injects: [
           inj("i1-1", 0, "mediaEnquiry", "media", "high", "confirmed", [
@@ -142,8 +142,8 @@
         assumptionChallenged: L(["We have been hacked.", "Vi har blivit hackade."]),
         reveals: ["hf-public"],
         narrative: L([
-          "{{time.T+180|clock}}. The cloud team has found the source.",
-          "Klockan {{time.T+180|clock}}. Molnteamet har hittat källan."
+          "{{time.T+180|clock}}. The cloud team has spent three hours comparing the reporter's sample with everything you store, and they have found the source.\n\nIt was not a break-in. Nobody needed to break in. What they found is a mistake that has been sitting in plain sight, and the logs only go back a fraction of the time it has been there.",
+          "Klockan {{time.T+180|clock}}. Molnteamet har ägnat tre timmar åt att jämföra reporterns urval med allt ni lagrar, och de har hittat källan.\n\nDet var inget intrång. Ingen behövde bryta sig in. Det de hittade är ett misstag som har legat öppet för alla, och loggarna täcker bara en bråkdel av tiden det har funnits där."
         ]),
         injects: [
           inj("i2-1", 180, "forensicFinding", "person.cloudLead", "critical", "confirmed", [
@@ -208,8 +208,8 @@
         assumptionChallenged: L(["Only contact details were exposed.", "Bara kontaktuppgifter har exponerats."]),
         reveals: ["hf-categories"],
         narrative: L([
-          "{{time.T+360|clock}}. The data protection officer has had the files reviewed.",
-          "Klockan {{time.T+360|clock}}. Dataskyddsombudet har låtit granska filerna."
+          "{{time.T+360|clock}}. The data protection officer has had the exposed files reviewed, column by column.\n\nUntil now everyone has talked about “contact details”. The review shows that the export job copied every field from the source system, including some that nobody thought of as part of the export.",
+          "Klockan {{time.T+360|clock}}. Dataskyddsombudet har låtit granska de exponerade filerna, kolumn för kolumn.\n\nHittills har alla talat om ”kontaktuppgifter”. Granskningen visar att exportjobbet kopierade varje fält från källsystemet, även några som ingen tänkte på som en del av exporten."
         ]),
         injects: [
           inj("i3-1", 360, "forensicFinding", "person.dpo", "critical", "confirmed", [
@@ -274,8 +274,8 @@
         assumptionChallenged: L(["We became aware today.", "Vi fick kännedom i dag."]),
         reveals: ["hf-ticket"],
         narrative: L([
-          "{{time.T+480|clock}}. While searching for the export job's history, the team finds a closed support ticket.",
-          "Klockan {{time.T+480|clock}}. När teamet söker i exportjobbets historik hittar de ett stängt supportärende."
+          "{{time.T+480|clock}}. While tracing the history of the export job, the team searches the support system for anything that mentions the storage address.\n\nThey find a closed support ticket. Reading it changes the question of when the organisation “became aware”, and with it every deadline the room has been working towards.",
+          "Klockan {{time.T+480|clock}}. När teamet spårar exportjobbets historik söker de i supportsystemet efter allt som nämner lagringsadressen.\n\nDe hittar ett stängt supportärende. Att läsa det ändrar frågan om när organisationen ”fick kännedom”, och därmed varje tidsfrist som rummet har arbetat mot."
         ]),
         injects: [
           inj("i4-1", 480, "ticket", "serviceDesk", "high", "confirmed", [
@@ -331,8 +331,8 @@
         assumptionChallenged: L(["Closing the storage contained the leak.", "När lagringen stängdes begränsades läckan."]),
         reveals: ["hf-copies"],
         narrative: L([
-          "The next morning. The article is out. A threat-intelligence contact sends a screenshot.",
-          "Nästa morgon. Artikeln är publicerad. En kontakt inom hotunderrättelser skickar en skärmdump."
+          "The next morning. The article is out, with a headline about health details left open online, and it is the most-read story on the news site.\n\nThe storage was closed yesterday. Then a threat-intelligence contact sends a screenshot from a forum, and it becomes clear that closing the storage was the end of nothing.",
+          "Nästa morgon. Artikeln är publicerad, med en rubrik om hälsouppgifter som legat öppet på nätet, och den är den mest lästa på nyhetssajten.\n\nLagringen stängdes i går. Sedan skickar en kontakt inom hotunderrättelser en skärmbild från ett forum, och det blir tydligt att stängningen inte avslutade någonting."
         ]),
         injects: [
           inj("i5-1", 1440, "threatIntel", "threatIntel", "high", "confirmed", [
@@ -396,8 +396,8 @@
         twistKind: "authority",
         assumptionChallenged: L(["Once notified, the regulator will let us handle it.", "När anmälan är gjord låter tillsynsmyndigheten oss sköta det."]),
         narrative: L([
-          "Three days later. A letter arrives with a list of questions and a deadline.",
-          "Tre dagar senare. Ett brev kommer med en lista över frågor och ett sista svarsdatum."
+          "Three days later. A letter arrives from the data protection authority, with a list of detailed questions and a two-week deadline.\n\nThe authority is no longer asking only about one storage container. It wants to understand how the whole organisation manages cloud storage, test data and warnings from outside.",
+          "Tre dagar senare. Ett brev kommer från dataskyddsmyndigheten, med en lista detaljerade frågor och en tidsfrist på två veckor.\n\nMyndigheten frågar inte längre bara om en lagringsplats. Den vill förstå hur hela organisationen hanterar molnlagring, testdata och varningar utifrån."
         ]),
         injects: [
           inj("i6-1", 4320, "regulatorLetter", "regulator", "high", "confirmed", [

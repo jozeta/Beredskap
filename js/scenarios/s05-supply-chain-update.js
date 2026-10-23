@@ -80,8 +80,8 @@
         clock: 0,
         title: L(["Monday morning alerts", "Larm på måndagsmorgonen"]),
         narrative: L([
-          "{{time.T+0|day}}, {{time.T+0|clock}}. Over the weekend {{supplier.vendor}} pushed version 7.4.2 of its IT-management agent, as it does every month. This morning the {{env.edr}} console is filling with alerts that all point at the agent's process.",
-          "{{time.T+0|day}}, klockan {{time.T+0|clock}}. Under helgen skickade {{supplier.vendor}} ut version 7.4.2 av sin agent för IT-förvaltning, som varje månad. I morse fylls {{env.edr}}-konsolen av larm som alla pekar på agentens process."
+          "{{time.T+0|day|cap}}, {{time.T+0|clock}}. Over the weekend {{supplier.vendor}} pushed version 7.4.2 of its IT-management agent, as it does every month. The agent runs on almost every computer you own and is trusted completely.\n\nThis morning the {{env.edr}} console is filling with alerts that all point at the agent's process. The update is properly signed by the vendor. Blocking it would also switch off patching and remote support everywhere.",
+          "{{time.T+0|day|cap}}, klockan {{time.T+0|clock}}. Under helgen skickade {{supplier.vendor}} ut version 7.4.2 av sin agent för IT-förvaltning, som de gör varje månad. Agenten körs på nästan varje dator ni har och är helt betrodd.\n\nI morse fylls {{env.edr}}-konsolen av larm som alla pekar på agentens process. Uppdateringen är korrekt signerad av leverantören. Att blockera den skulle också stänga av patchning och fjärrsupport överallt."
         ]),
         injects: [
           inj("i1-1", 0, "edrAlert", "edr", "high", "confirmed", [
@@ -145,8 +145,8 @@
         twistKind: "scope",
         assumptionChallenged: L(["A handful of hosts are affected.", "Ett fåtal datorer är drabbade."]),
         narrative: L([
-          "{{time.T+120|clock}}. The SOC has checked every machine. The vendor's support team has also replied.",
-          "Klockan {{time.T+120|clock}}. SOC har kontrollerat alla datorer. Leverantörens support har också svarat."
+          "{{time.T+120|clock}}. The SOC has spent two hours checking every machine that took the weekend's update, comparing files with the previous version.\n\nThe vendor's support team has also replied to your ticket, quickly and confidently. Their answer and your own findings do not agree, and the room has to decide whom to believe.",
+          "Klockan {{time.T+120|clock}}. SOC har ägnat två timmar åt att kontrollera varje dator som tog emot helgens uppdatering och jämfört filerna med föregående version.\n\nLeverantörens support har också svarat på ert ärende, snabbt och självsäkert. Deras svar och era egna fynd stämmer inte överens, och rummet måste avgöra vem det ska tro på."
         ]),
         injects: [
           inj("i2-1", 120, "forensicFinding", "soc", "high", "confirmed", [
@@ -215,8 +215,8 @@
         assumptionChallenged: L(["Signed software from a trusted vendor is safe.", "Signerad programvara från en betrodd leverantör är säker."]),
         reveals: ["hf-build"],
         narrative: L([
-          "{{time.T+360|clock}}. {{reg.csirt|cap}} publishes an advisory to its members and calls you directly because of your report.",
-          "Klockan {{time.T+360|clock}}. {{reg.csirt|cap}} publicerar en varning till sina medlemmar och ringer er direkt med anledning av er rapport."
+          "{{time.T+360|clock}}. {{reg.csirt|cap}} publishes an advisory to its members, and calls you directly because yours was one of the first reports.\n\nThe advisory settles the argument with the vendor. It also turns a single company's alert into a national incident, and every customer of {{supplier.vendor}} is now asking the same questions you asked this morning.",
+          "Klockan {{time.T+360|clock}}. {{reg.csirt|cap}} publicerar en varning till sina medlemmar och ringer er direkt, eftersom er rapport var en av de första.\n\nVarningen avgör tvisten med leverantören. Den gör också ett enskilt företags larm till en nationell incident, och varje kund till {{supplier.vendor}} ställer nu samma frågor som ni ställde i morse."
         ]),
         injects: [
           inj("i3-1", 360, "advisory", "csirt", "critical", "confirmed", [
@@ -272,8 +272,8 @@
         assumptionChallenged: L(["We are a victim, not a launch pad.", "Vi är ett offer, inte en startpunkt för angrepp."]),
         reveals: ["hf-pivot"],
         narrative: L([
-          "Tuesday, {{time.T+1440|clock}}. The security manager of one of your largest customers calls. Their SOC has found intruder activity that came through the dedicated connection to your network.",
-          "Tisdag, klockan {{time.T+1440|clock}}. Säkerhetschefen hos en av era största kunder ringer. Deras SOC har hittat intrångsaktivitet som kom via den dedikerade förbindelsen till ert nätverk."
+          "Tuesday, {{time.T+1440|clock}}. The security manager of one of your largest customers calls, and the tone is cold.\n\nTheir SOC has found intruder activity that arrived through the dedicated connection between their network and yours. They have already pulled the plug on the link. Your company is no longer only a victim of the supply-chain attack; to this customer, you are part of it.",
+          "Tisdag, klockan {{time.T+1440|clock}}. Säkerhetschefen hos en av era största kunder ringer, och tonen är kall.\n\nDeras SOC har hittat aktivitet från en inkräktare som kom via den dedikerade förbindelsen mellan deras nätverk och ert. De har redan kopplat bort förbindelsen. Ert företag är inte längre bara ett offer för leverantörsattacken; för den här kunden är ni en del av den."
         ]),
         injects: [
           inj("i4-1", 1440, "forensicFinding", "forensics", "critical", "confirmed", [
@@ -340,8 +340,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["We can do without the agent for a while.", "Vi klarar oss utan agenten ett tag."]),
         narrative: L([
-          "{{time.T+1560|clock}}. The service desk is overwhelmed, and a critical browser update is due this week.",
-          "Klockan {{time.T+1560|clock}}. Servicedesken är överbelastad, och en kritisk webbläsaruppdatering ska ut den här veckan."
+          "{{time.T+1560|clock}}. The agent has been blocked on every machine, which stopped the malware but also stopped everything the agent did.\n\nThe service desk is overwhelmed with requests nobody can solve remotely, field staff cannot get laptops fixed, and a critical browser update is due this week. Security and operations are pulling in opposite directions.",
+          "Klockan {{time.T+1560|clock}}. Agenten har blockerats på varje dator, vilket stoppade skadekoden men också allt som agenten gjorde.\n\nServicedesken är överbelastad av ärenden som ingen kan lösa på distans, fältpersonalen kan inte få sina datorer lagade och en kritisk webbläsaruppdatering måste ut den här veckan. Säkerhet och drift drar åt olika håll."
         ]),
         injects: [
           inj("i5-1", 1560, "impactReport", "person.serviceOwner", "high", "confirmed", [
@@ -404,8 +404,8 @@
         twistKind: "authority",
         assumptionChallenged: L(["We decide how fast we recover and reconnect.", "Vi bestämmer hur snabbt vi återställer och kopplar upp igen."]),
         narrative: L([
-          "Wednesday. Letters arrive from the customer's lawyers and from {{reg.supervisor}}.",
-          "Onsdag. Brev kommer från kundens advokater och från {{reg.supervisor}}."
+          "Wednesday. Two letters arrive within an hour of each other: one from the affected customer's lawyers, and one from {{reg.supervisor}}.\n\nBoth ask for things you have not prepared: independent evidence, formal reports and explanations of how you choose and monitor your suppliers. The incident is now being judged by people outside the company.",
+          "Onsdag. Två brev kommer inom en timme från varandra: ett från den drabbade kundens jurister och ett från {{reg.supervisor}}.\n\nBåda begär saker ni inte har förberett: oberoende bevis, formella rapporter och förklaringar av hur ni väljer och följer upp era leverantörer. Incidenten bedöms nu av människor utanför företaget."
         ]),
         injects: [
           inj("i6-1", 2880, "regulatorLetter", "regulator", "high", "confirmed", [
@@ -461,8 +461,8 @@
         assumptionChallenged: L(["Cutting off the agent removed the attacker.", "Att stänga av agenten tog bort angriparen."]),
         reveals: ["hf-second"],
         narrative: L([
-          "Thursday. The external forensic team has finished its first sweep.",
-          "Torsdag. Det externa forensiska teamet har gjort sin första genomgång."
+          "Thursday. The external forensic team has finished its first full sweep of the network, beyond the machines that ran the agent.\n\nMost of the estate is clean. On a smaller group of machines, they found something the agent left behind, and it does not need the agent to keep working.",
+          "Torsdag. Det externa forensikteamet har gjort sin första fullständiga genomsökning av nätverket, även utanför de datorer som körde agenten.\n\nDet mesta av miljön är rent. På en mindre grupp datorer hittade de något som agenten lämnade efter sig, och det behöver inte agenten för att fortsätta fungera."
         ]),
         injects: [
           inj("i7-1", 4320, "forensicFinding", "irRetainer", "critical", "confirmed", [
@@ -522,8 +522,8 @@
         assumptionChallenged: L(["The vendor's clean release ends the problem.", "Leverantörens rena version löser problemet."]),
         reveals: ["hf-earlier"],
         narrative: L([
-          "A week later. {{supplier.vendor}} publishes a rebuilt version 7.4.3 and a report.",
-          "En vecka senare. {{supplier.vendor}} publicerar en ombyggd version 7.4.3 och en rapport."
+          "A week later. {{supplier.vendor}} publishes a rebuilt version 7.4.3 and a report on what happened in its build system.\n\nOperations wants the agent back as soon as possible: a week of manual work has exhausted the service desk. The report is long and apologetic. It also contains a paragraph that nobody in the room likes.",
+          "En vecka senare. {{supplier.vendor}} publicerar en ombyggd version 7.4.3 och en rapport om vad som hände i deras byggmiljö.\n\nDriften vill ha tillbaka agenten så snart som möjligt: en vecka av manuellt arbete har utmattat servicedesken. Rapporten är lång och ursäktande. Den innehåller också ett stycke som ingen i rummet tycker om."
         ]),
         injects: [
           inj("i8-1", 7200, "supplierNotice", "vendor", "high", "confirmed", [
@@ -574,8 +574,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["If a supplier fails us, we can switch.", "Om en leverantör sviker oss kan vi byta."]),
         narrative: L([
-          "Two weeks later. The board wants to know why one supplier could put the whole organisation and a key customer at risk.",
-          "Två veckor senare. Styrelsen vill veta varför en enda leverantör kunde utsätta hela organisationen och en viktig kund för risk."
+          "Two weeks later. The board wants to understand how one supplier could put the whole organisation and a key customer at risk at the same time.\n\nThe obvious answer is to replace the supplier. Procurement has looked at the contract and the market, and the obvious answer is not as simple as it sounds.",
+          "Två veckor senare. Styrelsen vill förstå hur en enda leverantör kunde sätta hela organisationen och en viktig kund i fara samtidigt.\n\nDet självklara svaret är att byta leverantör. Inköp har gått igenom avtalet och marknaden, och det självklara svaret är inte så enkelt som det låter."
         ]),
         injects: [
           inj("i9-1", 10080, "email", "person.supplierManager", "medium", "confirmed", [

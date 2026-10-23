@@ -189,8 +189,8 @@
         clock: 0,
         title: { en: "Something is wrong with the file servers", sv: "Något är fel med filservrarna" },
         narrative: {
-          en: "It is {{time.T+0|day}}, {{time.T+0|clock}}. Most office staff at {{org.name}} have left for the weekend; the warehouse night shift starts at {{time.T+90|clock}}. The service desk is taking calls from people who cannot open shared files. Documents on {{asset.fileServer}} have new names ending in {{asset.ransomExt}}.",
-          sv: "Det är {{time.T+0|day}}, klockan {{time.T+0|clock}}. De flesta på kontoret hos {{org.name}} har gått hem för helgen och lagrets nattskift börjar {{time.T+90|clock}}. Servicedesken tar emot samtal från medarbetare som inte kan öppna gemensamma filer. Dokument på {{asset.fileServer}} har fått nya namn som slutar på {{asset.ransomExt}}."
+          en: "It is {{time.T+0|day}}, {{time.T+0|clock}}. Most office staff at {{org.name}} have left for the weekend; the warehouse night shift starts at {{time.T+90|clock}} and will need every system to pick and ship tomorrow's orders.\n\nThe service desk is taking calls from people who cannot open shared files. Documents on {{asset.fileServer}} have new names ending in {{asset.ransomExt}}, and the list of affected folders grows each time someone refreshes the screen. Nobody has declared an incident yet.",
+          sv: "Det är {{time.T+0|day}}, klockan {{time.T+0|clock}}. De flesta på kontoret hos {{org.name}} har gått hem för helgen och lagrets nattskift börjar {{time.T+90|clock}}; det behöver alla system för att plocka och skicka morgondagens beställningar.\n\nServicedesken tar emot samtal från medarbetare som inte kan öppna gemensamma filer. Dokument på {{asset.fileServer}} har fått nya namn som slutar på {{asset.ransomExt}}, och listan över drabbade mappar växer varje gång någon uppdaterar skärmen. Ingen har ännu utlyst någon incident."
         },
         injects: [
           {
@@ -336,8 +336,8 @@
         assumptionChallenged: { en: "Restoring from backup is a viable plan.", sv: "Att återställa från säkerhetskopior är en fungerande plan." },
         reveals: ["hf-backups"],
         narrative: {
-          en: "{{time.T+55|clock}}. Encryption has reached {{num.hostsStage2}} systems, {{num.servers}} of them servers. A ransom note signed {{actor.name}} has appeared on every affected server. IT operations went to start a restore — and found the backup repositories on {{asset.backupServer}} already encrypted.",
-          sv: "Klockan {{time.T+55|clock}}. Krypteringen har nått {{num.hostsStage2}} system, varav {{num.servers}} servrar. Ett utpressningsmeddelande undertecknat {{actor.name}} har dykt upp på varje drabbad server. IT-driften skulle börja återställa – och upptäckte att backupförråden på {{asset.backupServer}} redan var krypterade."
+          en: "{{time.T+55|clock}}. Encryption has reached {{num.hostsStage2}} systems, {{num.servers}} of them servers. A ransom note signed {{actor.name}} has appeared on every affected server, and the warehouse night shift is standing idle.\n\nIT operations went to start a restore, the plan everyone had relied on, and found the backup repositories on {{asset.backupServer}} already encrypted. The room has to work out what “recovery” means now.",
+          sv: "Klockan {{time.T+55|clock}}. Krypteringen har nått {{num.hostsStage2}} system, varav {{num.servers}} servrar. Ett utpressningsmeddelande undertecknat {{actor.name}} har dykt upp på varje drabbad server, och lagrets nattskift står stilla.\n\nIT-driften skulle börja återställa, den plan som alla hade litat på, och upptäckte att backupförråden på {{asset.backupServer}} redan var krypterade. Rummet måste reda ut vad ”återställning” betyder nu."
         },
         injects: [
           {
@@ -502,8 +502,8 @@
         assumptionChallenged: { en: "This started with a phishing email opened this afternoon.", sv: "Det här började med ett nätfiskemejl som öppnades i eftermiddags." },
         reveals: ["hf-access", "hf-dwell"],
         narrative: {
-          en: "{{time.T+190|clock}}. Two analysts from {{supplier.irRetainer}} are working remotely with your SOC. Their first findings change the picture of how this started.",
-          sv: "Klockan {{time.T+190|clock}}. Två analytiker från {{supplier.irRetainer}} arbetar på distans tillsammans med er SOC. Deras första fynd förändrar bilden av hur det här började."
+          en: "{{time.T+190|clock}}. Two analysts from {{supplier.irRetainer}} are working remotely with your SOC, pulling logs from the firewall, the VPN and the domain controllers.\n\nUntil now, everyone has assumed the attack started this afternoon, probably with a phishing email. The analysts' first findings change the picture of how this started, and of how long the attacker has been inside.",
+          sv: "Klockan {{time.T+190|clock}}. Två analytiker från {{supplier.irRetainer}} arbetar på distans tillsammans med er SOC och hämtar loggar från brandväggen, vpn:et och domänkontrollanterna.\n\nHittills har alla antagit att attacken började i eftermiddags, troligen med ett nätfiskemejl. Analytikernas första fynd förändrar bilden av hur det här började, och av hur länge angriparen har varit inne."
         },
         injects: [
           {
@@ -649,8 +649,8 @@
         assumptionChallenged: { en: "Encryption is the whole incident; no personal data has left the network.", sv: "Krypteringen är hela incidenten; inga personuppgifter har lämnat nätverket." },
         reveals: ["hf-exfil"],
         narrative: {
-          en: "Saturday, {{time.T+930|clock}}. The crisis management team meets for its morning update. Overnight, {{org.name}} was listed on {{actor.name}}'s leak site with a sample of files: payroll exports, customer contracts and scanned ID documents.",
-          sv: "Lördag, klockan {{time.T+930|clock}}. Krisledningsgruppen samlas för morgonens lägesgenomgång. Under natten har {{org.name}} publicerats på {{actor.name}}s läcksajt med ett urval filer: lönefiler, kundavtal och inskannade id-handlingar."
+          en: "Saturday, {{time.T+930|clock}}. The crisis management team meets for its morning update, tired after a short night.\n\nOvernight, {{org.name}} was listed on {{actor.name}}'s leak site with a sample of files: payroll exports, customer contracts and scanned ID documents. Until this morning the incident was about systems; now it is about people's data, and it is public.",
+          sv: "Lördag, klockan {{time.T+930|clock}}. Krisledningsgruppen samlas för morgonens lägesgenomgång, trött efter en kort natt.\n\nUnder natten har {{org.name}} publicerats på {{actor.name}}s läcksajt med ett urval filer: lönefiler, kundavtal och inskannade id-handlingar. Fram till i morse handlade incidenten om system; nu handlar den om människors uppgifter, och den är offentlig."
         },
         injects: [
           {
@@ -783,8 +783,8 @@
         twistKind: "impact",
         assumptionChallenged: { en: "Paying the ransom would at least keep the data private.", sv: "Att betala lösensumman skulle åtminstone hålla datan hemlig." },
         narrative: {
-          en: "Saturday afternoon, {{time.T+1290|clock}}. The leak site now shows a countdown: {{num.leakDays}} days until full publication. The price on the site has risen to {{num.ransomRaised|currency}}.",
-          sv: "Lördag eftermiddag, klockan {{time.T+1290|clock}}. Läcksajten visar nu en nedräkning: {{num.leakDays}} dagar till fullständig publicering. Priset på sajten har höjts till {{num.ransomRaised|currency}}."
+          en: "Saturday afternoon, {{time.T+1290|clock}}. The leak site now shows a countdown: {{num.leakDays}} days until full publication. The price on the site has risen to {{num.ransomRaised|currency}}.\n\nThe pressure inside the company is rising just as fast. Management wants every option on the table, the insurer has conditions, and the police have advice. Someone has to decide what {{org.name}} will and will not do.",
+          sv: "Lördag eftermiddag, klockan {{time.T+1290|clock}}. Läcksajten visar nu en nedräkning: {{num.leakDays}} dagar till fullständig publicering. Priset på sajten har höjts till {{num.ransomRaised|currency}}.\n\nTrycket inne i företaget stiger lika snabbt. Ledningen vill ha alla alternativ på bordet, försäkringsbolaget har villkor och polisen har råd. Någon måste bestämma vad {{org.name}} ska och inte ska göra."
         },
         injects: [
           {
@@ -904,8 +904,8 @@
         assumptionChallenged: { en: "Once the VPN is closed and passwords are reset, the attacker is out.", sv: "När VPN:en är stängd och lösenorden bytta är angriparen ute." },
         reveals: ["hf-persistence"],
         narrative: {
-          en: "Sunday, {{time.T+2280|clock}}. Rebuilt servers for {{org.service.primary|lcfirst}} are ready for testing. {{person.ceo.firstName}} wants the warehouse running at 06:00 on Monday: {{num.trucksMonday}} deliveries are booked and two large customers have threatened penalties.",
-          sv: "Söndag, klockan {{time.T+2280|clock}}. Återuppbyggda servrar för {{org.service.primary|lcfirst}} är klara för test. {{person.ceo.firstName}} vill ha lagret igång klockan 06 på måndag: {{num.trucksMonday}} leveranser är bokade och två stora kunder har hotat med vite."
+          en: "Sunday, {{time.T+2280|clock}}. After two days of work, rebuilt servers for {{org.service.primary|lcfirst}} are ready for testing.\n\n{{person.ceo.firstName}} wants the warehouse running at 06:00 on Monday: {{num.trucksMonday}} deliveries are booked and two large customers have threatened penalties. The technical team is less certain that the rebuilt environment is clean.",
+          sv: "Söndag, klockan {{time.T+2280|clock}}. Efter två dagars arbete är återuppbyggda servrar för {{org.service.primary|lcfirst}} klara för test.\n\n{{person.ceo.firstName}} vill ha lagret igång klockan 06 på måndag: {{num.trucksMonday}} leveranser är bokade och två stora kunder har hotat med vite. Det tekniska teamet är mindre säkert på att den återuppbyggda miljön är ren."
         },
         injects: [
           {
@@ -1035,8 +1035,8 @@
         twistKind: "impact",
         assumptionChallenged: { en: "The harm is confined to {{org.shortName}}.", sv: "Skadan är begränsad till {{org.shortName}}." },
         narrative: {
-          en: "Sunday evening, {{time.T+2700|clock}}. Customers are forwarding emails that appear to come from {{org.shortName}}'s finance department, asking them to pay outstanding invoices to a new bank account.",
-          sv: "Söndag kväll, klockan {{time.T+2700|clock}}. Kunder vidarebefordrar mejl som ser ut att komma från ekonomiavdelningen på {{org.shortName}}, där de uppmanas att betala utestående fakturor till ett nytt bankkonto."
+          en: "Sunday {{time.T+2700|daypart}}, {{time.T+2700|clock}}. The incident spreads beyond your own walls.\n\nCustomers are forwarding emails that appear to come from {{org.shortName}}'s finance department, asking them to pay outstanding invoices to a new bank account. The emails look exactly like your real invoices, because they are built from them.",
+          sv: "Söndag {{time.T+2700|daypart}}, klockan {{time.T+2700|clock}}. Incidenten sprider sig utanför era egna väggar.\n\nKunder vidarebefordrar mejl som ser ut att komma från ekonomiavdelningen på {{org.shortName}}, där de uppmanas att betala utestående fakturor till ett nytt bankkonto. Mejlen ser exakt ut som era riktiga fakturor, eftersom de är byggda av dem."
         },
         injects: [
           {
@@ -1156,8 +1156,8 @@
         assumptionChallenged: { en: "Once systems are restored, you are back where you were on Friday.", sv: "När systemen är återställda är ni tillbaka där ni var i fredags." },
         reveals: ["hf-cleancopy"],
         narrative: {
-          en: "Monday, {{time.T+3600|clock}}. The offline copy has been checked in an isolated environment. Recovery can begin, but not everything can come back at once — and not everything will come back as it was.",
-          sv: "Måndag, klockan {{time.T+3600|clock}}. Den frånkopplade kopian har kontrollerats i en isolerad miljö. Återställningen kan börja, men allt kan inte komma tillbaka samtidigt – och allt kommer inte tillbaka som det var."
+          en: "Monday, {{time.T+3600|clock}}. The offline copy from the archive store has been checked in an isolated environment, and it is clean. Recovery can begin.\n\nBut not everything can come back at once, and not everything will come back as it was. Someone has to decide what comes first, what waits, and what risk the company accepts by switching systems back on.",
+          sv: "Måndag, klockan {{time.T+3600|clock}}. Den frånkopplade kopian från arkivet har kontrollerats i en isolerad miljö, och den är ren. Återställningen kan börja.\n\nMen allt kan inte komma tillbaka samtidigt, och allt kommer inte tillbaka som det var. Någon måste bestämma vad som kommer först, vad som får vänta och vilken risk företaget accepterar när systemen slås på igen."
         },
         injects: [
           {

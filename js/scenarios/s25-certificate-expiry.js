@@ -75,8 +75,8 @@
         clock: 0,
         title: L(["Midnight", "Midnatt"]),
         narrative: L([
-          "{{time.T+0|weekday|cap}}, {{time.T+5|clock}}. Alarms fire across {{org.name}}: internal systems refuse to talk to each other, the VPN rejects every connection, and integrations with partners fail. All at once.",
-          "{{time.T+0|weekday|cap}}, klockan {{time.T+5|clock}}. Larm går över hela {{org.name}}: interna system vägrar prata med varandra, VPN:et avvisar alla anslutningar och integrationerna med partner fallerar. Allt på en gång."
+          "{{time.T+0|weekday|cap}}, {{time.T+5|clock}}. Five minutes after midnight, alarms fire across {{org.name}}: internal systems refuse to talk to each other, the VPN rejects every connection, and integrations with partners fail. All at once.\n\nThe night shift cannot log in to anything. Everything broke in the same second, across the whole company, which makes it look very much like a coordinated attack.",
+          "{{time.T+0|weekday|cap}}, klockan {{time.T+5|clock}}. Fem minuter efter midnatt larmar det över hela {{org.name}}: interna system vägrar prata med varandra, vpn:et avvisar varje anslutning och integrationer med partner slutar fungera. Allt på en gång.\n\nNattskiftet kan inte logga in någonstans. Allt gick sönder i samma sekund, i hela företaget, vilket får det att se mycket ut som ett samordnat angrepp."
         ]),
         injects: [
           inj("i1-1", 5, "siemAlert", "siem", "critical", "confirmed", [
@@ -142,8 +142,8 @@
         assumptionChallenged: L(["Someone is attacking our certificate infrastructure.", "Någon angriper vår certifikatinfrastruktur."]),
         reveals: ["hf-expiry"],
         narrative: L([
-          "{{time.T+60|clock}}. {{person.networkLead.name}} opens the certificate chain of a failing server.",
-          "Klockan {{time.T+60|clock}}. {{person.networkLead.name}} öppnar certifikatkedjan för en server som inte fungerar."
+          "{{time.T+60|clock}}. {{person.networkLead.name}} opens the certificate details of one of the failing servers and reads the chain of trust from the bottom up.\n\nThe server's own certificate is fine. So is the company's root. The problem sits in the middle, in a certificate that was issued five years ago and has not been thought about since.",
+          "Klockan {{time.T+60|clock}}. {{person.networkLead.name}} öppnar certifikatinformationen för en av de servrar som inte fungerar och läser förtroendekedjan nerifrån och upp.\n\nServerns eget certifikat är i ordning. Det är även företagets rot. Problemet sitter i mitten, i ett certifikat som utfärdades för fem år sedan och som ingen har tänkt på sedan dess."
         ]),
         injects: [
           inj("i2-1", 60, "logExcerpt", "itOps", "high", "confirmed", [
@@ -195,8 +195,8 @@
         assumptionChallenged: L(["Renewal is a quick admin task.", "Förnyelse är en snabb administrativ uppgift."]),
         reveals: ["hf-root"],
         narrative: L([
-          "{{time.T+180|clock}}. {{person.itOps.name}} finds the renewal procedure, written five years ago.",
-          "Klockan {{time.T+180|clock}}. {{person.itOps.name}} hittar förnyelseproceduren, skriven för fem år sedan."
+          "{{time.T+180|clock}}. The fix is known: issue a new intermediate certificate. {{person.itOps.name}} finds the renewal procedure in an old document, written five years ago by people who have since moved on.\n\nIt is short, precise and old-fashioned. Every step depends on things kept offline for security reasons, and on people who are not in the building.",
+          "Klockan {{time.T+180|clock}}. Lösningen är känd: utfärda ett nytt mellanliggande certifikat. {{person.itOps.name}} hittar förnyelseproceduren i ett gammalt dokument, skrivet för fem år sedan av personer som sedan dess har gått vidare.\n\nDen är kort, exakt och gammaldags. Varje steg är beroende av saker som av säkerhetsskäl förvaras frånkopplade, och av personer som inte är i byggnaden."
         ]),
         injects: [
           inj("i3-1", 180, "email", "itOps", "high", "confirmed", [
@@ -248,8 +248,8 @@
         assumptionChallenged: L(["This is an outage, not a security incident.", "Det här är ett avbrott, inte en säkerhetsincident."]),
         reveals: ["hf-workaround"],
         narrative: L([
-          "{{time.T+480|clock}}. As services return, {{person.socLead.name}} sees traffic going somewhere it shouldn't.",
-          "Klockan {{time.T+480|clock}}. När tjänsterna kommer tillbaka ser {{person.socLead.name}} trafik som går dit den inte ska."
+          "{{time.T+480|clock}}. Morning. Services are coming back one by one, some through the proper fix and some through quick workarounds made in the night.\n\nThe service desk is overloaded with staff who still cannot log in. {{person.socLead.name}} notices traffic from one integration going somewhere it should not, and an IT notice in staff inboxes that nobody in IT remembers writing.",
+          "Klockan {{time.T+480|clock}}. Morgon. Tjänsterna kommer tillbaka en efter en, en del via den riktiga lösningen och en del via snabba nödlösningar som gjordes under natten.\n\nServicedesken är överbelastad av anställda som fortfarande inte kan logga in. {{person.socLead.name}} ser att trafik från en integration går dit den inte borde, och ett IT-meddelande i personalens inkorgar som ingen på IT minns att de har skrivit."
         ]),
         injects: [
           inj("i4-1", 480, "phishingEmail", "attacker", "high", "confirmed", [
@@ -313,8 +313,8 @@
         twistKind: "authority",
         assumptionChallenged: L(["We decide when our services are back.", "Vi bestämmer när våra tjänster är tillbaka."]),
         narrative: L([
-          "{{time.T+1440|weekday|cap}}. The PKI is renewed and most services run. {{person.supplierManager.name}} has a letter.",
-          "{{time.T+1440|weekday|cap}}. PKI:n är förnyad och de flesta tjänster fungerar. {{person.supplierManager.name}} har ett brev."
+          "{{time.T+1440|weekday|cap}}. The certificate authority has been renewed and most services run normally again. The crisis team expects to stand down today.\n\nThen {{person.supplierManager.name}} brings a letter from one of your most important partners. The partner has read about the night's workarounds, and its contract has something to say about them.",
+          "{{time.T+1440|weekday|cap}}. Certifikatutfärdaren har förnyats och de flesta tjänster fungerar normalt igen. Krisledningen räknar med att avvecklas i dag.\n\nSedan kommer {{person.supplierManager.name}} med ett brev från en av era viktigaste partner. Partnern har läst om nattens nödlösningar, och dess avtal har något att säga om dem."
         ]),
         injects: [
           inj("i5-1", 1440, "supplierNotice", "supplier", "high", "confirmed", [
@@ -351,8 +351,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["It was one forgotten certificate.", "Det var ett bortglömt certifikat."]),
         narrative: L([
-          "{{time.T+4320|weekday|cap}}. {{person.itOps.name}} presents the certificate inventory.",
-          "{{time.T+4320|weekday|cap}}. {{person.itOps.name}} presenterar förteckningen över certifikat."
+          "{{time.T+4320|weekday|cap}}. {{person.itOps.name}} presents the results of a full search for certificates across the company, something nobody had done before.\n\nThe midnight failure was one certificate that nobody had on a list. The search shows how many more there are, and how many dates are waiting in the next few months.",
+          "{{time.T+4320|weekday|cap}}. {{person.itOps.name}} presenterar resultatet av en fullständig genomsökning efter certifikat i hela företaget, något som ingen hade gjort tidigare.\n\nFelet vid midnatt var ett enda certifikat som ingen hade på någon lista. Genomsökningen visar hur många fler det finns, och hur många datum som väntar de närmaste månaderna."
         ]),
         injects: [
           inj("i6-1", 4320, "impactReport", "itOps", "medium", "confirmed", [

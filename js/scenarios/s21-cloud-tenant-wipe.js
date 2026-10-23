@@ -75,8 +75,8 @@
         clock: 0,
         title: L(["Resources disappearing", "Resurser försvinner"]),
         narrative: L([
-          "{{time.T+0|weekday|cap}}, {{time.T+0|clock}}. Monitoring at {{org.name}} goes red: {{org.service.customer|lcfirst}} is down, and the cloud console shows production servers being deleted, one after another.",
-          "{{time.T+0|weekday|cap}}, klockan {{time.T+0|clock}}. Övervakningen hos {{org.name}} slår om till rött: {{org.service.customer|lcfirst}} ligger nere, och molnkonsolen visar hur produktionsservrar raderas, en efter en."
+          "{{time.T+0|weekday|cap}}, {{time.T+0|clock}}. A quiet weekend, until monitoring at {{org.name}} goes red: {{org.service.customer|lcfirst}} is down.\n\nThe cloud console shows something nobody has seen before: production servers being deleted, one after another, while the on-call engineer watches. Customers are getting errors on every page. Every minute, there is less left to save.",
+          "{{time.T+0|weekday|cap}}, klockan {{time.T+0|clock}}. En lugn helg, tills övervakningen hos {{org.name}} slår om till rött: {{org.service.customer|lcfirst}} ligger nere.\n\nMolnkonsolen visar något som ingen har sett förut: produktionsservrar som raderas, en efter en, medan jourhavande tekniker tittar på. Kunderna får fel på varje sida. För varje minut finns det mindre kvar att rädda."
         ]),
         injects: [
           inj("i1-1", 0, "siemAlert", "siem", "critical", "confirmed", [
@@ -142,8 +142,8 @@
         assumptionChallenged: L(["A broken deployment script deleted the servers.", "Ett trasigt driftsättningsskript raderade servrarna."]),
         reveals: ["hf-token"],
         narrative: L([
-          "{{time.T+60|clock}}. The pipeline identity is disabled and the deletions stop. {{person.socLead.name}} pulls the cloud activity log.",
-          "Klockan {{time.T+60|clock}}. Byggkedjans identitet är avstängd och raderingarna upphör. {{person.socLead.name}} tar fram molnets aktivitetslogg."
+          "{{time.T+60|clock}}. The pipeline identity has been disabled and the deletions have stopped. What is gone is gone, but nothing more is disappearing.\n\n{{person.socLead.name}} pulls the cloud activity log to understand why the company's own deployment pipeline started destroying production. Everyone hopes for a broken script.",
+          "Klockan {{time.T+60|clock}}. Byggkedjans identitet har inaktiverats och raderingarna har upphört. Det som är borta är borta, men inget mer försvinner.\n\n{{person.socLead.name}} hämtar molnets aktivitetslogg för att förstå varför företagets egen byggkedja började förstöra produktionen. Alla hoppas på ett trasigt skript."
         ]),
         injects: [
           inj("i2-1", 60, "authLog", "siem", "critical", "confirmed", [
@@ -199,8 +199,8 @@
         assumptionChallenged: L(["We can restore from last night's backup.", "Vi kan återställa från nattens säkerhetskopia."]),
         reveals: ["hf-vault"],
         narrative: L([
-          "{{time.T+180|clock}}. {{person.cloudLead.name}} opens the backup service to start restoring.",
-          "Klockan {{time.T+180|clock}}. {{person.cloudLead.name}} öppnar säkerhetskopieringstjänsten för att börja återställa."
+          "{{time.T+180|clock}}. The plan is straightforward: rebuild the servers and restore the data from the nightly cloud backups. {{person.cloudLead.name}} opens the backup service to start the restore.\n\nThe screen takes a long time to load. When it does, the room goes quiet.",
+          "Klockan {{time.T+180|clock}}. Planen är enkel: bygg upp servrarna igen och återställ datan från de nattliga säkerhetskopiorna i molnet. {{person.cloudLead.name}} öppnar backuptjänsten för att börja återställa.\n\nSkärmen tar lång tid att ladda. När den gör det blir det tyst i rummet."
         ]),
         injects: [
           inj("i3-1", 180, "backupReport", "backupSystem", "critical", "confirmed", [
@@ -256,8 +256,8 @@
         assumptionChallenged: L(["It is only destruction: nothing was taken.", "Det är bara förstörelse: ingenting togs."]),
         reveals: ["hf-copy"],
         narrative: L([
-          "{{time.T+300|clock}}. The activity log has one more entry, earlier than all the deletions.",
-          "Klockan {{time.T+300|clock}}. Aktivitetsloggen har en post till, tidigare än alla raderingar."
+          "{{time.T+300|clock}}. The team is piecing together the service from source code, old exports and anything else it can find.\n\nMeanwhile, the analysts keep reading the activity log backwards, looking for the attacker's first move. There is one more entry, earlier than all the deletions, and it changes what kind of incident this is.",
+          "Klockan {{time.T+300|clock}}. Teamet pusslar ihop tjänsten från källkod, gamla exporter och allt annat de kan hitta.\n\nSamtidigt fortsätter analytikerna att läsa aktivitetsloggen baklänges, på jakt efter angriparens första drag. Det finns ytterligare en post, tidigare än alla raderingar, och den ändrar vilken sorts incident det här är."
         ]),
         injects: [
           inj("i4-1", 300, "logExcerpt", "siem", "critical", "confirmed", [
@@ -321,8 +321,8 @@
         twistKind: "authority",
         assumptionChallenged: L(["This was vandalism with no demand.", "Det här var skadegörelse utan krav."]),
         narrative: L([
-          "{{time.T+720|clock}}. The rebuild is half done. {{person.ceo.name}} forwards an email that arrived at the company's general address.",
-          "Klockan {{time.T+720|clock}}. Återuppbyggnaden är halvvägs. {{person.ceo.name}} vidarebefordrar ett mejl som kommit till företagets allmänna adress."
+          "{{time.T+720|clock}}. The rebuild is about half done, and the first parts of the service are running again in a new environment.\n\nThen {{person.ceo.name}} forwards an email that arrived at the company's general address. Whoever wrote it knows exactly what happened, including details that have never been made public.",
+          "Klockan {{time.T+720|clock}}. Ombyggnaden är ungefär halvvägs, och de första delarna av tjänsten körs igen i en ny miljö.\n\nSedan vidarebefordrar {{person.ceo.name}} ett mejl som kom till företagets allmänna adress. Den som skrev det vet exakt vad som hände, även detaljer som aldrig har offentliggjorts."
         ]),
         injects: [
           inj("i5-1", 720, "ransomNote", "attacker", "critical", "confirmed", [
@@ -373,8 +373,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["When the service is back, the incident is over.", "När tjänsten är tillbaka är incidenten över."]),
         narrative: L([
-          "{{time.T+2880|weekday|cap}}. {{org.service.customer}} is back online after {{num.rebuildHours}} hours.",
-          "{{time.T+2880|weekday|cap}}. {{org.service.customer}} är tillbaka efter {{num.rebuildHours}} timmar."
+          "{{time.T+2880|weekday|cap}}. {{org.service.customer}} is back online after {{num.rebuildHours}} hours, rebuilt almost from scratch.\n\nThe team is exhausted and proud. But being back online is not the same as being back to normal: customers, the regulator and your own board all have questions about what happened before the outage, not only during it.",
+          "{{time.T+2880|weekday|cap}}. {{org.service.customer}} är i drift igen efter {{num.rebuildHours}} timmar, ombyggd nästan från grunden.\n\nTeamet är utmattat och stolt. Men att vara i drift igen är inte detsamma som att vara tillbaka till det normala: kunderna, tillsynsmyndigheten och er egen styrelse har alla frågor om det som hände före avbrottet, inte bara under det."
         ]),
         injects: [
           inj("i6-1", 2880, "regulatorLetter", "regulator", "high", "confirmed", [

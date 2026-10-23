@@ -78,8 +78,8 @@
         clock: 0,
         title: L(["A script nobody ordered", "Ett skript som ingen har beställt"]),
         narrative: L([
-          "{{time.T+0|day}}, {{time.T+0|clock}}. Most staff have left for the holiday. The {{env.edr}} console lights up: the remote-management agent from {{supplier.msp}} is running a script called “maintenance” on {{num.hosts}} machines.",
-          "{{time.T+0|day}}, klockan {{time.T+0|clock}}. De flesta har gått hem inför helgen. {{env.edr}}-konsolen lyser upp: fjärrförvaltningsagenten från {{supplier.msp}} kör ett skript som heter ”maintenance” på {{num.hosts}} datorer."
+          "{{time.T+0|day|cap}}, {{time.T+0|clock}}. Most staff have already left for the holiday. Your IT is run by {{supplier.msp}}, an outside provider; your own IT team is two people.\n\nThe {{env.edr}} console lights up: the provider's remote-management agent is running a script called “maintenance” on {{num.hosts}} machines. Nobody ordered any maintenance, and the script is trying to switch off your security tools.",
+          "{{time.T+0|day|cap}}, klockan {{time.T+0|clock}}. De flesta har redan gått för helgen. Er IT drivs av {{supplier.msp}}, en extern leverantör; ert eget IT-team består av två personer.\n\n{{env.edr}}-konsolen lyser upp: leverantörens fjärrhanteringsagent kör ett skript som heter ”maintenance” på {{num.hosts}} datorer. Ingen har beställt något underhåll, och skriptet försöker stänga av era säkerhetsverktyg."
         ]),
         injects: [
           inj("i1-1", 0, "edrAlert", "edr", "critical", "confirmed", [
@@ -140,8 +140,8 @@
         assumptionChallenged: L(["This is an attack on our organisation.", "Det här är ett angrepp mot vår organisation."]),
         reveals: ["hf-msp"],
         narrative: L([
-          "{{time.T+60|clock}}. The provider's support line goes to voicemail, its status page is down, and the account manager's mobile is off.",
-          "Klockan {{time.T+60|clock}}. Leverantörens supportnummer går till röstbrevlådan, statussidan ligger nere och kundansvarigs mobil är avstängd."
+          "{{time.T+60|clock}}. You try to reach the provider. Their support line goes to voicemail, their status page is down, and the account manager's mobile is switched off.\n\nThe company you pay to run your IT has gone silent, on the evening when you need it most. Meanwhile, messages from other companies start appearing in security forums, describing exactly what you are seeing.",
+          "Klockan {{time.T+60|clock}}. Ni försöker nå leverantören. Deras supportlinje går till röstbrevlådan, statussidan ligger nere och kundansvariges mobil är avstängd.\n\nFöretaget ni betalar för att driva er IT har tystnat, den kväll ni behöver det som mest. Samtidigt börjar meddelanden från andra företag dyka upp i säkerhetsforum, med beskrivningar av exakt det ni ser."
         ]),
         injects: [
           inj("i2-1", 60, "threatIntel", "threatIntel", "critical", "confirmed", [
@@ -206,8 +206,8 @@
         assumptionChallenged: L(["Blocking the agent removed the attackers' access.", "Att blockera agenten tog bort angriparnas åtkomst."]),
         reveals: ["hf-admins"],
         narrative: L([
-          "{{time.T+180|clock}}. The incident response firm is connected remotely and looks at your directory.",
-          "Klockan {{time.T+180|clock}}. Incidentresponsföretaget är uppkopplat på distans och tittar på er katalogtjänst."
+          "{{time.T+180|clock}}. An incident response firm you called directly is now connected remotely, and has started looking at your directory.\n\nBlocking the provider's agent stopped the script. But the agent was only one of the ways the provider reaches into your network, and the response team wants to see all the others.",
+          "Klockan {{time.T+180|clock}}. En incidentfirma som ni ringde direkt är nu uppkopplad på distans och har börjat titta på er katalogtjänst.\n\nAtt blockera leverantörens agent stoppade skriptet. Men agenten var bara ett av sätten som leverantören når in i ert nätverk, och incidentteamet vill se alla de andra."
         ]),
         injects: [
           inj("i3-1", 180, "authLog", "siem", "critical", "confirmed", [
@@ -270,8 +270,8 @@
         twistKind: "authority",
         assumptionChallenged: L(["Our provider is obliged to help us in an incident.", "Vår leverantör är skyldig att hjälpa oss vid en incident."]),
         narrative: L([
-          "{{time.T+300|clock}}. The provider finally answers — through its lawyers.",
-          "Klockan {{time.T+300|clock}}. Leverantören svarar till slut – via sina advokater."
+          "{{time.T+300|clock}}. The provider finally answers, but not the technicians you know by name. The reply comes from its lawyers.\n\nYour team needs answers quickly: what did the attackers do, what do they have, what should you look for? Someone pulls out the contract with the provider to see what you can demand.",
+          "Klockan {{time.T+300|clock}}. Leverantören svarar till slut, men inte de tekniker ni känner vid namn. Svaret kommer från deras jurister.\n\nErt team behöver svar snabbt: vad gjorde angriparna, vad har de, vad ska ni leta efter? Någon tar fram avtalet med leverantören för att se vad ni kan kräva."
         ]),
         injects: [
           inj("i4-1", 300, "email", "supplier", "high", "confirmed", [
@@ -327,8 +327,8 @@
         assumptionChallenged: L(["We can always take control of our own systems.", "Vi kan alltid ta kontroll över våra egna system."]),
         reveals: ["hf-noaccess"],
         narrative: L([
-          "{{time.T+600|clock}}. The incident response team asks for a domain administrator account to start the clean-up.",
-          "Klockan {{time.T+600|clock}}. Incidentresponsteamet ber om ett domänadministratörskonto för att börja saneringen."
+          "{{time.T+600|clock}}. The incident response team is ready to start the clean-up: removing the provider's accounts, resetting passwords and checking the firewall.\n\nThey ask for a domain administrator account to work with. The two people on your own IT team look at each other.",
+          "Klockan {{time.T+600|clock}}. Incidentteamet är redo att börja städa: ta bort leverantörens konton, byta lösenord och kontrollera brandväggen.\n\nDe ber om ett domänadministratörskonto att arbeta med. De två personerna i ert eget IT-team tittar på varandra."
         ]),
         injects: [
           inj("i5-1", 600, "chat", "person.itOps", "critical", "confirmed", [
@@ -380,8 +380,8 @@
         assumptionChallenged: L(["EDR blocked the script everywhere that matters.", "EDR blockerade skriptet överallt där det spelar roll."]),
         reveals: ["hf-timed"],
         narrative: L([
-          "The holiday itself, {{time.T+1440|clock}}. The response team has inventoried machines the EDR does not cover.",
-          "Själva helgdagen, klockan {{time.T+1440|clock}}. Incidentresponsteamet har inventerat de datorer som EDR inte täcker."
+          "The holiday itself, {{time.T+1440|clock}}. The provider is locked out and the visible machines look clean. Some in the room want to go home.\n\nThe response team keeps going. They have inventoried machines your EDR does not cover: old servers, kiosks and lab systems nobody thinks about. What they find there has a deadline.",
+          "Själva helgdagen, klockan {{time.T+1440|clock}}. Leverantören är utelåst och de synliga datorerna ser rena ut. En del i rummet vill gå hem.\n\nIncidentteamet fortsätter. De har inventerat datorer som ert EDR inte täcker: gamla servrar, kiosker och labbsystem som ingen tänker på. Det de hittar där har en tidsgräns."
         ]),
         injects: [
           inj("i6-1", 1440, "forensicFinding", "irRetainer", "critical", "confirmed", [
@@ -440,8 +440,8 @@
         twistKind: "authority",
         assumptionChallenged: L(["We manage our incident on our own.", "Vi hanterar vår incident på egen hand."]),
         narrative: L([
-          "Two days later. A coordination call brings together dozens of the provider's customers.",
-          "Två dagar senare. Ett samordningsmöte samlar dussintals av leverantörens kunder."
+          "Two days later. {{reg.csirt|cap}} hosts a coordination call that brings together dozens of the provider's customers, from small offices to large companies.\n\nEveryone is dealing with the same attack, at different stages and with different levels of help. What you do now affects the others, and what they do affects you.",
+          "Två dagar senare. {{reg.csirt|cap}} håller ett samordningsmöte som samlar dussintals av leverantörens kunder, från små kontor till stora företag.\n\nAlla hanterar samma angrepp, i olika skeden och med olika mycket hjälp. Det ni gör nu påverkar de andra, och det de gör påverkar er."
         ]),
         injects: [
           inj("i7-1", 2880, "advisory", "csirt", "high", "confirmed", [
@@ -496,8 +496,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["We can switch providers quickly.", "Vi kan snabbt byta leverantör."]),
         narrative: L([
-          "Five days later. The immediate crisis is over. The board asks what happens now.",
-          "Fem dagar senare. Den akuta krisen är över. Styrelsen frågar vad som händer nu."
+          "Five days later. The immediate crisis is over: the timed ransomware never ran, and the provider is locked out.\n\nThe board asks the question nobody has had time for: what happens now? You depended on one provider for everything, and it is not obvious that you can do without one.",
+          "Fem dagar senare. Den akuta krisen är över: den tidsinställda ransomwaren kördes aldrig, och leverantören är utelåst.\n\nStyrelsen ställer frågan som ingen har hunnit med: vad händer nu? Ni var beroende av en enda leverantör för allt, och det är inte självklart att ni klarar er utan en."
         ]),
         injects: [
           inj("i8-1", 7200, "email", "person.supplierManager", "medium", "confirmed", [

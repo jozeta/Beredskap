@@ -77,8 +77,8 @@
         clock: 0,
         title: L(["Line 3 has stopped", "Linje 3 har stannat"]),
         narrative: L([
-          "{{time.T+0|day}}, {{time.T+0|clock}}. On the night shift at {{org.name}}, line 3 stops. The operator screens show controllers dropping off the network and coming back, again and again.",
-          "{{time.T+0|day}}, klockan {{time.T+0|clock}}. Under nattskiftet hos {{org.name}} stannar linje 3. Operatörsskärmarna visar styrsystem som tappar kontakten med nätverket och kommer tillbaka, gång på gång."
+          "{{time.T+0|day|cap}}, {{time.T+0|clock}}. On the night shift at {{org.name}}, line 3 stops. The line has gone into a safe stop, with a batch half-way through the process.\n\nOn the operator screens, the line's controllers keep dropping off the network and coming back, again and again. Lines 1 and 2 are still running. The shift leader calls IT on-call and the OT engineer, and each of them has a different first guess.",
+          "{{time.T+0|day|cap}}, klockan {{time.T+0|clock}}. Under nattskiftet hos {{org.name}} stannar linje 3. Linjen har gått till ett säkert stopp, med en batch halvvägs genom processen.\n\nPå operatörsskärmarna tappar linjens styrsystem kontakten med nätverket och kommer tillbaka, om och om igen. Linje 1 och 2 går fortfarande. Skiftledaren ringer IT-jouren och OT-ingenjören, och de har var sin första gissning."
         ]),
         injects: [
           inj("i1-1", 0, "impactReport", "person.otEngineer", "high", "confirmed", [
@@ -142,8 +142,8 @@
         twistKind: "authority",
         assumptionChallenged: L(["IT decides how to contain a cyber incident.", "IT bestämmer hur en cyberincident ska begränsas."]),
         narrative: L([
-          "{{time.T+60|clock}}. The plant manager has arrived and is unhappy about what IT wants to do.",
-          "Klockan {{time.T+60|clock}}. Fabrikschefen har kommit och är missnöjd med vad IT vill göra."
+          "{{time.T+60|clock}}. The plant manager has arrived on site, and is unhappy about what IT wants to do.\n\nFor IT, cutting the plant off from the office network is the standard first move against malware. For the plant manager, the network is part of how lines 1 and 2 run safely, and pulling a cable is not a neutral act.",
+          "Klockan {{time.T+60|clock}}. Fabrikschefen har kommit till anläggningen, och är inte nöjd med vad IT vill göra.\n\nFör IT är att koppla bort fabriken från kontorsnätet det självklara första steget mot skadlig kod. För fabrikschefen är nätet en del av hur linje 1 och 2 körs säkert, och att dra ur en kabel är inte en neutral handling."
         ]),
         injects: [
           inj("i2-1", 60, "executiveMessage", "person.serviceOwner", "high", "confirmed", [
@@ -200,8 +200,8 @@
         assumptionChallenged: L(["This is a network or hardware fault.", "Det här är ett nätverks- eller hårdvarufel."]),
         reveals: ["hf-ews"],
         narrative: L([
-          "{{time.T+180|clock}}. The OT engineer compares the controllers' logic with the last approved version.",
-          "Klockan {{time.T+180|clock}}. OT-ingenjören jämför styrsystemens logik med den senast godkända versionen."
+          "{{time.T+180|clock}}. The plant is now separated from the office network, safely. The OT engineer starts comparing the controllers' logic with the last approved version.\n\nUntil now, the working theory has been malware or failing network hardware. The comparison will show whether anything inside the controllers themselves has changed.",
+          "Klockan {{time.T+180|clock}}. Fabriken är nu avskild från kontorsnätet, på ett säkert sätt. OT-ingenjören börjar jämföra styrsystemens logik med den senast godkända versionen.\n\nHittills har arbetsteorin varit skadlig kod eller trasig nätverksutrustning. Jämförelsen kommer att visa om något inne i själva styrsystemen har ändrats."
         ]),
         injects: [
           inj("i3-1", 180, "forensicFinding", "person.otEngineer", "critical", "confirmed", [
@@ -265,8 +265,8 @@
         assumptionChallenged: L(["The plant network is separated from IT.", "Fabriksnätet är avskilt från IT."]),
         reveals: ["hf-boundary"],
         narrative: L([
-          "{{time.T+300|clock}}. The network team traces how anyone could reach the engineering workstation.",
-          "Klockan {{time.T+300|clock}}. Nätverksteamet spårar hur någon kunde nå ingenjörsarbetsstationen."
+          "{{time.T+300|clock}}. The network team traces how anyone could have reached the engineering workstation, the computer used to program the controllers.\n\nThe plant network is supposed to be separated from the office network. Everyone believed it was. The firewall rules tell a more complicated story.",
+          "Klockan {{time.T+300|clock}}. Nätverksteamet spårar hur någon kan ha nått ingenjörsarbetsstationen, datorn som används för att programmera styrsystemen.\n\nFabriksnätet ska vara avskilt från kontorsnätet. Alla trodde att det var det. Brandväggsreglerna berättar en mer komplicerad historia."
         ]),
         injects: [
           inj("i4-1", 300, "networkEvidence", "itOps", "critical", "confirmed", [
@@ -330,8 +330,8 @@
         assumptionChallenged: L(["The attacker only wanted to stop production.", "Angriparen ville bara stoppa produktionen."]),
         reveals: ["hf-safety"],
         narrative: L([
-          "{{time.T+480|clock}}. A line-by-line comparison of the logic reaches the safety interlocks.",
-          "Klockan {{time.T+480|clock}}. Jämförelsen av logiken rad för rad når fram till säkerhetsförreglingarna."
+          "{{time.T+480|clock}}. The engineers have been working through the modified logic line by line, function by function.\n\nSo far the changes explain why the controllers kept restarting. Now the comparison reaches the safety interlocks, the parts of the logic that stop the line when something dangerous happens.",
+          "Klockan {{time.T+480|clock}}. Ingenjörerna har gått igenom den ändrade logiken rad för rad, funktion för funktion.\n\nHittills förklarar ändringarna varför styrsystemen startade om hela tiden. Nu når jämförelsen säkerhetsförreglingarna, de delar av logiken som stoppar linjen när något farligt händer."
         ]),
         injects: [
           inj("i5-1", 480, "forensicFinding", "person.otEngineer", "critical", "confirmed", [
@@ -392,8 +392,8 @@
         twistKind: "authority",
         assumptionChallenged: L(["We restart when we are ready.", "Vi startar när vi är redo."]),
         narrative: L([
-          "Morning. The authorities have been informed and the OT vendor is on site.",
-          "Morgon. Myndigheterna har informerats och OT-leverantören är på plats."
+          "Morning. The authorities have been informed, and the OT vendor's engineers are on site with their reference files.\n\nProduction management wants a restart date: customers are waiting and every hour costs money. But restarting is no longer a decision {{org.name}} can take alone.",
+          "Morgon. Myndigheterna har informerats, och OT-leverantörens ingenjörer är på plats med sina referensfiler.\n\nProduktionsledningen vill ha ett datum för omstart: kunderna väntar och varje timme kostar pengar. Men att starta om är inte längre ett beslut som {{org.name}} kan fatta ensamt."
         ]),
         injects: [
           inj("i6-1", 900, "regulatorLetter", "regulator", "high", "confirmed", [
@@ -448,8 +448,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["We can simply restore the approved logic.", "Vi kan helt enkelt återställa den godkända logiken."]),
         narrative: L([
-          "The next day. Engineers prepare to load trusted logic onto the verified controllers.",
-          "Nästa dag. Ingenjörerna förbereder sig för att läsa in pålitlig logik i de kontrollerade styrsystemen."
+          "The next day. The verified controllers are ready, and engineers prepare to load trusted logic onto them.\n\nThe question is which logic can be trusted. The project files on the engineering workstation were in the attacker's hands, and the offline copies are older than anyone would like.",
+          "Nästa dag. De verifierade styrsystemen är klara, och ingenjörerna förbereder sig för att ladda in pålitlig logik.\n\nFrågan är vilken logik som går att lita på. Projektfilerna på ingenjörsarbetsstationen har varit i angriparens händer, och de frånkopplade kopiorna är äldre än någon skulle önska."
         ]),
         injects: [
           inj("i7-1", 1440, "impactReport", "person.otEngineer", "high", "confirmed", [
@@ -509,8 +509,8 @@
         assumptionChallenged: L(["The incident is limited to this plant.", "Incidenten är begränsad till den här fabriken."]),
         reveals: ["hf-sister"],
         narrative: L([
-          "Two days later. An engineer who works at both sites mentions something.",
-          "Två dagar senare. En ingenjör som arbetar på båda anläggningarna nämner en sak."
+          "Two days later. The plant is slowly recovering. In a review meeting, an engineer who works at both of the company's plants mentions something almost in passing.\n\nThe room goes quiet. If they are right, the same door may be open somewhere else, at a plant that has had no alarm at all.",
+          "Två dagar senare. Fabriken återhämtar sig långsamt. På ett genomgångsmöte nämner en ingenjör som arbetar vid båda företagets fabriker något nästan i förbigående.\n\nDet blir tyst i rummet. Om hen har rätt kan samma dörr stå öppen någon annanstans, i en fabrik som inte har haft något larm alls."
         ]),
         injects: [
           inj("i8-1", 2880, "employeeReport", "employee", "high", "confirmed", [
@@ -561,8 +561,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["Insurance and contracts will absorb the cost.", "Försäkringar och avtal tar hand om kostnaden."]),
         narrative: L([
-          "Five days later. Production is back in stages. The commercial fallout arrives.",
-          "Fem dagar senare. Produktionen är tillbaka stegvis. De kommersiella följderna kommer."
+          "Five days later. Production is back in stages, line by line, under the vendor's supervision.\n\nThe commercial fallout arrives in the same week: customers count the late deliveries, and the insurer reads its policy again. The room has to decide what changes, now that everyone is listening.",
+          "Fem dagar senare. Produktionen är tillbaka i etapper, linje för linje, under leverantörens överinseende.\n\nDe kommersiella följderna kommer samma vecka: kunderna räknar de sena leveranserna och försäkringsbolaget läser sin försäkring igen. Rummet måste bestämma vad som ändras, nu när alla lyssnar."
         ]),
         injects: [
           inj("i9-1", 7200, "email", "customer", "medium", "confirmed", [

@@ -76,8 +76,8 @@
         clock: 0,
         title: L(["Connected", "Ihopkopplade"]),
         narrative: L([
-          "{{time.T+0|weekday|cap}}, {{time.T+0|clock}}. Yesterday {{org.name}} connected its network to {{supplier.vendor}}, the software company it bought last month. This morning the security centre has alerts on your file servers, all from addresses on the new side.",
-          "{{time.T+0|weekday|cap}}, klockan {{time.T+0|clock}}. I går kopplade {{org.name}} ihop sitt nätverk med {{supplier.vendor}}, mjukvaruföretaget som köptes förra månaden. I morse har säkerhetscentralen larm på era filservrar, alla från adresser på den nya sidan."
+          "{{time.T+0|weekday|cap}}, {{time.T+0|clock}}. Yesterday {{org.name}} connected its network to {{supplier.vendor}}, the software company it bought last month. The integration project celebrated with cake.\n\nSince early today the security centre has had alerts on your file servers, all from addresses on the new side of the connection. The integration team is sure it is just a migration script, and the deal team does not want any delays.",
+          "{{time.T+0|weekday|cap}}, klockan {{time.T+0|clock}}. I går kopplade {{org.name}} ihop sitt nätverk med {{supplier.vendor}}, mjukvaruföretaget som köptes förra månaden. Integrationsprojektet firade med tårta.\n\nSedan tidigt i dag har säkerhetscentralen haft larm på era filservrar, alla från adresser på den nya sidan av förbindelsen. Integrationsteamet är säkert på att det bara är ett migreringsskript, och affärsteamet vill inte ha några förseningar."
         ]),
         injects: [
           inj("i1-1", 0, "edrAlert", "edr", "high", "confirmed", [
@@ -137,8 +137,8 @@
         assumptionChallenged: L(["A migration script misbehaved.", "Ett migreringsskript betedde sig fel."]),
         reveals: ["hf-months"],
         narrative: L([
-          "{{time.T+120|clock}}. Your incident responders get access to the acquired company's logs.",
-          "Klockan {{time.T+120|clock}}. Era incidenthanterare får tillgång till det förvärvade företagets loggar."
+          "{{time.T+120|clock}}. The connection has been cut, and your incident responders have been given access to the acquired company's logs for the first time.\n\nUntil now, everyone assumed the problem started yesterday, when the networks were joined. The logs on the other side go back much further.",
+          "Klockan {{time.T+120|clock}}. Förbindelsen är bruten, och era incidenthanterare har för första gången fått tillgång till det förvärvade företagets loggar.\n\nHittills har alla antagit att problemet började i går, när näten kopplades ihop. Loggarna på andra sidan går mycket längre tillbaka."
         ]),
         injects: [
           inj("i2-1", 120, "forensicFinding", "irRetainer", "critical", "confirmed", [
@@ -190,8 +190,8 @@
         assumptionChallenged: L(["The sellers told us everything they knew.", "Säljarna berättade allt de visste."]),
         reveals: ["hf-diligence"],
         narrative: L([
-          "{{time.T+480|clock}}. {{person.legal.name}} reads the due diligence file next to the acquired company's email archive.",
-          "Klockan {{time.T+480|clock}}. {{person.legal.name}} läser handlingarna från företagsgranskningen bredvid det förvärvade företagets e-postarkiv."
+          "{{time.T+480|clock}}. A long-compromised network raises an obvious question: did anyone know before you signed? {{person.legal.name}} reads the due diligence file next to the acquired company's email archive.\n\nThe due diligence questionnaire was answered by the sellers a few months ago. The email archive shows what they were saying to each other at the same time.",
+          "Klockan {{time.T+480|clock}}. Ett nätverk som varit komprometterat länge väcker en självklar fråga: visste någon innan ni skrev under? {{person.legal.name}} läser företagsgranskningens dokument bredvid det förvärvade företagets mejlarkiv.\n\nFrågeformuläret i granskningen besvarades av säljarna för några månader sedan. Mejlarkivet visar vad de sa till varandra vid samma tid."
         ]),
         injects: [
           inj("i3-1", 480, "email", "employee", "high", "confirmed", [
@@ -243,8 +243,8 @@
         assumptionChallenged: L(["The damage is limited to the acquired company.", "Skadan är begränsad till det förvärvade företaget."]),
         reveals: ["hf-signing"],
         narrative: L([
-          "{{time.T+1440|weekday|cap}}. The investigation on both sides reports in.",
-          "{{time.T+1440|weekday|cap}}. Utredningen på båda sidor rapporterar."
+          "{{time.T+1440|weekday|cap}}. The investigation teams on both sides report their findings from the first full day.\n\nTwo questions matter most: what did the attacker reach on your side during the night the networks were connected, and what did they take from the acquired company over the months before? Both answers matter to people outside the company.",
+          "{{time.T+1440|weekday|cap}}. Utredningsteamen på båda sidor redovisar sina fynd från det första hela dygnet.\n\nTvå frågor är viktigast: vad nådde angriparen på er sida under natten då näten var ihopkopplade, och vad tog de från det förvärvade företaget under månaderna innan? Båda svaren betyder något för människor utanför företaget."
         ]),
         injects: [
           inj("i4-1", 1440, "logExcerpt", "siem", "critical", "confirmed", [
@@ -308,8 +308,8 @@
         twistKind: "authority",
         assumptionChallenged: L(["We own the company, so we decide.", "Vi äger företaget, så vi bestämmer."]),
         narrative: L([
-          "{{time.T+2880|weekday|cap}}. The integration steering committee meets with the acquired company's managing director.",
-          "{{time.T+2880|weekday|cap}}. Integrationens styrgrupp möter det förvärvade företagets vd."
+          "{{time.T+2880|weekday|cap}}. The security team has a clear recommendation: rebuild the acquired company's directory and systems before any connection is restored.\n\nThe integration steering committee meets with the acquired company's managing director to agree on it. The managing director arrives with a different view, and a different reading of who decides.",
+          "{{time.T+2880|weekday|cap}}. Säkerhetsteamet har en tydlig rekommendation: bygg om det förvärvade företagets katalogtjänst och system innan någon förbindelse återställs.\n\nIntegrationens styrgrupp möts med det förvärvade företagets vd för att komma överens om det. Vd kommer med en annan uppfattning, och en annan tolkning av vem som bestämmer."
         ]),
         injects: [
           inj("i5-1", 2880, "executiveMessage", "management", "high", "disputed", [
@@ -346,8 +346,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["Security is an IT question after the deal.", "Säkerhet är en IT-fråga efter affären."]),
         narrative: L([
-          "{{time.T+10080|weekday|cap}}. The board reviews a deal worth {{num.dealValue}} million.",
-          "{{time.T+10080|weekday|cap}}. Styrelsen granskar en affär värd {{num.dealValue}} miljoner."
+          "Six months later. The board reviews a deal worth {{num.dealValue}} million, and the integration is far behind plan.\n\nThe incident is closed, but its costs are still arriving: the rebuild, the warranty dispute with the sellers and the customers who left. The chair wants to know what will be different in the next acquisition.",
+          "Sex månader senare. Styrelsen går igenom en affär värd {{num.dealValue}} miljoner, och integrationen ligger långt efter plan.\n\nIncidenten är avslutad, men kostnaderna fortsätter att komma: ombyggnaden, garantitvisten med säljarna och kunderna som lämnade. Ordföranden vill veta vad som blir annorlunda vid nästa förvärv."
         ]),
         injects: [
           inj("i6-1", 10080, "executiveMessage", "management", "medium", "confirmed", [

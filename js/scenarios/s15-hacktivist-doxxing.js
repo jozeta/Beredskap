@@ -75,8 +75,8 @@
         clock: 0,
         title: L(["Our front page, their message", "Vår startsida, deras budskap"]),
         narrative: L([
-          "{{time.T+0|day}}, {{time.T+0|clock}}. The day after {{org.name}} announced a contested public decision, the front page of its website changes.",
-          "{{time.T+0|day}}, klockan {{time.T+0|clock}}. Dagen efter att {{org.name}} tillkännagav ett omstritt offentligt beslut ändras startsidan på webbplatsen."
+          "{{time.T+0|day|cap}}, {{time.T+0|clock}}. Yesterday {{org.name}} announced a contested public decision, and the reaction online was angry. This morning the front page of the website changes.\n\nScreenshots are spreading fast: your logo has been replaced with a group's symbol and a message to the people who made the decision. The public e-services still work. A local reporter is already asking whether citizens' data is safe.",
+          "{{time.T+0|day|cap}}, klockan {{time.T+0|clock}}. I går tillkännagav {{org.name}} ett omstritt offentligt beslut, och reaktionerna på nätet var arga. I dag ändras webbplatsens förstasida.\n\nSkärmbilder sprids snabbt: er logotyp har ersatts av en grupps symbol och ett meddelande till dem som fattade beslutet. De offentliga e-tjänsterna fungerar fortfarande. En lokalreporter frågar redan om medborgarnas uppgifter är säkra."
         ]),
         injects: [
           inj("i1-1", 0, "socialPost", "socialMedia", "high", "confirmed", [
@@ -136,8 +136,8 @@
         assumptionChallenged: L(["The attackers exploited the website.", "Angriparna utnyttjade webbplatsen."]),
         reveals: ["hf-cms"],
         narrative: L([
-          "{{time.T+90|clock}}. The publishing tool's audit log is reviewed.",
-          "Klockan {{time.T+90|clock}}. Publiceringsverktygets granskningslogg gås igenom."
+          "{{time.T+90|clock}}. The defaced pages have been taken down and the original content restored. Now the team reviews the publishing tool's audit log to see how the changes were made.\n\nEveryone expected a technical flaw in the website. The log points somewhere else: to someone who was allowed to publish.",
+          "Klockan {{time.T+90|clock}}. De ändrade sidorna har tagits ned och det ursprungliga innehållet är återställt. Nu går teamet igenom publiceringsverktygets granskningslogg för att se hur ändringarna gjordes.\n\nAlla väntade sig en teknisk brist i webbplatsen. Loggen pekar någon annanstans: på någon som hade behörighet att publicera."
         ]),
         injects: [
           inj("i2-1", 90, "authLog", "itOps", "high", "confirmed", [
@@ -193,8 +193,8 @@
         assumptionChallenged: L(["This is about the website.", "Det här handlar om webbplatsen."]),
         reveals: ["hf-dox"],
         narrative: L([
-          "{{time.T+240|clock}}. An employee calls HR in tears.",
-          "Klockan {{time.T+240|clock}}. En anställd ringer HR i tårar."
+          "{{time.T+240|clock}}. The website is back to normal and the incident seemed to be winding down. Then an employee calls HR, in tears.\n\nThe group has moved from your website to your people. This is no longer an IT incident or a communication problem; it is about the personal safety of staff and their families.",
+          "Klockan {{time.T+240|clock}}. Webbplatsen fungerar normalt igen och incidenten verkade klinga av. Sedan ringer en anställd till HR, i tårar.\n\nGruppen har gått från er webbplats till era medarbetare. Det här är inte längre en IT-incident eller ett kommunikationsproblem; det handlar om personalens och deras familjers personliga säkerhet."
         ]),
         injects: [
           inj("i3-1", 240, "socialPost", "socialMedia", "critical", "confirmed", [
@@ -255,8 +255,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["The e-services are not a target.", "E-tjänsterna är inte en måltavla."]),
         narrative: L([
-          "{{time.T+480|clock}}. Citizens can't book, apply or pay.",
-          "Klockan {{time.T+480|clock}}. Medborgarna kan inte boka, ansöka eller betala."
+          "{{time.T+480|clock}}. While HR and security deal with the threats, a new problem appears on the public side.\n\nCitizens cannot book, apply or pay: the e-services are unreachable, and so is the call-back system the switchboard uses. People who need the services today have no way to reach you.",
+          "Klockan {{time.T+480|clock}}. Medan HR och säkerhet hanterar hoten dyker ett nytt problem upp på den publika sidan.\n\nMedborgarna kan inte boka, ansöka eller betala: e-tjänsterna går inte att nå, och inte heller växelns system för återuppringning. Den som behöver tjänsterna i dag har inget sätt att nå er."
         ]),
         injects: [
           inj("i4-1", 480, "networkEvidence", "itOps", "high", "confirmed", [
@@ -311,8 +311,8 @@
         twistKind: "authority",
         assumptionChallenged: L(["We control our own crisis communication.", "Vi styr vår egen kriskommunikation."]),
         narrative: L([
-          "The next day. Staff, unions and the press all want answers.",
-          "Nästa dag. Personal, fackförbund och press vill alla ha svar."
+          "The next day. Staff are frightened, the unions want answers and the press is covering every development.\n\nThe threats against staff have been reported, and the police have taken a close interest. Their involvement brings protection, but also conditions on what the organisation may say, and to whom.",
+          "Nästa dag. Personalen är rädd, facken vill ha svar och pressen bevakar varje utveckling.\n\nHoten mot personalen har polisanmälts, och polisen visar stort intresse. Deras medverkan ger skydd, men också villkor för vad organisationen får säga, och till vem."
         ]),
         injects: [
           inj("i5-1", 1440, "phoneTranscript", "police", "high", "confirmed", [
@@ -368,8 +368,8 @@
         assumptionChallenged: L(["The group found staff details from public sources.", "Gruppen hittade personaluppgifterna i offentliga källor."]),
         reveals: ["hf-export"],
         narrative: L([
-          "Two days later. The investigation compares the published list with internal records.",
-          "Två dagar senare. Utredningen jämför den publicerade listan med interna register."
+          "Two days later. The investigators compare the published list of staff with the organisation's own records, field by field.\n\nUntil now everyone assumed the group had collected the details from public sources and social media. The comparison shows where the list really came from, and it is uncomfortably close to home.",
+          "Två dagar senare. Utredarna jämför den publicerade listan över personal med organisationens egna register, fält för fält.\n\nHittills har alla antagit att gruppen samlat uppgifterna från öppna källor och sociala medier. Jämförelsen visar var listan egentligen kom ifrån, och det är obehagligt nära."
         ]),
         injects: [
           inj("i6-1", 2160, "forensicFinding", "forensics", "high", "confirmed", [
@@ -429,8 +429,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["The attack is over.", "Angreppet är över."]),
         narrative: L([
-          "Three days in. Things have calmed down — until a new post.",
-          "Tre dagar in. Det har lugnat sig – tills ett nytt inlägg dyker upp."
+          "Three days in. Things have calmed down. The website is secure, the e-services are back and the threatened staff have support.\n\nThen a new post from the group appears, with a date. The council vote on the decision is coming up, and the group has noticed.",
+          "Tre dagar in. Det har lugnat sig. Webbplatsen är säkrad, e-tjänsterna är tillbaka och den hotade personalen har stöd.\n\nSedan dyker ett nytt inlägg från gruppen upp, med ett datum. Fullmäktiges omröstning om beslutet närmar sig, och gruppen har märkt det."
         ]),
         injects: [
           inj("i7-1", 2880, "socialPost", "socialMedia", "high", "unverified", [

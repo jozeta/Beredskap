@@ -85,8 +85,8 @@
         clock: 0,
         title: L(["Where is our money?", "Var är våra pengar?"]),
         narrative: L([
-          "{{time.T+0|day}}, {{time.T+0|clock}}. {{person.supplierManager.firstName}} forwards an angry email from {{supplier.vendor}}: their invoice of {{num.amount|currency}} is now 30 days overdue. Accounts payable insists it was paid on time — to the new bank account the supplier asked them to use.",
-          "{{time.T+0|day}}, klockan {{time.T+0|clock}}. {{person.supplierManager.firstName}} vidarebefordrar ett argt mejl från {{supplier.vendor}}: deras faktura på {{num.amount|currency}} är nu 30 dagar försenad. Leverantörsreskontran står fast vid att den betalades i tid – till det nya bankkonto som leverantören bad dem använda."
+          "{{time.T+0|day|cap}}, {{time.T+0|clock}}. {{person.supplierManager.firstName}} forwards an angry email from {{supplier.vendor}}, one of your oldest suppliers: their invoice of {{num.amount|currency}} is now 30 days overdue, and they threaten to stop deliveries.\n\nAccounts payable insists it was paid on time, to the new bank account the supplier asked them to use a few weeks ago. Either someone is mistaken, or the money went somewhere it should not have.",
+          "{{time.T+0|day|cap}}, klockan {{time.T+0|clock}}. {{person.supplierManager.firstName}} vidarebefordrar ett argt mejl från {{supplier.vendor}}, en av era äldsta leverantörer: deras faktura på {{num.amount|currency}} är nu 30 dagar försenad, och de hotar att stoppa leveranserna.\n\nLeverantörsreskontran står fast vid att den betalades i tid, till det nya bankkonto som leverantören bad dem använda för några veckor sedan. Antingen har någon fel, eller så har pengarna hamnat där de inte borde."
         ]),
         injects: [
           inj("i1-1", 0, "email", "supplier", "medium", "confirmed", [
@@ -153,8 +153,8 @@
         assumptionChallenged: L(["The supplier's email was compromised.", "Det var leverantörens e-post som var komprometterad."]),
         reveals: ["hf-cfo"],
         narrative: L([
-          "{{time.T+120|clock}}. The SOC has pulled the full email thread. The bank-change message did not come from {{supplier.vendor.domain}} at all. It came from {{asset.lookalikeDomain}} — and it quoted an internal reply that only existed in {{person.cfo.name}}'s mailbox.",
-          "Klockan {{time.T+120|clock}}. SOC har tagit fram hela mejltråden. Meddelandet om nytt bankkonto kom inte alls från {{supplier.vendor.domain}}. Det kom från {{asset.lookalikeDomain}} – och citerade ett internt svar som bara fanns i {{person.cfo.name}}s e-postlåda."
+          "{{time.T+120|clock}}. The SOC has pulled the full email thread and read the message headers line by line.\n\nThe bank-change message did not come from {{supplier.vendor.domain}} at all. It came from {{asset.lookalikeDomain}}, a domain that differs by a single letter. And it quoted an internal reply that only ever existed in {{person.cfo.name}}'s mailbox.",
+          "Klockan {{time.T+120|clock}}. SOC har tagit fram hela mejltråden och läst meddelandehuvudena rad för rad.\n\nMeddelandet om nytt bankkonto kom inte alls från {{supplier.vendor.domain}}. Det kom från {{asset.lookalikeDomain}}, en domän som skiljer sig med en enda bokstav. Och det citerade ett internt svar som bara någonsin fanns i {{person.cfo.name}}s e-postlåda."
         ]),
         injects: [
           inj("i2-1", 120, "forensicFinding", "soc", "high", "confirmed", [
@@ -217,8 +217,8 @@
         assumptionChallenged: L(["This is one fraudulent payment.", "Det här är en enskild bedräglig betalning."]),
         reveals: ["hf-rules"],
         narrative: L([
-          "{{time.T+300|clock}}. The mailbox review is done. Two inbox rules nobody recognises have been forwarding finance messages to an outside address and hiding replies about bank details in a folder nobody opens.",
-          "Klockan {{time.T+300|clock}}. Genomgången av e-postlådan är klar. Två inkorgsregler som ingen känner igen har vidarebefordrat ekonomimeddelanden till en extern adress och gömt svar om bankuppgifter i en mapp som ingen öppnar."
+          "{{time.T+300|clock}}. The review of the CFO's mailbox is done, and it is worse than a single fraudulent email.\n\nTwo inbox rules that nobody recognises have been forwarding finance messages to an outside address, and hiding replies about bank details in a folder nobody opens. The question is no longer how one payment went wrong, but what else the attacker has read, and for how long.",
+          "Klockan {{time.T+300|clock}}. Genomgången av ekonomichefens e-postlåda är klar, och det är värre än ett enda bedrägligt mejl.\n\nTvå inkorgsregler som ingen känner igen har vidarebefordrat ekonomimeddelanden till en extern adress och gömt svar om bankuppgifter i en mapp som ingen öppnar. Frågan är inte längre hur en betalning gick fel, utan vad mer angriparen har läst, och hur länge."
         ]),
         injects: [
           inj("i3-1", 300, "forensicFinding", "forensics", "critical", "confirmed", [
@@ -292,8 +292,8 @@
         assumptionChallenged: L(["Only our own payments were affected.", "Bara våra egna betalningar har påverkats."]),
         reveals: ["hf-customers"],
         narrative: L([
-          "The next morning, {{time.T+1380|clock}}. Customer service has taken a string of calls: customers have received invoices that look exactly like yours, with a note about a new bank account.",
-          "Nästa morgon, klockan {{time.T+1380|clock}}. Kundtjänst har tagit emot en rad samtal: kunder har fått fakturor som ser exakt ut som era, med en notis om ett nytt bankkonto."
+          "The next day, {{time.T+1380|clock}}. Customer service has taken a string of calls since opening time.\n\nCustomers have received invoices that look exactly like yours, with your logo, real order numbers and a polite note about a new bank account. Some have already paid. The fraud has moved from your money to your customers' money.",
+          "Nästa dag, klockan {{time.T+1380|clock}}. Kundtjänst har tagit emot en rad samtal sedan öppningsdags.\n\nKunder har fått fakturor som ser exakt ut som era, med er logotyp, riktiga ordernummer och en artig notis om ett nytt bankkonto. En del har redan betalat. Bedrägeriet har flyttat från era pengar till era kunders pengar."
         ]),
         injects: [
           inj("i4-1", 1380, "customerComplaint", "customer", "high", "confirmed", [
@@ -370,8 +370,8 @@
         assumptionChallenged: L(["The bank will get the money back.", "Banken kommer att få tillbaka pengarna."]),
         reveals: ["hf-funds"],
         narrative: L([
-          "{{time.T+1620|clock}}. The receiving bank has answered your bank. The insurer wants a loss estimate by end of day.",
-          "Klockan {{time.T+1620|clock}}. Mottagarbanken har svarat er bank. Försäkringsbolaget vill ha en uppskattning av förlusten före dagens slut."
+          "{{time.T+1620|clock}}. The receiving bank has finally answered your bank's recall request, and the answer decides how much of the loss is real.\n\nThe insurer wants a loss estimate by the end of the day, and it will ask exactly how the bank change was approved. What you write now will be compared with the facts later.",
+          "Klockan {{time.T+1620|clock}}. Mottagarbanken har till slut svarat på er banks begäran om återkallelse, och svaret avgör hur stor förlusten faktiskt blir.\n\nFörsäkringsbolaget vill ha en uppskattning av förlusten före dagens slut, och det kommer att fråga exakt hur bytet av bankkonto godkändes. Det ni skriver nu kommer senare att jämföras med fakta."
         ]),
         injects: [
           inj("i5-1", 1620, "email", "bank", "high", "confirmed", [
@@ -444,8 +444,8 @@
         twistKind: "authority",
         assumptionChallenged: L(["The senior person closest to the problem should lead the review.", "Den chef som står närmast problemet bör leda utredningen."]),
         narrative: L([
-          "Three days later. The board meets tomorrow. {{person.cfo.name}} proposes to lead the review of finance controls personally — and suggests the mailbox findings need not be shared beyond the management team.",
-          "Tre dagar senare. Styrelsen sammanträder i morgon. {{person.cfo.name}} föreslår att personligen leda granskningen av ekonomikontrollerna – och menar att fynden i e-postlådan inte behöver delas utanför ledningsgruppen."
+          "Three days later. The board meets tomorrow, and the audit committee wants a written account first.\n\n{{person.cfo.name}} proposes to lead the review of finance controls personally, and suggests that the mailbox findings need not be shared beyond the management team. The CFO knows the processes best. It was also the CFO's mailbox.",
+          "Tre dagar senare. Styrelsen sammanträder i morgon, och revisionsutskottet vill ha en skriftlig redogörelse först.\n\n{{person.cfo.name}} föreslår att personligen leda granskningen av ekonomikontrollerna, och menar att fynden i e-postlådan inte behöver delas utanför ledningsgruppen. Ekonomichefen känner processerna bäst. Det var också ekonomichefens e-postlåda."
         ]),
         injects: [
           inj("i6-1", 4320, "executiveMessage", "person.cfo", "medium", "confirmed", [

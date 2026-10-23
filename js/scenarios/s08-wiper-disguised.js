@@ -80,8 +80,8 @@
         clock: 0,
         title: L(["Every screen at once", "Alla skärmar på en gång"]),
         narrative: L([
-          "{{time.T+0|day}}, {{time.T+0|clock}}. Within minutes, computers across {{org.name}} restart and show the same red message. Servers stop responding. Phones still work.",
-          "{{time.T+0|day}}, klockan {{time.T+0|clock}}. Inom några minuter startar datorer i hela {{org.name}} om och visar samma röda meddelande. Servrar slutar svara. Telefonerna fungerar fortfarande."
+          "{{time.T+0|day|cap}}, {{time.T+0|clock}}. Within minutes, computers across {{org.name}} restart on their own and show the same red message: your files are encrypted, pay within 48 hours.\n\nServers stop responding one after another. {{org.service.primary|cap}} has stopped, field staff cannot see their work orders, and customer service has no system access. Phones still work. It looks like every ransomware case the team has read about.",
+          "{{time.T+0|day|cap}}, klockan {{time.T+0|clock}}. Inom några minuter startar datorer över hela {{org.name}} om av sig själva och visar samma röda meddelande: era filer är krypterade, betala inom 48 timmar.\n\nServrarna slutar svara en efter en. {{org.service.primary|cap}} har stannat, fältpersonalen ser inte sina arbetsordrar och kundtjänst har ingen åtkomst till systemen. Telefonerna fungerar fortfarande. Det ser ut som varje fall av utpressningsprogram som teamet har läst om."
         ]),
         injects: [
           inj("i1-1", 0, "ransomNote", "attacker", "critical", "unverified", [
@@ -146,8 +146,8 @@
         assumptionChallenged: L(["Criminals want money, so paying is an option.", "Kriminella vill ha pengar, så att betala är ett alternativ."]),
         reveals: ["hf-fake"],
         narrative: L([
-          "{{time.T+120|clock}}. The incident response partner has looked at the ransom note.",
-          "Klockan {{time.T+120|clock}}. Incidentresponspartnern har tittat på utpressningsmeddelandet."
+          "{{time.T+120|clock}}. The incident response partner has had two hours with the ransom note and the first affected machines.\n\nEveryone in the room is preparing for a negotiation: the insurer wants to know whether you are in contact with the attackers, and management wants to know the price. The partner asks for a few minutes to explain something about the note.",
+          "Klockan {{time.T+120|clock}}. Incidentpartnern har haft två timmar med utpressningsmeddelandet och de första drabbade datorerna.\n\nAlla i rummet förbereder sig på en förhandling: försäkringsbolaget vill veta om ni har kontakt med angriparna, och ledningen vill veta priset. Partnern ber om några minuter för att förklara något om meddelandet."
         ]),
         injects: [
           inj("i2-1", 120, "forensicFinding", "irRetainer", "critical", "confirmed", [
@@ -203,8 +203,8 @@
         assumptionChallenged: L(["Data is encrypted and could be recovered with a key.", "Datan är krypterad och skulle kunna återställas med en nyckel."]),
         reveals: ["hf-wiper"],
         narrative: L([
-          "{{time.T+300|clock}}. The first disk images have been analysed.",
-          "Klockan {{time.T+300|clock}}. De första diskavbilderna har analyserats."
+          "{{time.T+300|clock}}. The first disk images have been analysed in the partner's lab.\n\nThe recovery plan so far has assumed that the data is still there, locked behind a key someone could buy or crack. The analysis tests that assumption, and the room waits for the answer.",
+          "Klockan {{time.T+300|clock}}. De första diskavbildningarna har analyserats i partnerns labb.\n\nÅterställningsplanen har hittills utgått från att datan finns kvar, låst bakom en nyckel som någon kan köpa eller knäcka. Analysen prövar det antagandet, och rummet väntar på svaret."
         ]),
         injects: [
           inj("i3-1", 300, "forensicFinding", "forensics", "critical", "confirmed", [
@@ -265,8 +265,8 @@
         assumptionChallenged: L(["This is our incident to manage and talk about as we see fit.", "Det här är vår incident att hantera och tala om som vi själva vill."]),
         reveals: ["hf-actor"],
         narrative: L([
-          "Evening, {{time.T+720|clock}}. Representatives from {{reg.csirt}} and the national security service meet the crisis management team.",
-          "Kväll, klockan {{time.T+720|clock}}. Företrädare för {{reg.csirt}} och säkerhetstjänsten möter krisledningsgruppen."
+          "{{time.T+720|weekday|cap}} {{time.T+720|daypart}}, {{time.T+720|clock}}. Representatives from {{reg.csirt}} and the national security service arrive and meet the crisis management team behind closed doors.\n\nThey bring information they cannot fully share, and requests you did not expect. Outside, journalists have started calling: the outage is visible to everyone who relies on {{org.name}}.",
+          "{{time.T+720|weekday|cap}} {{time.T+720|daypart}}, klockan {{time.T+720|clock}}. Företrädare för {{reg.csirt}} och säkerhetstjänsten kommer och möter krisledningsgruppen bakom stängda dörrar.\n\nDe har med sig information som de inte kan dela fullt ut, och önskemål ni inte hade väntat er. Utanför har journalister börjat ringa: avbrottet syns för alla som är beroende av {{org.name}}."
         ]),
         injects: [
           inj("i4-1", 720, "advisory", "csirt", "critical", "confirmed", [
@@ -322,8 +322,8 @@
         assumptionChallenged: L(["Our identity and backup management survived.", "Vår identitetsmiljö och backupförvaltning klarade sig."]),
         reveals: ["hf-identity"],
         narrative: L([
-          "The next day, {{time.T+1440|clock}}. The rebuild team tries to restore the directory.",
-          "Nästa dag, klockan {{time.T+1440|clock}}. Ombyggnadsteamet försöker återställa katalogtjänsten."
+          "The next day, {{time.T+1440|clock}}. The rebuild team starts with what everything else depends on: the directory that lets people and systems log in.\n\nThey expected to restore it from backup in a few hours. Instead, they spend the morning discovering how far the damage reaches, and why the obvious first step cannot be the first step.",
+          "Nästa dag, klockan {{time.T+1440|clock}}. Ombyggnadsteamet börjar med det som allt annat är beroende av: katalogtjänsten som låter människor och system logga in.\n\nDe räknade med att återställa den från säkerhetskopia på några timmar. I stället ägnar de förmiddagen åt att upptäcka hur långt skadan når, och varför det självklara första steget inte kan vara det första."
         ]),
         injects: [
           inj("i5-1", 1440, "forensicFinding", "itOps", "critical", "confirmed", [
@@ -386,8 +386,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["Our continuity plan covers a few days without IT.", "Vår kontinuitetsplan täcker några dagar utan IT."]),
         narrative: L([
-          "Two days in. Field staff, customer service and finance are improvising.",
-          "Två dagar in. Fältpersonal, kundtjänst och ekonomi improviserar."
+          "Two days in. Field staff, customer service and finance are improvising with paper forms, personal phones and spreadsheets on the few laptops that still work.\n\nIt is working for the most urgent jobs, but people are tired and mistakes are creeping in. Everyone is asking the same question: how long?",
+          "Två dagar in. Fältpersonal, kundtjänst och ekonomi improviserar med pappersblanketter, privata telefoner och kalkylark på de få datorer som fortfarande fungerar.\n\nDet fungerar för de mest brådskande uppdragen, men folk är trötta och misstagen börjar smyga sig in. Alla ställer samma fråga: hur länge?"
         ]),
         injects: [
           inj("i6-1", 2880, "impactReport", "person.serviceOwner", "high", "confirmed", [
@@ -446,8 +446,8 @@
         twistKind: "authority",
         assumptionChallenged: L(["Being open about who attacked us is always right.", "Det är alltid rätt att vara öppen om vem som angrep oss."]),
         narrative: L([
-          "Three days in. A parliamentary committee wants a briefing, and journalists have heard a country named.",
-          "Tre dagar in. Ett riksdagsutskott vill ha en dragning, och journalister har hört ett land nämnas."
+          "Three days in. The outage is national news. A parliamentary committee wants a briefing, and journalists have heard a country named by their sources.\n\nThe public wants to know who did this. The people who know most about the attack are asking you to say less, not more.",
+          "Tre dagar in. Avbrottet är riksnyheter. Ett riksdagsutskott vill ha en föredragning, och journalister har hört ett land nämnas av sina källor.\n\nAllmänheten vill veta vem som gjorde det här. De som vet mest om angreppet ber er att säga mindre, inte mer."
         ]),
         injects: [
           inj("i7-1", 4320, "email", "management", "high", "confirmed", [
@@ -502,8 +502,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["Our cyber insurance will cover the rebuild.", "Vår cyberförsäkring täcker ombyggnaden."]),
         narrative: L([
-          "A week later. The rebuild budget has been estimated, and a letter arrives from the insurer.",
-          "En vecka senare. Budgeten för ombyggnaden har beräknats, och ett brev kommer från försäkringsbolaget."
+          "A week later. The rebuild is under way and the first budget estimate is on the table: it is large. Finance assumed the cyber insurance would cover most of it.\n\nThen a letter arrives from the insurer, written by its lawyers rather than its claims team.",
+          "En vecka senare. Ombyggnaden pågår och den första budgetuppskattningen ligger på bordet: den är stor. Ekonomi utgick från att cyberförsäkringen skulle täcka det mesta.\n\nSedan kommer ett brev från försäkringsbolaget, skrivet av dess jurister snarare än skadeavdelningen."
         ]),
         injects: [
           inj("i8-1", 10080, "email", "insurer", "high", "confirmed", [

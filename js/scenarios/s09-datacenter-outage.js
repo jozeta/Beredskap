@@ -38,7 +38,7 @@
     },
     minStages: 3,
     maxStages: 7,
-    constraints: { startWindow: "weekend", sectors: ["finance", "healthcare", "public", "telecom", "technology", "transport"] },
+    constraints: { startWindow: "night", sectors: ["finance", "healthcare", "public", "telecom", "technology", "transport"] },
     actor: { types: ["unknown"], motivation: L(["Unclear: opportunistic access to an exposed building system", "Oklar: opportunistisk åtkomst till ett exponerat fastighetssystem"]), capability: "low" },
     variables: {
       tempPeak: { min: 38, max: 52 },
@@ -77,8 +77,8 @@
         clock: 0,
         title: L(["Too hot", "För varmt"]),
         narrative: L([
-          "{{time.T+0|day}}, {{time.T+0|clock}}. Temperature alarms from the primary data centre reach IT on-call. Servers are throttling and some have shut themselves down. The facilities on-call phone goes to voicemail.",
-          "{{time.T+0|day}}, klockan {{time.T+0|clock}}. Temperaturlarm från den primära datahallen når IT-jouren. Servrar sänker sin prestanda och några har stängt av sig själva. Fastighetsjourens telefon går till röstbrevlådan."
+          "{{time.T+0|day|cap}}, {{time.T+0|clock}}. A quiet night, until temperature alarms from the primary data centre reach IT on-call. Servers in hall A are slowing themselves down to cope with the heat, and some have already shut down.\n\nThe facilities on-call phone goes to voicemail. Every critical service runs in that hall, and the disaster-recovery site has been sitting ready, untouched, for years.",
+          "{{time.T+0|day|cap}}, klockan {{time.T+0|clock}}. En lugn natt, tills temperaturlarm från det primära datacentret når IT-jouren. Servrarna i hall A sänker sin egen prestanda för att klara värmen, och några har redan stängt av sig.\n\nFastighetsjourens telefon går till röstbrevlådan. Varje kritisk tjänst körs i den hallen, och reservplatsen har stått redo, orörd, i flera år."
         ]),
         injects: [
           inj("i1-1", 0, "siemAlert", "itOps", "high", "confirmed", [
@@ -139,8 +139,8 @@
         assumptionChallenged: L(["Our disaster-recovery site takes over automatically.", "Vår reservplats tar över automatiskt."]),
         reveals: ["hf-deps"],
         narrative: L([
-          "{{time.T+60|clock}}. The failover has been started. It is not going well.",
-          "Klockan {{time.T+60|clock}}. Övergången har startats. Det går inte bra."
+          "{{time.T+60|clock}}. The failover to the disaster-recovery site has been started, exactly as the plan describes.\n\nIt is not going well. One service after another refuses to start, each for a different reason. The plan assumed the standby site would simply take over; nobody has checked that assumption since the plan was written.",
+          "Klockan {{time.T+60|clock}}. Övergången till reservplatsen har startats, precis som planen beskriver.\n\nDet går inte bra. Den ena tjänsten efter den andra vägrar starta, var och en av olika skäl. Planen utgick från att reservplatsen bara skulle ta över; ingen har kontrollerat det antagandet sedan planen skrevs."
         ]),
         injects: [
           inj("i2-1", 60, "logExcerpt", "itOps", "critical", "confirmed", [
@@ -214,8 +214,8 @@
         assumptionChallenged: L(["This is an equipment failure.", "Det här är ett utrustningsfel."]),
         reveals: ["hf-bms"],
         narrative: L([
-          "{{time.T+180|clock}}. The facilities technician has arrived and opened the building management system's event log.",
-          "Klockan {{time.T+180|clock}}. Fastighetsteknikern har kommit fram och öppnat fastighetssystemets händelselogg."
+          "{{time.T+180|clock}}. The facilities technician has finally arrived at the building and opened the building management system's event log.\n\nEveryone assumed a cooling unit had failed, or a sensor had broken. The technician scrolls back through the log, goes quiet, and asks who else has access to the system.",
+          "Klockan {{time.T+180|clock}}. Fastighetsteknikern har till slut kommit fram till byggnaden och öppnat fastighetssystemets händelselogg.\n\nAlla antog att ett kylaggregat hade gått sönder, eller att en givare var trasig. Teknikern bläddrar bakåt i loggen, blir tyst och frågar vem mer som har åtkomst till systemet."
         ]),
         injects: [
           inj("i3-1", 180, "logExcerpt", "facilities", "critical", "confirmed", [
@@ -271,8 +271,8 @@
         assumptionChallenged: L(["We lose no data on failover.", "Vi förlorar inga data vid en övergång."]),
         reveals: ["hf-loss"],
         narrative: L([
-          "{{time.T+300|clock}}. Services are partly back at the standby site — with gaps.",
-          "Klockan {{time.T+300|clock}}. Tjänsterna är delvis tillbaka på reservplatsen – med luckor."
+          "{{time.T+300|clock}}. After hours of work, services are partly back at the standby site, and the first customers can log in again.\n\nBut the reconciliation team reports gaps. Some of the very last activity before the outage is missing at the standby site, and the place where it may still exist is a hall nobody can safely enter yet.",
+          "Klockan {{time.T+300|clock}}. Efter timmar av arbete är tjänsterna delvis tillbaka på reservplatsen, och de första kunderna kan logga in igen.\n\nMen avstämningsteamet rapporterar luckor. En del av den allra sista aktiviteten före avbrottet saknas på reservplatsen, och det ställe där den kanske fortfarande finns är en hall som ingen ännu kan gå in i på ett säkert sätt."
         ]),
         injects: [
           inj("i4-1", 300, "impactReport", "person.serviceOwner", "high", "confirmed", [
@@ -333,8 +333,8 @@
         assumptionChallenged: L(["Someone got lucky last night.", "Någon hade tur i natt."]),
         reveals: ["hf-account"],
         narrative: L([
-          "Morning, {{time.T+600|clock}}. The security team has the building system's full access history.",
-          "Morgon, klockan {{time.T+600|clock}}. Säkerhetsteamet har tillgång till fastighetssystemets hela åtkomsthistorik."
+          "{{time.T+600|weekday|cap}} {{time.T+600|daypart}}, {{time.T+600|clock}}. The security team has received the building system's full access history from the facilities contractor.\n\nThe question is no longer whether someone changed the cooling, but how they got in and how long they have been able to. The answer points to a door that has been open for much longer than one night.",
+          "{{time.T+600|weekday|cap}} {{time.T+600|daypart}}, klockan {{time.T+600|clock}}. Säkerhetsteamet har fått fastighetssystemets hela åtkomsthistorik från fastighetsentreprenören.\n\nFrågan är inte längre om någon ändrade kylningen, utan hur de kom in och hur länge de har kunnat göra det. Svaret pekar på en dörr som har stått öppen mycket längre än en natt."
         ]),
         injects: [
           inj("i5-1", 600, "forensicFinding", "forensics", "critical", "confirmed", [
@@ -397,8 +397,8 @@
         twistKind: "authority",
         assumptionChallenged: L(["We control everything in our data centre.", "Vi styr allt i vår datahall."]),
         narrative: L([
-          "The next day. The police and the insurer both want the building system's logs. They belong to someone else.",
-          "Nästa dag. Både polisen och försäkringsbolaget vill ha fastighetssystemets loggar. De tillhör någon annan."
+          "The next day. The police want the building system's logs to investigate the sabotage, and the insurer wants them to assess the claim.\n\nBut the building system is not yours. It belongs to the building owner and serves other tenants too. You rent the space; someone else holds the evidence.",
+          "Nästa dag. Polisen vill ha fastighetssystemets loggar för att utreda sabotaget, och försäkringsbolaget vill ha dem för att bedöma skadan.\n\nMen fastighetssystemet är inte ert. Det tillhör fastighetsägaren och betjänar även andra hyresgäster. Ni hyr lokalerna; någon annan har bevisen."
         ]),
         injects: [
           inj("i6-1", 1440, "email", "supplier", "high", "confirmed", [
@@ -453,8 +453,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["If it was sabotage, we are not responsible.", "Om det var sabotage är vi inte ansvariga."]),
         narrative: L([
-          "Three days later. The board receives the root-cause summary.",
-          "Tre dagar senare. Styrelsen får sammanfattningen av grundorsaken."
+          "Three days later. The board receives the root-cause summary, and the directors read it closely.\n\nIt would be convenient to present the outage as an attack by an unknown third party. It would also be convenient to present it as a maintenance failure. The summary on the table says something less convenient.",
+          "Tre dagar senare. Styrelsen får sammanfattningen av grundorsaken, och ledamöterna läser den noggrant.\n\nDet vore bekvämt att framställa avbrottet som ett angrepp från en okänd tredje part. Det vore också bekvämt att framställa det som ett underhållsfel. Sammanfattningen på bordet säger något mindre bekvämt."
         ]),
         injects: [
           inj("i7-1", 4320, "email", "management", "medium", "confirmed", [

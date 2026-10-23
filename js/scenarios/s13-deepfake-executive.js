@@ -74,8 +74,8 @@
         clock: 0,
         title: L(["A confidential transfer", "En hemlig överföring"]),
         narrative: L([
-          "{{time.T+0|day}}, {{time.T+0|clock}}. A finance manager at {{org.name}} comes to the CFO, slightly pale. Forty minutes ago they were on a video call with the CEO.",
-          "{{time.T+0|day}}, klockan {{time.T+0|clock}}. En ekonomiansvarig på {{org.name}} kommer till ekonomichefen, något blek. För fyrtio minuter sedan var de med i ett videosamtal med vd."
+          "{{time.T+0|day|cap}}, {{time.T+0|clock}}. A finance manager at {{org.name}} knocks on the CFO's door, slightly pale. Forty minutes ago they were on a video call with the CEO, who asked for help with something confidential.\n\nThe manager has already sent part of a large payment, and another is scheduled for this afternoon. They followed the CEO's instructions. Something about the call still bothers them, and they cannot quite say what.",
+          "{{time.T+0|day|cap}}, klockan {{time.T+0|clock}}. En ekonomiansvarig på {{org.name}} knackar på ekonomichefens dörr, lite blek. För fyrtio minuter sedan var hen med i ett videosamtal med vd, som bad om hjälp med något konfidentiellt.\n\nDen ekonomiansvariga har redan skickat en del av en stor betalning, och ytterligare en är schemalagd till i eftermiddag. Hen följde vd:s instruktioner. Något med samtalet stör ändå, och hen kan inte riktigt säga vad."
         ]),
         injects: [
           inj("i1-1", 0, "employeeReport", "employee", "high", "unverified", [
@@ -135,8 +135,8 @@
         assumptionChallenged: L(["Seeing and hearing someone on a video call proves it is them.", "Att se och höra någon i ett videosamtal bevisar att det är de."]),
         reveals: ["hf-fake"],
         narrative: L([
-          "{{time.T+60|clock}}. The CEO, {{person.ceo.name}}, calls from the arrivals hall.",
-          "Klockan {{time.T+60|clock}}. Vd, {{person.ceo.name}}, ringer från ankomsthallen."
+          "{{time.T+60|clock}}. Nobody has been able to reach the CEO all morning. Then {{person.ceo.name}} calls back from the arrivals hall of an airport, having just switched their phone on.\n\nThe finance manager is in the room when the call is put on speaker. What the CEO says turns a strange payment into something much more serious.",
+          "Klockan {{time.T+60|clock}}. Ingen har lyckats nå vd under förmiddagen. Sedan ringer {{person.ceo.name}} tillbaka från ankomsthallen på en flygplats, precis när telefonen slagits på.\n\nDen ekonomiansvariga är i rummet när samtalet läggs på högtalare. Det vd säger förvandlar en märklig betalning till något mycket allvarligare."
         ]),
         injects: [
           inj("i2-1", 60, "phoneTranscript", "person.ceo", "critical", "confirmed", [
@@ -192,8 +192,8 @@
         assumptionChallenged: L(["This was only payment fraud.", "Det här var bara betalningsbedrägeri."]),
         reveals: ["hf-helpdesk"],
         narrative: L([
-          "{{time.T+150|clock}}. The CEO tries to log in from the taxi and can't.",
-          "Klockan {{time.T+150|clock}}. Vd försöker logga in från taxin och kan inte."
+          "{{time.T+150|clock}}. The CEO tries to log in to email from the taxi, and cannot: the account no longer accepts their phone.\n\nThe service desk checks the history. The video call was not the first time someone used the CEO's face or voice this week, and the first time was aimed at something more useful than money.",
+          "Klockan {{time.T+150|clock}}. Vd försöker logga in i e-posten från taxin, och kan inte: kontot godtar inte längre deras telefon.\n\nServicedesken kontrollerar historiken. Videosamtalet var inte första gången någon använde vd:s ansikte eller röst den här veckan, och första gången riktades mot något mer användbart än pengar."
         ]),
         injects: [
           inj("i3-1", 150, "ticket", "serviceDesk", "critical", "confirmed", [
@@ -248,8 +248,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["The damage was the money.", "Skadan var pengarna."]),
         narrative: L([
-          "The next morning. The CEO's name is trending.",
-          "Nästa morgon. Vd:ns namn trendar."
+          "The next morning. The fraud has been reported and the CEO's account has been secured. The crisis team hoped to handle the rest quietly.\n\nThen the CEO's name starts trending on social media. A clip is spreading fast, and the comments are furious. Customers, staff and journalists are all asking the same question.",
+          "Nästa morgon. Bedrägeriet har anmälts och vd:s konto har säkrats. Krisledningen hoppades kunna hantera resten i det tysta.\n\nSedan börjar vd:s namn trenda i sociala medier. Ett klipp sprids snabbt, och kommentarerna är rasande. Kunder, personal och journalister ställer alla samma fråga."
         ]),
         injects: [
           inj("i4-1", 1440, "socialPost", "socialMedia", "high", "disputed", [
@@ -311,8 +311,8 @@
         assumptionChallenged: L(["One employee was targeted.", "En anställd var måltavla."]),
         reveals: ["hf-others"],
         narrative: L([
-          "After the public statement, people start coming forward.",
-          "Efter det offentliga uttalandet börjar folk höra av sig."
+          "After the public statement about the fake audio and the fraud, something changes inside the company.\n\nPeople start coming forward, one by one, a little embarrassed. They received calls this week too, from a voice they recognised, asking for things that seemed ordinary at the time.",
+          "Efter det offentliga uttalandet om det falska ljudet och bedrägeriet förändras något inne i företaget.\n\nFolk börjar träda fram, en och en, lite generade. De fick också samtal den här veckan, från en röst de kände igen, med frågor om saker som verkade vanliga just då."
         ]),
         injects: [
           inj("i5-1", 1800, "employeeReport", "employee", "high", "confirmed", [
@@ -372,8 +372,8 @@
         twistKind: "authority",
         assumptionChallenged: L(["The employee who paid is the problem.", "Den anställda som betalade är problemet."]),
         narrative: L([
-          "Three days later. The first payment has been partly recovered.",
-          "Tre dagar senare. Den första betalningen har delvis återfåtts."
+          "Three days later. The bank has partly recovered the first payment; the rest has moved on through other accounts.\n\nThe board meets to review the incident. The finance manager, who raised the alarm and came forward on the first morning, is waiting outside to find out what happens to them.",
+          "Tre dagar senare. Banken har delvis fått tillbaka den första betalningen; resten har gått vidare genom andra konton.\n\nStyrelsen möts för att gå igenom incidenten. Den ekonomiansvariga, som slog larm och trädde fram den första morgonen, väntar utanför för att få veta vad som händer med hen."
         ]),
         injects: [
           inj("i6-1", 4320, "executiveMessage", "management", "high", "confirmed", [
