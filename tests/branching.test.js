@@ -298,6 +298,38 @@
 
   // ---- Import / export ---------------------------------------------------------------------------------
 
+  suite("debrief route map", () => {
+    test("decision points list the options and mark the room's choice; the stage map has no tooltips", () => {
+      const s = window.BKTest.walk.branching(generate(BK.scenarios.get("b01-lost-laptop"), { length: "short" }), T0, null, 1)[0];
+      const r = BK.io.export.report(s, "en");
+      const pts = r.branch.points;
+      const reached = Object.keys(pts).filter((k) => pts[k].reached);
+      assert.equal(reached.length, r.decisions.length, "one reached point per choice made");
+      assert.ok(Object.keys(pts).some((k) => !pts[k].reached), "unreached decisions are listed too");
+      reached.forEach((k) => assert.ok(pts[k].options.some((o) => o.key === pts[k].chosen), "chosen option offered at § " + k));
+      const host = document.createElement("div");
+      host.className = "routemap-wrap";
+      document.body.appendChild(host);
+      try {
+        const map = BK.graphics.routeMap(r.branch.map, { lang: "en", title: "Route", titles: r.branch.titles, points: pts, spread: true });
+        host.appendChild(map);
+        const node = map.querySelector(".rm-node--point.is-visited[tabindex]");
+        assert.ok(node, "focusable decision point");
+        node.dispatchEvent(new FocusEvent("focus"));
+        const tip = host.querySelector(".rm-tip");
+        assert.ok(tip && !tip.hidden, "tooltip shown on focus");
+        assert.ok(tip.querySelector(".rm-tip__opt.is-chosen"), "chosen option marked");
+        assert.ok(tip.querySelectorAll(".rm-tip__opt").length >= 2, "options listed");
+        node.dispatchEvent(new FocusEvent("blur"));
+        assert.ok(tip.hidden, "tooltip hidden on blur");
+        const stageMap = BK.graphics.routeMap(r.branch.map, { lang: "en", title: "Route" });
+        assert.ok(!stageMap.querySelector("[tabindex]") && stageMap.getAttribute("role") === "img", "stage map stays a plain image");
+      } finally {
+        host.remove();
+      }
+    });
+  });
+
   suite("branching import", () => {
     const session = () => window.BKTest.walk.branching(generate(BK.scenarios.get("b01-lost-laptop"), { length: "short" }), T0, null, 1)[0];
 
