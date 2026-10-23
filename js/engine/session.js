@@ -125,6 +125,10 @@
     if (isBranching(sess)) {
       const n = Math.floor(sess.route.filter((r) => r.option).length / 4);
       if (n >= 1) key = "choices-" + n;
+    } else if (isCustom(sess)) {
+      // Custom decks have no stages: one card per timed (discussion) slide after the first.
+      const { list, idx, slide } = locate(sess);
+      if (timedSlide(slide) && list.slice(0, idx).some(timedSlide)) key = slide.id;
     } else {
       const { slide } = locate(sess);
       const stage = slide && slide.stageId ? stageById(sess, slide.stageId) : null;
@@ -493,7 +497,7 @@
         break;
       case "observationAdd": {
         const stageSlide = slide && slide.stageId ? slide.stageId : null;
-        sess.observations.push(Object.assign({ id: BK.dom.uid("obs"), createdAt: new Date(at).toISOString(), stageId: stageSlide, status: "open", priority: "medium" }, cmd.entry));
+        sess.observations.push(Object.assign({ id: BK.dom.uid("obs"), createdAt: new Date(at).toISOString(), stageId: stageSlide, status: "open", priority: "medium", observation: "" }, cmd.entry));
         break;
       }
       case "observationUpdate": {

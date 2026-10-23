@@ -13,6 +13,8 @@
   const { el, svgIcon } = BK.dom;
   const c = BK.ui.c;
   const t = BK.t;
+  // Template text is unresolved: numbers and names are rolled per generation, so placeholders read as "…".
+  const tx = (v, l) => String(BK.loc(v, l) || "").replace(/\{\{[^}]*\}\}/g, "…");
   const opts = BK.data.options;
 
   // Filter state survives re-renders (e.g. language switch) during the session.
@@ -24,7 +26,7 @@
   function searchText(tpl) {
     const parts = [tpl.id, t("category." + tpl.category, null, "en"), t("category." + tpl.category, null, "sv")];
     ["en", "sv"].forEach((l) => {
-      parts.push(BK.loc(tpl.title, l), BK.loc(tpl.summary, l));
+      parts.push(tx(tpl.title, l), tx(tpl.summary, l));
       (tpl.learningObjectives || []).forEach((lo) => parts.push(BK.loc(lo.text, l)));
     });
     parts.push((tpl.mitre || []).join(" "));
@@ -79,9 +81,9 @@
         "div",
         { class: "scenario-card__head" },
         emblem(tpl),
-        el("div", { class: "scenario-card__heading" }, el("p", { class: "eyebrow scenario-card__category", text: t("category." + tpl.category) }), el("h2", { class: "scenario-card__title", text: BK.loc(tpl.title) }))
+        el("div", { class: "scenario-card__heading" }, el("p", { class: "eyebrow scenario-card__category", text: t("category." + tpl.category) }), el("h2", { class: "scenario-card__title", text: tx(tpl.title) }))
       ),
-      el("p", { class: "scenario-card__summary", text: BK.loc(tpl.summary) }),
+      el("p", { class: "scenario-card__summary", text: tx(tpl.summary) }),
       metaLine(tpl),
       problems.length ? c.badge(t("library.invalid", { n: problems.length }), "danger", "warning") : null,
       el(
@@ -109,6 +111,7 @@
     const ok = await BK.ui.dialog.confirm({ title: t("builder.deleteDeckTitle"), message: t("builder.deleteDeckBody", { title: d.title }), confirmLabel: t("common.delete"), danger: true });
     if (!ok) return;
     BK.store.removeItem("deck", d.id);
+    BK.store.removeItem("exercise", "ex-" + d.id); // its start snapshot; runs in History keep their own copy
     BK.router.refresh();
   }
 
@@ -151,17 +154,17 @@
       "div",
       { class: "stack" },
       el("div", { class: "scenario-card__head" }, emblem(tpl, 40), el("div", { class: "badges" }, c.badge(t("category." + tpl.category), "accent"), archetypeBadge(tpl), sizeBadges(tpl))),
-      el("p", { text: BK.loc(tpl.summary) }),
+      el("p", { text: tx(tpl.summary) }),
       el("h3", { class: "eyebrow", text: t("library.objectives") }),
-      el("ul", { class: "bullets" }, (tpl.learningObjectives || []).map((lo) => el("li", { text: BK.loc(lo.text) }))),
+      el("ul", { class: "bullets" }, (tpl.learningObjectives || []).map((lo) => el("li", { text: tx(lo.text) }))),
       el("h3", { class: "eyebrow", text: t("report.lessons") }),
-      el("ul", { class: "bullets" }, ((tpl.debrief && tpl.debrief.keyLessons) || []).map((x) => el("li", { text: BK.loc(x) }))),
-      tpl.format === "branching" ? mapOutline(tpl) : [el("h3", { class: "eyebrow", text: t("library.stagesOutline") }), el("ol", { class: "bullets" }, (tpl.stages || []).map((s) => el("li", { text: BK.loc(s.title) })))],
+      el("ul", { class: "bullets" }, ((tpl.debrief && tpl.debrief.keyLessons) || []).map((x) => el("li", { text: tx(x) }))),
+      tpl.format === "branching" ? mapOutline(tpl) : [el("h3", { class: "eyebrow", text: t("library.stagesOutline") }), el("ol", { class: "bullets" }, (tpl.stages || []).map((s) => el("li", { text: tx(s.title) })))],
       el("h3", { class: "eyebrow", text: t("library.attack") }),
       el("p", { class: "mono small", text: (tpl.mitre || []).join(" · ") })
     );
     BK.ui.dialog.open({
-      title: BK.loc(tpl.title),
+      title: tx(tpl.title),
       body,
       wide: true,
       actions: [

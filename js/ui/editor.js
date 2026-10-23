@@ -606,6 +606,19 @@
       return ex ? BK.loc(ex.title) : t("editor.title");
     },
     render(root, ctx) {
+      // Custom exercises are edited in the slide builder; an imported one gets its deck back first.
+      const ex = BK.store.getItem("exercise", ctx.params.instanceId);
+      if (ex && ex.format === "custom") {
+        let deckId = ex.deckId;
+        if (!deckId || !BK.store.getItem("deck", deckId)) {
+          const d = BK.engine.custom.normaliseDeck({ title: BK.loc(ex.title), summary: BK.loc(ex.summary), lang: ex.settings.lang, stageTheme: ex.settings.stageTheme, minutes: ex.pacing.totalMinutes, meters: ex.settings.meters, complications: ex.settings.complications, slides: ex.slides });
+          BK.store.putItem("deck", d);
+          deckId = d.id;
+          BK.store.putItem("exercise", Object.assign({}, ex, { deckId }));
+        }
+        window.location.replace("#/builder/" + encodeURIComponent(deckId));
+        return;
+      }
       state.root = root;
       state.ctx = ctx;
       build(root);

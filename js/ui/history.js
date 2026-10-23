@@ -61,7 +61,8 @@
 
   function row(sess, lang) {
     const exercise = Object.assign({ id: sess.exerciseId }, sess.instance);
-    const decided = Object.keys(sess.decisions).length;
+    // Branching runs record their choices on the route, not as decision log entries.
+    const decided = sess.instance.format === "branching" ? sess.route.filter((r) => r.option).length : Object.keys(sess.decisions).length;
     return el(
       "li",
       { class: ["list__item", "history-item", sess.archived && "is-archived"] },
@@ -76,6 +77,7 @@
           sess.archived ? c.badge(t("history.archived"), "neutral") : null,
           sess.imported ? c.badge(t("history.imported"), "info") : null,
           branchBadges(sess),
+          sess.instance.format === "custom" ? c.badge(t("category.custom"), "info", "layout") : null,
           el("span", { class: "muted small", text: BK.i18n.fmt.dateTime(new Date(sess.createdAt), lang) + " · " + t("history.decisions", { n: decided }) + " · " + t("history.observations", { n: sess.observations.length }) })
         )
       ),

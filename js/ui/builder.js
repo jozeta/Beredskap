@@ -50,9 +50,11 @@
 
   function save(now) {
     clearTimeout(view.saveTimer);
+    // The live deck stays the same object (the canvas edits it in place); only the stored copy is normalised.
     const run = () => {
-      view.deck = C().normaliseDeck(Object.assign({}, view.deck, { updatedAt: new Date().toISOString() }));
-      BK.store.putItem("deck", view.deck);
+      if (!view.deck) return;
+      view.deck.updatedAt = new Date().toISOString();
+      BK.store.putItem("deck", C().normaliseDeck(JSON.parse(JSON.stringify(view.deck))));
       if (view.status) view.status.textContent = t("builder.saved", { time: BK.i18n.fmt.time(new Date(), BK.i18n.getLang()) });
     };
     if (now) run();
@@ -137,8 +139,12 @@
         touched();
       }
     });
-    area.textContent = "";
-    area.appendChild(el("div", { class: "s-custom" }, editor));
+    // Swap only the slide content for its editable twin; the timer block (if any) stays as the stage draws it.
+    const box = area.querySelector(".s-custom");
+    const shown = box && box.firstElementChild;
+    if (shown && !shown.classList.contains("s-custom__timer")) box.replaceChild(editor, shown);
+    else if (box) box.prepend(editor);
+    else area.appendChild(el("div", { class: "s-custom" }, editor));
     f.appendChild(canvas);
     wrap.appendChild(f);
     requestAnimationFrame(() => BK.ui.stageRenderer.fit(f, canvas));
@@ -176,6 +182,7 @@
           dragleave: (e) => e.currentTarget.classList.remove("is-drop"),
           drop: (e) => {
             e.preventDefault();
+            e.currentTarget.classList.remove("is-drop");
             const from = Number(e.dataTransfer.getData("text/plain"));
             if (Number.isInteger(from)) move(from, i);
           }
@@ -608,9 +615,12 @@
           value: "save",
           kind: "primary",
           onClick: () => {
-            Object.assign(view.deck, draft);
+            // Settings go through the normaliser too (an empty title becomes "Untitled", minutes are clamped).
+            const n = C().normaliseDeck(Object.assign({}, view.deck, draft, { slides: [] }));
+            Object.keys(draft).forEach((k) => (view.deck[k] = n[k]));
             save(true);
             render(view.root);
+            document.title = BK.ui.builder.title() + " · " + t("app.name");
           }
         }
       ]
@@ -705,8 +715,11 @@
       window.addEventListener("resize", onResize);
     },
     unmount() {
-      if (view.deck) save(true);
+      if (view.deck && view.root) save(true);
+      clearTimeout(view.saveTimer);
+      clearTimeout(view.thumbTimer);
       window.removeEventListener("resize", onResize);
+      view.deck = null;
       view.els = {};
       view.root = null;
     },

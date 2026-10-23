@@ -292,8 +292,9 @@
         : put("p", { class: "a-post__text" }, "content", sp.quote),
       el(
         "footer",
-        { class: "a-post__actions", "aria-hidden": "true" },
-        [["reply", m.replies], ["repost", m.shares], ["heart", m.likes], ["eye", m.views]].map(([icon, n]) => el("span", null, svgIcon(icon, { size: 30 }), n ? el("span", { text: n }) : null))
+        // Decorative on the stage; in the builder the counts are editable fields.
+        { class: "a-post__actions", "aria-hidden": editing() ? null : "true" },
+        [["reply", "replies"], ["repost", "shares"], ["heart", "likes"], ["eye", "views"]].map(([icon, k]) => el("span", null, svgIcon(icon, { size: 30 }), editing() ? put("span", {}, "meta." + k, m[k]) : m[k] ? el("span", { text: m[k] }) : null))
       )
     );
   }

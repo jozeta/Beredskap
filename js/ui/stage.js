@@ -550,9 +550,10 @@
     ["L", "shortcuts.lang"], ["D", "shortcuts.theme"], ["Esc", "shortcuts.esc"], ["?", "shortcuts.help"]
   ];
 
-  /** Help list; in a branching run the digits choose an option instead of jumping to a stage. */
-  function shortcutList(lang, branching) {
-    const list = branching ? SHORTCUTS.map((x) => (x[1] === "shortcuts.jump" ? ["1 2 3 4", "shortcuts.choose"] : x)) : SHORTCUTS;
+  /** Help list; in a branching run the digits choose an option instead of jumping to a stage, and custom decks have no stages. */
+  function shortcutList(lang, format) {
+    const fmt = format === true ? "branching" : format;
+    const list = fmt === "branching" ? SHORTCUTS.map((x) => (x[1] === "shortcuts.jump" ? ["1 2 3 4", "shortcuts.choose"] : x)) : fmt === "custom" ? SHORTCUTS.filter((x) => x[1] !== "shortcuts.jump") : SHORTCUTS;
     return el("dl", { class: "shortcut-list" }, list.map(([keys, label]) => [el("dt", null, keys.split(" ").map((x) => el("kbd", { text: x }))), el("dd", { text: t(label, null, lang) })]));
   }
 
@@ -612,7 +613,7 @@
     view.overlay =
       kind === "private"
         ? privateOverlay(sess)
-        : el("aside", { class: "help-overlay", role: "dialog", "aria-label": t("shortcuts.title", null, sess.lang) }, el("h2", { text: t("shortcuts.title", null, sess.lang) }), shortcutList(sess.lang, sess.instance.format === "branching"));
+        : el("aside", { class: "help-overlay", role: "dialog", "aria-label": t("shortcuts.title", null, sess.lang) }, el("h2", { text: t("shortcuts.title", null, sess.lang) }), shortcutList(sess.lang, sess.instance.format));
     view.overlay.dataset.kind = kind;
     view.viewport.appendChild(view.overlay);
   }

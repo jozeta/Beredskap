@@ -1104,6 +1104,14 @@
       "help.searchPlaceholder": "e.g. timer, builder, export",
       "help.matches": "{n} matching topics",
       "help.noMatch": "No topic matches your search.",
+      "category.custom": "Custom exercise",
+      "settings.dataCount.one": "1 saved item",
+      "editor.slidesCount.one": "1 slide",
+      "stage.earlier.one": "1 earlier event",
+      "history.decisions.one": "1 decision",
+      "history.observations.one": "1 observation",
+      "builder.deckMeta.one": "1 slide · edited {date}",
+      "help.matches.one": "1 matching topic",
       "error.validation": "The exercise cannot start until these problems are fixed:"
     },
 
@@ -2196,6 +2204,14 @@
       "help.searchPlaceholder": "t.ex. timer, byggare, export",
       "help.matches": "{n} matchande avsnitt",
       "help.noMatch": "Inget avsnitt matchar sökningen.",
+      "category.custom": "Egen övning",
+      "settings.dataCount.one": "1 sparad post",
+      "editor.slidesCount.one": "1 bild",
+      "stage.earlier.one": "1 tidigare händelse",
+      "history.decisions.one": "1 beslut",
+      "history.observations.one": "1 observation",
+      "builder.deckMeta.one": "1 bild · ändrad {date}",
+      "help.matches.one": "1 matchande avsnitt",
       "error.validation": "Övningen kan inte startas förrän de här problemen är åtgärdade:"
     }
   };
@@ -2211,6 +2227,8 @@
   /** Translate a UI key. Falls back to English, then to the key itself. */
   function t(key, vars, lang) {
     const l = lang || current;
+    // Counts: a "<key>.one" variant, where a language has one, is used for exactly one.
+    if (vars && vars.n === 1 && strings[l] && strings[l][key + ".one"] !== undefined) key += ".one";
     let str = strings[l] && strings[l][key];
     if (str === undefined) {
       missing.add(l + ":" + key);

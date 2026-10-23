@@ -165,7 +165,9 @@
     const both = (s) => ({ en: s, sv: s });
     const now = new Date().toISOString();
     return {
-      id: BK.dom.uid("ex"),
+      // One exercise per deck: starting again (or cancelling the start dialog) replaces the snapshot instead of
+      // piling up copies. Sessions keep their own copy of the instance, so earlier runs are unaffected.
+      id: "ex-" + deck.id,
       createdAt: now,
       updatedAt: now,
       edited: false,
@@ -177,7 +179,7 @@
       templateVersion: deck.version,
       seed: BK.rng.newSeed(),
       category: "custom",
-      emblem: "notes",
+      emblem: "custom",
       title: both(deck.title),
       scenarioTitle: both(deck.title),
       summary: both(deck.summary),
