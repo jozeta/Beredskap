@@ -643,10 +643,11 @@
       window.addEventListener("resize", onResize);
       view.cleanup = [() => document.removeEventListener("keydown", onKey), () => window.removeEventListener("resize", onResize), () => clearInterval(ticker), () => view.ctrl.close()];
 
-      // Clicking the stage advances, like most presentation software.
+      // Clicking the stage advances, like most presentation software, but starts the discussion
+      // countdown before it leaves a discussion slide (see "advance" in the session reducer).
       view.viewport.addEventListener("click", (e) => {
         if (e.target.closest("a, button, .help-overlay, .private-overlay")) return;
-        view.ctrl.dispatch({ type: "next" });
+        view.ctrl.dispatch({ type: "advance" });
       });
 
       if (!document.fullscreenElement) BK.ui.toast(t(window.opener ? "stage.moveHint" : "stage.fullscreenHint"), "info", 6000);
