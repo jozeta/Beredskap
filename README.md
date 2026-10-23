@@ -93,7 +93,7 @@ Firefox.
 **Option A: open it from disk.**
 
 ```sh
-git clone https://github.com/<your-account>/Beredskap.git
+git clone https://github.com/jozeta/Beredskap.git
 cd Beredskap
 open index.html          # macOS; on Windows: start index.html, on Linux: xdg-open index.html
 ```
