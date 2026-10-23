@@ -310,6 +310,11 @@
       const stage = stageById(sess, slide.stageId);
       const ms = (stage.discussionMinutes || 5) * 60000;
       sess.timer = { stageId: slide.stageId, durationMs: ms, remainingMs: ms, runningSince: null };
+    } else if (!isBranching(sess) && slide.stageId && sess.timer.stageId !== slide.stageId && !sess.timer.runningSince) {
+      // Earlier slides of a stage already show (and can start) that stage's discussion time, instead of 00:00.
+      const stage = stageById(sess, slide.stageId);
+      const ms = ((stage && stage.discussionMinutes) || 5) * 60000;
+      sess.timer = { stageId: slide.stageId, durationMs: ms, remainingMs: ms, runningSince: null };
     }
   }
 

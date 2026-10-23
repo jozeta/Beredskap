@@ -1,2 +1,26 @@
+# Operating system files
 .DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors and IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Local tooling and notes
 .remember/
+.claude/
+*.log
+node_modules/
+
+# Local scratch pages used during development (preview, smoke and probe harnesses)
+/_*.html
+/_*.js
+
+# Exports and downloads made while testing the app
+beredskap-*.json
+beredskap-*.md
+beredskap-*.csv
