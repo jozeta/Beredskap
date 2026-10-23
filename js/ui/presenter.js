@@ -340,15 +340,89 @@
     );
   }
 
+  /** Pressure meters: −/+ per meter; the stage footer shows the result. */
+  function metersPanel(sess, d) {
+    const values = BK.engine.session.meterValues(sess);
+    return [
+      el("p", { class: "muted small", text: t("meters.hint") }),
+      el(
+        "ul",
+        { class: "pres-meters" },
+        values.map((m) => {
+          const label = t("meter." + m.id);
+          return el(
+            "li",
+            null,
+            el("span", { class: "pres-meters__label", text: label }),
+            el("span", { class: "pres-meters__bar", "aria-hidden": "true" }, Array.from({ length: 5 }, (_, i) => el("span", { class: i < m.value ? "is-on" : null }))),
+            el("span", { class: "tabular", text: m.value + "/5" }),
+            c.button({ label: t("meters.lower", { meter: label }), icon: "prev", iconOnly: true, size: "sm", disabled: m.value <= 0, onClick: () => d({ type: "meterAdjust", meter: m.id, delta: -1 }) }),
+            c.button({ label: t("meters.raise", { meter: label }), icon: "plus", iconOnly: true, size: "sm", disabled: m.value >= 5, onClick: () => d({ type: "meterAdjust", meter: m.id, delta: 1 }) })
+          );
+        })
+      )
+    ];
+  }
+
+  /** Complication deck: draw, show on stage, hide, or put an unseen card back. Notes stay here. */
+  function complicationsPanel(sess, d) {
+    const drawn = sess.complications || [];
+    const left = BK.data.complications.cards.length - drawn.length;
+    return [
+      el("p", { class: "muted small", text: t("complication.hint") }),
+      el("div", { class: "actions" }, c.button({ label: left ? t("complication.draw") : t("complication.deckEmpty"), icon: "dice", size: "sm", kind: "primary", disabled: !left || sess.status === "ended", onClick: () => d({ type: "complicationDraw" }) })),
+      drawn.length
+        ? el(
+            "ul",
+            { class: "pres-cards" },
+            drawn
+              .slice()
+              .reverse()
+              .map((x) => {
+                const card = BK.data.complications.get(x.id);
+                if (!card) return null;
+                const active = sess.activeComplication === x.id;
+                return el(
+                  "li",
+                  { class: ["pres-card-item", active && "is-active"] },
+                  el(
+                    "div",
+                    { class: "badges" },
+                    c.badge(t("complication.cat." + card.cat), "accent"),
+                    c.badge(active ? t("complication.onStage") : x.shownAt ? t("complication.shown") : t("complication.ready"), active ? "warn" : "neutral")
+                  ),
+                  el("p", null, el("strong", { text: BK.loc(card.title) })),
+                  el("p", { class: "small", text: BK.loc(card.text) }),
+                  el("p", { class: "muted small" }, el("strong", { text: t("complication.watch") + ": " }), BK.loc(card.note)),
+                  el(
+                    "div",
+                    { class: "actions" },
+                    active
+                      ? c.button({ label: t("complication.hide"), icon: "eye-off", size: "sm", onClick: () => d({ type: "complicationHide" }) })
+                      : c.button({ label: t("complication.show"), icon: "eye", size: "sm", onClick: () => d({ type: "complicationShow", id: x.id }) }),
+                    x.shownAt ? null : c.button({ label: t("complication.discard"), icon: "trash", iconOnly: true, size: "sm", kind: "ghost", onClick: () => d({ type: "complicationDiscard", id: x.id }) })
+                  )
+                );
+              })
+          )
+        : el("p", { class: "muted small", text: t("complication.empty") })
+    ];
+  }
+
   function facilitationCards(sess) {
     const F = BK.ui.facilitation;
     const d = view.ctrl.dispatch;
     const assessed = Object.keys(sess.objectives).length;
+    const settings = sess.instance.settings;
     const lessons = (sess.instance.debrief && sess.instance.debrief.keyLessons) || [];
     return [
       fold("obs", t("presenter.observations"), sess.observations.length, F.observationForm(sess, d), F.observationList(sess, d)),
       fold("obj", t("presenter.objectives"), assessed + "/" + sess.instance.objectives.length, F.objectivesEditor(sess, d)),
       fold("lessons", t("presenter.lessons"), lessons.length, el("p", { class: "muted small", text: t("presenter.lessonsHint") }), el("ul", { class: "bullets" }, lessons.map((x) => el("li", { text: BK.loc(x) })))),
+      settings.meters ? fold("meters", t("meters.presenterTitle"), null, metersPanel(sess, d)) : null,
+      settings.complications && settings.complications !== "off"
+        ? fold("deck", t("complication.presenterTitle"), (sess.complications || []).filter((x) => !x.shownAt).length || null, complicationsPanel(sess, d))
+        : null,
       fold("notes", t("presenter.notesField"), null, F.notesEditor(sess, d))
     ];
   }

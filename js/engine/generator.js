@@ -47,6 +47,8 @@
     discussionMinutes: null,
     injectRelease: "manual",
     decisionMode: "options",
+    meters: false, // pressure meters on the stage (customer trust, regulator attention, media pressure)
+    complications: "manual", // complication deck: "off" | "manual" (facilitator draws) | "auto" (one ready per stage)
     mode: "pure", // branching: "pure" (choice after choice) | "hybrid" (discussion stops)
     length: "short", // branching: "short" | "long"
     seed: "FJORD-1000"
@@ -58,6 +60,8 @@
     p.objectives = Object.assign({ deselected: [], custom: [] }, p.objectives || {});
     p.participantNames = p.participantNames || {};
     p.seed = BK.rng.normalizeSeed(p.seed) || DEFAULT_PARAMS.seed;
+    p.meters = p.meters === true;
+    p.complications = ["off", "manual", "auto"].includes(p.complications) ? p.complications : "manual";
     p.scenarioId = template.id;
     if (template.format === "branching") {
       p.stageCount = null;
@@ -622,6 +626,7 @@
                 set: (o.set || []).slice(),
                 requires: o.requires == null ? null : o.requires,
                 hides: o.hides == null ? null : o.hides,
+                effects: o.effects ? Object.assign({}, o.effects) : null,
                 why: R.resolveDeep(o.why || null, ctx, missing)
               }))
             }
@@ -673,7 +678,9 @@
         lang: p.lang,
         mode: p.mode,
         length: p.length,
-        discussMinutes
+        discussMinutes,
+        meters: p.meters,
+        complications: p.complications
       },
       pacing: { totalMinutes: total, stages: [], choiceRange: [range.min, range.max] },
       slides: [],
@@ -796,7 +803,9 @@
         injectRelease: p.injectRelease,
         decisionMode: p.decisionMode,
         stageTheme: p.stageTheme,
-        lang: p.lang
+        lang: p.lang,
+        meters: p.meters,
+        complications: p.complications
       },
       unresolved: []
     };

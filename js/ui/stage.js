@@ -371,6 +371,27 @@
       )
     );
 
+  const METER_ICON = { trust: "users", regulator: "scale", media: "newspaper" };
+
+  /** The story's pressure meters: icon, label and five segments each. Text carries the value too. */
+  function meters(p, lang) {
+    if (!p.meters) return null;
+    return el(
+      "ul",
+      { class: "s-meters", "aria-label": t("meters.title", null, lang) },
+      p.meters.map((m) =>
+        el(
+          "li",
+          { class: ["s-meter", "s-meter--" + m.id], title: m.label + ": " + m.value + "/" + m.max },
+          svgIcon(METER_ICON[m.id] || "gauge", { size: 24 }),
+          el("span", { class: "s-meter__label", text: t("meter.short." + m.id, null, lang) }),
+          el("span", { class: "s-meter__bar", "aria-hidden": "true" }, Array.from({ length: m.max }, (_, i) => el("span", { class: i < m.value ? "is-on" : null }))),
+          el("span", { class: "sr-only", text: m.value + "/" + m.max })
+        )
+      )
+    );
+  }
+
   function rail(p, lang) {
     const g = p.progress;
     if (g.branching) {
@@ -379,20 +400,23 @@
         { class: "s-rail s-rail--branching" },
         el("span", { class: "s-rail__page", text: g.page != null ? t("branch.pageNum", { n: g.page }, lang) : "" }),
         el("span", { class: "s-rail__choices", text: t("branch.choicesMade", { n: g.choices }, lang) }),
-        wordmark()
+        meters(p, lang),
+        p.meters ? null : wordmark()
       );
     }
     return el(
       "footer",
-      { class: "s-rail" },
+      // Many stages plus meters: the meters drop their short labels (icons and segments remain).
+      { class: ["s-rail", p.meters && g.stageCount >= 8 && "s-rail--dense"] },
       el(
         "ol",
         { class: "s-rail__stages", "aria-label": t("presenter.stages", null, lang) },
         Array.from({ length: g.stageCount }, (_, i) => el("li", { class: ["s-rail__seg", i < g.stageIndex && "is-done", i === g.stageIndex && "is-current"], text: String(i + 1) }))
       ),
+      meters(p, lang),
       el("span", { class: "s-rail__clock", text: g.clock }),
       el("span", { class: "s-rail__count", text: g.slideNumber + " / " + g.slideCount }),
-      wordmark()
+      p.meters ? null : wordmark()
     );
   }
 
@@ -407,6 +431,22 @@
       el("div", { class: "s-slide" }, renderer(s, p, lang)),
       s.type === "title" ? null : rail(p, lang)
     );
+    if (p.complication && !p.paused && p.screen === "normal") {
+      // A complication card covers the slide until the facilitator hides it.
+      canvas.appendChild(
+        el(
+          "div",
+          { class: "s-complication" },
+          el(
+            "div",
+            { class: "s-complication__card" },
+            el("p", { class: "s-complication__kicker" }, svgIcon("dice", { size: 40 }), el("span", { text: t("complication.title", null, lang) + " · " + p.complication.category })),
+            el("h1", { class: "s-complication__title", text: p.complication.title }),
+            el("p", { class: "s-complication__text", text: p.complication.text })
+          )
+        )
+      );
+    }
     if (p.paused) canvas.appendChild(el("div", { class: "s-paused" }, svgIcon("pause", { size: 96 }), el("h1", { class: "s-h1", text: t("stage.paused", null, lang) }), el("p", { class: "s-lead", text: t("stage.pausedBody", null, lang) })));
     if (p.ended && s.type !== "debrief") canvas.appendChild(el("div", { class: "s-paused" }, el("h1", { class: "s-h1", text: t("stage.ended", null, lang) })));
     if (p.screen !== "normal") canvas.appendChild(el("div", { class: "s-blank s-blank--" + p.screen }));
@@ -575,7 +615,7 @@
 
   function draw(sess) {
     const p = BK.engine.session.project(sess, Date.now());
-    const key = [p.slide.id, p.slide.step, p.lang, p.theme, p.paused, p.screen, p.ended, p.rev].join("|");
+    const key = [p.slide.id, p.slide.step, p.lang, p.theme, p.paused, p.screen, p.ended, p.rev, p.complication && p.complication.id].join("|");
     if (key === view.lastKey) {
       tick(view.canvas, p);
       return;

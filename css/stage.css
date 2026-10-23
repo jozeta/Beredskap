@@ -112,6 +112,26 @@
 .s-rail__seg.is-done { background: var(--accent-soft); color: var(--accent); }
 .s-rail__seg.is-current { background: var(--accent); color: var(--on-accent); }
 .s-rail__clock { font-weight: 600; color: var(--ink); }
+.s-rail__clock, .s-rail__count { white-space: nowrap; }
+.s-rail--dense .s-meter__label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.s-rail--dense .s-meters { gap: 20px; }
+/* Pressure meters in the rail: icon, short label, five segments. */
+.s-meters { display: flex; gap: 28px; margin: 0; padding: 0; list-style: none; font-size: 20px; }
+.s-rail--branching .s-meters { margin-left: auto; }
+.s-meter { display: inline-flex; gap: 10px; align-items: center; color: var(--ink-muted); }
+.s-meter .icon { color: var(--accent); }
+.s-meter__bar { display: inline-flex; gap: 4px; }
+.s-meter__bar span { width: 14px; height: 14px; border-radius: 3px; background: var(--surface-2); }
+.s-meter__bar span.is-on { background: var(--accent); }
+.s-meter--regulator .s-meter__bar span.is-on, .s-meter--media .s-meter__bar span.is-on { background: var(--warn); }
+.stage--twist .s-meter, .stage--twist .s-meter .icon { color: var(--on-accent); }
+
+/* Complication card over the slide */
+.s-complication { position: absolute; inset: 0; z-index: 5; display: grid; place-items: center; background: color-mix(in srgb, var(--bg) 94%, transparent); }
+.s-complication__card { width: 1240px; padding: 64px 80px; background: var(--surface); border: 1px solid var(--line); border-top: 10px solid var(--warn); border-radius: 24px; box-shadow: var(--shadow); }
+.s-complication__kicker { display: flex; gap: 16px; align-items: center; margin: 0 0 28px; color: var(--warn); font-size: 28px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.s-complication__title { margin: 0 0 24px; font-size: 72px; line-height: 1.1; }
+.s-complication__text { margin: 0; font-size: 44px; line-height: 1.4; color: var(--ink); }
 
 /* ---- Title ------------------------------------------------------------------------------------ */
 .s-title { position: relative; display: flex; flex-direction: column; justify-content: flex-start; align-items: flex-start; padding-top: 96px; }

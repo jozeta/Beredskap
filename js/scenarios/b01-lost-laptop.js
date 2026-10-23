@@ -171,7 +171,7 @@
         discuss: [q("Who outside IT needs to know that the deal model may be exposed?", "Vem utanför IT behöver veta att kalkylen kan vara exponerad?", ["legal", "ceo"])],
         choice: ask(["What do you do about the deal?", "Vad gör ni med affären?"], ["Recognises market-abuse obligations and brings the deal team and legal in without delay.", "Inser skyldigheterna kring marknadsmissbruk och tar in affärsteamet och juristen utan dröjsmål."], [
           opt(["Tell the deal team and legal; review disclosure duties", "Informera affärsteamet och juristen; se över informationsplikten"], "l3", ["Right, and it widens the circle of people who know.", "Rätt, och det vidgar kretsen av personer som vet."]),
-          opt(["Leave the deal out of it: it is a theft, not a leak", "Låt affären vara: det är en stöld, inte en läcka"], "l3", ["Keeps things simple until someone trades on the information.", "Håller det enkelt tills någon handlar på informationen."], { set: "dealIgnored" }),
+          opt(["Leave the deal out of it: it is a theft, not a leak", "Låt affären vara: det är en stöld, inte en läcka"], "l3", ["Keeps things simple until someone trades on the information.", "Håller det enkelt tills någon handlar på informationen."], { effects: { regulator: 1 }, set: "dealIgnored" }),
           opt(["Pause the deal talks until you know more", "Pausa förhandlingarna tills ni vet mer"], "l3", ["Safe for the market, costly for the deal, and hard to explain to the other side.", "Säkert för marknaden, dyrt för affären och svårt att förklara för motparten."])
         ])
       }),
@@ -206,7 +206,7 @@
           opt(["Give the listing to the police and let them act", "Lämna annonsen till polisen och låt dem agera"], "c7", ["Slower, but lawful and it preserves evidence.", "Långsammare, men lagligt och bevarar bevisen."], { requires: "policeReport", set: "recovered" }),
           opt(["Have someone pose as a buyer", "Låt någon låtsas vara köpare"], "c7b", ["Might work. Might also put a colleague in a car park with a thief.", "Kan fungera. Kan också ställa en kollega på en parkering med en tjuv."]),
           opt(["Send the remote wipe now, before they sell it", "Skicka fjärrraderingen nu, innan de säljer den"], "c7", ["Protects the data if it connects. Destroys the evidence of what was read.", "Skyddar data om den kopplar upp sig. Förstör bevisen för vad som lästes."], { hides: "wipeSent", set: "wipeSent" }),
-          opt(["Post a public appeal with a finder's reward", "Gör ett offentligt upprop med hittelön"], "x1", ["Fast reach, no control over who reads it, including journalists.", "Snabb spridning, ingen kontroll över vem som läser, inte heller journalister."])
+          opt(["Post a public appeal with a finder's reward", "Gör ett offentligt upprop med hittelön"], "x1", ["Fast reach, no control over who reads it, including journalists.", "Snabb spridning, ingen kontroll över vem som läser, inte heller journalister."], { effects: { media: 2 } })
         ])
       }),
 
@@ -267,9 +267,9 @@
         ], ["Because the clock was started early, you have a deadline you can plan to.", "Eftersom klockan startades tidigt har ni en tidsgräns att planera mot."])],
         discuss: [q("What would you put in a notification today, and what would you add later?", "Vad skulle ni skriva i en anmälan i dag, och vad skulle ni komplettera med senare?", ["dpo", "legal"])],
         choice: ask(["Do you notify?", "Anmäler ni?"], ["Notifies on time with what is known and supplements later, rather than waiting for certainty.", "Anmäler i tid med det som är känt och kompletterar senare, i stället för att vänta på visshet."], [
-          opt(["Notify now and follow up as facts arrive", "Anmäl nu och komplettera när fakta kommer"], "l5", ["Meets the deadline. The regulator expects updates.", "Håller tidsgränsen. Tillsynsmyndigheten förväntar sig kompletteringar."], { set: "notified" }),
-          opt(["Wait for the forensic result", "Vänta på det forensiska resultatet"], "l5", ["Likely to miss 72 hours. You must then explain why.", "Missar troligen 72 timmar. Då måste ni förklara varför."], { set: "notifyLate" }),
-          opt(["Decide it is not notifiable", "Besluta att det inte är anmälningspliktigt"], "l5", ["Defensible only if you are sure no one could read it. You are not.", "Försvarbart bara om ni är säkra på att ingen kunde läsa den. Det är ni inte."], { hides: "notifyClock", set: "denied" })
+          opt(["Notify now and follow up as facts arrive", "Anmäl nu och komplettera när fakta kommer"], "l5", ["Meets the deadline. The regulator expects updates.", "Håller tidsgränsen. Tillsynsmyndigheten förväntar sig kompletteringar."], { effects: { regulator: -1 }, set: "notified" }),
+          opt(["Wait for the forensic result", "Vänta på det forensiska resultatet"], "l5", ["Likely to miss 72 hours. You must then explain why.", "Missar troligen 72 timmar. Då måste ni förklara varför."], { effects: { regulator: 1 }, set: "notifyLate" }),
+          opt(["Decide it is not notifiable", "Besluta att det inte är anmälningspliktigt"], "l5", ["Defensible only if you are sure no one could read it. You are not.", "Försvarbart bara om ni är säkra på att ingen kunde läsa den. Det är ni inte."], { effects: { regulator: 2 }, hides: "notifyClock", set: "denied" })
         ])
       }),
 
@@ -280,8 +280,8 @@
         long: true,
         skipTo: "c9",
         choice: ask(["Do you tell the affected customers?", "Berättar ni för de berörda kunderna?"], ["Tells customers early, with practical advice about suspicious contact.", "Berättar för kunderna tidigt, med praktiska råd om misstänkta kontakter."], [
-          opt(["Yes, with advice on spotting fraud attempts", "Ja, med råd om hur de känner igen bedrägeriförsök"], "c9", ["Builds trust; their contact details may be used for invoice fraud.", "Bygger förtroende; deras kontaktuppgifter kan användas för fakturabedrägerier."]),
-          opt(["Only if they ask", "Bara om de frågar"], "c9", ["Quiet now, awkward if fraud follows.", "Tyst nu, pinsamt om bedrägerier följer."])
+          opt(["Yes, with advice on spotting fraud attempts", "Ja, med råd om hur de känner igen bedrägeriförsök"], "c9", ["Builds trust; their contact details may be used for invoice fraud.", "Bygger förtroende; deras kontaktuppgifter kan användas för fakturabedrägerier."], { effects: { trust: 1 } }),
+          opt(["Only if they ask", "Bara om de frågar"], "c9", ["Quiet now, awkward if fraud follows.", "Tyst nu, pinsamt om bedrägerier följer."], { effects: { trust: -1 } })
         ])
       }),
 
@@ -363,7 +363,7 @@
         ],
         choice: ask(["What do you tell the reporter?", "Vad säger ni till reportern?"], ["Holds a single, accurate line and avoids confirming details that move markets.", "Håller en enda korrekt linje och undviker att bekräfta detaljer som påverkar marknaden."], [
           opt(["Confirm the loss and say you are assessing the data", "Bekräfta förlusten och säg att ni bedömer vilka data som berörs"], "x2", ["Honest and limited. The word “negotiations” is already in their question.", "Ärligt och begränsat. Ordet ”förhandlingar” finns redan i deras fråga."]),
-          opt(["Decline to comment", "Avböj att kommentera"], "x2", ["They publish anyway, with speculation instead of facts.", "De publicerar ändå, med spekulationer i stället för fakta."])
+          opt(["Decline to comment", "Avböj att kommentera"], "x2", ["They publish anyway, with speculation instead of facts.", "De publicerar ändå, med spekulationer i stället för fakta."], { effects: { media: 1 } })
         ])
       }),
       pg("x2", ["A different offer", "Ett annat erbjudande"], [

@@ -195,7 +195,7 @@
         choice: ask(["What signal do you send?", "Vilken signal sänder ni?"], ["Says the matter is being handled under a fair process, without naming anyone, and corrects wrong rumours.", "Säger att ärendet hanteras i en rättvis process, utan att namnge någon, och rättar felaktiga rykten."], [
           opt(["A short internal message: it is being handled fairly, no names", "Ett kort internt meddelande: det hanteras rättvist, inga namn"], "c7", ["Calms the guessing.", "Lugnar gissningarna."]),
           opt(["Say nothing until the process is finished", "Säg ingenting förrän processen är klar"], "c7", ["The wrong guesses keep circulating.", "De felaktiga gissningarna fortsätter att cirkulera."]),
-          opt(["Dismiss the data scientist today and announce it to all staff as an example", "Säg upp dataanalytikern i dag och meddela all personal det som ett exempel"], "x1", ["A strong signal. Also a legal risk.", "En stark signal. Också en juridisk risk."])
+          opt(["Dismiss the data scientist today and announce it to all staff as an example", "Säg upp dataanalytikern i dag och meddela all personal det som ett exempel"], "x1", ["A strong signal. Also a legal risk.", "En stark signal. Också en juridisk risk."], { effects: { media: 1, trust: -1 } })
         ])
       }),
 
@@ -227,8 +227,8 @@
         "Kunden vars projekt försenades ber om en förklaring till den missade delleveransen. Deras avtal säger att forskningsmiljön är avsatt för godkänt projektarbete.\n\nProjektledaren vill säga ”tekniska problem”. {{person.serviceOwner.name}} är inte säker på att det är ärligt nog, särskilt om det visar sig att tunneln har kommit åt deras data."
       ], {
         choice: ask(["What do you tell the customer?", "Vad säger ni till kunden?"], ["Explains honestly that the environment was misused, what was checked, and what changed.", "Förklarar ärligt att miljön missbrukades, vad som kontrollerades och vad som ändrades."], [
-          opt(["Explain honestly what happened and what you checked", "Förklara ärligt vad som hände och vad ni kontrollerade"], "c9", ["Builds trust; requires you to know about the tunnel.", "Bygger förtroende; kräver att ni vet hur det är med tunneln."]),
-          opt(["Say “technical problems” and offer a discount", "Säg ”tekniska problem” och erbjud en rabatt"], "c9", ["Smooth, until they learn more.", "Smidigt, tills de får veta mer."])
+          opt(["Explain honestly what happened and what you checked", "Förklara ärligt vad som hände och vad ni kontrollerade"], "c9", ["Builds trust; requires you to know about the tunnel.", "Bygger förtroende; kräver att ni vet hur det är med tunneln."], { effects: { trust: 1 } }),
+          opt(["Say “technical problems” and offer a discount", "Säg ”tekniska problem” och erbjud en rabatt"], "c9", ["Smooth, until they learn more.", "Smidigt, tills de får veta mer."], { effects: { trust: -1 } })
         ])
       }),
 

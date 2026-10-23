@@ -113,8 +113,8 @@
           { id: "k3", label: ["Hours to bank cut-off", "Timmar till bankens brytpunkt"], value: 9, tone: "danger" }
         ]) },
         choice: ask(["How do you pay people today?", "Hur betalar ni folk i dag?"], ["Pays staff on time from the best available data, with corrections next month.", "Betalar personalen i tid utifrån bästa tillgängliga data, med rättelser nästa månad."], [
-          opt(["Build a payment file from last month plus this month's changes", "Bygg en betalningsfil från förra månaden plus den här månadens ändringar"], "c4", ["Some errors, corrected later. Everyone is paid today.", "En del fel, som rättas senare. Alla får lön i dag."], { set: "paidOnTime" }),
-          opt(["Delay payroll by a day and tell staff why", "Skjut upp lönen en dag och berätta varför"], "c4", ["Honest and safer, and some staff have bills due today.", "Ärligt och säkrare, och en del anställda har räkningar som förfaller i dag."]),
+          opt(["Build a payment file from last month plus this month's changes", "Bygg en betalningsfil från förra månaden plus den här månadens ändringar"], "c4", ["Some errors, corrected later. Everyone is paid today.", "En del fel, som rättas senare. Alla får lön i dag."], { effects: { trust: 1 }, set: "paidOnTime" }),
+          opt(["Delay payroll by a day and tell staff why", "Skjut upp lönen en dag och berätta varför"], "c4", ["Honest and safer, and some staff have bills due today.", "Ärligt och säkrare, och en del anställda har räkningar som förfaller i dag."], { effects: { trust: -1 } }),
           opt(["Pay everyone exactly last month's amount", "Betala alla exakt förra månadens belopp"], "c4", ["Simple, and wrong for everyone who changed.", "Enkelt, och fel för alla som har förändringar."], { set: "paidOnTime" })
         ])
       }),
@@ -193,7 +193,7 @@
         choice: ask(["How do you respond?", "Hur svarar ni?"], ["Stays silent publicly, gives the post to the police, and reassures staff internally.", "Är tyst offentligt, lämnar inlägget till polisen och lugnar personalen internt."], [
           opt(["Say nothing publicly and pass the post to the police", "Säg ingenting offentligt och lämna inlägget till polisen"], "c7", ["Frustrating, and correct.", "Frustrerande, och rätt."]),
           opt(["Send a calm internal message to staff", "Skicka ett lugnt internt meddelande till personalen"], "c7", ["Addresses the people who matter most.", "Vänder sig till dem som betyder mest."]),
-          opt(["Reply publicly, naming him as the saboteur", "Svara offentligt och peka ut honom som sabotör"], "x1", ["Satisfying for a minute.", "Tillfredsställande i en minut."], { set: "accused" })
+          opt(["Reply publicly, naming him as the saboteur", "Svara offentligt och peka ut honom som sabotör"], "x1", ["Satisfying for a minute.", "Tillfredsställande i en minut."], { effects: { media: 2 }, set: "accused" })
         ])
       }),
 
@@ -202,8 +202,8 @@
         "Den externa revisorn har hört om lönekörningen som misslyckades och ber om ett möte. Hen vill veta hur en tidigare anställd kunde köra kod i affärssystemet, och om betalningsfilen som skickades manuellt hade ett korrekt godkännande.\n\nÅrsrevisionen är om sex veckor. Frågorna kommer att stå i revisionsrapporten, vad ni än svarar."
       ], {
         choice: ask(["How do you meet the auditor?", "Hur möter ni revisorn?"], ["Gives a full account with the control failures and the fixes.", "Ger en fullständig redogörelse med kontrollbristerna och åtgärderna."], [
-          opt(["A full account, control gaps included", "En fullständig redogörelse, inklusive kontrollbristerna"], "l4", ["Uncomfortable, and auditors respect it.", "Obekvämt, och revisorer respekterar det."]),
-          opt(["A short account focusing on the recovery", "En kort redogörelse med fokus på återställningen"], "l4", ["They will ask the other questions anyway.", "De kommer att ställa de andra frågorna ändå."])
+          opt(["A full account, control gaps included", "En fullständig redogörelse, inklusive kontrollbristerna"], "l4", ["Uncomfortable, and auditors respect it.", "Obekvämt, och revisorer respekterar det."], { effects: { regulator: -1 } }),
+          opt(["A short account focusing on the recovery", "En kort redogörelse med fokus på återställningen"], "l4", ["They will ask the other questions anyway.", "De kommer att ställa de andra frågorna ändå."], { effects: { regulator: 1 } })
         ])
       }),
 

@@ -336,6 +336,10 @@
       if (pg.choice) {
         if (!isBilingual(pg.choice.strong)) issue(list, "branching", w, "choice needs a strong-team note");
         pg.choice.options.forEach((op) => isBilingual(op.why) || issue(list, "branching", w + " › " + op.key, "option needs a why note"));
+        // Pressure-meter effects: known meters, whole steps of at most two.
+        pg.choice.options.forEach((op) =>
+          Object.entries(op.effects || {}).forEach(([k, v]) => (["trust", "regulator", "media"].includes(k) && Number.isInteger(v) && Math.abs(v) <= 2) || issue(list, "branching", w + " › " + op.key, "effect " + k + " " + v))
+        );
       }
     });
 

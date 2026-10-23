@@ -168,6 +168,15 @@
         )
       ),
 
+      r.complications.length || r.meters
+        ? section(
+            t("meters.title", null, l),
+            r.meters ? [el("h3", { class: "eyebrow", text: t("report.meters", null, l) }), el("div", { class: "badges" }, r.meters.map((m) => c.badge(m.label + ": " + m.value + "/5", "neutral")))] : null,
+            r.complications.length
+              ? [el("h3", { class: "eyebrow", text: t("report.complications", null, l) }), el("ul", { class: "bullets" }, r.complications.map((x) => el("li", null, el("strong", { text: x.category + " · " + x.title + ": " }), x.text)))]
+              : null
+          )
+        : null,
       section(t("plan.title", null, l), F().actionPlanEditor(sess, dispatch, l, r)),
 
       section(t("report.scorecard", null, l), F().scorecardEditor(sess, dispatch, l)),

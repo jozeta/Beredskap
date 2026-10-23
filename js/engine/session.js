@@ -59,6 +59,9 @@
       decisions: {},
       observations: [],
       actions: [],
+      meters: {},
+      complications: [],
+      activeComplication: null,
       objectives: {},
       scorecard: {},
       notes: "",
@@ -71,6 +74,60 @@
       log: [{ at: new Date(t0).toISOString(), type: "start" }],
       instance
     }, branching ? { route: [{ pageId: startPage, at: new Date(t0).toISOString(), option: null, num: B().passageNum(B().page(instance, startPage), []) }], flags: [] } : {});
+  }
+
+  // ---- Pressure meters -------------------------------------------------------------------------------
+  // The story's world, not the team's performance: three 0–5 meters with a starting value, moved by the
+  // facilitator (sess.meters holds the adjustments) and, in branching runs, by the effects of chosen options.
+
+  const METERS = [{ id: "trust", start: 4 }, { id: "regulator", start: 1 }, { id: "media", start: 1 }];
+  const METER_MAX = 5;
+
+  function optionEffects(sess) {
+    const sum = {};
+    if (!isBranching(sess)) return sum;
+    sess.route.forEach((r) => {
+      const pg = r.option && B().page(sess.instance, r.pageId);
+      const opt = pg && pg.choice && pg.choice.options.find((o) => o.key === r.option);
+      Object.entries((opt && opt.effects) || {}).forEach(([k, v]) => (sum[k] = (sum[k] || 0) + v));
+    });
+    return sum;
+  }
+
+  /** Current meter values, clamped to 0–5. */
+  function meterValues(sess) {
+    const fx = optionEffects(sess);
+    const adj = sess.meters || {};
+    return METERS.map((m) => ({ id: m.id, value: Math.max(0, Math.min(METER_MAX, m.start + (adj[m.id] || 0) + (fx[m.id] || 0))) }));
+  }
+
+  // ---- Complication deck -----------------------------------------------------------------------------
+
+  /** Draw the next card: seeded from the exercise seed and the number drawn so far, never a repeat. */
+  function drawComplication(sess, at, key) {
+    const deck = BK.data.complications.cards;
+    const used = new Set((sess.complications || []).map((c) => c.id));
+    const left = deck.filter((c) => !used.has(c.id));
+    if (!left.length) return null;
+    const rng = BK.rng.create(sess.instance.seed + "/complications/" + used.size);
+    const card = left[rng.int(0, left.length - 1)];
+    sess.complications = (sess.complications || []).concat({ id: card.id, key: key || null, drawnAt: new Date(at).toISOString(), shownAt: null });
+    return card;
+  }
+
+  /** "auto" mode: one card ready (not shown) at each new stage after the first, or every fourth choice. */
+  function autoComplication(sess, at) {
+    if (sess.instance.settings.complications !== "auto" || sess.status === "ended") return;
+    let key = null;
+    if (isBranching(sess)) {
+      const n = Math.floor(sess.route.filter((r) => r.option).length / 4);
+      if (n >= 1) key = "choices-" + n;
+    } else {
+      const { slide } = locate(sess);
+      const stage = slide && slide.stageId ? stageById(sess, slide.stageId) : null;
+      if (stage && stage.index >= 1) key = stage.id;
+    }
+    if (key && !(sess.complications || []).some((c) => c.key === key)) drawComplication(sess, at, key);
   }
 
   const ACTION_STATUS = ["open", "progress", "done", "dropped"];
@@ -457,6 +514,33 @@
       case "actionRemove":
         sess.actions = (sess.actions || []).filter((x) => x.id !== cmd.id);
         break;
+      case "meterAdjust": {
+        const m = METERS.find((x) => x.id === cmd.meter);
+        if (!m) break;
+        const cur = meterValues(sess).find((x) => x.id === m.id).value;
+        const next = Math.max(0, Math.min(METER_MAX, cur + (cmd.delta > 0 ? 1 : -1)));
+        sess.meters = Object.assign({}, sess.meters || {}, { [m.id]: ((sess.meters || {})[m.id] || 0) + (next - cur) });
+        break;
+      }
+      case "complicationDraw":
+        if (!ended) drawComplication(sess, at, null);
+        break;
+      case "complicationShow": {
+        const c = (sess.complications || []).find((x) => x.id === cmd.id);
+        if (c) {
+          sess.activeComplication = c.id;
+          c.shownAt = c.shownAt || new Date(at).toISOString();
+          sess.log.push({ at: new Date(at).toISOString(), type: "complication", id: c.id });
+        }
+        break;
+      }
+      case "complicationHide":
+        sess.activeComplication = null;
+        break;
+      case "complicationDiscard":
+        // Only a card the room has not seen can go back in the deck.
+        sess.complications = (sess.complications || []).filter((x) => x.id !== cmd.id || x.shownAt);
+        break;
       case "objective":
         sess.objectives[cmd.objectiveId] = { status: cmd.status, note: cmd.note || "", at: new Date(at).toISOString() };
         break;
@@ -492,6 +576,7 @@
       sess.position.step = Math.min(sess.position.step, stepCount(sess, after.slide));
     }
     onPosition(sess, at);
+    autoComplication(sess, at);
     sess.rev = (prev.rev || 0) + 1;
     sess.updatedAt = new Date(at).toISOString();
     return sess;
@@ -513,6 +598,12 @@
   }
 
   /** Public view of one inject: never reliability classification, notes, expected responses or tests. */
+  /** The card currently shown to the room (title and text only; the facilitator note stays out). */
+  function publicComplication(sess, lang) {
+    const card = sess.activeComplication && BK.data.complications.get(sess.activeComplication);
+    return card ? { id: card.id, category: t("complication.cat." + card.cat, null, lang), title: L(card.title, lang), text: L(card.text, lang) } : null;
+  }
+
   /** A person source as { name, title } so artefacts can lay the two out separately; null otherwise. */
   function speaker(inj, lang) {
     const label = L(inj.sourceLabel, lang);
@@ -723,6 +814,8 @@
       screen: sess.screen,
       progress: progress(sess, list, idx, lang),
       timer: { remainingMs: Math.max(0, timerRemaining(sess, now)), durationMs: sess.timer.durationMs, running: !!sess.timer.runningSince, active: slide && slide.type === "discussion" },
+      meters: sess.instance.settings.meters ? meterValues(sess).map((m) => ({ id: m.id, value: m.value, max: METER_MAX, label: t("meter." + m.id, null, lang) })) : null,
+      complication: publicComplication(sess, lang),
       slide: slideContent(sess, slide, sess.position.step, lang)
     };
   }
@@ -912,6 +1005,8 @@
     criteria,
     ACTION_STATUS,
     normaliseAction,
+    METERS,
+    meterValues,
     findInject,
     create,
     apply,

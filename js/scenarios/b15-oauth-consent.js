@@ -170,8 +170,8 @@
           "{{person.dpo.name}} har klassificeringen från granskningen: HR-filer med personuppgifter, kundavtal med namngivna kontakter och brevlådor med personliga och hälsorelaterade meddelanden.\n\nDet är en personuppgiftsincident, och eftersom kartläggningen är grundlig kan anmälan bli exakt om vad som togs. Frågan är bara när den ska skickas."
         ], ["Because you scoped fully, the notification can be precise.", "Eftersom ni kartlade fullständigt kan anmälan bli exakt."])],
         choice: ask(["When do you notify?", "När anmäler ni?"], ["Notifies within 72 hours with what is known and supplements.", "Anmäler inom 72 timmar med det som är känt och kompletterar."], [
-          opt(["Within 72 hours, supplementing later", "Inom 72 timmar, med senare kompletteringar"], "l3", ["Meets the duty.", "Uppfyller skyldigheten."], { set: "notified" }),
-          opt(["After the scoping is complete", "När kartläggningen är klar"], "l3", ["More complete, probably late.", "Mer komplett, troligen sent."], { set: "notifyLate" })
+          opt(["Within 72 hours, supplementing later", "Inom 72 timmar, med senare kompletteringar"], "l3", ["Meets the duty.", "Uppfyller skyldigheten."], { effects: { regulator: -1 }, set: "notified" }),
+          opt(["After the scoping is complete", "När kartläggningen är klar"], "l3", ["More complete, probably late.", "Mer komplett, troligen sent."], { effects: { regulator: 1 }, set: "notifyLate" })
         ])
       }),
 
@@ -198,9 +198,9 @@
           ], { headline: ["Fwd: Updated bank details", "Vb: Uppdaterade bankuppgifter"], meta: { subject: L(["Fwd: Updated bank details", "Vb: Uppdaterade bankuppgifter"]) }, tests: ["lo3"] })
         ],
         choice: ask(["What do you do?", "Vad gör ni?"], ["Warns every customer in an active invoice thread today, by phone where payments are large.", "Varnar varje kund i en aktiv fakturatråd i dag, per telefon där beloppen är stora."], [
-          opt(["Warn every customer with an open invoice, today", "Varna varje kund med en öppen faktura, i dag"], "c7", ["Embarrassing, and it stops the fraud.", "Pinsamt, och det stoppar bedrägeriet."], { set: "customersWarned" }),
+          opt(["Warn every customer with an open invoice, today", "Varna varje kund med en öppen faktura, i dag"], "c7", ["Embarrassing, and it stops the fraud.", "Pinsamt, och det stoppar bedrägeriet."], { effects: { trust: 1 }, set: "customersWarned" }),
           opt(["Confirm to this customer that it is fake", "Bekräfta för den här kunden att det är falskt"], "c7", ["Saves one payment.", "Räddar en betalning."]),
-          opt(["Keep quiet and fix it internally", "Håll tyst och åtgärda det internt"], "x1", ["Avoids embarrassment, for now.", "Undviker pinsamhet, för stunden."])
+          opt(["Keep quiet and fix it internally", "Håll tyst och åtgärda det internt"], "x1", ["Avoids embarrassment, for now.", "Undviker pinsamhet, för stunden."], { effects: { trust: -2 } })
         ])
       }),
 
