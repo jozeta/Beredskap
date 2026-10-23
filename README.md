@@ -1,72 +1,179 @@
 # Beredskap
 
-Tabletop exercises for cyber crises, in English and Swedish. Beredskap generates a
-realistic, internally consistent exercise from one of 35 scenario templates in two
-formats: 25 **discussion** exercises (stages, injects, a timed discussion, a
-decision) and 10 **branching** exercises, which work like the old gamebooks: every
-page ends in a choice of 2–4 options and the story goes where the room takes it. It
-projects the exercise on a 16:9 stage while the facilitator steers from a private
-presenter view. It also records decisions and observations, and it produces a
-debrief and an after-action report.
+**Tabletop exercises for cyber crises, in English and Swedish. Runs entirely in your browser.**
 
-It is a single static web page: plain HTML, CSS and JavaScript. It has no
-backend, no build step and no dependencies. It makes no network requests (the
-Content-Security-Policy forbids them), and everything is stored in the browser.
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+![No build step](https://img.shields.io/badge/build-none-brightgreen)
+![Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)
+![Offline](https://img.shields.io/badge/network-none-brightgreen)
 
-All organisations, people, domains (`*.example`) and IP addresses (RFC 5737
-ranges) in the generated content are fictional. Threat actors are invented. No
-real group names are used.
+Beredskap (Swedish for *preparedness*) helps you plan and run tabletop exercises:
+a facilitator walks a group through a realistic cyber incident, one stage or one
+decision at a time, and the room discusses what they would do. Afterwards, you get a
+debrief, an after-action report and an improvement plan with owners and due dates.
+
+- **52 ready-made scenarios.** 35 *discussion* exercises unfold in stages, with injects
+  (emails, chats, calls, alerts, news), a timed discussion and a decision. 17 *branching*
+  exercises work like a gamebook: every page ends in a choice and the story follows the
+  room to one of five endings. Topics range from ransomware, phishing and insider threats
+  to supply-chain attacks, cloud outages, cryptomining, malicious npm packages, shadow AI
+  and disaster recovery.
+- **Build your own.** A slide editor with 53 templates (questions, decisions, email and
+  chat threads, phone calls, social posts, alerts, logs, reports) lets you create custom
+  exercises.
+- **Two screens.** The room sees a clean 16:9 stage. You steer from a private presenter
+  view with notes, hints, timers and the logs.
+- **Private by design.** A single static web page with no backend, no build step, no
+  dependencies and no tracking. The Content-Security-Policy blocks every network request,
+  and everything is stored in your browser.
+
+All organisations, people, domains (`*.example`) and IP addresses (RFC 5737 ranges) in
+the generated content are fictional. Threat actors are invented, and no real group names
+are used.
+
+## Screenshots
+
+| | |
+|---|---|
+| ![Dashboard](docs/screenshots/dashboard.png) | ![Scenario library](docs/screenshots/library.png) |
+| **Dashboard.** Start an exercise, resume a running one or open a recent one. | **Scenario library.** 52 scenarios to search and filter, plus your own exercises. |
+| ![Exercise setup](docs/screenshots/setup.png) | ![Presenter view](docs/screenshots/presenter.png) |
+| **Setup.** Organisation, length, audience, roles, objectives and extra pressure. | **Presenter view.** What the room sees, plus notes, hints, timer and logs. |
+| ![Stage](docs/screenshots/stage.png) | ![Exercise builder](docs/screenshots/builder.png) |
+| **Stage.** The audience screen, with injects drawn as realistic mock-ups. | **Exercise builder.** Build your own exercise slide by slide. |
+| ![Debrief route map](docs/screenshots/debrief-route-map.png) | ![Help](docs/screenshots/help.png) |
+| **Debrief.** The route through a branching exercise; hover over a decision to see the options. | **Help.** A built-in guide in English and Swedish. |
+
+## Features
+
+- **Generated, consistent exercises.** Every generation rolls a fictional organisation,
+  cast, threat actor, numbers and timeline from a seed. The same seed and settings always
+  give the same exercise.
+- **Tailoring.** Sector, size, technology vocabulary (for example Microsoft 365 or Google
+  Workspace), jurisdiction (regulator, reporting rules, currency), audience (technical,
+  executive or mixed), difficulty, inject density, participating roles, real participant
+  names and learning objectives.
+- **Facilitation tools.** Inject release, skip and postpone; a discussion timer; pacing
+  ("behind by 5 min"); decision and observation logs; black and white screen; a clicker and
+  keyboard shortcuts; and recovery after a reload.
+- **Extra pressure (optional).** Pressure meters on the stage (customer trust, regulator
+  attention, media) and a deck of 32 complication cards to draw during the run.
+- **Debrief.** Learning objectives, what really happened (including what the room never
+  found), decisions, a facilitator scorecard (an assessment, never a maturity score), MITRE
+  ATT&CK, NIST CSF 2.0 and ISO/IEC 27001:2022 mapping, and an improvement plan.
+- **Exports.** A printable after-action report (or PDF), Markdown, CSV (inject log,
+  decision log, observations, action plan), JSON for archiving or moving to another
+  computer, plus a printable facilitator guide and role cards.
+- **Bilingual.** The interface, the stage and the exports are in English and Swedish. You
+  can switch the stage language live.
+- **Light and dark themes**, accessible keyboard navigation and WCAG AA colour contrast.
 
 ---
 
 ## Contents
 
-1. [Setup](#1-setup)
-2. [Operator guide](#2-operator-guide)
-3. [Keyboard shortcuts](#3-keyboard-shortcuts)
-4. [Architecture](#4-architecture)
-5. [Data model](#5-data-model)
-6. [Authoring a new scenario](#6-authoring-a-new-scenario)
-7. [Testing](#7-testing)
-8. [Limitations](#8-limitations)
+1. [Installation](#1-installation)
+2. [Quick start](#2-quick-start)
+3. [Operator guide](#3-operator-guide)
+4. [Keyboard shortcuts](#4-keyboard-shortcuts)
+5. [Architecture](#5-architecture)
+6. [Data model](#6-data-model)
+7. [Authoring a new scenario](#7-authoring-a-new-scenario)
+8. [Testing](#8-testing)
+9. [Limitations](#9-limitations)
+10. [License](#10-license)
 
 ---
 
-## 1. Setup
+## 1. Installation
 
-**Run from disk.** Open `index.html` in a current Chrome, Edge or Firefox. Nothing
-needs installing. Everything works from `file://`.
+Beredskap needs no installation and no build step. You only need a current Chrome, Edge or
+Firefox.
 
-**Run from a static host.** Any static host serves the folder unchanged
-(GitHub Pages, Azure Static Web Apps, an intranet web server). Locally:
+**Option A: open it from disk.**
 
 ```sh
-python3 -m http.server 8000      # then open http://localhost:8000/
+git clone https://github.com/<your-account>/Beredskap.git
+cd Beredskap
+open index.html          # macOS; on Windows: start index.html, on Linux: xdg-open index.html
 ```
 
-**Run the tests.** Open `tests.html`. From `file://`, three source-reading tests
-report as *skipped*, because a page opened from disk may not read other files.
-Serve the folder as above and open `http://localhost:8000/tests.html` to run all
-of them. See [Testing](#7-testing).
+Everything works from `file://`.
 
-**Requirements.** The app needs a current evergreen browser with
-`BroadcastChannel`, `Intl`, the `<dialog>` element and `localStorage`. On a
-projector, use the stage window in fullscreen at 1920×1080. The stage scales to
-any 16:9 size.
+**Option B: serve it locally.** This is recommended if you want to run all the tests.
+
+```sh
+cd Beredskap
+python3 -m http.server 8000
+# then open http://localhost:8000/
+```
+
+**Option C: host it.** Any static host can serve the folder unchanged, for example GitHub
+Pages, Azure Static Web Apps, Netlify or an intranet web server. For GitHub Pages, go to
+*Settings → Pages*, choose *Deploy from a branch*, pick `main` and the root folder. The
+included `.nojekyll` file makes Pages serve the files whose names start with `_`.
+
+**Requirements.** An evergreen browser with `BroadcastChannel`, `Intl`, `<dialog>` and
+`localStorage`. For projection, use the stage window in full screen at 1920×1080; the stage
+scales to any 16:9 size.
 
 ---
 
-## 2. Operator guide
+## 2. Quick start
 
-### 2.1 From zero to running (about one minute)
+### Run your first exercise (about five minutes)
 
-1. **Library** (`#/library`). Browse the 35 scenarios. You can filter by
+1. Open **Scenario library** in the top menu and pick a scenario. *The Laptop on the Night
+   Train* is a short branching exercise; *Locked Out at Close of Business* is a classic
+   ransomware discussion exercise.
+2. Choose **Use scenario**. The defaults give a sound exercise. Open *Advanced* to set the
+   organisation, roles and objectives, then choose **Generate exercise**.
+3. Read through the generated exercise in the private preview. Every inject, hidden fact
+   and facilitator note is there. Edit any text you like.
+4. Choose **Start exercise**, then **Presenter here + stage window**. Drag the stage window to the projector
+   and press **F** for full screen. The window you started from becomes your presenter view.
+5. Press **→** or click the stage to move forward. After the last question of a stage, the
+   first click starts the discussion timer and the next click moves on. In branching
+   exercises, press **1–4** (or use the presenter's buttons) to record the room's choice.
+6. When you are done, choose **End exercise** and open the **Debrief**.
+
+### Build your own exercise
+
+1. In **Scenario library**, choose **New custom exercise**.
+2. Choose **New slide** and pick templates from the gallery.
+3. Click into any text on the slide to edit it. Use the toolbar for formatting, lists,
+   icons, images and block order, and add messages to chat, SMS and call slides.
+4. Give question slides a discussion timer, and write presenter notes under each slide.
+5. Choose **Start exercise**. Your exercise is listed under *My exercises* in the library.
+
+### Debrief and follow up
+
+1. In the debrief, set each learning objective to addressed, partly addressed or not
+   addressed, and add observations.
+2. Build the **improvement plan**. Each action gets an owner, a due date, how you will know
+   it is done, and a status. Adopt the scenario's suggestions with one click.
+3. Print the report or export Markdown, CSV or JSON. Open actions from every exercise are
+   collected under **History**.
+
+### Need more?
+
+Open **Help** in the top menu for the full guide: every setup option, the builder, pressure
+meters and complications, shortcuts, exports, privacy, facilitation tips and
+troubleshooting.
+
+---
+
+## 3. Operator guide
+
+### 3.1 From zero to running (about one minute)
+
+1. **Library** (`#/library`). Browse the 52 scenarios. You can filter by
    category, structure (archetype A–F) and format (discussion or branching), or
    search. A card's preview shows
-   the summary, learning objectives, stage titles and framework references. It
-   never shows hidden facts.
-2. **New exercise** (`#/new`). Pick a scenario, or *Surprise me*, then choose
-   *Generate*. The defaults give a sound exercise. *Advanced* covers:
+   the summary, learning objectives, key lessons, stage titles and framework
+   references. It never shows hidden facts.
+2. **Setup** (`#/new`). Choose *Use scenario* on a card (or *New exercise* /
+   *Surprise me* on the dashboard), then choose *Generate exercise*. The defaults give a sound exercise. *Advanced* covers:
    - sector, size and a fixed organisation name;
    - technology environment and jurisdiction;
    - which external pressures to include;
@@ -74,6 +181,7 @@ any 16:9 size.
    - participating roles, with optional real participant names;
    - learning objectives;
    - discussion time, inject release and decision mode;
+   - extra pressure: pressure meters and the complication deck;
    - the seed.
 
    Every control changes the generated exercise. For a branching scenario,
@@ -91,14 +199,14 @@ any 16:9 size.
    change the stage count, or reroll. From here you can also print the
    facilitator guide or the role cards.
 4. **Start.** Choose between two ways to run:
-   - **Two screens** (recommended): the stage opens in a new window, which you
+   - **Presenter here + stage window** (recommended): the stage opens in a new window, which you
      drag to the projector and make fullscreen with `F`. This window becomes the
      presenter view.
-   - **One screen**: the stage opens fullscreen in this window. Facilitator
+   - **Single screen**: the stage opens fullscreen in this window. Facilitator
      notes are available in a private overlay (`N`), framed in red so you notice
      if it is being projected.
 
-### 2.2 Running the exercise
+### 3.2 Running the exercise
 
 - **Stage** (`#/stage/:id`). The participants see this. A stage runs:
   situation → timeline (one inject per step) → injects and data → twist →
@@ -125,7 +233,7 @@ any 16:9 size.
 - **Recovery.** Every change autosaves. If a window is closed or reloaded,
   reopening it restores the exact slide and the logs, with timers paused.
 
-### 2.3 Running a branching exercise
+### 3.3 Running a branching exercise
 
 - **Pages and choices.** The stage shows a page (its gamebook number, "§ 212",
   and a few lines of story), any artefacts on it, and then the choice: 2–4
@@ -150,17 +258,20 @@ any 16:9 size.
   *Contained* to *Disaster*. The scale is for discussion, never a score. The
   stage debrief shows the route through the whole map: the room's path drawn
   strong, unvisited pages as numbers only. The operator debrief adds the page
-  titles, every choice with the options not taken and where they led, and the
+  titles (hover over or tab to a decision point to see the options and the
+  room's choice), every choice with the options not taken and where they led, and the
   endings that were not reached.
 
-### 2.4 Debrief and exports
+### 3.4 Debrief and exports
 
 - **Debrief** (`#/debrief/:id`). This view collects:
   - the summary, plus learning objectives with their status;
   - the ground-truth reveal, including hidden facts the room never surfaced;
   - the full timeline with decisions;
   - assumptions versus reality, observations and unresolved risks;
-  - improvement actions;
+  - the improvement plan: actions with owner, due date, how completion is
+    verified and status (open, in progress, done, dropped), seeded from the
+    scenario's suggestions and from observations;
   - the facilitator scorecard and the MITRE ATT&CK, NIST CSF 2.0 and ISO/IEC
     27001:2022 mapping.
 
@@ -169,20 +280,41 @@ any 16:9 size.
 - **Exports**:
   - **JSON**: the full exercise and session, schema-versioned.
   - **Markdown**: the after-action report.
-  - **CSV**: the inject log, decision log and actions. Files are UTF-8 with a
+  - **CSV**: the inject log, decision log, observations and action plan. Files are UTF-8 with a
     BOM, use the locale's separator and are guarded against formula injection.
   - **Print / Save as PDF**: the after-action report, the facilitator guide
     (marked confidential) and role cards.
 - **History** (`#/history`) lists past and running sessions. From there you can
-  reopen a debrief, export, run again, archive or delete. Deleting asks for
+  reopen the presenter or debrief, export, run again, archive or delete. Open
+  improvement actions from every debrief are collected below the list. Deleting asks for
   confirmation. Imports also start here. An import is validated in full before
   anything is stored, is always stored as a new copy, and is rendered as plain
   text.
+- **Help** (`#/help`) is the built-in guide (14 topics, searchable).
 - **Settings** (`#/settings`) holds the language, UI theme, default stage theme
   and default duration. You can also export all raw data, or clear it with a
   double confirmation.
 
-### 2.5 Language and theme
+### 3.5 Custom exercises, pressure meters and complications
+
+- **Exercise builder** (`#/builder/:id`). Start it with *New custom exercise* in
+  the library. Slides are listed on the left (drag, or Alt+↑/↓, to reorder),
+  the selected slide is edited in place in the middle, and the toolbar adapts
+  to the selection: layout, discussion timer, text formatting, lists, quotes,
+  callouts, icons, key figures, timelines, A–D options, images, and the type,
+  sender and messages of artefact slides. *New slide* opens a gallery of 53
+  templates in six groups. Every slide can have presenter notes, which never
+  reach the stage. Changes save automatically. *Export JSON* writes a deck file
+  that imports from History. Custom runs use the same stage, presenter,
+  observations, improvement plan and exports.
+- **Pressure meters.** Customer trust, regulator attention and media pressure,
+  shown on the stage from 0 to 5. You move them in the presenter; in branching
+  exercises some options move them too.
+- **Complication deck.** 32 short twists (people, technical, communication,
+  legal, logistics, wildcard). Draw a card, read its private note, then show it
+  on the stage or put it back. In automatic mode one card is readied per stage.
+
+### 3.6 Language and theme
 
 The UI, the stage and the exports are fully bilingual (EN/SV). On stage, `L`
 switches language live. Names, numbers and times stay identical, because both
@@ -191,7 +323,7 @@ independent (light, dark or system), and on stage `D` switches the theme live.
 
 ---
 
-## 3. Keyboard shortcuts
+## 4. Keyboard shortcuts
 
 These work on the stage and in the presenter. They are disabled while you type
 in a field or a dialog is open. A presentation clicker (PageUp/PageDown, arrows,
@@ -219,21 +351,22 @@ link comes first, and on each page change focus moves to the page heading.
 
 ---
 
-## 4. Architecture
+## 5. Architecture
 
 ```
 index.html          app shell; classic <script> tags in dependency order (works on file://)
 tests.html          in-browser test runner
 css/                tokens (light/dark), app, stage (1920×1080 canvas), presenter, print
 js/core/            namespace (window.BK), store, rng, i18n, theme, safe DOM builders
-js/data/            options/vocabulary, roles, sectors, environments, name pools, frameworks
-js/engine/          template resolver, generator, validator, pacing, slide compiler, branching, session, edit
+js/data/            options/vocabulary, roles, sectors, environments, name pools, frameworks, complications, help
+js/engine/          template resolver, generator, validator, pacing, slide compiler, branching, session, edit, custom (builder decks)
 js/graphics/        icon sprite + emblems, SVG charts, route map, inject artefact mock-ups, title artwork
-js/scenarios/       _registry, _helpers, s01 … s25 (discussion), b01 … b10 (branching), one file each
+js/scenarios/       _registry, _helpers, s01 … s35 (discussion), b01 … b17 (branching), one file each
 js/io/              export (JSON/Markdown/CSV), import (validation), print
-js/ui/              router, sync, dialog, components, and one module per view
+js/ui/              router, sync, dialog, components, and one module per view (incl. builder, custom-slide, help)
 js/app.js           boot: preferences, shell, routes, storage-problem banner
 tests/              runner and test suites
+docs/screenshots/   README images
 ```
 
 **One global namespace.** Every file is an IIFE that attaches to `window.BK`.
@@ -265,7 +398,7 @@ already localised. Facilitator notes, expected responses, hidden facts before
 their reveal, true reliability classifications, role-only injects and
 unreleased injects are never copied into it. They are therefore never in the
 stage DOM, not even hidden. Tests sweep every slide of every scenario, both
-languages and every branch to enforce this (see [Testing](#7-testing)).
+languages and every branch to enforce this (see [Testing](#8-testing)).
 
 **Sync.** Session state lives in `localStorage`. A view opens it with
 `BK.sync.open(sessionId, onChange)` and changes it only through the returned
@@ -294,7 +427,7 @@ says so.
 
 ---
 
-## 5. Data model
+## 6. Data model
 
 ### Template (authored)
 
@@ -397,12 +530,23 @@ are empty: the slide list is computed from the route. The **session** adds
 written to `decisions[pageId]`, so the decision log and exports work for both
 formats.
 
+### Custom deck (builder)
+
+A deck is `{ id, kind: "deck", title, summary, lang, stageTheme, minutes,
+meters, complications, slides }`. A slide is either `{ kind: "blocks", layout,
+blocks, notes, timerMinutes }` or `{ kind: "artefact", inject, notes,
+timerMinutes }`. Rich text is stored as runs `[{ t, b, i, u }]`, never as
+markup, and images only as PNG/JPEG/WebP/GIF data URLs.
+`BK.engine.custom.normaliseDeck` is the single gate for edited, stored and
+imported decks. `toExercise(deck)` produces an instance with `format: "custom"`
+and empty scenario fields, which the session reducer runs slide by slide.
+
 ### Export envelope
 
 ```json
-{ "schema": "beredskap.exercise", "schemaVersion": 2, "kind": "exercise | session",
+{ "schema": "beredskap.exercise", "schemaVersion": 2, "kind": "exercise | session | deck",
   "app": { "name": "Beredskap", "version": "…" }, "exportedAt": "…",
-  "exercise": { … }, "session": { … } | null }
+  "exercise": { … }, "session": { … } | null }      // a deck file carries "deck": { … } instead
 ```
 
 Schema version 2 added the branching format. Version 1 files still import and
@@ -413,7 +557,7 @@ copy or changes nothing.
 
 ---
 
-## 6. Authoring a new scenario
+## 7. Authoring a new scenario
 
 Start from a scenario with a similar structure. `s01-ransomware-vpn.js` is the
 annotated reference and writes the schema out in full. `s02`–`s20` use the
@@ -564,12 +708,12 @@ page text.
 
 ---
 
-## 7. Testing
+## 8. Testing
 
 Open `tests.html`. The runner has no dependencies. It reports *passed*,
 *failed* and *skipped* separately and never counts a skipped test as passed.
-Current result: **178 passed, 0 failed** when served over HTTP. From `file://`
-the result is 175 passed and 3 skipped; the skipped three are the source-reading
+Current result: **209 passed, 0 failed** when served over HTTP. From `file://`
+the result is 206 passed and 3 skipped; the skipped three are the source-reading
 tests.
 
 | Suite | Covers |
@@ -583,6 +727,7 @@ tests.
 | accessibility | every operator view (empty and populated) and every stage slide of every scenario, in both languages: accessible names, labels, unique ids, valid references, no positive tabindex, heading order, SVG text alternatives; dialog focus handling; WCAG AA contrast of the colour tokens in both themes |
 | layout | every slide of every scenario (two seeds, every audience, both languages; branching scenarios along playthroughs that take every option) laid out at the native 1920×1080 canvas after the stage's own fitting step: nothing leaves the slide area (and so runs over the progress rail), no chart text leaves its chart, no text is clipped; with a test that a planted overflow is caught |
 | branching | map rules (each with a failing fixture), landing resolution, path lengths and endings of every branching scenario, determinism and page numbers, length and mode effects, choose/undo/digit keys/next-blocking, scorecard criteria, **confidentiality** along playthroughs that take every option (both lengths, both languages: no facilitator text, flag label or unvisited page reaches the projection or the stage DOM), import/export round trip, tampered routes rejected, version-1 files still import |
+| custom exercises | deck normalisation (unknown fields, block types and unsafe image sources dropped), every builder template in both languages, rich text read back from the DOM, custom runs with timers, presenter notes never on stage, builder edits surviving autosave, editor redirect, deck and custom-session import/export; the help guide's content and search |
 | hardening | source self-check (no `eval(`, `new Function`, string timers, `innerHTML =` outside `icons.js`, network APIs or external URLs; with a test that the rules detect planted violations); `index.html` CSP and no inline script/handlers; `tests.html` loads the same scripts as `index.html`; nothing loaded from the network during the run |
 
 For a quick check from the command line, the same source scan can be run with
@@ -594,7 +739,7 @@ grep -rnE "eval\(|new Function|innerHTML\s*=|fetch\(|XMLHttpRequest" js | grep -
 
 ---
 
-## 8. Limitations
+## 9. Limitations
 
 - **Confidentiality is a display boundary, not a security boundary.** The
   stage never renders facilitator content. However, the stage window runs in
@@ -624,3 +769,9 @@ grep -rnE "eval\(|new Function|innerHTML\s*=|fetch\(|XMLHttpRequest" js | grep -
   text edits, after a confirmation.
 - **Out of scope for v1:** PowerPoint export, AI-generated content, and any
   server or cloud features.
+
+---
+
+## 10. License
+
+Beredskap is released under the [MIT License](LICENSE).
