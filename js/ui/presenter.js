@@ -99,7 +99,7 @@
     return el(
       "header",
       { class: "pres-top" },
-      el("a", { class: "wordmark", href: "#/edit/" + encodeURIComponent(sess.exerciseId), title: t("presenter.back") }, svgIcon("mark", { size: 24, className: "wordmark__mark" }), el("span", { class: "wordmark__name", text: t("app.name") })),
+      el("a", { class: "wordmark", href: sess.instance.format === "custom" ? "#/builder/" + encodeURIComponent(sess.instance.deckId) : "#/edit/" + encodeURIComponent(sess.exerciseId), title: t("presenter.back") }, svgIcon("mark", { size: 24, className: "wordmark__mark" }), el("span", { class: "wordmark__name", text: t("app.name") })),
       el("h1", { class: "pres-top__title", text: BK.loc(sess.title) }),
       el(
         "div",
@@ -168,7 +168,29 @@
         "div",
         { class: "pres-nav__lower" },
         preview(next, t("presenter.next"), "stage-frame--next", f.branching && f.branching.choice && f.branching.choice.current && !f.branching.choice.chosen ? t("presenter.awaitingChoice") : null),
-        f.branching ? routeList(f.branching) : el(
+        f.custom
+          ? el(
+              "nav",
+              { class: "pres-stages", "aria-label": t("builder.slides") },
+              el("h2", { class: "eyebrow", text: t("builder.slides") }),
+              el(
+                "ol",
+                null,
+                f.custom.slides.map((s) =>
+                  el(
+                    "li",
+                    null,
+                    el(
+                      "button",
+                      { type: "button", class: ["pres-stage", s.current && "is-current"], "aria-current": s.current ? "step" : null, on: { click: () => view.ctrl.dispatch({ type: "gotoSlide", slideId: s.id }) } },
+                      el("span", { class: "pres-stage__num", text: String(s.index + 1) }),
+                      el("span", { text: s.title })
+                    )
+                  )
+                )
+              )
+            )
+          : f.branching ? routeList(f.branching) : el(
           "nav",
           { class: "pres-stages", "aria-label": t("presenter.stages") },
           el("h2", { class: "eyebrow", text: t("presenter.stages") }),
@@ -417,8 +439,8 @@
     const lessons = (sess.instance.debrief && sess.instance.debrief.keyLessons) || [];
     return [
       fold("obs", t("presenter.observations"), sess.observations.length, F.observationForm(sess, d), F.observationList(sess, d)),
-      fold("obj", t("presenter.objectives"), assessed + "/" + sess.instance.objectives.length, F.objectivesEditor(sess, d)),
-      fold("lessons", t("presenter.lessons"), lessons.length, el("p", { class: "muted small", text: t("presenter.lessonsHint") }), el("ul", { class: "bullets" }, lessons.map((x) => el("li", { text: BK.loc(x) })))),
+      sess.instance.objectives.length ? fold("obj", t("presenter.objectives"), assessed + "/" + sess.instance.objectives.length, F.objectivesEditor(sess, d)) : null,
+      lessons.length ? fold("lessons", t("presenter.lessons"), lessons.length, el("p", { class: "muted small", text: t("presenter.lessonsHint") }), el("ul", { class: "bullets" }, lessons.map((x) => el("li", { text: BK.loc(x) })))) : null,
       settings.meters ? fold("meters", t("meters.presenterTitle"), null, metersPanel(sess, d)) : null,
       settings.complications && settings.complications !== "off"
         ? fold("deck", t("complication.presenterTitle"), (sess.complications || []).filter((x) => !x.shownAt).length || null, complicationsPanel(sess, d))
@@ -528,7 +550,15 @@
           "div",
           { class: "pres-main" },
           navCard(sess, f),
-          f.branching
+          f.custom
+            ? el(
+                "div",
+                { class: "pres-side" },
+                f.custom.timerMinutes ? timerCard(sess) : null,
+                c.card({ class: "card pres-card" }, el("h2", { text: t("builder.notes") }), f.custom.notes ? el("p", { class: "pres-custom-notes", text: f.custom.notes }) : el("p", { class: "muted", text: t("builder.noNotes") })),
+                facilitationCards(sess)
+              )
+            : f.branching
             ? el(
                 "div",
                 { class: "pres-side" },

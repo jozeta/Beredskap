@@ -89,6 +89,7 @@
     const r = BK.io.export.report(sess, view.lang);
     const l = r.lang;
     const dispatch = view.ctrl.dispatch;
+    const custom = sess.instance.format === "custom";
 
     BK.dom.mount(
       view.root,
@@ -115,7 +116,8 @@
       ),
       exportsBar(sess),
 
-      el(
+      // Custom (builder) exercises have no scenario model: no objectives, ground truth, decisions or frameworks.
+      custom ? null : el(
         "div",
         { class: "grid grid--overview" },
         section(t("report.objectives", null, l), F().objectivesEditor(sess, dispatch, l)),
@@ -142,11 +144,11 @@
         )
       ),
 
-      r.branch
+      custom ? null : r.branch
         ? section(t("report.route", null, l), el("div", { class: "routemap-wrap" }, BK.graphics.routeMap(r.branch.map, { lang: l, title: t("report.route", null, l), choices: r.decisions.length, titles: r.branch.titles })))
         : section(t("report.timeline", null, l), BK.graphics.charts.timeline({ title: t("report.timeline", null, l), events: r.timeline }, l)),
 
-      r.branch ? choicesSection(r, l) : section(
+      custom ? null : r.branch ? choicesSection(r, l) : section(
         t("report.decisions", null, l),
         table(
           [t("csv.stage", null, l), t("csv.question", null, l), t("report.field.option", null, l), t("report.field.text", null, l), t("report.field.rationale", null, l), t("report.field.dissent", null, l), t("report.field.owner", null, l)],
@@ -154,7 +156,7 @@
         )
       ),
 
-      section(t("report.assumptions", null, l), table([t("stage.assumed", null, l), t("stage.reality", null, l)], r.assumptions.map((a) => [el("span", { class: "strike", text: a.assumption }), a.reality]))),
+      custom ? null : section(t("report.assumptions", null, l), table([t("stage.assumed", null, l), t("stage.reality", null, l)], r.assumptions.map((a) => [el("span", { class: "strike", text: a.assumption }), a.reality]))),
 
       el(
         "div",
@@ -179,12 +181,12 @@
         : null,
       section(t("plan.title", null, l), F().actionPlanEditor(sess, dispatch, l, r)),
 
-      section(t("report.scorecard", null, l), F().scorecardEditor(sess, dispatch, l)),
+      custom ? null : section(t("report.scorecard", null, l), F().scorecardEditor(sess, dispatch, l)),
 
       el(
         "div",
         { class: "grid grid--overview" },
-        section(
+        custom ? null : section(
           t("report.frameworks", null, l),
           table(["", "", ""], [].concat(r.frameworks.mitre.map((m) => ["MITRE ATT&CK", m.id, m.name || ""]), r.frameworks.nistCsf.map((m) => ["NIST CSF 2.0", m.id, m.name || ""]), r.frameworks.iso27001.map((m) => ["ISO/IEC 27001:2022", m.id, m.name || ""])))
         ),

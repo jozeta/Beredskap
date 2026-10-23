@@ -14,8 +14,8 @@
 
   const NAV = [
     { hash: "#/", key: "nav.dashboard", icon: "gauge", match: (p) => p === "/" },
-    { hash: "#/library", key: "nav.library", icon: "book", match: (p) => p.startsWith("/library") },
-    { hash: "#/new", key: "nav.new", icon: "plus", match: (p) => p.startsWith("/new") || p.startsWith("/edit") },
+    // Exercises start from the library ("Use scenario" or a custom exercise), so setup, editing and the builder belong to it.
+    { hash: "#/library", key: "nav.library", icon: "book", match: (p) => p.startsWith("/library") || p.startsWith("/new") || p.startsWith("/edit") || p.startsWith("/builder") },
     { hash: "#/history", key: "nav.history", icon: "timeline", match: (p) => p.startsWith("/history") || p.startsWith("/debrief") },
     { hash: "#/settings", key: "nav.settings", icon: "settings", match: (p) => p.startsWith("/settings") }
   ];
@@ -202,6 +202,7 @@
     r("#/library", BK.ui.library);
     r("#/new", BK.ui.wizard);
     r("#/edit/:instanceId", BK.ui.editor);
+    r("#/builder/:deckId", BK.ui.builder);
     r("#/presenter/:sessionId", BK.ui.presenter);
     r("#/stage/:sessionId", BK.ui.stage);
     r("#/debrief/:sessionId", BK.ui.debrief);

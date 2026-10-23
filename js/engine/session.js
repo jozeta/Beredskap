@@ -21,6 +21,9 @@
   const t = (key, vars, lang) => BK.t(key, vars, lang);
   const B = () => BK.engine.branching;
   const isBranching = (sess) => sess.instance.format === "branching";
+  const isCustom = (sess) => sess.instance.format === "custom";
+  /** A slide whose discussion countdown the click/arrow "advance" rule respects. */
+  const timedSlide = (slide) => !!slide && (slide.type === "discussion" || (slide.type === "custom" && slide.timer > 0));
 
   // Inject types that carry a system-assigned severity (shown on stage); human messages do not.
   const SYSTEM_TYPES = new Set(["siemAlert", "edrAlert", "authLog", "networkEvidence", "logExcerpt", "backupReport", "ticket", "forensicFinding", "threatIntel", "advisory", "statusPage"]);
@@ -224,6 +227,7 @@
   /** Effective slide list with index. Recomputed from the instance and session state. */
   function slides(sess) {
     if (isBranching(sess)) return B().slides(sess);
+    if (isCustom(sess)) return sess.instance.slides.map((s, index) => ({ id: s.id, type: "custom", index, timer: s.timerMinutes || 0 }));
     const audience = sess.instance.settings.audience;
     const wanted = BK.engine.slides.injectSlideWanted;
     const out = [];
@@ -295,6 +299,9 @@
       const pg = B().page(sess.instance, slide.pageId);
       const ms = ((pg.discuss && pg.discuss.minutes) || 4) * 60000;
       sess.timer = { stageId: slide.pageId, durationMs: ms, remainingMs: ms, runningSince: null };
+    } else if (slide.type === "custom" && slide.timer > 0 && sess.timer.stageId !== slide.id) {
+      const ms = slide.timer * 60000;
+      sess.timer = { stageId: slide.id, durationMs: ms, remainingMs: ms, runningSince: null };
     } else if (slide.type === "discussion" && !slide.pageId && sess.timer.stageId !== slide.stageId) {
       const stage = stageById(sess, slide.stageId);
       const ms = (stage.discussionMinutes || 5) * 60000;
@@ -334,7 +341,7 @@
       case "advance":
         // A click on the stage: once every question on a discussion slide is showing, the first
         // click starts the countdown instead of leaving the slide; a click while it runs moves on.
-        if (slide && slide.type === "discussion" && !sess.paused && !ended && !sess.timer.runningSince && sess.position.step >= stepCount(sess, slide) && timerRemaining(sess, at) > 0) {
+        if (timedSlide(slide) && !sess.paused && !ended && !sess.timer.runningSince && sess.position.step >= stepCount(sess, slide) && timerRemaining(sess, at) > 0) {
           sess.timer.runningSince = at;
           break;
         }
@@ -642,6 +649,14 @@
     const e = inst.entities;
     const stage = slide.stageId ? stageById(sess, slide.stageId) : null;
     const base = { type: slide.type, id: slide.id, step };
+    if (isCustom(sess)) {
+      // The audience gets the slide's content; its facilitator notes stay out.
+      const src = inst.slides.find((s) => s.id === slide.id);
+      if (!src) return base;
+      const copy = JSON.parse(JSON.stringify(src));
+      delete copy.notes;
+      return Object.assign(base, { slide: copy, timerMinutes: copy.timerMinutes || 0, variant: copy.kind === "blocks" && copy.layout === "twist" ? "twist" : null });
+    }
     if (isBranching(sess)) {
       const own = B().slideContent(sess, slide, step, lang, base);
       if (own) return own;
@@ -789,6 +804,7 @@
 
   function progress(sess, list, idx, lang) {
     if (isBranching(sess)) return B().progress(sess, list, idx);
+    if (isCustom(sess)) return { custom: true, stageIndex: -1, stageCount: 0, slideNumber: idx + 1, slideCount: list.length, clock: "" };
     const slide = list[idx];
     const stage = slide && slide.stageId ? stageById(sess, slide.stageId) : null;
     return {
@@ -813,7 +829,7 @@
       ended: sess.status === "ended",
       screen: sess.screen,
       progress: progress(sess, list, idx, lang),
-      timer: { remainingMs: Math.max(0, timerRemaining(sess, now)), durationMs: sess.timer.durationMs, running: !!sess.timer.runningSince, active: slide && slide.type === "discussion" },
+      timer: { remainingMs: Math.max(0, timerRemaining(sess, now)), durationMs: sess.timer.durationMs, running: !!sess.timer.runningSince, active: timedSlide(slide) },
       meters: sess.instance.settings.meters ? meterValues(sess).map((m) => ({ id: m.id, value: m.value, max: METER_MAX, label: t("meter." + m.id, null, lang) })) : null,
       complication: publicComplication(sess, lang),
       slide: slideContent(sess, slide, sess.position.step, lang)
@@ -851,6 +867,26 @@
     const inst = sess.instance;
     const { slide, idx, list } = locate(sess);
     if (isBranching(sess)) return branchingFacilitatorView(sess, now, lang, list, idx, slide);
+    if (isCustom(sess)) {
+      const src = slide && inst.slides.find((s) => s.id === slide.id);
+      const elapsedMin = elapsedMs(sess, now) / 60000;
+      return {
+        lang,
+        custom: { notes: src ? src.notes || "" : "", timerMinutes: src ? src.timerMinutes || 0 : 0, slides: inst.slides.map((s, i) => ({ id: s.id, index: i, title: BK.engine.custom.slideLabel(s, lang), current: i === idx })) },
+        slideIndex: idx,
+        slideCount: list.length,
+        slideType: slide && slide.type,
+        stage: null,
+        slideNotes: null,
+        decision: null,
+        decisionLog: null,
+        hiddenFacts: [],
+        injects: [],
+        roleInjects: [],
+        pacing: { elapsedMin, totalMin: inst.pacing.totalMinutes, state: elapsedMin > inst.pacing.totalMinutes ? "behind" : "onTime", delta: Math.max(0, Math.round(elapsedMin - inst.pacing.totalMinutes)), suggestSkip: false },
+        stages: []
+      };
+    }
     const stage = slide && slide.stageId ? stageById(sess, slide.stageId) : null;
     const stageIdx = stage ? stage.index : -1;
     const elapsedMin = elapsedMs(sess, now) / 60000;
@@ -993,6 +1029,7 @@
    */
   function criteria(instance, session) {
     if (instance.format === "branching") return B().criteria(instance, session);
+    if (instance.format === "custom") return [];
     const out = [];
     instance.stages.forEach((s) => {
       if (!s.decision) return;

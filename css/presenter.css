@@ -128,3 +128,4 @@
 .pres-card-item { display: grid; gap: 4px; padding: 10px 12px; border: var(--hairline) solid var(--line); border-radius: var(--radius-sm); }
 .pres-card-item.is-active { border-color: var(--warn); box-shadow: inset 4px 0 0 var(--warn); }
 .pres-card-item p { margin: 0; }
+.pres-custom-notes { margin: 0; white-space: pre-wrap; line-height: 1.5; }

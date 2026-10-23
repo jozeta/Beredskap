@@ -103,6 +103,49 @@
     ];
   }
 
+  // ---- Custom exercises (slide builder decks) ----------------------------------------------------------
+
+  async function removeDeck(d) {
+    const ok = await BK.ui.dialog.confirm({ title: t("builder.deleteDeckTitle"), message: t("builder.deleteDeckBody", { title: d.title }), confirmLabel: t("common.delete"), danger: true });
+    if (!ok) return;
+    BK.store.removeItem("deck", d.id);
+    BK.router.refresh();
+  }
+
+  function myExercises() {
+    const decks = BK.store.list("deck").sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt)));
+    return c.card(
+      { class: "card card--wide library-custom" },
+      el("div", { class: "library-custom__head" }, el("h2", { text: t("builder.myExercises") }), el("p", { class: "muted", text: decks.length ? t("builder.myExercisesIntro") : t("builder.myExercisesEmpty") })),
+      decks.length
+        ? el(
+            "ul",
+            { class: "list" },
+            decks.map((d) =>
+              el(
+                "li",
+                { class: "list__item" },
+                el(
+                  "a",
+                  { class: "list__main library-custom__link", href: "#/builder/" + encodeURIComponent(d.id) },
+                  el("span", { class: "list__title", text: d.title }),
+                  el("span", { class: "muted small", text: t("builder.deckMeta", { n: (d.slides || []).length, date: BK.i18n.fmt.date(new Date(d.updatedAt || Date.now()), BK.i18n.getLang()) }) })
+                ),
+                el(
+                  "div",
+                  { class: "actions history-item__actions" },
+                  c.button({ label: t("builder.edit"), icon: "edit", iconOnly: true, size: "sm", href: "#/builder/" + encodeURIComponent(d.id) }),
+                  c.button({ label: t("builder.start"), icon: "play", iconOnly: true, size: "sm", disabled: !(d.slides || []).length, onClick: () => BK.ui.builder.startDeck(d.id) }),
+                  c.button({ label: t("builder.duplicate"), icon: "copy", iconOnly: true, size: "sm", onClick: () => (BK.ui.builder.duplicate(d.id), BK.router.refresh()) }),
+                  c.button({ label: t("common.delete"), icon: "trash", iconOnly: true, size: "sm", className: "btn--danger-hover", onClick: () => removeDeck(d) })
+                )
+              )
+            )
+          )
+        : null
+    );
+  }
+
   function preview(tpl) {
     const body = el(
       "div",
@@ -177,11 +220,13 @@
   BK.ui.library = {
     title: () => t("library.title"),
     render(root, ctx) {
+      root.append(myExercises());
       // The dashboard's format cards link here with ?format=.
       if (ctx && ctx.query && ["discussion", "branching"].includes(ctx.query.format)) state.format = ctx.query.format;
       const all = BK.scenarios.list();
       const results = el("div", { class: "results" });
-      root.append(c.pageHeader(t("library.title"), t("library.intro")), filters(() => renderResults(results, all)), results);
+      root.prepend(c.pageHeader(t("library.title"), t("library.intro"), [c.button({ label: t("builder.newCustom"), icon: "plus", kind: "primary", href: "#/builder/new" })]));
+      root.append(el("h2", { class: "library__heading", text: t("library.scenarios") }), filters(() => renderResults(results, all)), results);
       renderResults(results, all);
     }
   };

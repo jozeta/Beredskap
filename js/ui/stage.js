@@ -241,6 +241,10 @@
     );
   }
 
+  // Custom (builder) slides: content from custom-slide.js; a slide with a timer shows the countdown.
+  R.custom = (s, p, lang) =>
+    el("div", { class: "s-custom" }, s.slide ? BK.ui.customSlide.render(s.slide, lang) : null, s.timerMinutes > 0 ? el("div", { class: "s-custom__timer" }, timerBlock(p)) : null);
+
   R.decision = (s, p, lang) =>
     el(
       "div",
@@ -427,7 +431,7 @@
     const renderer = R[s.type] || (() => el("div"));
     const canvas = el(
       "div",
-      { class: ["stage", "stage--" + s.type, opts && opts.preview && "stage--preview", opts && opts.animate && "is-entering"], "data-theme": p.theme, lang },
+      { class: ["stage", "stage--" + s.type, s.variant && "stage--" + s.variant, opts && opts.preview && "stage--preview", opts && opts.animate && "is-entering"], "data-theme": p.theme, lang },
       el("div", { class: "s-slide" }, renderer(s, p, lang)),
       s.type === "title" ? null : rail(p, lang)
     );
