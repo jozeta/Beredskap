@@ -472,7 +472,8 @@
     if (typingTarget(e.target) || document.querySelector("dialog[open]")) return false;
     const k = e.key;
     let cmd = null;
-    if (k === "ArrowRight" || k === "ArrowDown" || k === " " || k === "PageDown") cmd = { type: "next" };
+    // Forward keys follow the stage-click rule: start a discussion countdown before leaving the slide.
+    if (k === "ArrowRight" || k === "ArrowDown" || k === " " || k === "PageDown") cmd = { type: "advance" };
     else if (k === "ArrowLeft" || k === "ArrowUp" || k === "PageUp") cmd = { type: "prev" };
     else if (k === "Home") cmd = { type: "first" };
     else if (k === "End") cmd = { type: "last" };

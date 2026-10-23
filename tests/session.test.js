@@ -359,9 +359,11 @@
     }
 
     test("clicker keys navigate", () => {
-      assert.equal(press("PageDown").type, "next");
+      assert.equal(press("PageDown").type, "advance");
       assert.equal(press("PageUp").type, "prev");
-      assert.equal(press(" ").type, "next");
+      assert.equal(press(" ").type, "advance");
+      assert.equal(press("ArrowRight").type, "advance");
+      assert.equal(press("ArrowDown").type, "advance");
       assert.equal(press("ArrowLeft").type, "prev");
       assert.equal(press(".").value, "black");
       assert.equal(press("b").value, "black");
