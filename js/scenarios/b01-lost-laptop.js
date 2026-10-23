@@ -27,10 +27,10 @@
       "Ekonomichefens dator är borta efter en resa med nattåget. Disken var kanske inte krypterad. Varje val avgör hur mycket av det här som blir en incident."
     ]),
     learningObjectives: [
-      { id: "lo1", text: L(["Treat a lost device as an identity incident first", "Behandla en förlorad enhet som en identitetsincident i första hand"]) },
-      { id: "lo2", text: L(["Establish what was on a device without guessing", "Fastställa vad som fanns på en enhet utan att gissa"]) },
-      { id: "lo3", text: L(["Decide on personal-data notification under uncertainty", "Fatta beslut om anmälan av personuppgiftsincident under osäkerhet"]) },
-      { id: "lo4", text: L(["Handle inside information and the board", "Hantera insiderinformation och styrelsen"]) }
+      { id: "lo1", text: L(["Treat a lost device as an identity incident first", "Behandla en förlorad enhet som en identitetsincident i första hand"]), teaser: L(["What really goes missing when a thing goes missing", "Vad som egentligen försvinner när en sak försvinner"]) },
+      { id: "lo2", text: L(["Establish what was on a device without guessing", "Fastställa vad som fanns på en enhet utan att gissa"]), teaser: L(["Knowing versus remembering", "Att veta kontra att minnas"]) },
+      { id: "lo3", text: L(["Decide on personal-data notification under uncertainty", "Fatta beslut om anmälan av personuppgiftsincident under osäkerhet"]), teaser: L(["Deciding before all the facts are in", "Att besluta innan alla fakta finns"]) },
+      { id: "lo4", text: L(["Handle inside information and the board", "Hantera insiderinformation och styrelsen"]), teaser: L(["Who needs to know, and when", "Vem som behöver veta, och när"]) }
     ],
     mitre: ["T1078", "T1550", "T1114", "T1005", "T1657"],
     frameworks: {

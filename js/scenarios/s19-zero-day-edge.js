@@ -26,10 +26,10 @@
       "En kritisk brist i enheten som ansluter er personal till nätverket utnyttjas över hela världen. Det finns ingen rättning. Ingen vet om ni redan har drabbats."
     ]),
     learningObjectives: [
-      { id: "lo1", text: L(["Act on a zero-day before certainty", "Agera på en nolldagssårbarhet innan det finns visshet"]) },
-      { id: "lo2", text: L(["Hunt for compromise that predates disclosure", "Leta efter intrång som skedde före offentliggörandet"]) },
-      { id: "lo3", text: L(["Decide to take a critical system offline and own the impact", "Besluta att koppla bort ett kritiskt system och ta ansvar för följderna"]) },
-      { id: "lo4", text: L(["Treat a patched device as possibly still compromised", "Behandla en rättad enhet som möjligen fortfarande komprometterad"]) }
+      { id: "lo1", text: L(["Act on a zero-day before certainty", "Agera på en nolldagssårbarhet innan det finns visshet"]), teaser: L(["Acting before you are sure", "Att agera innan man är säker"]) },
+      { id: "lo2", text: L(["Hunt for compromise that predates disclosure", "Leta efter intrång som skedde före offentliggörandet"]), teaser: L(["Looking backwards as well as forwards", "Att blicka bakåt och inte bara framåt"]) },
+      { id: "lo3", text: L(["Decide to take a critical system offline and own the impact", "Besluta att koppla bort ett kritiskt system och ta ansvar för följderna"]), teaser: L(["Owning a hard call", "Att stå för ett svårt beslut"]) },
+      { id: "lo4", text: L(["Treat a patched device as possibly still compromised", "Behandla en rättad enhet som möjligen fortfarande komprometterad"]), teaser: L(["When fixed might not mean safe", "När åtgärdat kanske inte betyder säkert"]) }
     ],
     mitre: ["T1190", "T1133", "T1552", "T1078", "T1070", "T1562"],
     frameworks: {

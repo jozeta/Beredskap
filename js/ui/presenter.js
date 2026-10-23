@@ -344,9 +344,11 @@
     const F = BK.ui.facilitation;
     const d = view.ctrl.dispatch;
     const assessed = Object.keys(sess.objectives).length;
+    const lessons = (sess.instance.debrief && sess.instance.debrief.keyLessons) || [];
     return [
       fold("obs", t("presenter.observations"), sess.observations.length, F.observationForm(sess, d), F.observationList(sess, d)),
       fold("obj", t("presenter.objectives"), assessed + "/" + sess.instance.objectives.length, F.objectivesEditor(sess, d)),
+      fold("lessons", t("presenter.lessons"), lessons.length, el("p", { class: "muted small", text: t("presenter.lessonsHint") }), el("ul", { class: "bullets" }, lessons.map((x) => el("li", { text: BK.loc(x) })))),
       fold("notes", t("presenter.notesField"), null, F.notesEditor(sess, d))
     ];
   }

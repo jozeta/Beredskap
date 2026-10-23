@@ -111,6 +111,8 @@
       el("p", { text: BK.loc(tpl.summary) }),
       el("h3", { class: "eyebrow", text: t("library.objectives") }),
       el("ul", { class: "bullets" }, (tpl.learningObjectives || []).map((lo) => el("li", { text: BK.loc(lo.text) }))),
+      el("h3", { class: "eyebrow", text: t("report.lessons") }),
+      el("ul", { class: "bullets" }, ((tpl.debrief && tpl.debrief.keyLessons) || []).map((x) => el("li", { text: BK.loc(x) }))),
       tpl.format === "branching" ? mapOutline(tpl) : [el("h3", { class: "eyebrow", text: t("library.stagesOutline") }), el("ol", { class: "bullets" }, (tpl.stages || []).map((s) => el("li", { text: BK.loc(s.title) })))],
       el("h3", { class: "eyebrow", text: t("library.attack") }),
       el("p", { class: "mono small", text: (tpl.mitre || []).join(" · ") })

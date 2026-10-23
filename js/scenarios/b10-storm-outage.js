@@ -27,10 +27,10 @@
       "En storm slår ut strömmen och nästan all mobiltäckning i regionen. Ingen har angripit er, tills bedragarna märker att ingen kan kontrollera något."
     ]),
     learningObjectives: [
-      { id: "lo1", text: L(["Lead when normal communication channels fail", "Leda när de vanliga kommunikationskanalerna fallerar"]) },
-      { id: "lo2", text: L(["Put staff safety first in a physical crisis", "Sätta personalens säkerhet först i en fysisk kris"]) },
-      { id: "lo3", text: L(["Shut down and restart IT in a controlled order", "Stänga ned och starta upp IT i kontrollerad ordning"]) },
-      { id: "lo4", text: L(["Expect opportunistic attacks during a crisis", "Räkna med opportunistiska angrepp under en kris"]) }
+      { id: "lo1", text: L(["Lead when normal communication channels fail", "Leda när de vanliga kommunikationskanalerna fallerar"]), teaser: L(["Leading when the usual ways are gone", "Att leda när de vanliga vägarna är borta"]) },
+      { id: "lo2", text: L(["Put staff safety first in a physical crisis", "Sätta personalens säkerhet först i en fysisk kris"]), teaser: L(["People before systems", "Människor före system"]) },
+      { id: "lo3", text: L(["Shut down and restart IT in a controlled order", "Stänga ned och starta upp IT i kontrollerad ordning"]), teaser: L(["Order in stopping and starting", "Ordning när man stänger av och startar"]) },
+      { id: "lo4", text: L(["Expect opportunistic attacks during a crisis", "Räkna med opportunistiska angrepp under en kris"]), teaser: L(["Staying alert while everyone is busy", "Att vara vaksam när alla har fullt upp"]) }
     ],
     mitre: ["T1566", "T1656", "T1078", "T1204"],
     frameworks: {

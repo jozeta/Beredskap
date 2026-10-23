@@ -512,7 +512,9 @@
         });
       case "briefing":
         return Object.assign(base, {
-          objectives: inst.objectives.map((o) => L(o.text, lang)),
+          // The audience sees the teaser, never the objective itself, so the briefing does not
+          // give the plot away. Custom objectives are the operator's own words and show as written.
+          objectives: inst.objectives.map((o) => L(o.teaser || o.text, lang)),
           minutes: inst.pacing.totalMinutes,
           stageCount: inst.stages.length,
           choiceRange: inst.pacing.choiceRange || null,

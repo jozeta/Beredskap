@@ -27,10 +27,10 @@
       "Dagen före lönedagen rapporterar lönetjänstleverantören ett intrång och stoppar alla lönekörningar. Tusentals personer räknar med lön i morgon, och deras personuppgifter kan vara borta."
     ]),
     learningObjectives: [
-      { id: "lo1", text: L(["Keep a critical business process running when a SaaS provider fails", "Hålla en kritisk process igång när en SaaS-leverantör fallerar"]) },
-      { id: "lo2", text: L(["Understand controller duties when the breach is at a processor", "Förstå den personuppgiftsansvariges skyldigheter när intrånget sker hos ett biträde"]) },
-      { id: "lo3", text: L(["Communicate with staff whose own data is affected", "Kommunicera med personal vars egna uppgifter berörs"]) },
-      { id: "lo4", text: L(["Spot fraud that exploits an incident", "Upptäcka bedrägerier som utnyttjar en incident"]) }
+      { id: "lo1", text: L(["Keep a critical business process running when a SaaS provider fails", "Hålla en kritisk process igång när en SaaS-leverantör fallerar"]), teaser: L(["Keeping the everyday working", "Att hålla vardagen igång"]) },
+      { id: "lo2", text: L(["Understand controller duties when the breach is at a processor", "Förstå den personuppgiftsansvariges skyldigheter när intrånget sker hos ett biträde"]), teaser: L(["Whose problem it is when it happens somewhere else", "Vems problem det är när det händer någon annanstans"]) },
+      { id: "lo3", text: L(["Communicate with staff whose own data is affected", "Kommunicera med personal vars egna uppgifter berörs"]), teaser: L(["Talking to the people closest to you", "Att tala med dem som står er närmast"]) },
+      { id: "lo4", text: L(["Spot fraud that exploits an incident", "Upptäcka bedrägerier som utnyttjar en incident"]), teaser: L(["Staying alert while everyone is busy", "Att vara vaksam när alla har fullt upp"]) }
     ],
     mitre: ["T1199", "T1078", "T1530", "T1566", "T1657"],
     frameworks: {

@@ -26,10 +26,10 @@
       "Inom en timme: en våg av nätfiske, en kritisk tjänst som ligger nere och ett administratörskonto som gör konstiga saker. Ni har fyra personer som kan hantera det. Två av bränderna hänger ihop."
     ]),
     learningObjectives: [
-      { id: "lo1", text: L(["Prioritise several incidents with too few people", "Prioritera flera incidenter med för få personer"]) },
-      { id: "lo2", text: L(["Establish clear incident command", "Etablera en tydlig incidentledning"]) },
-      { id: "lo3", text: L(["Separate connected incidents from coincidences", "Skilja sammanhängande incidenter från sammanträffanden"]) },
-      { id: "lo4", text: L(["Coordinate response actions so they don't collide", "Samordna åtgärder så att de inte krockar"]) }
+      { id: "lo1", text: L(["Prioritise several incidents with too few people", "Prioritera flera incidenter med för få personer"]), teaser: L(["Too much, too few", "För mycket, för få"]) },
+      { id: "lo2", text: L(["Establish clear incident command", "Etablera en tydlig incidentledning"]), teaser: L(["Who is in charge", "Vem som leder"]) },
+      { id: "lo3", text: L(["Separate connected incidents from coincidences", "Skilja sammanhängande incidenter från sammanträffanden"]), teaser: L(["Seeing patterns, and seeing too many", "Att se mönster – och att se för många"]) },
+      { id: "lo4", text: L(["Coordinate response actions so they don't collide", "Samordna åtgärder så att de inte krockar"]), teaser: L(["Keeping efforts from colliding", "Att hindra insatser från att krocka"]) }
     ],
     mitre: ["T1566.002", "T1078", "T1098", "T1136", "T1021", "T1490"],
     frameworks: {

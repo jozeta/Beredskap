@@ -213,8 +213,10 @@ BK.scenarios.register({
   title:   { en: "Locked Out at Close of Business", sv: "Utelåsta vid arbetsdagens slut" },
   summary: { en: "...", sv: "..." },
   learningObjectives: [
-    { id: "lo1", text: { en: "Decide containment scope under business pressure", sv: "..." } },
-    { id: "lo2", text: { en: "Assess backup trustworthiness before recovery", sv: "..." } }
+    // text: the objective as the facilitator sees it (presenter, debrief, guide, report).
+    // teaser: the audience-facing version on the briefing slide — names the theme, never the plot.
+    { id: "lo1", text: { en: "Decide containment scope under business pressure", sv: "..." }, teaser: { en: "How far to go, and who decides", sv: "..." } },
+    { id: "lo2", text: { en: "Assess backup trustworthiness before recovery", sv: "..." }, teaser: { en: "Trusting what you think you have", sv: "..." } }
   ],
   mitre: ["T1133", "T1078", "T1490", "T1486", "T1567"],
   frameworks: { nistCsf: ["RS.MA", "RS.CO", "RC.RP"], iso27001: ["A.5.24", "A.5.26", "A.8.13"] },
@@ -325,7 +327,7 @@ Stages and slides are independent: a stage compiles to one or more slides.
 | Type | Content |
 |---|---|
 | `title` | Scenario title, emblem, seeded artwork, organisation, date, banner "EXERCISE — fictional scenario" |
-| `briefing` | Objectives, rules of engagement, duration, how rounds work |
+| `briefing` | Objective teasers (never the objectives themselves), rules of engagement, duration, how rounds work |
 | `context` | Organisation profile, critical services and dependencies diagram, role roster with names and initials avatars |
 | `situation` | Stage x/y, in-scenario clock, narrative |
 | `timeline` | Injects revealed so far; new injects animate in one per keypress |

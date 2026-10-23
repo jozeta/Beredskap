@@ -30,10 +30,10 @@
       "En administratör som ska sluta laddar upp gigabyte till privat molnlagring. Överlämning eller stöld? Varje svar gruppen kommer fram till visar sig vara halva historien – och personen i centrum kan vara ett offer."
     ]),
     learningObjectives: [
-      { id: "lo1", text: L(["Investigate an insider alert proportionately and lawfully", "Utreda ett insiderlarm proportionerligt och lagligt"]) },
-      { id: "lo2", text: L(["Coordinate security, HR, legal and privacy in one response", "Samordna säkerhet, HR, juridik och dataskydd i en och samma hantering"]) },
-      { id: "lo3", text: L(["Remove persistent privileged access, not only a user account", "Ta bort bestående privilegierad åtkomst, inte bara ett användarkonto"]) },
-      { id: "lo4", text: L(["Recognise coercion and protect the people involved", "Känna igen påtryckningar och skydda de inblandade"]) }
+      { id: "lo1", text: L(["Investigate an insider alert proportionately and lawfully", "Utreda ett insiderlarm proportionerligt och lagligt"]), teaser: L(["Fairness and proportion", "Rättvisa och proportioner"]) },
+      { id: "lo2", text: L(["Coordinate security, HR, legal and privacy in one response", "Samordna säkerhet, HR, juridik och dataskydd i en och samma hantering"]), teaser: L(["Many functions, one response", "Många funktioner, en hantering"]) },
+      { id: "lo3", text: L(["Remove persistent privileged access, not only a user account", "Ta bort bestående privilegierad åtkomst, inte bara ett användarkonto"]), teaser: L(["What it really takes to close a door", "Vad som krävs för att verkligen stänga en dörr"]) },
+      { id: "lo4", text: L(["Recognise coercion and protect the people involved", "Känna igen påtryckningar och skydda de inblandade"]), teaser: L(["The people behind the event", "Människorna bakom händelsen"]) }
     ],
     mitre: ["T1078", "T1133", "T1136", "T1098", "T1567.002", "T1213"],
     frameworks: {

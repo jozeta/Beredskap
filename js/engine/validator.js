@@ -34,6 +34,14 @@
     return v && typeof v === "object" && !Array.isArray(v) && LANGS.every((l) => typeof v[l] === "string" && v[l].trim() !== "");
   }
 
+  /** Every objective needs its clear text (facilitator) and a teaser (briefing slide) that does not give the plot away. */
+  function checkObjectives(tpl, where, list) {
+    (tpl.learningObjectives || []).forEach((lo) => {
+      if (!isBilingual(lo.text)) issue(list, "field", where("learningObjectives › " + lo.id), "text");
+      if (!isBilingual(lo.teaser)) issue(list, "stageContent", where("learningObjectives › " + lo.id), "teaser");
+    });
+  }
+
   /** Walk any structure; report text fields that are not complete { en, sv } objects. */
   function checkLanguages(value, path, list) {
     if (Array.isArray(value)) {
@@ -102,6 +110,7 @@
       else seen.set(key, true);
     };
     tpl.learningObjectives.forEach((lo) => unique("lo", lo.id, where("learningObjectives")));
+    checkObjectives(tpl, where, list);
     (tpl.hiddenFacts || []).forEach((hf) => unique("hf", hf.id, where("hiddenFacts")));
 
     const stageIndex = {};
@@ -294,6 +303,7 @@
     const checkRole = (r, w) => {
       if (r && !roles.has(r)) issue(list, "role", w, r);
     };
+    checkObjectives(tpl, where, list);
     const loIds = new Set(tpl.learningObjectives.map((lo) => lo.id));
     const ctx = { checkRole, loIds };
     const injectIds = new Set();

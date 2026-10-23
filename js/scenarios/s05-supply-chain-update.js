@@ -29,10 +29,10 @@
       "En rutinmässig helguppdatering från en betrodd leverantör utlöser larm på måndagsmorgonen. Leverantören säger att det är ett falsklarm. Sanningen kommer utifrån – och den är värre än någon önskade."
     ]),
     learningObjectives: [
-      { id: "lo1", text: L(["Weigh a vendor's assurances against your own evidence", "Väga en leverantörs försäkringar mot era egna spår"]) },
-      { id: "lo2", text: L(["Contain compromised trusted software across the estate", "Begränsa komprometterad betrodd programvara i hela miljön"]) },
-      { id: "lo3", text: L(["Manage obligations to customers you may have exposed", "Hantera skyldigheter mot kunder som ni kan ha exponerat"]) },
-      { id: "lo4", text: L(["Decide under dependency on a single critical supplier", "Fatta beslut när ni är beroende av en enda kritisk leverantör"]) }
+      { id: "lo1", text: L(["Weigh a vendor's assurances against your own evidence", "Väga en leverantörs försäkringar mot era egna spår"]), teaser: L(["Trusting others, checking yourself", "Att lita på andra och kontrollera själv"]) },
+      { id: "lo2", text: L(["Contain compromised trusted software across the estate", "Begränsa komprometterad betrodd programvara i hela miljön"]), teaser: L(["When the familiar becomes uncertain", "När det välbekanta blir osäkert"]) },
+      { id: "lo3", text: L(["Manage obligations to customers you may have exposed", "Hantera skyldigheter mot kunder som ni kan ha exponerat"]), teaser: L(["Duties to those who depend on you", "Ansvaret mot dem som är beroende av er"]) },
+      { id: "lo4", text: L(["Decide under dependency on a single critical supplier", "Fatta beslut när ni är beroende av en enda kritisk leverantör"]), teaser: L(["Depending on one partner", "Att vara beroende av en enda partner"]) }
     ],
     mitre: ["T1195.002", "T1554", "T1072", "T1071", "T1199", "T1003", "T1021"],
     frameworks: {

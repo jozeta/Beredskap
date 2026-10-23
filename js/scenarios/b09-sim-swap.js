@@ -27,10 +27,10 @@
       "Mitt under ett möte tappar ekonomichefens telefon täckningen. Tio minuter senare frågar banken varför en ny enhet har lagts till på företagets konto."
     ]),
     learningObjectives: [
-      { id: "lo1", text: L(["Recognise a SIM swap and act within minutes", "Känna igen en SIM-kapning och agera inom några minuter"]) },
-      { id: "lo2", text: L(["Stop and recall a fraudulent payment", "Stoppa och återkalla en bedräglig betalning"]) },
-      { id: "lo3", text: L(["Remove SMS from critical authentication and approvals", "Ta bort sms från kritisk inloggning och attestering"]) },
-      { id: "lo4", text: L(["Work with a telecom carrier under pressure", "Samarbeta med en teleoperatör under tidspress"]) }
+      { id: "lo1", text: L(["Recognise a SIM swap and act within minutes", "Känna igen en SIM-kapning och agera inom några minuter"]), teaser: L(["Minutes that matter", "Minuter som spelar roll"]) },
+      { id: "lo2", text: L(["Stop and recall a fraudulent payment", "Stoppa och återkalla en bedräglig betalning"]), teaser: L(["Getting money back", "Att få tillbaka pengar"]) },
+      { id: "lo3", text: L(["Remove SMS from critical authentication and approvals", "Ta bort sms från kritisk inloggning och attestering"]), teaser: L(["How you prove who someone is", "Hur ni bevisar vem någon är"]) },
+      { id: "lo4", text: L(["Work with a telecom carrier under pressure", "Samarbeta med en teleoperatör under tidspress"]), teaser: L(["Depending on someone else's help", "Att vara beroende av någon annans hjälp"]) }
     ],
     mitre: ["T1451", "T1111", "T1078", "T1098", "T1657"],
     frameworks: {

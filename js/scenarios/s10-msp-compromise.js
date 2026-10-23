@@ -26,10 +26,10 @@
       "En helgdagsafton börjar er IT-leverantörs verktyg för fjärrförvaltning köra ett skript som ingen har beställt. Leverantören svarar inte. Sedan upptäcker ni vem som egentligen har nycklarna till ert nätverk."
     ]),
     learningObjectives: [
-      { id: "lo1", text: L(["Contain an attack that arrives through a trusted provider", "Begränsa ett angrepp som kommer via en betrodd leverantör"]) },
-      { id: "lo2", text: L(["Regain independent administrative control", "Återta egen administrativ kontroll"]) },
-      { id: "lo3", text: L(["Act when contracts and providers fail you", "Agera när avtal och leverantörer sviker"]) },
-      { id: "lo4", text: L(["Coordinate with other victims and national bodies", "Samordna med andra drabbade och nationella myndigheter"]) }
+      { id: "lo1", text: L(["Contain an attack that arrives through a trusted provider", "Begränsa ett angrepp som kommer via en betrodd leverantör"]), teaser: L(["When help becomes a risk", "När hjälp blir en risk"]) },
+      { id: "lo2", text: L(["Regain independent administrative control", "Återta egen administrativ kontroll"]), teaser: L(["Standing on your own feet", "Att stå på egna ben"]) },
+      { id: "lo3", text: L(["Act when contracts and providers fail you", "Agera när avtal och leverantörer sviker"]), teaser: L(["When agreements meet reality", "När avtal möter verkligheten"]) },
+      { id: "lo4", text: L(["Coordinate with other victims and national bodies", "Samordna med andra drabbade och nationella myndigheter"]), teaser: L(["You are not the only one", "Ni är inte ensamma"]) }
     ],
     mitre: ["T1199", "T1072", "T1219", "T1078", "T1059", "T1486"],
     frameworks: {

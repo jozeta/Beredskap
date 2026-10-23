@@ -28,10 +28,10 @@
       "Nattskift på vattenverket. Muspekaren på styrskärmen rör sig av sig själv, och ett doseringsvärde för kemikalier stiger."
     ]),
     learningObjectives: [
-      { id: "lo1", text: L(["Put physical safety first in an OT incident", "Sätta den fysiska säkerheten först vid en OT-incident"]) },
-      { id: "lo2", text: L(["Run critical processes manually while systems are untrusted", "Driva kritiska processer manuellt medan systemen inte är betrodda"]) },
-      { id: "lo3", text: L(["Report to authorities and the sector", "Rapportera till myndigheter och sektorn"]) },
-      { id: "lo4", text: L(["Talk to the public about water safety honestly", "Tala ärligt med allmänheten om vattensäkerhet"]) }
+      { id: "lo1", text: L(["Put physical safety first in an OT incident", "Sätta den fysiska säkerheten först vid en OT-incident"]), teaser: L(["What matters most when it is real", "Vad som är viktigast när det är på riktigt"]) },
+      { id: "lo2", text: L(["Run critical processes manually while systems are untrusted", "Driva kritiska processer manuellt medan systemen inte är betrodda"]), teaser: L(["Working without the usual tools", "Att arbeta utan de vanliga verktygen"]) },
+      { id: "lo3", text: L(["Report to authorities and the sector", "Rapportera till myndigheter och sektorn"]), teaser: L(["Who outside the organisation should know", "Vem utanför organisationen som ska veta"]) },
+      { id: "lo4", text: L(["Talk to the public about water safety honestly", "Tala ärligt med allmänheten om vattensäkerhet"]), teaser: L(["Keeping public trust", "Att behålla allmänhetens förtroende"]) }
     ],
     mitre: ["T0822", "T0883", "T0836", "T0813", "T1219"],
     frameworks: {

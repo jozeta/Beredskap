@@ -175,6 +175,7 @@
           "li",
           { class: "fx-objective" },
           el("p", { class: "fx-objective__text", text: BK.loc(o.text, lang) }),
+          o.teaser ? el("p", { class: "fx-objective__teaser muted small", text: t("objective.onScreen", { text: BK.loc(o.teaser, lang) }, lang) }) : null,
           c.segmented({
             label: t("obs.status"),
             name: "fx-objst-" + o.id,

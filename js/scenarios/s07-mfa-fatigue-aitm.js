@@ -26,10 +26,10 @@
       "Dussintals inloggningsförfrågningar mitt i natten, och till slut trycker någon på ”godkänn”. Att byta lösenordet känns som slutet på saken. Det är början."
     ]),
     learningObjectives: [
-      { id: "lo1", text: L(["Contain an identity compromise beyond a password reset", "Begränsa ett identitetsintrång bortom ett lösenordsbyte"]) },
-      { id: "lo2", text: L(["Scope mailbox and file access by an attacker", "Avgränsa en angripares åtkomst till e-post och filer"]) },
-      { id: "lo3", text: L(["Stop internal phishing spreading through trust", "Stoppa intern nätfiske som sprids genom förtroende"]) },
-      { id: "lo4", text: L(["Treat users as part of the defence, not the cause", "Behandla användare som en del av försvaret, inte som orsaken"]) }
+      { id: "lo1", text: L(["Contain an identity compromise beyond a password reset", "Begränsa ett identitetsintrång bortom ett lösenordsbyte"]), teaser: L(["What it takes to be sure", "Vad som krävs för att vara säker"]) },
+      { id: "lo2", text: L(["Scope mailbox and file access by an attacker", "Avgränsa en angripares åtkomst till e-post och filer"]), teaser: L(["Mapping what was touched", "Att kartlägga vad som har rörts"]) },
+      { id: "lo3", text: L(["Stop internal phishing spreading through trust", "Stoppa intern nätfiske som sprids genom förtroende"]), teaser: L(["How trust spreads", "Hur förtroende sprids"]) },
+      { id: "lo4", text: L(["Treat users as part of the defence, not the cause", "Behandla användare som en del av försvaret, inte som orsaken"]), teaser: L(["How you see your colleagues", "Hur ni ser på era kollegor"]) }
     ],
     mitre: ["T1621", "T1557", "T1539", "T1078", "T1114", "T1213", "T1534", "T1528", "T1098"],
     frameworks: {

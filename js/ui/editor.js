@@ -254,7 +254,9 @@
             t("editor.pacing"),
             el("p", { text: t("wizard.lengthOption", { n: ex.pacing.totalMinutes, min: ex.pacing.choiceRange[0], max: ex.pacing.choiceRange[1] }) + " · " + t("branch.length." + ex.settings.length) + " · " + t("branch.mode." + ex.settings.mode) }),
             el("h3", { class: "eyebrow", text: t("editor.objectives") }),
-            el("ul", { class: "bullets" }, ex.objectives.map((o) => el("li", { text: L(o.text) })))
+            el("ul", { class: "bullets" }, ex.objectives.map((o) => el("li", { text: L(o.text) }))),
+            el("h3", { class: "eyebrow", text: t("report.lessons") }),
+            el("ul", { class: "bullets" }, (ex.debrief.keyLessons || []).map((x) => el("li", { text: L(x) })))
           )
         : section(
         t("editor.pacing"),
@@ -266,7 +268,9 @@
           el("li", null, el("span", { text: t("editor.debrief") }), el("span", { class: "tabular", text: t("editor.minutesShort", { n: ex.pacing.debrief }) }))
         ),
         el("h3", { class: "eyebrow", text: t("editor.objectives") }),
-        el("ul", { class: "bullets" }, ex.objectives.map((o) => el("li", { text: L(o.text) })))
+        el("ul", { class: "bullets" }, ex.objectives.map((o) => el("li", { text: L(o.text) }))),
+        el("h3", { class: "eyebrow", text: t("report.lessons") }),
+        el("ul", { class: "bullets" }, (ex.debrief.keyLessons || []).map((x) => el("li", { text: L(x) })))
       ),
       el("div", { class: "card--wide" }, section(t("editor.people"), el("div", { class: "table-wrap" }, peopleTable)))
     );

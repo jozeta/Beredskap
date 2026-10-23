@@ -30,10 +30,10 @@
       "En långvarig leverantör undrar varför de inte har fått betalt. Ni har betalat – till ett nytt konto. Det som börjar som ett pinsamt samtal till ekonomi blir ett månader långt intrång i en e-postlåda, bedrägerier mot era egna kunder och en kapplöpning mot bankens återkallelsefrist."
     ]),
     learningObjectives: [
-      { id: "lo1", text: L(["Act on payment fraud within the bank's recall window", "Agera på betalningsbedrägeri inom bankens frist för återkallelse"]) },
-      { id: "lo2", text: L(["Scope a mailbox compromise beyond the first visible fraud", "Avgränsa ett intrång i en e-postlåda bortom det första synliga bedrägeriet"]) },
-      { id: "lo3", text: L(["Protect customers and partners when your own domain is used against them", "Skydda kunder och partner när er egen domän används mot dem"]) },
-      { id: "lo4", text: L(["Handle conflicts of interest and personal accountability in the response", "Hantera jäv och personligt ansvar i hanteringen"]) }
+      { id: "lo1", text: L(["Act on payment fraud within the bank's recall window", "Agera på betalningsbedrägeri inom bankens frist för återkallelse"]), teaser: L(["Racing the clock", "Att tävla mot klockan"]) },
+      { id: "lo2", text: L(["Scope a mailbox compromise beyond the first visible fraud", "Avgränsa ett intrång i en e-postlåda bortom det första synliga bedrägeriet"]), teaser: L(["Looking past the first thing you see", "Att se bortom det första man ser"]) },
+      { id: "lo3", text: L(["Protect customers and partners when your own domain is used against them", "Skydda kunder och partner när er egen domän används mot dem"]), teaser: L(["Duties to those who trust you", "Ansvaret mot dem som litar på er"]) },
+      { id: "lo4", text: L(["Handle conflicts of interest and personal accountability in the response", "Hantera jäv och personligt ansvar i hanteringen"]), teaser: L(["When it gets personal", "När det blir personligt"]) }
     ],
     mitre: ["T1566", "T1557", "T1539", "T1078", "T1114", "T1564.008", "T1656", "T1534"],
     frameworks: {

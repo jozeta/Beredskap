@@ -26,10 +26,10 @@
       "Nattskift. En produktionslinje stannar eftersom styrsystemen gång på gång tappar kontakten med nätverket. IT ser skadekod; produktionen ser en säkerhetsrisk i att dra ur sladdar. Båda har delvis rätt."
     ]),
     learningObjectives: [
-      { id: "lo1", text: L(["Contain an OT incident without creating a safety hazard", "Begränsa en OT-incident utan att skapa en säkerhetsrisk"]) },
-      { id: "lo2", text: L(["Let IT and operations share decision-making", "Låta IT och produktion dela på besluten"]) },
-      { id: "lo3", text: L(["Find and close the IT/OT boundary breach", "Hitta och stänga intrånget i gränsen mellan IT och OT"]) },
-      { id: "lo4", text: L(["Restart production under uncertainty", "Starta produktionen igen under osäkerhet"]) }
+      { id: "lo1", text: L(["Contain an OT incident without creating a safety hazard", "Begränsa en OT-incident utan att skapa en säkerhetsrisk"]), teaser: L(["Acting without creating new dangers", "Att agera utan att skapa nya faror"]) },
+      { id: "lo2", text: L(["Let IT and operations share decision-making", "Låta IT och produktion dela på besluten"]), teaser: L(["Two worlds, one decision", "Två världar, ett beslut"]) },
+      { id: "lo3", text: L(["Find and close the IT/OT boundary breach", "Hitta och stänga intrånget i gränsen mellan IT och OT"]), teaser: L(["Finding the way in", "Att hitta vägen in"]) },
+      { id: "lo4", text: L(["Restart production under uncertainty", "Starta produktionen igen under osäkerhet"]), teaser: L(["Starting again without certainty", "Att starta om utan att vara säker"]) }
     ],
     mitre: ["T0886", "T0866", "T0831", "T0880", "T0816", "T1021", "T1078"],
     frameworks: {

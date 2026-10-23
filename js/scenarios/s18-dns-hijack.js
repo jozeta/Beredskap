@@ -26,10 +26,10 @@
       "En lugn helg rapporterar kunder certifikatvarningar och en del når er inte alls. Det ser ut som att driftleverantören har konfigurerat något fel. Det är inte leverantören."
     ]),
     learningObjectives: [
-      { id: "lo1", text: L(["Recognise a domain hijack early", "Känna igen en domänkapning tidigt"]) },
-      { id: "lo2", text: L(["Understand how DNS control leads to account takeover", "Förstå hur kontroll över DNS leder till kapade konton"]) },
-      { id: "lo3", text: L(["Recover critical external accounts with slow third parties", "Återta kritiska externa konton med långsamma tredje parter"]) },
-      { id: "lo4", text: L(["Restore trust in your domain for customers", "Återställa kundernas förtroende för er domän"]) }
+      { id: "lo1", text: L(["Recognise a domain hijack early", "Känna igen en domänkapning tidigt"]), teaser: L(["Noticing early", "Att upptäcka tidigt"]) },
+      { id: "lo2", text: L(["Understand how DNS control leads to account takeover", "Förstå hur kontroll över DNS leder till kapade konton"]), teaser: L(["How one thing leads to another", "Hur en sak leder till en annan"]) },
+      { id: "lo3", text: L(["Recover critical external accounts with slow third parties", "Återta kritiska externa konton med långsamma tredje parter"]), teaser: L(["Depending on someone else's pace", "Att vara beroende av någon annans takt"]) },
+      { id: "lo4", text: L(["Restore trust in your domain for customers", "Återställa kundernas förtroende för er domän"]), teaser: L(["Earning trust back", "Att förtjäna förtroendet igen"]) }
     ],
     mitre: ["T1584", "T1078", "T1114", "T1588", "T1539", "T1098"],
     frameworks: {

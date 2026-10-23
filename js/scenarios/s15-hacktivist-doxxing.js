@@ -25,10 +25,10 @@
       "En grupp som är arg över ett offentligt beslut vandaliserar er webbplats. Sedan publicerar de hemadresserna till personalen bakom beslutet."
     ]),
     learningObjectives: [
-      { id: "lo1", text: L(["Protect staff when an attack becomes personal", "Skydda personalen när ett angrepp blir personligt"]) },
-      { id: "lo2", text: L(["Restore public services under pressure", "Återställa offentliga tjänster under press"]) },
-      { id: "lo3", text: L(["Work with the police on threats", "Samarbeta med polisen kring hot"]) },
-      { id: "lo4", text: L(["Communicate without amplifying the attackers", "Kommunicera utan att förstärka angriparnas budskap"]) }
+      { id: "lo1", text: L(["Protect staff when an attack becomes personal", "Skydda personalen när ett angrepp blir personligt"]), teaser: L(["When it gets personal", "När det blir personligt"]) },
+      { id: "lo2", text: L(["Restore public services under pressure", "Återställa offentliga tjänster under press"]), teaser: L(["Serving the public under pressure", "Att tjäna allmänheten under press"]) },
+      { id: "lo3", text: L(["Work with the police on threats", "Samarbeta med polisen kring hot"]), teaser: L(["Working with outside bodies", "Att samarbeta med aktörer utanför"]) },
+      { id: "lo4", text: L(["Communicate without amplifying the attackers", "Kommunicera utan att förstärka angriparnas budskap"]), teaser: L(["Choosing your words", "Att välja sina ord"]) }
     ],
     mitre: ["T1491.002", "T1078", "T1498", "T1589", "T1213", "T1199"],
     frameworks: {

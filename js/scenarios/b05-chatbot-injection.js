@@ -27,10 +27,10 @@
       "Er webbplats AI-assistent har pratats omkull och visar främlingar andra kunders beställningar. Den är fortfarande i drift, fortfarande hjälpsam och litar fortfarande på den som frågar."
     ]),
     learningObjectives: [
-      { id: "lo1", text: L(["Contain a misbehaving AI feature quickly", "Snabbt begränsa en AI-funktion som beter sig fel"]) },
-      { id: "lo2", text: L(["Understand why authorisation cannot live in a prompt", "Förstå varför behörighetskontroll inte kan ligga i en prompt"]) },
-      { id: "lo3", text: L(["Notify when the leak came from your own assistant", "Anmäla när läckan kom från er egen assistent"]) },
-      { id: "lo4", text: L(["Communicate honestly about AI failures", "Kommunicera ärligt om fel i AI-funktioner"]) }
+      { id: "lo1", text: L(["Contain a misbehaving AI feature quickly", "Snabbt begränsa en AI-funktion som beter sig fel"]), teaser: L(["Acting quickly on something new", "Att agera snabbt på något nytt"]) },
+      { id: "lo2", text: L(["Understand why authorisation cannot live in a prompt", "Förstå varför behörighetskontroll inte kan ligga i en prompt"]), teaser: L(["Where rules should live", "Var regler hör hemma"]) },
+      { id: "lo3", text: L(["Notify when the leak came from your own assistant", "Anmäla när läckan kom från er egen assistent"]), teaser: L(["Owning what your own tools do", "Att äga det era egna verktyg gör"]) },
+      { id: "lo4", text: L(["Communicate honestly about AI failures", "Kommunicera ärligt om fel i AI-funktioner"]), teaser: L(["Speaking plainly about new technology", "Att tala klarspråk om ny teknik"]) }
     ],
     mitre: ["T1190", "T1213", "T1565", "T1657"],
     frameworks: {
