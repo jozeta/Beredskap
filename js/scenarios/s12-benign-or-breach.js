@@ -26,10 +26,10 @@
       "Säkerhetsverktygen larmar på en kritisk server under ett planerat underhåll. Underhållet är på riktigt. Det visar sig att något annat också är det."
     ]),
     learningObjectives: [
-      { id: "lo1", text: L(["Triage an alert without dismissing it because a benign explanation exists", "Bedöma ett larm utan att avfärda det bara för att det finns en harmlös förklaring"]) },
-      { id: "lo2", text: L(["Use independent telemetry to separate legitimate and malicious activity", "Använda oberoende telemetri för att skilja legitim aktivitet från skadlig"]) },
-      { id: "lo3", text: L(["Decide on isolating a business-critical system", "Besluta om isolering av ett verksamhetskritiskt system"]) },
-      { id: "lo4", text: L(["Recognise alert suppression and fatigue as a risk", "Se undertryckta larm och larmtrötthet som en risk"]) }
+      { id: "lo1", text: L(["Triage an alert without dismissing it because a benign explanation exists", "Bedöma ett larm utan att avfärda det bara för att det finns en harmlös förklaring"]), teaser: L(["Plausible is not the same as proven", "Rimligt är inte samma sak som bevisat"]) },
+      { id: "lo2", text: L(["Use independent telemetry to separate legitimate and malicious activity", "Använda oberoende telemetri för att skilja legitim aktivitet från skadlig"]), teaser: L(["Seeing for yourself", "Att se med egna ögon"]) },
+      { id: "lo3", text: L(["Decide on isolating a business-critical system", "Besluta om isolering av ett verksamhetskritiskt system"]), teaser: L(["The cost of caution", "Priset för försiktighet"]) },
+      { id: "lo4", text: L(["Recognise alert suppression and fatigue as a risk", "Se undertryckta larm och larmtrötthet som en risk"]), teaser: L(["What you have learned to ignore", "Det ni har lärt er att ignorera"]) }
     ],
     mitre: ["T1021", "T1078", "T1003", "T1562.001", "T1070", "T1048"],
     frameworks: {

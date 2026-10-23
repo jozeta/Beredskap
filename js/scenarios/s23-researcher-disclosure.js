@@ -26,10 +26,10 @@
       "En forskare har hittat ett sätt att ta över era kunders enheter och tänker publicera om nittio dagar. Era jurister, ert produktteam och forskaren vill alla olika saker."
     ]),
     learningObjectives: [
-      { id: "lo1", text: L(["Respond to a vulnerability report in good faith", "Bemöta en sårbarhetsrapport i god tro"]) },
-      { id: "lo2", text: L(["Find every product that shares a vulnerable component", "Hitta alla produkter som delar en sårbar komponent"]) },
-      { id: "lo3", text: L(["Meet reporting duties for exploited vulnerabilities", "Uppfylla rapporteringsskyldigheter för utnyttjade sårbarheter"]) },
-      { id: "lo4", text: L(["Protect customers who cannot update quickly", "Skydda kunder som inte kan uppdatera snabbt"]) }
+      { id: "lo1", text: L(["Respond to a vulnerability report in good faith", "Bemöta en sårbarhetsrapport i god tro"]), teaser: L(["Meeting an outsider in good faith", "Att möta någon utifrån i god tro"]) },
+      { id: "lo2", text: L(["Find every product that shares a vulnerable component", "Hitta alla produkter som delar en sårbar komponent"]), teaser: L(["How far one problem reaches", "Hur långt ett problem når"]) },
+      { id: "lo3", text: L(["Meet reporting duties for exploited vulnerabilities", "Uppfylla rapporteringsskyldigheter för utnyttjade sårbarheter"]), teaser: L(["Who outside the organisation should know", "Vem utanför organisationen som ska veta"]) },
+      { id: "lo4", text: L(["Protect customers who cannot update quickly", "Skydda kunder som inte kan uppdatera snabbt"]), teaser: L(["Caring for those who cannot move fast", "Att ta hand om dem som inte kan agera snabbt"]) }
     ],
     mitre: ["T1190", "T1078", "T1098", "T1195"],
     frameworks: {

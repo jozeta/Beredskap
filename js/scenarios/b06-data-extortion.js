@@ -27,10 +27,10 @@
       "Alla system fungerar. Men någon har era klienters filer, och de säger att de kommer att ringa era klienter innan ni gör det."
     ]),
     learningObjectives: [
-      { id: "lo1", text: L(["Verify and scope a data-theft extortion", "Verifiera och avgränsa en utpressning efter datastöld"]) },
-      { id: "lo2", text: L(["Put client confidentiality duties first", "Sätta skyldigheten att skydda klienternas förtroende främst"]) },
-      { id: "lo3", text: L(["Decide on paying, with no encryption to undo", "Ta ställning till betalning när det inte finns någon kryptering att häva"]) },
-      { id: "lo4", text: L(["Control third-party remote access", "Kontrollera tredje parts fjärråtkomst"]) }
+      { id: "lo1", text: L(["Verify and scope a data-theft extortion", "Verifiera och avgränsa en utpressning efter datastöld"]), teaser: L(["Separating claims from facts", "Att skilja påståenden från fakta"]) },
+      { id: "lo2", text: L(["Put client confidentiality duties first", "Sätta skyldigheten att skydda klienternas förtroende främst"]), teaser: L(["The promises you have made to others", "De löften ni har gett andra"]) },
+      { id: "lo3", text: L(["Decide on paying, with no encryption to undo", "Ta ställning till betalning när det inte finns någon kryptering att häva"]), teaser: L(["Hard choices with no good options", "Svåra val utan bra alternativ"]) },
+      { id: "lo4", text: L(["Control third-party remote access", "Kontrollera tredje parts fjärråtkomst"]), teaser: L(["Who else holds a key to your house", "Vem mer som har en nyckel till ert hus"]) }
     ],
     mitre: ["T1133", "T1078", "T1567.002", "T1657", "T1048"],
     frameworks: {

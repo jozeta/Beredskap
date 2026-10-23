@@ -27,10 +27,10 @@
       "Dagen efter att ni kopplat ihop nätverken med mjukvaruföretaget ni just förvärvat börjar larmen. De följde med köpet."
     ]),
     learningObjectives: [
-      { id: "lo1", text: L(["Contain an incident that crosses a new trust boundary", "Begränsa en incident som korsar en ny förtroendegräns"]) },
-      { id: "lo2", text: L(["Assess security in acquisitions before connecting", "Bedöma säkerheten vid förvärv innan ni kopplar ihop"]) },
-      { id: "lo3", text: L(["Handle a code-signing compromise in a product you now own", "Hantera en komprometterad kodsigneringsnyckel i en produkt ni nu äger"]) },
-      { id: "lo4", text: L(["Lead across two organisations in the middle of integration", "Leda över två organisationer mitt i en integration"]) }
+      { id: "lo1", text: L(["Contain an incident that crosses a new trust boundary", "Begränsa en incident som korsar en ny förtroendegräns"]), teaser: L(["Where your organisation ends", "Var er organisation slutar"]) },
+      { id: "lo2", text: L(["Assess security in acquisitions before connecting", "Bedöma säkerheten vid förvärv innan ni kopplar ihop"]), teaser: L(["What you take on when you join with others", "Vad ni tar på er när ni går samman med andra"]) },
+      { id: "lo3", text: L(["Handle a code-signing compromise in a product you now own", "Hantera en komprometterad kodsigneringsnyckel i en produkt ni nu äger"]), teaser: L(["Inheriting other people's problems", "Att ärva andras problem"]) },
+      { id: "lo4", text: L(["Lead across two organisations in the middle of integration", "Leda över två organisationer mitt i en integration"]), teaser: L(["Leading in the middle of change", "Att leda mitt i en förändring"]) }
     ],
     mitre: ["T1199", "T1484.002", "T1078", "T1003", "T1114", "T1552", "T1554"],
     frameworks: {

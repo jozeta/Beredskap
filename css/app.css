@@ -720,6 +720,7 @@ fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
 .fx-objective { display: grid; gap: 6px; padding-bottom: 12px; border-bottom: var(--hairline) solid var(--line); }
 .fx-objective:last-child { border-bottom: 0; }
 .fx-objective__text { font-weight: 500; }
+.fx-objective__teaser { margin-top: -0.25rem; font-style: italic; }
 .fx-scorecard { display: grid; gap: 12px; }
 
 .pres-fold > summary { display: flex; align-items: center; gap: var(--s1); cursor: pointer; list-style: none; min-height: 36px; }

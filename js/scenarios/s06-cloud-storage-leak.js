@@ -30,10 +30,10 @@
       "En reporter ringer om en fil med personuppgifter som verkar komma från era system. Ingen har hackats – vilket visar sig inte vara någon tröst alls."
     ]),
     learningObjectives: [
-      { id: "lo1", text: L(["Respond to the media without guessing or denying", "Svara media utan att gissa eller förneka"]) },
-      { id: "lo2", text: L(["Establish the scope of a cloud exposure with incomplete logs", "Fastställa omfattningen av en exponering i molnet med ofullständiga loggar"]) },
-      { id: "lo3", text: L(["Meet personal data breach duties, including when awareness began", "Uppfylla skyldigheterna vid personuppgiftsincidenter, inklusive när kännedom uppstod"]) },
-      { id: "lo4", text: L(["Treat affected people as the priority", "Sätta de berörda människorna i första rummet"]) }
+      { id: "lo1", text: L(["Respond to the media without guessing or denying", "Svara media utan att gissa eller förneka"]), teaser: L(["Speaking before you know", "Att uttala sig innan man vet"]) },
+      { id: "lo2", text: L(["Establish the scope of a cloud exposure with incomplete logs", "Fastställa omfattningen av en exponering i molnet med ofullständiga loggar"]), teaser: L(["Seeing the whole picture with gaps in it", "Att se helheten när bitar saknas"]) },
+      { id: "lo3", text: L(["Meet personal data breach duties, including when awareness began", "Uppfylla skyldigheterna vid personuppgiftsincidenter, inklusive när kännedom uppstod"]), teaser: L(["When the clock starts", "När klockan börjar ticka"]) },
+      { id: "lo4", text: L(["Treat affected people as the priority", "Sätta de berörda människorna i första rummet"]), teaser: L(["Putting people first", "Att sätta människor först"]) }
     ],
     mitre: ["T1530", "T1213"],
     frameworks: {

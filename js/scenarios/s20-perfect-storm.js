@@ -26,10 +26,10 @@
       "Det börjar som ett inloggningsfel. På kvällen är identitetsplattformen i någon annans händer, er IT-leverantör ligger nere, nödkontona fungerar inte och pressen ringer. Ledningsgruppen måste hålla en gemensam bild och tala med en röst."
     ]),
     learningObjectives: [
-      { id: "lo1", text: L(["Maintain a common operating picture across many workstreams", "Upprätthålla en gemensam lägesbild över många arbetsflöden"]) },
-      { id: "lo2", text: L(["Keep decision authority clear under pressure", "Hålla beslutsmandatet tydligt under press"]) },
-      { id: "lo3", text: L(["Recover control of the identity platform", "Återta kontrollen över identitetsplattformen"]) },
-      { id: "lo4", text: L(["Communicate and notify under uncertainty", "Kommunicera och anmäla under osäkerhet"]) }
+      { id: "lo1", text: L(["Maintain a common operating picture across many workstreams", "Upprätthålla en gemensam lägesbild över många arbetsflöden"]), teaser: L(["One shared picture", "En gemensam lägesbild"]) },
+      { id: "lo2", text: L(["Keep decision authority clear under pressure", "Hålla beslutsmandatet tydligt under press"]), teaser: L(["Who decides when everything happens at once", "Vem som bestämmer när allt händer på en gång"]) },
+      { id: "lo3", text: L(["Recover control of the identity platform", "Återta kontrollen över identitetsplattformen"]), teaser: L(["Regaining the foundations", "Att återta grunden"]) },
+      { id: "lo4", text: L(["Communicate and notify under uncertainty", "Kommunicera och anmäla under osäkerhet"]), teaser: L(["Speaking before you know", "Att uttala sig innan man vet"]) }
     ],
     mitre: ["T1484.002", "T1078", "T1098", "T1199", "T1114", "T1556"],
     frameworks: {

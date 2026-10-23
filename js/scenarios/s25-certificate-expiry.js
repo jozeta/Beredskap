@@ -27,10 +27,10 @@
       "Vid midnatt slutar varje internt system lita på alla andra. Det ser ut som ett samordnat angrepp. Det är ett datum som ingen skrev upp, och en angripare är på väg att utnyttja det."
     ]),
     learningObjectives: [
-      { id: "lo1", text: L(["Tell an operational fault from an attack before acting", "Skilja ett driftfel från ett angrepp innan ni agerar"]) },
-      { id: "lo2", text: L(["Recover trust infrastructure safely under time pressure", "Återställa förtroendeinfrastruktur på ett säkert sätt under tidspress"]) },
-      { id: "lo3", text: L(["Avoid workarounds that remove security controls", "Undvika nödlösningar som tar bort säkerhetskontroller"]) },
-      { id: "lo4", text: L(["Give certificates and keys an owner", "Ge certifikat och nycklar en ägare"]) }
+      { id: "lo1", text: L(["Tell an operational fault from an attack before acting", "Skilja ett driftfel från ett angrepp innan ni agerar"]), teaser: L(["Understanding before acting", "Att förstå innan man agerar"]) },
+      { id: "lo2", text: L(["Recover trust infrastructure safely under time pressure", "Återställa förtroendeinfrastruktur på ett säkert sätt under tidspress"]), teaser: L(["Repairing the foundations under time pressure", "Att laga grunden under tidspress"]) },
+      { id: "lo3", text: L(["Avoid workarounds that remove security controls", "Undvika nödlösningar som tar bort säkerhetskontroller"]), teaser: L(["The cost of shortcuts", "Priset för genvägar"]) },
+      { id: "lo4", text: L(["Give certificates and keys an owner", "Ge certifikat och nycklar en ägare"]), teaser: L(["Who looks after the things nobody sees", "Vem som tar hand om det ingen ser"]) }
     ],
     mitre: ["T1557", "T1566", "T1204", "T1553"],
     frameworks: {

@@ -551,11 +551,11 @@
     const deselected = new Set(p.objectives.deselected || []);
     return (template.learningObjectives || [])
       .filter((lo) => !deselected.has(lo.id))
-      .map((lo) => ({ id: lo.id, text: R.resolveText(lo.text, ctx, missing), custom: false }))
+      .map((lo) => ({ id: lo.id, text: R.resolveText(lo.text, ctx, missing), teaser: lo.teaser ? R.resolveText(lo.teaser, ctx, missing) : null, custom: false }))
       .concat(
         (p.objectives.custom || [])
           .filter((t) => String(t).trim())
-          .map((t, i) => ({ id: "custom-" + (i + 1), text: { en: String(t), sv: String(t) }, custom: true }))
+          .map((t, i) => ({ id: "custom-" + (i + 1), text: { en: String(t), sv: String(t) }, teaser: null, custom: true }))
       );
   }
 

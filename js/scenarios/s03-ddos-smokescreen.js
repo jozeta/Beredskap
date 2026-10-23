@@ -29,10 +29,10 @@
       "Årets viktigaste kväll, och webbplatsen faller ihop under en flod av trafik. Alla stirrar på bandbreddsgraferna – vilket är precis vad angriparen ville."
     ]),
     learningObjectives: [
-      { id: "lo1", text: L(["Coordinate DDoS mitigation with providers under commercial pressure", "Samordna åtgärder mot överbelastningsattacker med leverantörer under kommersiellt tryck"]) },
-      { id: "lo2", text: L(["Keep watching for secondary attacks during a loud incident", "Fortsätta bevaka sekundära angrepp under en högljudd incident"]) },
-      { id: "lo3", text: L(["Decide on extortion without rewarding the attacker", "Besluta om utpressning utan att belöna angriparen"]) },
-      { id: "lo4", text: L(["Protect customers whose accounts were taken over", "Skydda kunder vars konton har tagits över"]) }
+      { id: "lo1", text: L(["Coordinate DDoS mitigation with providers under commercial pressure", "Samordna åtgärder mot överbelastningsattacker med leverantörer under kommersiellt tryck"]), teaser: L(["Working with partners under pressure", "Att samarbeta med partner under press"]) },
+      { id: "lo2", text: L(["Keep watching for secondary attacks during a loud incident", "Fortsätta bevaka sekundära angrepp under en högljudd incident"]), teaser: L(["Where you are looking, and where you are not", "Var ni tittar – och var ni inte tittar"]) },
+      { id: "lo3", text: L(["Decide on extortion without rewarding the attacker", "Besluta om utpressning utan att belöna angriparen"]), teaser: L(["Saying yes or no to demands", "Att säga ja eller nej till krav"]) },
+      { id: "lo4", text: L(["Protect customers whose accounts were taken over", "Skydda kunder vars konton har tagits över"]), teaser: L(["Caring for the people affected", "Att ta hand om dem som drabbas"]) }
     ],
     mitre: ["T1498", "T1499", "T1110", "T1078", "T1589", "T1657"],
     frameworks: {

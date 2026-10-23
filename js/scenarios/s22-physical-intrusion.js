@@ -26,10 +26,10 @@
       "En lokalvårdare hittar en liten låda inkopplad bakom receptionens skrivare. Ingen har beställt den, ingen har skrivit in den, och den har pratat med nätverket i mer än en vecka."
     ]),
     learningObjectives: [
-      { id: "lo1", text: L(["Handle a suspicious device without destroying evidence", "Hantera en misstänkt enhet utan att förstöra bevis"]) },
-      { id: "lo2", text: L(["Connect physical security and cyber security in one response", "Förena fysisk säkerhet och cybersäkerhet i en och samma insats"]) },
-      { id: "lo3", text: L(["Scope credential theft from inside the network", "Avgränsa stöld av inloggningsuppgifter inifrån nätverket"]) },
-      { id: "lo4", text: L(["Change behaviour around doors and visitors without blaming staff", "Förändra beteenden kring dörrar och besökare utan att skuldbelägga personalen"]) }
+      { id: "lo1", text: L(["Handle a suspicious device without destroying evidence", "Hantera en misstänkt enhet utan att förstöra bevis"]), teaser: L(["Careful hands", "Försiktiga händer"]) },
+      { id: "lo2", text: L(["Connect physical security and cyber security in one response", "Förena fysisk säkerhet och cybersäkerhet i en och samma insats"]), teaser: L(["Where the physical and the digital meet", "Där det fysiska och det digitala möts"]) },
+      { id: "lo3", text: L(["Scope credential theft from inside the network", "Avgränsa stöld av inloggningsuppgifter inifrån nätverket"]), teaser: L(["Mapping what was touched", "Att kartlägga vad som har rörts"]) },
+      { id: "lo4", text: L(["Change behaviour around doors and visitors without blaming staff", "Förändra beteenden kring dörrar och besökare utan att skuldbelägga personalen"]), teaser: L(["Changing habits without blame", "Att ändra vanor utan att skuldbelägga"]) }
     ],
     mitre: ["T1200", "T1557", "T1078", "T1021", "T1213"],
     frameworks: {

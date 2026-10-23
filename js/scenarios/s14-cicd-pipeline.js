@@ -26,10 +26,10 @@
       "Molnfakturan har tredubblats under natten eftersom någon utvinner kryptovaluta i ert konto. Det är den billiga delen av historien."
     ]),
     learningObjectives: [
-      { id: "lo1", text: L(["Contain leaked cloud credentials quickly and completely", "Begränsa läckta molnuppgifter snabbt och fullständigt"]) },
-      { id: "lo2", text: L(["Look beyond the obvious impact to what else the access allowed", "Se bortom den uppenbara påverkan till vad mer åtkomsten möjliggjorde"]) },
-      { id: "lo3", text: L(["Decide which software releases can be trusted", "Avgöra vilka programversioner som går att lita på"]) },
-      { id: "lo4", text: L(["Restore a trusted build capability and tell customers", "Återställa en pålitlig byggkapacitet och informera kunderna"]) }
+      { id: "lo1", text: L(["Contain leaked cloud credentials quickly and completely", "Begränsa läckta molnuppgifter snabbt och fullständigt"]), teaser: L(["Closing every door, quickly", "Att stänga varje dörr, snabbt"]) },
+      { id: "lo2", text: L(["Look beyond the obvious impact to what else the access allowed", "Se bortom den uppenbara påverkan till vad mer åtkomsten möjliggjorde"]), teaser: L(["Looking past the obvious", "Att se bortom det uppenbara"]) },
+      { id: "lo3", text: L(["Decide which software releases can be trusted", "Avgöra vilka programversioner som går att lita på"]), teaser: L(["What you can still stand behind", "Vad ni fortfarande kan stå för"]) },
+      { id: "lo4", text: L(["Restore a trusted build capability and tell customers", "Återställa en pålitlig byggkapacitet och informera kunderna"]), teaser: L(["Rebuilding trust in your own work", "Att återbygga förtroendet för ert eget arbete"]) }
     ],
     mitre: ["T1496", "T1552", "T1078", "T1195.002", "T1554", "T1098", "T1528"],
     frameworks: {

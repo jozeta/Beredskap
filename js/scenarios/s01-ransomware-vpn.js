@@ -117,11 +117,11 @@
       sv: "En fredagskväll börjar filer byta namn. Det som ser ut som ett snabbt ransomwareutbrott visar sig ha förberetts i flera dagar: säkerhetskopiorna slogs ut först, angriparen kom in via VPN:en och datan hade redan lämnat huset innan något krypterades."
     },
     learningObjectives: [
-      { id: "lo1", text: { en: "Decide containment scope under business pressure", sv: "Besluta om omfattningen av isoleringen under tryck från verksamheten" } },
-      { id: "lo2", text: { en: "Assess backup trustworthiness before recovery", sv: "Bedöma om säkerhetskopiorna går att lita på innan återställning" } },
-      { id: "lo3", text: { en: "Recognise a double-extortion data breach and act on notification duties", sv: "Känna igen dubbel utpressning med dataintrång och agera utifrån anmälningsplikten" } },
-      { id: "lo4", text: { en: "Establish decision authority and an update rhythm in the crisis management team", sv: "Etablera beslutsmandat och en rytm för lägesrapportering i krisledningsgruppen" } },
-      { id: "lo5", text: { en: "Prioritise recovery order and assign ownership of residual risk", sv: "Prioritera återställningsordningen och utse ägare för den kvarstående risken" } }
+      { id: "lo1", text: { en: "Decide containment scope under business pressure", sv: "Besluta om omfattningen av isoleringen under tryck från verksamheten" }, teaser: { en: "How far to go, and who decides", sv: "Hur långt man ska gå, och vem som bestämmer" } },
+      { id: "lo2", text: { en: "Assess backup trustworthiness before recovery", sv: "Bedöma om säkerhetskopiorna går att lita på innan återställning" }, teaser: { en: "Trusting what you think you have", sv: "Att lita på det man tror att man har" } },
+      { id: "lo3", text: { en: "Recognise a double-extortion data breach and act on notification duties", sv: "Känna igen dubbel utpressning med dataintrång och agera utifrån anmälningsplikten" }, teaser: { en: "When the problem is bigger than it looks", sv: "När problemet är större än det ser ut" } },
+      { id: "lo4", text: { en: "Establish decision authority and an update rhythm in the crisis management team", sv: "Etablera beslutsmandat och en rytm för lägesrapportering i krisledningsgruppen" }, teaser: { en: "Who decides, and how the team keeps up", sv: "Vem som bestämmer, och hur gruppen håller takten" } },
+      { id: "lo5", text: { en: "Prioritise recovery order and assign ownership of residual risk", sv: "Prioritera återställningsordningen och utse ägare för den kvarstående risken" }, teaser: { en: "Choosing what comes first", sv: "Att välja vad som kommer först" } }
     ],
     mitre: ["T1133", "T1078", "T1003", "T1021", "T1562.001", "T1053", "T1136", "T1490", "T1486", "T1567"],
     frameworks: {

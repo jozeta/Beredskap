@@ -25,10 +25,10 @@
       "En ekonomiansvarig deltar i ett videosamtal med vd om ett hemligt förvärv och påbörjar överföringen. Vd satt på ett flygplan. Rösten och ansiktet var inte vd:ns."
     ]),
     learningObjectives: [
-      { id: "lo1", text: L(["Stop and recover a fraudulent payment quickly", "Stoppa och återkräva en bedräglig betalning snabbt"]) },
-      { id: "lo2", text: L(["Recognise synthetic media as an attack on identity processes", "Se syntetiska medier som ett angrepp på identitetsprocesser"]) },
-      { id: "lo3", text: L(["Communicate when your own leader's voice can be faked", "Kommunicera när er egen ledares röst kan förfalskas"]) },
-      { id: "lo4", text: L(["Build a verification culture without blaming the victim", "Bygga en kontrollkultur utan att skuldbelägga den drabbade"]) }
+      { id: "lo1", text: L(["Stop and recover a fraudulent payment quickly", "Stoppa och återkräva en bedräglig betalning snabbt"]), teaser: L(["Racing the clock", "Att tävla mot klockan"]) },
+      { id: "lo2", text: L(["Recognise synthetic media as an attack on identity processes", "Se syntetiska medier som ett angrepp på identitetsprocesser"]), teaser: L(["How you know who you are talking to", "Hur ni vet vem ni talar med"]) },
+      { id: "lo3", text: L(["Communicate when your own leader's voice can be faked", "Kommunicera när er egen ledares röst kan förfalskas"]), teaser: L(["When a familiar voice cannot be trusted", "När en välbekant röst inte går att lita på"]) },
+      { id: "lo4", text: L(["Build a verification culture without blaming the victim", "Bygga en kontrollkultur utan att skuldbelägga den drabbade"]), teaser: L(["Checking without blaming", "Att kontrollera utan att skuldbelägga"]) }
     ],
     mitre: ["T1656", "T1589", "T1098", "T1078", "T1657", "T1586"],
     frameworks: {

@@ -26,10 +26,10 @@
       "Den primära datahallen överhettas en lugn natt och reservplatsen tar inte över. Det ser ut som otur och dåligt underhåll. En del av det är det."
     ]),
     learningObjectives: [
-      { id: "lo1", text: L(["Run a failover decision under time pressure", "Fatta beslut om övergång till reservmiljö under tidspress"]) },
-      { id: "lo2", text: L(["Treat facilities and building systems as part of the attack surface", "Behandla fastighet och fastighetssystem som en del av angreppsytan"]) },
-      { id: "lo3", text: L(["Handle data loss beyond the recovery point objective", "Hantera dataförlust utöver målet för återställningspunkt"]) },
-      { id: "lo4", text: L(["Keep two explanations open: fault and attack", "Hålla två förklaringar öppna: fel och angrepp"]) }
+      { id: "lo1", text: L(["Run a failover decision under time pressure", "Fatta beslut om övergång till reservmiljö under tidspress"]), teaser: L(["Big decisions on a short clock", "Stora beslut med kort tid"]) },
+      { id: "lo2", text: L(["Treat facilities and building systems as part of the attack surface", "Behandla fastighet och fastighetssystem som en del av angreppsytan"]), teaser: L(["Parts of the house you rarely think about", "Delar av huset man sällan tänker på"]) },
+      { id: "lo3", text: L(["Handle data loss beyond the recovery point objective", "Hantera dataförlust utöver målet för återställningspunkt"]), teaser: L(["Living with what cannot be recovered", "Att leva med det som inte går att få tillbaka"]) },
+      { id: "lo4", text: L(["Keep two explanations open: fault and attack", "Hålla två förklaringar öppna: fel och angrepp"]), teaser: L(["Keeping more than one explanation open", "Att hålla mer än en förklaring öppen"]) }
     ],
     mitre: ["T0831", "T0886", "T1078", "T1133"],
     frameworks: {

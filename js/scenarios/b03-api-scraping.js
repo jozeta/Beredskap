@@ -27,10 +27,10 @@
       "En säljare på ett forum erbjuder era kunders uppgifter. Ingen har brutit sig in: appens API lämnade helt enkelt ut vilken kunds uppgifter som helst till den som frågade."
     ]),
     learningObjectives: [
-      { id: "lo1", text: L(["Verify a data-sale claim quickly and calmly", "Verifiera ett påstående om försäljning av data snabbt och lugnt"]) },
-      { id: "lo2", text: L(["Fix an authorisation flaw without breaking the service", "Rätta ett behörighetsfel utan att slå ut tjänsten"]) },
-      { id: "lo3", text: L(["Notify when the 'breach' is a design flaw", "Anmäla när ”intrånget” är ett konstruktionsfel"]) },
-      { id: "lo4", text: L(["Handle a security researcher's earlier warning honestly", "Hantera en säkerhetsforskares tidigare varning ärligt"]) }
+      { id: "lo1", text: L(["Verify a data-sale claim quickly and calmly", "Verifiera ett påstående om försäljning av data snabbt och lugnt"]), teaser: L(["Separating claims from facts", "Att skilja påståenden från fakta"]) },
+      { id: "lo2", text: L(["Fix an authorisation flaw without breaking the service", "Rätta ett behörighetsfel utan att slå ut tjänsten"]), teaser: L(["Fixing things without breaking things", "Att laga utan att förstöra"]) },
+      { id: "lo3", text: L(["Notify when the 'breach' is a design flaw", "Anmäla när ”intrånget” är ett konstruktionsfel"]), teaser: L(["What counts as an incident", "Vad som räknas som en incident"]) },
+      { id: "lo4", text: L(["Handle a security researcher's earlier warning honestly", "Hantera en säkerhetsforskares tidigare varning ärligt"]), teaser: L(["Honesty about the past", "Ärlighet om det som redan hänt"]) }
     ],
     mitre: ["T1190", "T1119", "T1020", "T1589", "T1566"],
     frameworks: {

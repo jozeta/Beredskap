@@ -90,6 +90,21 @@
       });
     });
 
+    test("the briefing slide shows objective teasers, never the objectives themselves, every scenario, both languages", () => {
+      BK.scenarios.list().forEach((t) => {
+        const inst = Object.assign({ id: "ex-" + t.id }, generate(t));
+        let sess = S().create(inst, 0);
+        sess = S().apply(sess, { type: "gotoSlide", slideId: "briefing" }, 0);
+        ["en", "sv"].forEach((lang) => {
+          const p = S().project(Object.assign({}, sess, { lang }), 0);
+          assert.equal(p.slide.type, "briefing", t.id);
+          assert.deepEqual(p.slide.objectives, inst.objectives.map((o) => o.teaser[lang]), t.id + " " + lang);
+          const json = JSON.stringify(p);
+          inst.objectives.forEach((o) => assert.ok(!json.includes(o.text[lang]), t.id + " " + o.id + " objective text on stage (" + lang + ")"));
+        });
+      });
+    });
+
     test("ids, emblems and categories are unique and known", () => {
       const list = BK.scenarios.list();
       assert.equal(new Set(list.map((t) => t.category)).size, list.length, "each scenario has its own category");

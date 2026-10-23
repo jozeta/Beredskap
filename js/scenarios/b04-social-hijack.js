@@ -27,10 +27,10 @@
       "En fredagskväll börjar ert varumärkeskonto marknadsföra en kryptogiveaway. Ni kan inte logga in, följare skickar pengar och supporten svarar på måndag."
     ]),
     learningObjectives: [
-      { id: "lo1", text: L(["Regain control of a hijacked brand account", "Återta kontrollen över ett kapat varumärkeskonto"]) },
-      { id: "lo2", text: L(["Warn customers through channels you still control", "Varna kunder via kanaler ni fortfarande kontrollerar"]) },
-      { id: "lo3", text: L(["Treat social accounts as critical identities", "Behandla konton i sociala medier som kritiska identiteter"]) },
-      { id: "lo4", text: L(["Respond to synthetic media of your own executives", "Bemöta syntetisk media med era egna chefer"]) }
+      { id: "lo1", text: L(["Regain control of a hijacked brand account", "Återta kontrollen över ett kapat varumärkeskonto"]), teaser: L(["Getting your own voice back", "Att få tillbaka sin egen röst"]) },
+      { id: "lo2", text: L(["Warn customers through channels you still control", "Varna kunder via kanaler ni fortfarande kontrollerar"]), teaser: L(["Reaching people when your usual channels are gone", "Att nå ut när de vanliga kanalerna är borta"]) },
+      { id: "lo3", text: L(["Treat social accounts as critical identities", "Behandla konton i sociala medier som kritiska identiteter"]), teaser: L(["What you treat as important, and what you should", "Vad ni behandlar som viktigt – och vad ni borde"]) },
+      { id: "lo4", text: L(["Respond to synthetic media of your own executives", "Bemöta syntetisk media med era egna chefer"]), teaser: L(["When seeing is no longer believing", "När man inte längre kan tro sina ögon"]) }
     ],
     mitre: ["T1586", "T1078", "T1111", "T1566", "T1656"],
     frameworks: {

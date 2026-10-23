@@ -27,10 +27,10 @@
       "Den elektroniska patientjournalen slocknar mitt i natten. Akutmottagningen är full och ambulanser är på väg. Papper är allt ni har."
     ]),
     learningObjectives: [
-      { id: "lo1", text: L(["Keep patients safe on downtime procedures", "Hålla patienterna säkra med reservrutiner"]) },
-      { id: "lo2", text: L(["Decide on ambulance redirection with the region", "Besluta om omdirigering av ambulanser tillsammans med regionen"]) },
-      { id: "lo3", text: L(["Balance patient safety with forensic preservation", "Väga patientsäkerhet mot säkring av spår"]) },
-      { id: "lo4", text: L(["Prioritise recovery by clinical need", "Prioritera återställningen efter kliniskt behov"]) }
+      { id: "lo1", text: L(["Keep patients safe on downtime procedures", "Hålla patienterna säkra med reservrutiner"]), teaser: L(["What matters most when it is real", "Vad som är viktigast när det är på riktigt"]) },
+      { id: "lo2", text: L(["Decide on ambulance redirection with the region", "Besluta om omdirigering av ambulanser tillsammans med regionen"]), teaser: L(["Decisions shared with others", "Beslut som delas med andra"]) },
+      { id: "lo3", text: L(["Balance patient safety with forensic preservation", "Väga patientsäkerhet mot säkring av spår"]), teaser: L(["Two good aims pulling apart", "Två goda mål som drar åt olika håll"]) },
+      { id: "lo4", text: L(["Prioritise recovery by clinical need", "Prioritera återställningen efter kliniskt behov"]), teaser: L(["Choosing what comes first", "Att välja vad som kommer först"]) }
     ],
     mitre: ["T1486", "T1133", "T1078", "T1021", "T1490", "T1041", "T1657"],
     frameworks: {

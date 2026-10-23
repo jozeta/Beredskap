@@ -29,10 +29,10 @@
       "Skärmarna fylls av ett utpressningsmeddelande och systemen slutar starta. Det ser ut som alla ransomwarefall teamet har läst om – förutom att ingen verkar vilja ha pengarna."
     ]),
     learningObjectives: [
-      { id: "lo1", text: L(["Recognise when an incident is destruction, not extortion", "Känna igen när en incident handlar om förstörelse, inte utpressning"]) },
-      { id: "lo2", text: L(["Work with national authorities under information-sharing constraints", "Samarbeta med nationella myndigheter med begränsningar i informationsdelningen"]) },
-      { id: "lo3", text: L(["Plan a rebuild from scratch, including identity", "Planera en ombyggnad från grunden, inklusive identitetsmiljön"]) },
-      { id: "lo4", text: L(["Keep the organisation running on manual procedures", "Hålla verksamheten igång med manuella rutiner"]) }
+      { id: "lo1", text: L(["Recognise when an incident is destruction, not extortion", "Känna igen när en incident handlar om förstörelse, inte utpressning"]), teaser: L(["Understanding what you are really facing", "Att förstå vad ni egentligen står inför"]) },
+      { id: "lo2", text: L(["Work with national authorities under information-sharing constraints", "Samarbeta med nationella myndigheter med begränsningar i informationsdelningen"]), teaser: L(["Working with outside bodies", "Att samarbeta med aktörer utanför"]) },
+      { id: "lo3", text: L(["Plan a rebuild from scratch, including identity", "Planera en ombyggnad från grunden, inklusive identitetsmiljön"]), teaser: L(["Starting over", "Att börja om"]) },
+      { id: "lo4", text: L(["Keep the organisation running on manual procedures", "Hålla verksamheten igång med manuella rutiner"]), teaser: L(["Keeping going by hand", "Att hålla igång för hand"]) }
     ],
     mitre: ["T1485", "T1561", "T1490", "T1078", "T1021", "T1484"],
     frameworks: {

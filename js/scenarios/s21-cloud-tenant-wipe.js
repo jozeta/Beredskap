@@ -26,10 +26,10 @@
       "Produktionsservrar försvinner ur molnet en efter en. Sedan databaserna. Sedan säkerhetskopiorna. Ingen internt tryckte på radera, men någon med er byggkedjas nycklar gjorde det."
     ]),
     learningObjectives: [
-      { id: "lo1", text: L(["Stop an attacker who is using legitimate cloud administration", "Stoppa en angripare som använder legitim molnadministration"]) },
-      { id: "lo2", text: L(["Keep backups out of reach of the identities that run production", "Hålla säkerhetskopior utom räckhåll för de identiteter som driver produktionen"]) },
-      { id: "lo3", text: L(["Recognise data theft hidden behind destruction", "Upptäcka datastöld som döljs bakom förstörelse"]) },
-      { id: "lo4", text: L(["Rebuild from code under customer pressure", "Återuppbygga från kod under tryck från kunderna"]) }
+      { id: "lo1", text: L(["Stop an attacker who is using legitimate cloud administration", "Stoppa en angripare som använder legitim molnadministration"]), teaser: L(["When normal tools are used against you", "När vanliga verktyg används mot er"]) },
+      { id: "lo2", text: L(["Keep backups out of reach of the identities that run production", "Hålla säkerhetskopior utom räckhåll för de identiteter som driver produktionen"]), teaser: L(["Keeping your safety net safe", "Att skydda sitt skyddsnät"]) },
+      { id: "lo3", text: L(["Recognise data theft hidden behind destruction", "Upptäcka datastöld som döljs bakom förstörelse"]), teaser: L(["What the loud part might hide", "Vad det högljudda kan dölja"]) },
+      { id: "lo4", text: L(["Rebuild from code under customer pressure", "Återuppbygga från kod under tryck från kunderna"]), teaser: L(["Rebuilding while others wait", "Att bygga upp igen medan andra väntar"]) }
     ],
     mitre: ["T1078.004", "T1528", "T1485", "T1490", "T1537", "T1657"],
     frameworks: {
