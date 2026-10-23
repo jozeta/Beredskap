@@ -1,7 +1,6 @@
 /*
  * branching.js — The gamebook format: a map of pages, each ending in a choice
- * of 2–4 options, a route rule or an ending (design: docs/superpowers/specs/
- * 2026-10-22-branching-mode-and-polish-design.md, §5).
+ * of 2–4 options, a route rule or an ending (README: "Authoring a branching exercise").
  *
  *   cond / offered / resolveTarget   flag conditions, offered options, landing page
  *   analyse(pages, start, length)    path enumeration: choice counts, endings, dead ends
