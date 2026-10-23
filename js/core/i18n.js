@@ -1096,6 +1096,14 @@
       "branch.tip.chosen": "Chosen",
       "branch.tip.notReached": "The room never reached this decision. These options were on the table.",
       "branch.tip.notVisited": "Not visited on this run.",
+      "nav.help": "Help",
+      "help.title": "Help",
+      "help.intro": "How to set up, run and debrief exercises, build your own, and adapt Beredskap to your organisation.",
+      "help.contents": "Contents",
+      "help.search": "Search the guide",
+      "help.searchPlaceholder": "e.g. timer, builder, export",
+      "help.matches": "{n} matching topics",
+      "help.noMatch": "No topic matches your search.",
       "error.validation": "The exercise cannot start until these problems are fixed:"
     },
 
@@ -2180,6 +2188,14 @@
       "branch.tip.chosen": "Valt",
       "branch.tip.notReached": "Rummet nådde aldrig det här beslutet. De här alternativen fanns.",
       "branch.tip.notVisited": "Besöktes inte i den här genomgången.",
+      "nav.help": "Hjälp",
+      "help.title": "Hjälp",
+      "help.intro": "Så ställer du in, genomför och utvärderar övningar, bygger egna och anpassar Beredskap till er organisation.",
+      "help.contents": "Innehåll",
+      "help.search": "Sök i guiden",
+      "help.searchPlaceholder": "t.ex. timer, byggare, export",
+      "help.matches": "{n} matchande avsnitt",
+      "help.noMatch": "Inget avsnitt matchar sökningen.",
       "error.validation": "Övningen kan inte startas förrän de här problemen är åtgärdade:"
     }
   };

@@ -17,7 +17,8 @@
     // Exercises start from the library ("Use scenario" or a custom exercise), so setup, editing and the builder belong to it.
     { hash: "#/library", key: "nav.library", icon: "book", match: (p) => p.startsWith("/library") || p.startsWith("/new") || p.startsWith("/edit") || p.startsWith("/builder") },
     { hash: "#/history", key: "nav.history", icon: "timeline", match: (p) => p.startsWith("/history") || p.startsWith("/debrief") },
-    { hash: "#/settings", key: "nav.settings", icon: "settings", match: (p) => p.startsWith("/settings") }
+    { hash: "#/settings", key: "nav.settings", icon: "settings", match: (p) => p.startsWith("/settings") },
+    { hash: "#/help", key: "nav.help", icon: "question", match: (p) => p.startsWith("/help") }
   ];
 
   const THEME_ICON = { light: "sun", dark: "moon", system: "theme-system" };
@@ -208,6 +209,8 @@
     r("#/debrief/:sessionId", BK.ui.debrief);
     r("#/history", BK.ui.history);
     r("#/settings", BK.ui.settings);
+    r("#/help", BK.ui.help);
+    r("#/help/:topic", BK.ui.help);
   }
 
   // ---- Boot -------------------------------------------------------------------------

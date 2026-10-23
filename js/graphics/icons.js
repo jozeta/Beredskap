@@ -179,6 +179,7 @@
     "align-left": '<path d="M4.5 6.5h15M4.5 10.5h9M4.5 14.5h15M4.5 18.5h9"/>',
     "align-center": '<path d="M4.5 6.5h15M7.5 10.5h9M4.5 14.5h15M7.5 18.5h9"/>',
     layout: '<rect x="3.5" y="4.5" width="17" height="15" rx="2"/><path d="M3.5 9h17M9.5 9v10.5"/>',
+    keyboard: '<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 10h.01M11 10h.01M15 10h.01M17 14H7"/>',
     divider: '<path d="M4 12h16"/><path d="M8 7h8M8 17h8" opacity=".5"/>'
   };
 
