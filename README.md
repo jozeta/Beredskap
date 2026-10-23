@@ -7,6 +7,8 @@
 ![Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)
 ![Offline](https://img.shields.io/badge/network-none-brightgreen)
 
+**▶ Try it now: [jozeta.github.io/Beredskap](https://jozeta.github.io/Beredskap/)** (no sign-up; everything stays in your browser)
+
 Beredskap (Swedish for *preparedness*) helps you plan and run tabletop exercises:
 a facilitator walks a group through a realistic cyber incident, one stage or one
 decision at a time, and the room discusses what they would do. Afterwards, you get a
@@ -87,7 +89,11 @@ are used.
 
 ## 1. Installation
 
-Beredskap needs no installation and no build step. You only need a current Chrome, Edge or
+**Just want to use it?** Open the hosted version at
+**https://jozeta.github.io/Beredskap/**. It is the same static app; your
+exercises are stored only in your own browser.
+
+To run your own copy: Beredskap needs no installation and no build step. You only need a current Chrome, Edge or
 Firefox.
 
 **Option A: open it from disk.**
