@@ -283,14 +283,16 @@
     const r = BK.io.export.report(session, langArg);
     const l = r.lang;
     const timeline = BK.graphics.charts.timeline({ title: t("report.timeline", null, l), events: r.timeline }, l);
+    // Custom (builder) runs have no scenario model: only observations, extras and the action plan apply.
+    const full = session.instance.format !== "custom";
     return el(
       "article",
       { class: "p-doc", lang: l },
-      header(r.title + " — " + t("report.title", null, l), r.orgName + " · " + r.date + " · " + t("report.duration", { planned: r.plannedMin, actual: r.actualMin }, l), false, l),
+      header(r.title + " — " + t("report.title", null, l), [r.orgName, r.date].filter(Boolean).join(" · ") + " · " + t("report.duration", { planned: r.plannedMin, actual: r.actualMin }, l), false, l),
       el("p", { text: r.summary }),
-      el("h2", { text: t("report.objectives", null, l) }),
-      table([t("library.objectives", null, l), t("obs.status", null, l), t("obs.note", null, l)], r.objectives.map((o) => [o.text, t("report.status." + o.status, null, l), o.note])),
-      r.branch
+      full ? el("h2", { text: t("report.objectives", null, l) }) : null,
+      full ? table([t("library.objectives", null, l), t("obs.status", null, l), t("obs.note", null, l)], r.objectives.map((o) => [o.text, t("report.status." + o.status, null, l), o.note])) : null,
+      !full ? null : r.branch
         ? [
             el("h2", { text: t("report.endingReached", null, l) }),
             el("p", { text: r.branch.ending ? r.branch.ending.label + " (" + r.branch.ending.gradeLabel + ") — " + r.branch.ending.summary : t("report.noEnding", null, l) }),
@@ -315,23 +317,25 @@
               r.decisions.map((d) => [d.stage, d.question, d.recorded ? d.option : t("report.notRecorded", null, l), d.text, d.rationale, d.dissent])
             )
           ],
-      el("h2", { text: t("report.assumptions", null, l) }),
-      table([t("stage.assumed", null, l), t("stage.reality", null, l)], r.assumptions.map((a) => [a.assumption, a.reality])),
+      full ? [el("h2", { text: t("report.assumptions", null, l) }), table([t("stage.assumed", null, l), t("stage.reality", null, l)], r.assumptions.map((a) => [a.assumption, a.reality]))] : null,
       el("h2", { text: t("report.observations", null, l) }),
       r.observations.length
         ? table([t("obs.category", null, l), t("obs.observation", null, l), t("obs.impact", null, l), t("obs.action", null, l)], r.observations.map((o) => [t("obs.cat." + (o.category || "coordination"), null, l), o.observation, o.impact || "", o.action || ""]))
         : el("p", { text: t("report.noObservations", null, l) }),
-      el("h2", { text: t("report.unresolved", null, l) }),
-      list(r.unresolved.map((u) => u.source + ": " + u.text)),
+      full ? [el("h2", { text: t("report.unresolved", null, l) }), list(r.unresolved.map((u) => u.source + ": " + u.text))] : null,
       r.complications.length ? [el("h2", { text: t("report.complications", null, l) }), list(r.complications.map((x) => x.category + ": " + x.title + " — " + x.text))] : null,
       r.meters ? [el("h2", { text: t("report.meters", null, l) }), list(r.meters.map((m) => m.label + ": " + m.value + "/5"))] : null,
       el("h2", { text: t("report.actions", null, l) }),
       table([t("plan.action", null, l), t("plan.owner", null, l), t("plan.priority", null, l), t("plan.due", null, l), t("plan.verify", null, l), t("plan.status", null, l)], r.actions.map((a) => [a.text, a.owner, t("obs.prio." + a.priority, null, l), a.due, a.verify || "", t("plan.st." + a.status, null, l)])),
-      el("h2", { text: t("report.scorecard", null, l) }),
-      el("p", { class: "p-sub", text: t("report.scorecardNote", null, l) }),
-      table([t("csv.stage", null, l), t("guide.evaluation", null, l), t("report.rating.label", null, l), t("obs.note", null, l)], r.scorecard.map((s) => [s.stage, s.text, s.rating ? t("report.rating." + s.rating, null, l) : t("report.rating.none", null, l), s.comment])),
-      el("h2", { text: t("report.frameworks", null, l) }),
-      table(["", "", ""], [].concat(r.frameworks.mitre.map((m) => ["MITRE ATT&CK", m.id, m.name || ""]), r.frameworks.nistCsf.map((m) => ["NIST CSF 2.0", m.id, m.name || ""]), r.frameworks.iso27001.map((m) => ["ISO/IEC 27001:2022", m.id, m.name || ""]))),
+      full
+        ? [
+            el("h2", { text: t("report.scorecard", null, l) }),
+            el("p", { class: "p-sub", text: t("report.scorecardNote", null, l) }),
+            table([t("csv.stage", null, l), t("guide.evaluation", null, l), t("report.rating.label", null, l), t("obs.note", null, l)], r.scorecard.map((s) => [s.stage, s.text, s.rating ? t("report.rating." + s.rating, null, l) : t("report.rating.none", null, l), s.comment])),
+            el("h2", { text: t("report.frameworks", null, l) }),
+            table(["", "", ""], [].concat(r.frameworks.mitre.map((m) => ["MITRE ATT&CK", m.id, m.name || ""]), r.frameworks.nistCsf.map((m) => ["NIST CSF 2.0", m.id, m.name || ""]), r.frameworks.iso27001.map((m) => ["ISO/IEC 27001:2022", m.id, m.name || ""])))
+          ]
+        : null,
       el("p", { class: "p-sub", text: t("report.meta", { seed: r.seed, id: r.templateId, version: r.templateVersion, date: r.date }, l) })
     );
   }

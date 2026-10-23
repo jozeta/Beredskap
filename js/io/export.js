@@ -303,13 +303,15 @@
     const out = [];
     const h = (n, text) => out.push("", "#".repeat(n) + " " + text, "");
     const li = (text) => out.push("- " + String(text).replace(/\r?\n/g, " "));
+    // Custom (builder) runs have no scenario model: only observations, extras, the plan and notes apply.
+    const full = session.instance.format !== "custom";
 
     out.push("# " + r.title + " — " + t("report.title", null, l));
     out.push("", "*" + t("report.meta", { seed: r.seed, id: r.templateId, version: r.templateVersion, date: r.date }, l) + "*");
-    out.push("", "**" + r.orgName + "** · " + r.sector + " · " + t("report.duration", { planned: r.plannedMin, actual: r.actualMin }, l));
-    out.push("", r.summary);
+    out.push("", (full ? "**" + r.orgName + "** · " + r.sector + " · " : "") + t("report.duration", { planned: r.plannedMin, actual: r.actualMin }, l));
+    if (r.summary) out.push("", r.summary);
 
-    h(2, t("report.objectives", null, l));
+    if (full) h(2, t("report.objectives", null, l));
     r.objectives.forEach((o) => li(o.text + " — **" + t("report.status." + o.status, null, l) + "**" + (o.note ? " (" + o.note + ")" : "")));
 
     if (r.branch) {
@@ -319,13 +321,13 @@
       out.push(r.branch.route.map((x) => "§ " + x.num + (x.option ? " (" + x.option + ")" : "")).join(" → "));
       h(3, t("report.otherEndings", null, l));
       r.branch.otherEndings.forEach((e) => li(e.label + " (" + e.gradeLabel + ")"));
-    } else {
+    } else if (full) {
       h(2, t("report.groundTruth", null, l));
       out.push(r.rootCause, "");
       r.attackerTimeline.forEach((e) => li(e.at + ": " + e.text));
     }
 
-    h(2, t("report.decisions", null, l));
+    if (full) h(2, t("report.decisions", null, l));
     r.decisions.forEach((d) => {
       h(3, (r.branch ? t("report.choiceN", { n: d.stage }, l) + " · § " + d.num : t("editor.stageN", { n: d.stage }, l)) + " · " + d.question);
       if (!d.recorded) return out.push(t("report.notRecorded", null, l));
@@ -340,15 +342,17 @@
       return null;
     });
 
-    h(2, t("report.assumptions", null, l));
-    out.push("| " + t("stage.assumed", null, l) + " | " + t("stage.reality", null, l) + " |", "|---|---|");
+    if (full) {
+      h(2, t("report.assumptions", null, l));
+      out.push("| " + t("stage.assumed", null, l) + " | " + t("stage.reality", null, l) + " |", "|---|---|");
+    }
     r.assumptions.forEach((a) => out.push("| " + mdEscape(a.assumption) + " | " + mdEscape(a.reality) + " |"));
 
     h(2, t("report.observations", null, l));
     if (!r.observations.length) out.push(t("report.noObservations", null, l));
     r.observations.forEach((o) => li("[" + t("obs.cat." + (o.category || "coordination"), null, l) + "] " + o.observation + (o.impact ? " — " + o.impact : "")));
 
-    h(2, t("report.unresolved", null, l));
+    if (full) h(2, t("report.unresolved", null, l));
     r.unresolved.forEach((u) => li(u.source + ": " + u.text));
 
     if (r.complications.length) {
@@ -364,14 +368,18 @@
     out.push("| " + [t("plan.action", null, l), t("plan.owner", null, l), t("plan.priority", null, l), t("plan.due", null, l), t("plan.verify", null, l), t("plan.status", null, l)].join(" | ") + " |", "|---|---|---|---|---|---|");
     r.actions.forEach((a) => out.push("| " + [a.text, a.owner, t("obs.prio." + a.priority, null, l), a.due, a.verify || "", t("plan.st." + a.status, null, l)].map(mdEscape).join(" | ") + " |"));
 
-    h(2, t("report.lessons", null, l));
-    r.lessons.forEach(li);
+    if (r.lessons.length) {
+      h(2, t("report.lessons", null, l));
+      r.lessons.forEach(li);
+    }
 
-    h(2, t("report.scorecard", null, l));
-    out.push("*" + t("report.scorecardNote", null, l) + "*", "");
+    if (full) {
+      h(2, t("report.scorecard", null, l));
+      out.push("*" + t("report.scorecardNote", null, l) + "*", "");
+    }
     r.scorecard.forEach((sc) => li((r.branch ? t("report.choiceN", { n: sc.stage }, l) : t("editor.stageN", { n: sc.stage }, l)) + " · " + sc.text + " — " + (sc.rating ? t("report.rating." + sc.rating, null, l) : t("report.rating.none", null, l)) + (sc.comment ? " (" + sc.comment + ")" : "")));
 
-    h(2, t("report.frameworks", null, l));
+    if (full) h(2, t("report.frameworks", null, l));
     r.frameworks.mitre.forEach((m) => li("MITRE ATT&CK " + m.id + " — " + (m.name || "")));
     r.frameworks.nistCsf.forEach((m) => li("NIST CSF 2.0 " + m.id + " — " + (m.name || "")));
     r.frameworks.iso27001.forEach((m) => li("ISO/IEC 27001:2022 " + m.id + " — " + (m.name || "")));

@@ -165,6 +165,79 @@
       assert.ok(typeof BK.io.export.markdown(s, "en") === "string");
     });
 
+    test("builder: edits made after an autosave are kept, and leaving the builder never brings back a deleted deck", async () => {
+      const d = C().normaliseDeck({ id: "deck-edit-test", title: "Edit test", lang: "en", slides: [C().fromTemplate("text", "en"), C().fromTemplate("chat", "en")] });
+      BK.store.putItem("deck", d);
+      const host = document.createElement("div");
+      document.body.appendChild(host);
+      const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      const type = (node, text) => {
+        node.textContent = text;
+        node.dispatchEvent(new Event("input", { bubbles: true }));
+      };
+      try {
+        BK.ui.builder.render(host, { params: { deckId: d.id }, query: {} });
+        type(host.querySelector(".builder__canvas .cs-h1, .builder__canvas .cs-h2"), "First edit");
+        await wait(650); // past the autosave
+        type(host.querySelector(".builder__canvas .cs-text"), "Second edit");
+        await wait(650);
+        let stored = BK.store.getItem("deck", d.id);
+        assert.equal(C().runsText(stored.slides[0].blocks[0].runs), "First edit");
+        assert.ok(stored.slides[0].blocks.some((b) => b.type === "text" && C().runsText(b.runs) === "Second edit"), "second edit lost");
+        // Artefact fields: two edits in a row on the chat slide both survive.
+        host.querySelectorAll(".builder__thumb-btn")[1].click();
+        const fields = host.querySelectorAll(".builder__canvas .cs-editable");
+        assert.ok(fields.length >= 2, "editable artefact fields");
+        type(fields[0], "Field A");
+        await wait(650);
+        type(fields[1], "Field B");
+        BK.ui.builder.unmount();
+        stored = BK.store.getItem("deck", d.id);
+        const json = JSON.stringify(stored.slides[1].inject);
+        assert.ok(json.includes("Field A") && json.includes("Field B"), "artefact edits lost: " + json.slice(0, 200));
+        // Deleted elsewhere, then the builder is opened on it and left: it must stay deleted.
+        BK.store.removeItem("deck", d.id);
+        host.textContent = "";
+        BK.ui.builder.render(host, { params: { deckId: d.id }, query: {} });
+        BK.ui.builder.unmount();
+        assert.equal(BK.store.getItem("deck", d.id), null, "deleted deck came back");
+      } finally {
+        BK.ui.builder.unmount();
+        BK.store.removeItem("deck", d.id);
+        host.remove();
+      }
+    });
+
+    test("opening a custom exercise in the editor sends it to the builder, rebuilding a missing deck from its slides", () => {
+      const d = deck();
+      const ex = C().toExercise(d);
+      assert.equal(ex.id, "ex-" + d.id, "one exercise per deck");
+      ex.deckId = "deck-gone";
+      BK.store.putItem("exercise", ex);
+      const before = window.location.hash;
+      const host = document.createElement("div");
+      try {
+        BK.ui.editor.render(host, { params: { instanceId: ex.id }, query: {} });
+        const again = BK.store.getItem("exercise", ex.id);
+        assert.ok(again.deckId && again.deckId !== "deck-gone", "exercise points at the rebuilt deck");
+        const rebuilt = BK.store.getItem("deck", again.deckId);
+        assert.ok(rebuilt && rebuilt.slides.length === d.slides.length, "deck rebuilt with every slide");
+        assert.ok(window.location.hash.indexOf("#/builder/" + again.deckId) === 0, "redirected to the builder");
+        assert.equal(host.textContent, "", "the editor itself did not render");
+        BK.store.removeItem("deck", again.deckId);
+      } finally {
+        BK.store.removeItem("exercise", ex.id);
+        window.history.replaceState(null, "", before || "#");
+      }
+    });
+
+    test("count strings use the singular for exactly one", () => {
+      assert.equal(BK.t("history.observations", { n: 1 }, "en"), "1 observation");
+      assert.equal(BK.t("history.observations", { n: 2 }, "en"), "2 observations");
+      assert.equal(BK.t("history.observations", { n: 1 }, "sv"), "1 observation");
+      assert.equal(BK.t("history.observations", { n: 0 }, "sv"), "0 observationer");
+    });
+
     test("deck export imports back as a new deck; custom sessions round-trip through import", () => {
       const d = deck();
       const text = JSON.stringify({ schema: BK.config.schemaId, schemaVersion: BK.config.schemaVersion, kind: "deck", deck: d });

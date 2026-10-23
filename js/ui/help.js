@@ -22,7 +22,7 @@
     if (b.steps) return el("ol", { class: "help__steps" }, b.steps.map((x) => el("li", { text: L(x) })));
     if (b.tip) return el("p", { class: "help__tip" }, svgIcon("lightbulb", { size: 18 }), el("span", { text: L(b.tip) }));
     if (b.terms) return el("dl", { class: "help__terms" }, b.terms.map(([term, text]) => [el("dt", { text: L(term) }), el("dd", { text: L(text) })]));
-    if (b.shortcuts) return BK.ui.stageRenderer.shortcutList(BK.i18n.getLang(), b.shortcuts === "branching");
+    if (b.shortcuts) return BK.ui.stageRenderer.shortcutList(BK.i18n.getLang(), b.shortcuts);
     return null;
   }
 

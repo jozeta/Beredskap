@@ -70,6 +70,7 @@
 
   function exportsBar(sess) {
     const ex = Object.assign({ id: sess.exerciseId }, sess.instance);
+    const custom = sess.instance.format === "custom"; // no injects or decision log in a custom run
     const io = BK.io.export;
     return el(
       "div",
@@ -77,8 +78,8 @@
       c.button({ label: t("export.print"), icon: "print", kind: "primary", onClick: () => BK.io.print.printReport(view.ctrl.get(), view.lang) }),
       c.button({ label: t("export.md"), icon: "download", onClick: () => io.downloadMarkdown(view.ctrl.get()) }),
       c.button({ label: t("export.json"), icon: "download", onClick: () => io.downloadJSON(ex, view.ctrl.get()) }),
-      c.button({ label: t("export.csvInjects"), icon: "download", kind: "ghost", onClick: () => io.downloadCSV(view.ctrl.get(), "injects") }),
-      c.button({ label: t("export.csvDecisions"), icon: "download", kind: "ghost", onClick: () => io.downloadCSV(view.ctrl.get(), "decisions") }),
+      custom ? null : c.button({ label: t("export.csvInjects"), icon: "download", kind: "ghost", onClick: () => io.downloadCSV(view.ctrl.get(), "injects") }),
+      custom ? null : c.button({ label: t("export.csvDecisions"), icon: "download", kind: "ghost", onClick: () => io.downloadCSV(view.ctrl.get(), "decisions") }),
       c.button({ label: t("export.csvObservations"), icon: "download", kind: "ghost", onClick: () => io.downloadCSV(view.ctrl.get(), "observations") }),
       c.button({ label: t("export.csvActions"), icon: "download", kind: "ghost", onClick: () => io.downloadCSV(view.ctrl.get(), "actions") })
     );
@@ -108,10 +109,10 @@
       el(
         "div",
         { class: "badges" },
-        c.badge(r.orgName, "accent"),
+        r.orgName ? c.badge(r.orgName, "accent") : null,
         c.badge(r.date, "neutral", "clock"),
         c.badge(t("report.duration", { planned: r.plannedMin, actual: r.actualMin }, l), "neutral", "hourglass"),
-        c.badge(t("editor.seed", { seed: r.seed }), "neutral", "dice"),
+        custom ? c.badge(t("category.custom"), "info", "layout") : c.badge(t("editor.seed", { seed: r.seed }), "neutral", "dice"),
         sess.status === "ended" ? c.badge(t("presenter.ended"), "neutral", "flag") : c.button({ label: t("debrief.backToPresenter"), icon: "prev", kind: "ghost", size: "sm", href: "#/presenter/" + encodeURIComponent(sess.id) })
       ),
       exportsBar(sess),
@@ -162,11 +163,10 @@
         "div",
         { class: "grid grid--overview" },
         section(t("report.observations", null, l), F().observationList(sess, dispatch), el("h3", { class: "eyebrow", text: t("obs.add") }), F().observationForm(sess, dispatch)),
-        section(
+        custom ? null : section(
           t("report.unresolved", null, l),
           r.unresolved.length ? el("ul", { class: "bullets" }, r.unresolved.map((u) => el("li", null, el("strong", { text: u.source + ": " }), u.text))) : el("p", { class: "muted", text: t("debrief.noUnresolved", null, l) }),
-          el("h3", { class: "eyebrow", text: t("report.lessons", null, l) }),
-          el("ul", { class: "bullets" }, r.lessons.map((x) => el("li", { text: x })))
+          r.lessons.length ? [el("h3", { class: "eyebrow", text: t("report.lessons", null, l) }), el("ul", { class: "bullets" }, r.lessons.map((x) => el("li", { text: x })))] : null
         )
       ),
 

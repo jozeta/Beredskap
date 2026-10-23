@@ -105,8 +105,8 @@
         "div",
         { class: "pres-top__status" },
         el("span", { class: "pres-clock tabular", dataset: { tick: "elapsed" }, text: t("presenter.elapsed", { elapsed: Math.floor(pace.elapsedMin), total: pace.totalMin }) }),
-        c.badge(paceText, paceTone, pace.state === "behind" ? "warning" : "clock"),
-        sess.status === "ended" ? c.badge(t("presenter.ended"), "neutral") : null
+        // Pacing advice only matters while the exercise runs.
+        sess.status === "ended" ? c.badge(t("presenter.ended"), "neutral", "flag") : c.badge(paceText, paceTone, pace.state === "behind" ? "warning" : "clock")
       ),
       el(
         "div",

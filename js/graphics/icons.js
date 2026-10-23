@@ -228,6 +228,7 @@
     certificate: ["verified", "clock"],
     "shadow-ai": ["robot", "user-secret"],
     "reply-all": ["mail", "users"],
+    custom: ["layout", "edit"],
     "whistleblower": ["newspaper", "scale"],
     "quiet-dba": ["database", "user-secret"],
     "logic-bomb": ["hourglass", "code-branch"],

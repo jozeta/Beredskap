@@ -109,7 +109,7 @@
                   el("span", { class: "list__title", text: BK.loc(ex.title) || ex.id }),
                   el("span", {
                     class: "muted small",
-                    text: [ex.format === "branching" ? t("branch.format") : null, ex.seed, ex.updatedAt ? BK.i18n.fmt.dateTime(new Date(ex.updatedAt), lang) : ""].filter(Boolean).join(" · ")
+                    text: [ex.format === "branching" ? t("branch.format") : null, ex.format === "custom" ? t("category.custom") : ex.seed, ex.updatedAt ? BK.i18n.fmt.dateTime(new Date(ex.updatedAt), lang) : ""].filter(Boolean).join(" · ")
                   })
                 ),
                 c.button({ label: t("dashboard.recent.open"), icon: "edit", kind: "ghost", size: "sm", href: "#/edit/" + encodeURIComponent(ex.id) })
