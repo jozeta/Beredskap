@@ -18,18 +18,25 @@
   const HEARTBEAT_MS = 2000;
   const FRESH_MS = 6000;
 
+  // One id per window for this page load. A reload keeps the id (sessionStorage survives it), but a fresh
+  // navigation does not reuse it: window.open copies the opener's sessionStorage, so the stage window would
+  // otherwise share the presenter's id and a presenter reload would think nobody else is running the session.
+  let TAB = null;
   function tabId() {
+    if (TAB) return TAB;
     const key = BK.config.storagePrefix + "tab";
     try {
-      let id = window.sessionStorage.getItem(key);
+      const nav = window.performance && performance.getEntriesByType ? performance.getEntriesByType("navigation")[0] : null;
+      let id = nav && nav.type === "reload" ? window.sessionStorage.getItem(key) : null;
       if (!id) {
         id = BK.dom.uid("tab");
         window.sessionStorage.setItem(key, id);
       }
-      return id;
+      TAB = id;
     } catch (err) {
-      return BK.dom.uid("tab");
+      TAB = BK.dom.uid("tab");
     }
+    return TAB;
   }
 
   function openChannel() {
