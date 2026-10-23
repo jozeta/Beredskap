@@ -62,6 +62,50 @@
     });
   });
 
+  suite("improvement plan", () => {
+    test("actions are added, normalised, updated, completed and removed", () => {
+      let s = richSession();
+      s = S().apply(s, { type: "actionAdd", entry: { text: "  Write an out-of-hours mandate  ", owner: "CEO", due: "2026-12-01", verify: "Signed by the board", priority: "high", status: "bogus", extra: "dropped" } }, T0);
+      const a = s.actions[0];
+      assert.equal(a.text, "Write an out-of-hours mandate");
+      assert.equal(a.status, "open", "unknown status falls back to open");
+      assert.ok(!("extra" in a), "unknown fields are dropped");
+      s = S().apply(s, { type: "actionUpdate", id: a.id, patch: { status: "done", due: "not a date" } }, T0 + 5000);
+      assert.equal(s.actions[0].status, "done");
+      assert.ok(s.actions[0].doneAt, "completion time recorded");
+      assert.equal(s.actions[0].due, "", "invalid date cleared");
+      s = S().apply(s, { type: "actionRemove", id: a.id }, T0);
+      assert.equal(s.actions.length, 0);
+    });
+
+    test("the report lists the plan, then suggestions not yet adopted", () => {
+      let s = richSession();
+      const before = BK.io.export.report(s, "en").actions;
+      assert.ok(before.some((x) => x.kind === "observation") && before.some((x) => x.kind === "suggested"));
+      const sug = before.find((x) => x.kind === "suggested");
+      s = S().apply(s, { type: "actionAdd", entry: { text: sug.text, source: "suggested", sourceRef: sug.id } }, T0);
+      const after = BK.io.export.report(s, "en").actions;
+      assert.equal(after[0].kind, "plan");
+      assert.ok(!after.some((x) => x.kind === "suggested" && x.id === sug.id), "adopted suggestion no longer listed separately");
+    });
+
+    test("action plan CSV, Markdown and import round trip", () => {
+      let s = richSession();
+      s = S().apply(s, { type: "actionAdd", entry: { text: "Test restores quarterly", owner: "IT", verify: "Restore within 8 h", due: "2027-01-15" } }, T0);
+      const csv = BK.io.export.csv(s, "actions", "en");
+      assert.ok(csv.includes("Test restores quarterly") && csv.includes("Restore within 8 h"));
+      assert.ok(BK.io.export.markdown(s, "en").includes("Restore within 8 h"));
+      const ex = Object.assign({ id: s.exerciseId }, s.instance);
+      const res = BK.io.import.validate(BK.io.export.toJSON(ex, s));
+      assert.ok(deepEqual(res.session.actions, s.actions), "actions survive export and import");
+      const bad = JSON.parse(BK.io.export.toJSON(ex, s));
+      bad.session.actions[0].status = "<script>";
+      let reason = null;
+      try { BK.io.import.validate(JSON.stringify(bad)); } catch (err) { reason = err.reason; }
+      assert.equal(reason, "shape", "unknown action status is rejected");
+    });
+  });
+
   suite("report and exports", () => {
     test("report collects decisions, unresolved risks and actions", () => {
       const r = BK.io.export.report(richSession(), "sv");
@@ -71,7 +115,7 @@
       assert.ok(r.unresolved.some((u) => u.text.includes("nattskiftet")), "open observation listed");
       assert.ok(!r.unresolved.some((u) => u.text === "Bra eskalering till SOC"), "closed observation not listed");
       assert.ok(r.unresolved.some((u) => u.source === BK.t("report.neverSurfaced", null, "sv")), "hidden facts never surfaced are unresolved");
-      assert.ok(r.actions.some((a) => a.fromObservation) && r.actions.some((a) => !a.fromObservation));
+      assert.ok(r.actions.some((a) => a.kind === "observation") && r.actions.some((a) => a.kind === "suggested"));
     });
 
     test("Markdown contains the report sections and records, with å/ä/ö intact", () => {
