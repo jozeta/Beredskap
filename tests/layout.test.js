@@ -2,8 +2,8 @@
  * layout.test.js — Stage layout sweep: every slide of every scenario is laid
  * out at the canvas's native 1920×1080 size (EN and SV, every audience, two
  * seeds; branching exercises along playthroughs that take every option) and checked for content that leaves the slide area (and so runs over
- * the progress rail), text that leaves its chart, and text cut off by a
- * clipping box. Also checks the operator views for horizontal page scroll at
+ * the progress rail), text that leaves its chart, text cut off by a
+ * clipping box, and text that collides with other text or with a chart. Also checks the operator views for horizontal page scroll at
  * phone, tablet and desktop widths.
  */
 (function () {
@@ -59,7 +59,45 @@
         out.push("chart text outside its chart: " + describe(txt));
       }
     });
+    collisions(slide, flagged).forEach((x) => out.push(x));
     return out;
+  }
+
+  const hits = (a, b) => Math.min(a.right, b.right) - Math.max(a.left, b.left) > 2 && Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > 2;
+
+  /** Line boxes of visible text (HTML text runs and SVG <text>), plus the slide's charts. */
+  function collisions(slide, flagged) {
+    const text = [];
+    const clippedAway = (n, r) => {
+      for (let p = n.parentElement; p && p !== slide; p = p.parentElement) {
+        const cs = getComputedStyle(p);
+        if ((cs.overflowY === "hidden" || cs.overflowY === "clip") && !hits(r, p.getBoundingClientRect())) return true;
+      }
+      return false;
+    };
+    slide.querySelectorAll("*").forEach((n) => {
+      if (n.closest(".sr-only") || (n.closest('[aria-hidden="true"]') && !n.closest("svg[role=img]")) || flagged.some((f) => f.contains(n))) return;
+      if (n instanceof SVGElement) {
+        if (n.tagName.toLowerCase() === "text" && n.textContent.trim()) text.push({ n, r: n.getBoundingClientRect() });
+        return;
+      }
+      n.childNodes.forEach((c) => {
+        if (c.nodeType !== 3 || !c.textContent.trim()) return;
+        const range = document.createRange();
+        range.selectNodeContents(c);
+        Array.from(range.getClientRects()).forEach((r) => r.width > 1 && !clippedAway(n, r) && text.push({ n, r }));
+      });
+    });
+    const charts = Array.from(slide.querySelectorAll("svg.chart-svg")).map((n) => ({ n, r: n.getBoundingClientRect() }));
+    const out = new Set();
+    text.forEach((a, i) => {
+      for (let j = i + 1; j < text.length; j++) {
+        const b = text[j];
+        if (a.n !== b.n && !a.n.contains(b.n) && !b.n.contains(a.n) && hits(a.r, b.r)) out.add("text overlaps text: " + describe(a.n) + " / " + describe(b.n));
+      }
+      charts.forEach((c) => !c.n.contains(a.n) && hits(a.r, c.r) && out.add("text overlaps a chart: " + describe(a.n)));
+    });
+    return Array.from(out);
   }
 
   function host() {
@@ -94,6 +132,15 @@
         tall.textContent = "planted";
         canvas.querySelector(".s-slide").appendChild(tall);
         assert.ok(layoutProblems(canvas).some((x) => x.includes("planted")), "planted overflow found");
+        tall.remove();
+        const heading = canvas.querySelector(".s-title__heading");
+        const twin = document.createElement("p");
+        twin.textContent = "collides";
+        twin.style.setProperty("position", "absolute");
+        twin.style.setProperty("left", heading.offsetLeft + "px");
+        twin.style.setProperty("top", heading.offsetTop + "px");
+        heading.parentNode.appendChild(twin);
+        assert.ok(layoutProblems(canvas).some((x) => x.includes("text overlaps text") && x.includes("collides")), "planted collision found");
       } finally {
         h.remove();
       }
