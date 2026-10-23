@@ -160,6 +160,103 @@
     );
   }
 
+  // ---- Improvement plan ----------------------------------------------------------------------------------------
+
+  const PLAN_STATUS = ["open", "progress", "done", "dropped"];
+
+  /** People in the exercise as owner suggestions; the owner field itself is free text. */
+  function ownerList(inst, id) {
+    return el("datalist", { id }, Object.values(inst.entities.people).map((p) => el("option", { value: p.name + " (" + BK.loc(p.roleLabel) + ")" })));
+  }
+
+  function planRow(sess, dispatch, a, lang) {
+    const commit = (patch) => dispatch({ type: "actionUpdate", id: a.id, patch });
+    const base = "fx-act-" + a.id;
+    const overdue = a.due && a.status !== "done" && a.status !== "dropped" && a.due < new Date().toISOString().slice(0, 10);
+    return el(
+      "li",
+      { class: ["fx-plan__item", "fx-plan__item--" + a.status, overdue && "is-overdue"] },
+      el(
+        "div",
+        { class: "fx-plan__head" },
+        textInput(base + "-text", a.text, (v, done) => done && v.trim() && commit({ text: v }), { "aria-label": t("plan.action", null, lang), class: "input fx-plan__text" }),
+        c.button({ label: t("plan.remove", null, lang), icon: "trash", iconOnly: true, size: "sm", kind: "ghost", className: "btn--danger-hover", onClick: () => dispatch({ type: "actionRemove", id: a.id }) })
+      ),
+      el(
+        "div",
+        { class: "form-grid form-grid--tight fx-plan__grid" },
+        c.field({ id: base + "-owner", label: t("plan.owner", null, lang), control: textInput(base + "-owner", a.owner, (v, done) => done && commit({ owner: v }), { list: base + "-people", placeholder: t("plan.ownerPlaceholder", null, lang) }) }),
+        c.field({ id: base + "-due", label: t("plan.due", null, lang), control: el("input", { id: base + "-due", class: "input", type: "date", value: a.due || "", on: { change: (e) => commit({ due: e.target.value }) } }) }),
+        c.field({ id: base + "-prio", label: t("plan.priority", null, lang), control: c.select(PRIORITIES.map((k) => ({ value: k, label: t("obs.prio." + k, null, lang) })), a.priority, (v) => commit({ priority: v }), { id: base + "-prio" }) }),
+        c.field({ id: base + "-status", label: t("plan.status", null, lang), control: c.select(PLAN_STATUS.map((k) => ({ value: k, label: t("plan.st." + k, null, lang) })), a.status, (v) => commit({ status: v }), { id: base + "-status" }) })
+      ),
+      c.field({ id: base + "-verify", label: t("plan.verify", null, lang), control: textInput(base + "-verify", a.verify, (v, done) => done && commit({ verify: v }), { placeholder: t("plan.verifyPlaceholder", null, lang) }) }),
+      overdue ? c.badge(t("plan.overdue", null, lang), "warn", "clock") : null,
+      ownerList(sess.instance, base + "-people")
+    );
+  }
+
+  /** The improvement plan: editable actions, a form for new ones, and suggestions to take in. */
+  function actionPlanEditor(sess, dispatch, lang, report) {
+    const plan = sess.actions || [];
+    const key = sess.id + ":plan:new";
+    const dr = draft(key, { text: "", owner: "", due: "", verify: "", priority: "medium" });
+    const add = (entry) => {
+      dispatch({ type: "actionAdd", entry });
+      BK.ui.toast(t("plan.added", null, lang), "ok");
+    };
+    const addNew = () => {
+      if (!dr.text.trim()) {
+        BK.ui.toast(t("plan.required", null, lang), "warn");
+        const box = document.getElementById("fx-plan-new-text");
+        if (box) box.focus();
+        return;
+      }
+      add({ text: dr.text.trim(), owner: dr.owner.trim(), due: dr.due, verify: dr.verify.trim(), priority: dr.priority, source: "manual" });
+      delete drafts[key];
+    };
+    const suggestions = (report.actions || []).filter((a) => a.kind !== "plan");
+    return el(
+      "div",
+      { class: "fx-plan" },
+      el("p", { class: "muted", text: t("plan.intro", null, lang) }),
+      plan.length ? el("ol", { class: "fx-plan__list" }, plan.map((a) => planRow(sess, dispatch, a, lang))) : el("p", { class: "muted", text: t("plan.empty", null, lang) }),
+      el(
+        "details",
+        { class: "fx-plan__new", open: !plan.length },
+        el("summary", { text: t("plan.newAction", null, lang) }),
+        c.field({ id: "fx-plan-new-text", label: t("plan.action", null, lang), control: textInput("fx-plan-new-text", dr.text, (v) => (dr.text = v)) }),
+        el(
+          "div",
+          { class: "form-grid form-grid--tight" },
+          c.field({ id: "fx-plan-new-owner", label: t("plan.owner", null, lang), control: textInput("fx-plan-new-owner", dr.owner, (v) => (dr.owner = v), { list: "fx-plan-new-people", placeholder: t("plan.ownerPlaceholder", null, lang) }) }),
+          c.field({ id: "fx-plan-new-due", label: t("plan.due", null, lang), control: el("input", { id: "fx-plan-new-due", class: "input", type: "date", value: dr.due, on: { change: (e) => (dr.due = e.target.value) } }) }),
+          c.field({ id: "fx-plan-new-prio", label: t("plan.priority", null, lang), control: c.select(PRIORITIES.map((k) => ({ value: k, label: t("obs.prio." + k, null, lang) })), dr.priority, (v) => (dr.priority = v), { id: "fx-plan-new-prio" }) })
+        ),
+        c.field({ id: "fx-plan-new-verify", label: t("plan.verify", null, lang), control: textInput("fx-plan-new-verify", dr.verify, (v) => (dr.verify = v), { placeholder: t("plan.verifyPlaceholder", null, lang) }) }),
+        ownerList(sess.instance, "fx-plan-new-people"),
+        el("div", { class: "actions" }, c.button({ label: t("plan.add", null, lang), icon: "plus", kind: "primary", size: "sm", onClick: addNew }))
+      ),
+      suggestions.length
+        ? [
+            el("h3", { class: "eyebrow", text: t("plan.suggestions", null, lang) }),
+            el(
+              "ul",
+              { class: "fx-plan__suggestions" },
+              suggestions.map((s) =>
+                el(
+                  "li",
+                  null,
+                  el("span", { class: "fx-plan__suggestion" }, el("span", { text: s.text }), el("span", { class: "muted small", text: (s.kind === "observation" ? t("plan.fromObservation", null, lang) : t("plan.fromScenario", null, lang)) + (s.owner ? " · " + s.owner : "") })),
+                  c.button({ label: t("plan.adopt", null, lang), icon: "plus", size: "sm", onClick: () => add({ text: s.text, owner: s.owner, due: s.due || "", priority: s.priority, source: s.kind, sourceRef: s.id }) })
+                )
+              )
+            )
+          ]
+        : null
+    );
+  }
+
   // ---- Learning objectives ----------------------------------------------------------------------------------
 
   function objectivesEditor(sess, dispatch, lang) {
@@ -242,5 +339,5 @@
     }, 4, t("presenter.notesField"));
   }
 
-  BK.ui.facilitation = { decisionForm, observationForm, observationList, objectivesEditor, scorecardEditor, notesEditor, OBS_CATEGORIES, RATINGS };
+  BK.ui.facilitation = { decisionForm, observationForm, observationList, objectivesEditor, scorecardEditor, notesEditor, actionPlanEditor, OBS_CATEGORIES, RATINGS };
 })();

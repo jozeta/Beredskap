@@ -79,7 +79,8 @@
       c.button({ label: t("export.json"), icon: "download", onClick: () => io.downloadJSON(ex, view.ctrl.get()) }),
       c.button({ label: t("export.csvInjects"), icon: "download", kind: "ghost", onClick: () => io.downloadCSV(view.ctrl.get(), "injects") }),
       c.button({ label: t("export.csvDecisions"), icon: "download", kind: "ghost", onClick: () => io.downloadCSV(view.ctrl.get(), "decisions") }),
-      c.button({ label: t("export.csvObservations"), icon: "download", kind: "ghost", onClick: () => io.downloadCSV(view.ctrl.get(), "observations") })
+      c.button({ label: t("export.csvObservations"), icon: "download", kind: "ghost", onClick: () => io.downloadCSV(view.ctrl.get(), "observations") }),
+      c.button({ label: t("export.csvActions"), icon: "download", kind: "ghost", onClick: () => io.downloadCSV(view.ctrl.get(), "actions") })
     );
   }
 
@@ -167,13 +168,7 @@
         )
       ),
 
-      section(
-        t("report.actions", null, l),
-        table(
-          [t("obs.action", null, l), t("obs.owner", null, l), t("obs.priority", null, l), t("obs.due", null, l), t("obs.status", null, l)],
-          r.actions.map((a) => [a.text, a.owner, t("obs.prio." + a.priority, null, l), a.due, a.fromObservation ? t("obs.st." + a.status, null, l) : c.badge(t("debrief.suggested", null, l), "neutral", "lightbulb")])
-        )
-      ),
+      section(t("plan.title", null, l), F().actionPlanEditor(sess, dispatch, l, r)),
 
       section(t("report.scorecard", null, l), F().scorecardEditor(sess, dispatch, l)),
 

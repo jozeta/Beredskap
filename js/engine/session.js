@@ -58,6 +58,7 @@
       injects,
       decisions: {},
       observations: [],
+      actions: [],
       objectives: {},
       scorecard: {},
       notes: "",
@@ -70,6 +71,27 @@
       log: [{ at: new Date(t0).toISOString(), type: "start" }],
       instance
     }, branching ? { route: [{ pageId: startPage, at: new Date(t0).toISOString(), option: null, num: B().passageNum(B().page(instance, startPage), []) }], flags: [] } : {});
+  }
+
+  const ACTION_STATUS = ["open", "progress", "done", "dropped"];
+  const ACTION_PRIORITY = ["high", "medium", "low"];
+
+  /** Keep an action's fields to known strings so storage, exports and imports agree. */
+  function normaliseAction(a) {
+    const str = (v, max) => String(v == null ? "" : v).slice(0, max);
+    return {
+      id: str(a.id, 80),
+      text: str(a.text, 1000).trim(),
+      owner: str(a.owner, 200),
+      due: /^\d{4}-\d{2}-\d{2}$/.test(a.due || "") ? a.due : "",
+      verify: str(a.verify, 1000),
+      priority: ACTION_PRIORITY.includes(a.priority) ? a.priority : "medium",
+      status: ACTION_STATUS.includes(a.status) ? a.status : "open",
+      source: ["manual", "suggested", "observation"].includes(a.source) ? a.source : "manual",
+      sourceRef: str(a.sourceRef, 80),
+      createdAt: str(a.createdAt, 40),
+      doneAt: a.doneAt ? str(a.doneAt, 40) : null
+    };
   }
 
   // ---- Clocks -----------------------------------------------------------------------------
@@ -417,6 +439,23 @@
       }
       case "observationRemove":
         sess.observations = sess.observations.filter((x) => x.id !== cmd.id);
+        break;
+      // Improvement plan: actions with an owner, a due date, how completion is verified, and a status.
+      case "actionAdd":
+        sess.actions = (sess.actions || []).concat(normaliseAction(Object.assign({ id: BK.dom.uid("act"), createdAt: new Date(at).toISOString() }, cmd.entry)));
+        break;
+      case "actionUpdate": {
+        const a = (sess.actions || []).find((x) => x.id === cmd.id);
+        if (a) {
+          const before = a.status;
+          Object.assign(a, normaliseAction(Object.assign({}, a, cmd.patch, { id: a.id })));
+          if (a.status === "done" && before !== "done") a.doneAt = new Date(at).toISOString();
+          if (a.status !== "done") a.doneAt = null;
+        }
+        break;
+      }
+      case "actionRemove":
+        sess.actions = (sess.actions || []).filter((x) => x.id !== cmd.id);
         break;
       case "objective":
         sess.objectives[cmd.objectiveId] = { status: cmd.status, note: cmd.note || "", at: new Date(at).toISOString() };
@@ -871,6 +910,8 @@
 
   BK.engine.session = {
     criteria,
+    ACTION_STATUS,
+    normaliseAction,
     findInject,
     create,
     apply,

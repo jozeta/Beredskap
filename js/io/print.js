@@ -324,7 +324,7 @@
       el("h2", { text: t("report.unresolved", null, l) }),
       list(r.unresolved.map((u) => u.source + ": " + u.text)),
       el("h2", { text: t("report.actions", null, l) }),
-      table([t("obs.action", null, l), t("obs.owner", null, l), t("obs.priority", null, l), t("obs.due", null, l)], r.actions.map((a) => [a.text, a.owner, t("obs.prio." + a.priority, null, l), a.due])),
+      table([t("plan.action", null, l), t("plan.owner", null, l), t("plan.priority", null, l), t("plan.due", null, l), t("plan.verify", null, l), t("plan.status", null, l)], r.actions.map((a) => [a.text, a.owner, t("obs.prio." + a.priority, null, l), a.due, a.verify || "", t("plan.st." + a.status, null, l)])),
       el("h2", { text: t("report.scorecard", null, l) }),
       el("p", { class: "p-sub", text: t("report.scorecardNote", null, l) }),
       table([t("csv.stage", null, l), t("guide.evaluation", null, l), t("report.rating.label", null, l), t("obs.note", null, l)], r.scorecard.map((s) => [s.stage, s.text, s.rating ? t("report.rating." + s.rating, null, l) : t("report.rating.none", null, l), s.comment])),

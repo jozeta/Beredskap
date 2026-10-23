@@ -129,10 +129,22 @@
       .concat(observations.filter((o) => o.status !== "closed").map((o) => ({ source: t("obs.cat." + (o.category || "coordination"), null, lang), text: o.observation })))
       .concat(hiddenFacts.filter((h) => h.state === "never").map((h) => ({ source: t("report.neverSurfaced", null, lang), text: h.text })));
 
-    const actions = observations
-      .filter((o) => o.action)
-      .map((o) => ({ text: o.action, owner: o.owner ? roleLabel(o.owner, lang) : "", priority: o.priority || "medium", due: o.due || "", status: o.status || "open", fromObservation: true }))
-      .concat((inst.debrief.suggestedActions || []).map((a) => ({ text: L(a.text, lang), owner: roleLabel(a.ownerRole, lang), priority: a.priority || "medium", due: "", status: "suggested", fromObservation: false })));
+    // The improvement plan first; then observation actions and scenario suggestions not yet taken into it.
+    const plan = session.actions || [];
+    const adopted = (source, ref) => plan.some((a) => a.source === source && a.sourceRef === ref);
+    const ownerText = (o) => (o && BK.data.roles.get(o) ? roleLabel(o, lang) : o || "");
+    const actions = plan
+      .map((a) => ({ id: a.id, text: a.text, owner: ownerText(a.owner), priority: a.priority, due: a.due, verify: a.verify, status: a.status, kind: "plan", overdue: !!(a.due && a.status !== "done" && a.status !== "dropped" && a.due < new Date().toISOString().slice(0, 10)) }))
+      .concat(
+        observations
+          .filter((o) => o.action && !adopted("observation", o.id))
+          .map((o) => ({ id: o.id, text: o.action, owner: o.owner ? roleLabel(o.owner, lang) : "", priority: o.priority || "medium", due: o.due || "", verify: "", status: "proposed", kind: "observation" }))
+      )
+      .concat(
+        (inst.debrief.suggestedActions || [])
+          .map((a, i) => ({ id: "suggested-" + i, text: L(a.text, lang), owner: roleLabel(a.ownerRole, lang), priority: a.priority || "medium", due: "", verify: "", status: "suggested", kind: "suggested" }))
+          .filter((a) => !adopted("suggested", a.id))
+      );
 
     const scorecard = S.criteria(inst, session).map((c) => {
       const sc = (session.scorecard || {})[c.id] || {};
@@ -310,8 +322,8 @@
     r.unresolved.forEach((u) => li(u.source + ": " + u.text));
 
     h(2, t("report.actions", null, l));
-    out.push("| " + [t("obs.action", null, l), t("obs.owner", null, l), t("obs.priority", null, l), t("obs.due", null, l)].join(" | ") + " |", "|---|---|---|---|");
-    r.actions.forEach((a) => out.push("| " + [a.text, a.owner, t("obs.prio." + a.priority, null, l), a.due].map(mdEscape).join(" | ") + " |"));
+    out.push("| " + [t("plan.action", null, l), t("plan.owner", null, l), t("plan.priority", null, l), t("plan.due", null, l), t("plan.verify", null, l), t("plan.status", null, l)].join(" | ") + " |", "|---|---|---|---|---|---|");
+    r.actions.forEach((a) => out.push("| " + [a.text, a.owner, t("obs.prio." + a.priority, null, l), a.due, a.verify || "", t("plan.st." + a.status, null, l)].map(mdEscape).join(" | ") + " |"));
 
     h(2, t("report.lessons", null, l));
     r.lessons.forEach(li);
@@ -366,6 +378,13 @@
       return csvTable(
         ["id", t("csv.stage", null, l), t("csv.question", null, l), t("report.field.option", null, l), t("report.field.text", null, l), t("report.field.rationale", null, l), t("report.field.dissent", null, l), t("report.field.openQuestions", null, l), t("report.field.owner", null, l), t("csv.recordedAt", null, l)],
         r.decisions.map((d) => [d.id, d.stage, d.question, d.option, d.text, d.rationale, d.dissent, d.openQuestions, d.owner, d.at || ""]),
+        l
+      );
+    }
+    if (kind === "actions") {
+      return csvTable(
+        [t("plan.action", null, l), t("plan.owner", null, l), t("plan.priority", null, l), t("plan.due", null, l), t("plan.verify", null, l), t("plan.status", null, l)],
+        r.actions.map((a) => [a.text, a.owner, t("obs.prio." + a.priority, null, l), a.due, a.verify || "", t("plan.st." + a.status, null, l)]),
         l
       );
     }

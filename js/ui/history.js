@@ -91,6 +91,47 @@
     );
   }
 
+  /** Open improvement actions across every session, soonest due first, each linking to its debrief. */
+  function openActions(all, lang) {
+    const today = new Date().toISOString().slice(0, 10);
+    const items = [];
+    all.forEach((s) => (s.actions || []).forEach((a) => {
+      if (a.status === "open" || a.status === "progress") items.push({ a, s });
+    }));
+    items.sort((x, y) => (x.a.due || "9999") .localeCompare(y.a.due || "9999"));
+    return c.card(
+      { class: "card card--wide history-actions" },
+      el("h2", { text: t("history.openActions") }),
+      el("p", { class: "muted", text: items.length ? t("history.openActionsIntro") : t("history.openActionsNone") }),
+      items.length
+        ? el(
+            "ul",
+            { class: "list" },
+            items.map(({ a, s }) =>
+              el(
+                "li",
+                { class: "list__item list__item--link history-actions__item" },
+                el(
+                  "a",
+                  { class: "list__main", href: "#/debrief/" + encodeURIComponent(s.id) },
+                  el("span", { class: "list__title", text: a.text }),
+                  el(
+                    "span",
+                    { class: "badges" },
+                    c.badge(t("plan.st." + a.status), a.status === "progress" ? "info" : "neutral"),
+                    a.due ? c.badge(a.due, a.due < today ? "warn" : "neutral", "clock") : null,
+                    a.due && a.due < today ? c.badge(t("plan.overdue"), "warn") : null,
+                    a.owner ? c.badge(a.owner, "neutral", "user") : null,
+                    el("span", { class: "muted small", text: BK.loc(s.title, lang) })
+                  )
+                )
+              )
+            )
+          )
+        : null
+    );
+  }
+
   BK.ui.history = {
     title: () => t("history.title"),
     render(root) {
@@ -108,7 +149,8 @@
               })
             : null,
           sessions.length ? el("ul", { class: "list" }, sessions.map((s) => row(s, lang))) : c.emptyState("timeline", t("history.empty"))
-        )
+        ),
+        all.length ? openActions(all, lang) : null
       );
     },
     runImport

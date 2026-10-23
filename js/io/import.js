@@ -239,6 +239,14 @@
       Object.values(o).forEach((v) => need(v === null || typeof v === "string", "shape", "observation field"));
       need(!o.stageId || stageIds.has(o.stageId), "reference", "observation stage");
     });
+
+    // Improvement plan (optional; older exports have none).
+    need(ses.actions === undefined || Array.isArray(ses.actions), "shape", "actions");
+    (ses.actions || []).forEach((a) => {
+      need(isObj(a) && typeof a.id === "string" && typeof a.text === "string", "shape", "action");
+      Object.values(a).forEach((v) => need(v === null || typeof v === "string", "shape", "action field"));
+      need(BK.engine.session.ACTION_STATUS.includes(a.status), "shape", "action status");
+    });
   }
 
   function stripMeta(ex) {
