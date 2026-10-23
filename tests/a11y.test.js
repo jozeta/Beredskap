@@ -121,6 +121,14 @@
     return ex;
   }
 
+  function fixtureDeck() {
+    const C = BK.engine.custom;
+    const d = C.normaliseDeck({ id: "deck-a11y", title: "A11y deck", lang: "en", slides: ["title", "questions", "chat-thread", "call", "siem", "kpi", "image", "decision"].map((id) => C.fromTemplate(id, "en")) });
+    BK.store.putItem("deck", d);
+    created.push("deck:" + d.id);
+    return d;
+  }
+
   function fixtureSession(ex) {
     let s = S().create(ex, T0);
     // Move into the exercise and log something, so presenter and debrief have content.
@@ -199,7 +207,7 @@
     });
 
     test("operator views pass the audit in both languages (empty storage)", () => {
-      [["dashboard", BK.ui.dashboard], ["library", BK.ui.library], ["wizard", BK.ui.wizard], ["history", BK.ui.history], ["settings", BK.ui.settings]].forEach(([name, view]) =>
+      [["dashboard", BK.ui.dashboard], ["library", BK.ui.library], ["wizard", BK.ui.wizard], ["history", BK.ui.history], ["settings", BK.ui.settings], ["help", BK.ui.help]].forEach(([name, view]) =>
         LANGS.forEach((lang) => assertClean(auditView(view, {}, lang), name + " (" + lang + ")"))
       );
     });
@@ -214,7 +222,9 @@
           ["wizard (scenario chosen)", BK.ui.wizard, { query: { scenario: "s07-mfa-fatigue-aitm" } }],
           ["editor", BK.ui.editor, { params: { instanceId: ex.id } }],
           ["presenter", BK.ui.presenter, { params: { sessionId: s.id } }],
-          ["debrief", BK.ui.debrief, { params: { sessionId: s.id } }]
+          ["debrief", BK.ui.debrief, { params: { sessionId: s.id } }],
+          ["builder", BK.ui.builder, { params: { deckId: fixtureDeck().id } }],
+          ["library (with a custom exercise)", BK.ui.library, {}]
         ];
         views.forEach(([name, view, ctx]) => LANGS.forEach((lang) => assertClean(auditView(view, ctx, lang), name + " (" + lang + ")")));
       } finally {

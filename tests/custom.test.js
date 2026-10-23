@@ -27,6 +27,45 @@
     return sess;
   }
 
+  suite("help guide", () => {
+    test("every help topic has a title, an icon in the sprite and text in both languages", () => {
+      const seen = new Set();
+      const both = (v, where) => assert.ok(v && typeof v.en === "string" && v.en.trim() && typeof v.sv === "string" && v.sv.trim(), "missing language in " + where);
+      BK.data.help.SECTIONS.forEach((s) => {
+        assert.ok(!seen.has(s.id), "duplicate topic " + s.id);
+        seen.add(s.id);
+        assert.ok(BK.icons.names.includes(s.icon), "unknown icon " + s.icon);
+        both(s.title, s.id);
+        s.blocks.forEach((b, i) => {
+          const w = s.id + " block " + (i + 1);
+          ["p", "tip"].forEach((k) => b[k] && both(b[k], w));
+          ["list", "steps"].forEach((k) => b[k] && b[k].forEach((x) => both(x, w)));
+          if (b.terms) b.terms.forEach(([a, d]) => (both(a, w), both(d, w)));
+        });
+      });
+      ["start", "setup", "builder", "run", "keys", "debrief", "exports"].forEach((id) => assert.ok(seen.has(id), "topic missing: " + id));
+    });
+
+    test("the help search filters topics and the keyboard topic shows the real shortcut list", () => {
+      const host = document.createElement("div");
+      document.body.appendChild(host);
+      try {
+        BK.ui.help.render(host, { params: {}, query: {} });
+        assert.ok(host.querySelector("#help-keys .shortcut-list kbd"), "shortcut list rendered");
+        const input = host.querySelector("#help-search");
+        input.value = "complication";
+        input.dispatchEvent(new Event("input"));
+        const visible = Array.from(host.querySelectorAll(".help__section")).filter((n) => !n.hidden).map((n) => n.dataset.topic);
+        assert.ok(visible.includes("pressure") && visible.length < BK.data.help.SECTIONS.length, "filtered to " + visible.join(","));
+        input.value = "zzqx-nothing";
+        input.dispatchEvent(new Event("input"));
+        assert.ok(!host.querySelector(".help__empty").hidden, "no-match message shown");
+      } finally {
+        host.remove();
+      }
+    });
+  });
+
   suite("custom exercises", () => {
     test("normaliseDeck drops unknown fields, block types and unsafe image sources", () => {
       const d = C().normaliseDeck({
