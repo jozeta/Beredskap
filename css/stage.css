@@ -811,3 +811,77 @@ kbd {
 .s-ending__word { font-size: calc(52px * var(--fit, 1)); font-weight: 700; color: var(--ink); letter-spacing: -0.01em; }
 @keyframes s-seal { from { opacity: 0; transform: scale(0.92) rotate(-6deg); } }
 .stage--preview .s-ending__seal { animation: none; }
+
+/* ============================================================================================
+   Custom (builder) slides — block layouts at canvas scale, using the stage tokens
+   ============================================================================================ */
+.s-custom { position: relative; height: 100%; }
+.s-custom__timer { position: absolute; right: 0; top: 0; }
+.cs { display: flex; flex-direction: column; justify-content: flex-start; gap: calc(28px * var(--fit, 1)); height: 100%; }
+.cs--title { justify-content: center; padding-bottom: 80px; }
+.cs--section { justify-content: center; }
+.cs--section .cs-h1 { font-size: calc(96px * var(--fit, 1)); }
+.cs--center { justify-content: center; align-items: center; text-align: center; }
+.cs--twist { justify-content: center; }
+.cs--twist .cs-kicker { color: var(--on-accent); opacity: 0.85; }
+.cs--title .cs-h1 { font-size: calc(104px * var(--fit, 1)); }
+.cs-h1 { margin: 0; font-size: calc(76px * var(--fit, 1)); font-weight: 600; line-height: 1.12; letter-spacing: -0.015em; }
+.cs-h2 { margin: 0; font-size: calc(52px * var(--fit, 1)); font-weight: 600; line-height: 1.2; }
+.cs-kicker { margin: 0; font-size: calc(30px * var(--fit, 1)); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+.cs-text { margin: 0; max-width: 1560px; line-height: 1.45; }
+.cs-text--s { font-size: calc(32px * var(--fit, 1)); color: var(--ink-muted); }
+.cs-text--m { font-size: calc(40px * var(--fit, 1)); }
+.cs-text--l { font-size: calc(48px * var(--fit, 1)); }
+.cs-center { text-align: center; margin-left: auto; margin-right: auto; }
+.cs-list { margin: 0; padding-left: 1.2em; display: grid; gap: calc(16px * var(--fit, 1)); font-size: calc(42px * var(--fit, 1)); line-height: 1.35; max-width: 1560px; }
+.cs-list--numbered { padding-left: 1.4em; }
+.cs-list li::marker { color: var(--accent); font-weight: 700; }
+.cs-quote { margin: 0; max-width: 1500px; }
+.cs-quote__text { margin: 0; padding-left: 40px; border-left: 8px solid var(--accent); font-size: calc(60px * var(--fit, 1)); line-height: 1.25; font-weight: 500; }
+.cs--center .cs-quote__text { border-left: 0; padding-left: 0; }
+.cs-quote__by { margin-top: 24px; padding-left: 48px; font-size: calc(30px * var(--fit, 1)); color: var(--ink-muted); }
+.cs--center .cs-quote__by { padding-left: 0; }
+.cs-callout { display: flex; gap: 28px; align-items: flex-start; max-width: 1560px; padding: 32px 40px; border-radius: 20px; background: var(--info-soft); border-left: 10px solid var(--info); }
+.cs-callout .icon { flex: none; color: var(--info); }
+.cs-callout__text { margin: 0; font-size: calc(40px * var(--fit, 1)); line-height: 1.4; }
+.cs-callout--warn { background: var(--warn-soft); border-left-color: var(--warn); }
+.cs-callout--warn .icon { color: var(--warn); }
+.cs-callout--danger { background: var(--danger-soft); border-left-color: var(--danger); }
+.cs-callout--danger .icon { color: var(--danger); }
+.cs-callout--ok { background: var(--ok-soft); border-left-color: var(--ok); }
+.cs-callout--ok .icon { color: var(--ok); }
+.cs-icons { display: flex; flex-wrap: wrap; gap: 48px 96px; justify-content: center; align-items: flex-start; margin-top: 24px; }
+.cs--center .cs-icons { margin-top: 0; }
+.cs-icon { margin: 0; display: grid; justify-items: center; gap: 20px; max-width: 420px; text-align: center; }
+.cs-icon__art { display: grid; place-items: center; width: 180px; height: 180px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); }
+.cs-icon--warn .cs-icon__art { background: var(--warn-soft); color: var(--warn); }
+.cs-icon--danger .cs-icon__art { background: var(--danger-soft); color: var(--danger); }
+.cs-icon--ok .cs-icon__art { background: var(--ok-soft); color: var(--ok); }
+.cs-icon__label { font-size: calc(38px * var(--fit, 1)); font-weight: 600; line-height: 1.25; }
+.cs-kpi { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 32px; }
+.cs-kpi__tile { display: grid; gap: 12px; padding: 40px; border-radius: 24px; background: var(--surface); border: 1px solid var(--line); border-top: 8px solid var(--info); }
+.cs-kpi__tile--warn { border-top-color: var(--warn); }
+.cs-kpi__tile--danger { border-top-color: var(--danger); }
+.cs-kpi__tile--ok { border-top-color: var(--ok); }
+.cs-kpi__value { font-size: calc(104px * var(--fit, 1)); font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; }
+.cs-kpi__label { font-size: calc(32px * var(--fit, 1)); color: var(--ink-muted); }
+.cs-timeline { list-style: none; margin: 0; padding: 0 0 0 36px; display: grid; gap: calc(24px * var(--fit, 1)); border-left: 4px solid var(--line); }
+.cs-timeline li { position: relative; display: grid; grid-template-columns: 200px 1fr; gap: 32px; font-size: calc(40px * var(--fit, 1)); line-height: 1.35; }
+.cs-timeline li::before { content: ""; position: absolute; left: -48px; top: 0.4em; width: 20px; height: 20px; border-radius: 50%; background: var(--accent); }
+.cs-timeline__time { font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; }
+.cs-options { list-style: none; margin: 0; padding: 0; display: grid; gap: calc(20px * var(--fit, 1)); max-width: 1600px; }
+.cs-options li { display: grid; grid-template-columns: 88px 1fr; gap: 28px; align-items: center; padding: 24px 32px; border: 1px solid var(--line); border-radius: 20px; background: var(--surface); }
+.cs-options__key { display: grid; place-items: center; width: 72px; height: 72px; border-radius: 50%; background: var(--accent); color: var(--on-accent); font-size: 36px; font-weight: 700; }
+.cs-options__text { font-size: calc(40px * var(--fit, 1)); line-height: 1.35; }
+.cs-image { margin: 0; display: grid; place-items: center; min-height: 0; flex: 1 1 auto; }
+.cs-image img { max-width: 100%; max-height: 640px; border-radius: 16px; object-fit: contain; }
+.cs-image--empty { min-height: 360px; gap: 16px; border: 4px dashed var(--line-strong); border-radius: 24px; color: var(--ink-muted); font-size: 32px; }
+.cs-divider { width: 100%; height: 0; margin: 8px 0; border: 0; border-top: 3px solid var(--line); }
+
+/* Builder edit affordances (only present inside the builder's editable canvas). */
+.cs-editable { outline: none; border-radius: 8px; transition: box-shadow 120ms; min-width: 40px; }
+.cs-editable:hover { box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent); }
+.cs-editable:focus { box-shadow: 0 0 0 4px var(--accent); }
+.cs-editable:empty::before { content: attr(data-placeholder); color: var(--ink-muted); opacity: 0.6; }
+.cs-block { position: relative; border-radius: 12px; }
+.cs-block.is-selected { box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 55%, transparent); }

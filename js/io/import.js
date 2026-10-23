@@ -84,9 +84,21 @@
     need(typeof id === "string" && ID.test(id), "shape", "id at " + where);
   }
 
+  /** Custom (builder) exercises: every slide passes through the deck normaliser and must survive unchanged in number. */
+  function checkCustomExercise(ex) {
+    need(ex.templateId === "custom" && typeof ex.seed === "string" && ex.seed.length <= 60, "shape", "custom exercise");
+    need(isObj(ex.settings) && isObj(ex.pacing) && isObj(ex.entities), "shape", "settings/pacing/entities");
+    need(Array.isArray(ex.slides) && ex.slides.length >= 1 && ex.slides.length <= 120, "shape", "slides");
+    const norm = BK.engine.custom.normaliseDeck({ slides: ex.slides }).slides;
+    need(norm.length === ex.slides.length, "shape", "slides");
+    ex.slides = norm;
+    ["objectives", "stages", "hiddenFacts"].forEach((k) => need(Array.isArray(ex[k]) && ex[k].length === 0, "shape", k));
+  }
+
   function checkExercise(ex) {
     need(isObj(ex), "shape", "exercise");
     need(ex.schema === BK.config.schemaId, "schema");
+    if (ex.format === "custom") return checkCustomExercise(ex);
     need(typeof ex.templateId === "string" && /^[sb]\d{2}-[a-z0-9-]{1,60}$/.test(ex.templateId), "shape", "templateId");
     need(typeof ex.templateVersion === "number", "shape", "templateVersion");
     need(typeof ex.seed === "string" && ex.seed.length <= 60, "shape", "seed");
@@ -213,6 +225,7 @@
 
     const branching = ex.format === "branching";
     if (branching) checkBranchingSession(ses, ex);
+    if (ex.format === "custom") need(ex.slides.some((s) => s.id === ses.position.slideId), "reference", "position");
     const injectIds = new Set();
     (branching ? ex.pages : ex.stages).forEach((s) => s.injects.concat(s.branchInjects || []).forEach((x) => injectIds.add(x.id)));
     const stageIds = new Set((branching ? ex.pages : ex.stages).map((s) => s.id));
@@ -269,7 +282,14 @@
     need(data.schema === BK.config.schemaId, "schema");
     need(typeof data.schemaVersion === "number" && data.schemaVersion >= 1, "version");
     need(data.schemaVersion <= BK.config.schemaVersion, "version", "newer than this app");
-    need(data.kind === "exercise" || data.kind === "session", "kind");
+    need(data.kind === "exercise" || data.kind === "session" || data.kind === "deck", "kind");
+
+    // A slide-builder deck: normalised like any edit, stored under a new id.
+    if (data.kind === "deck") {
+      need(isObj(data.deck) && Array.isArray(data.deck.slides), "shape", "deck");
+      const deck = BK.engine.custom.normaliseDeck(Object.assign({}, data.deck, { id: BK.dom.uid("deck") }));
+      return { deck, exercise: null, session: null };
+    }
 
     checkExercise(data.exercise);
     if (data.kind === "session") checkSession(data.session, data.exercise);
@@ -294,6 +314,10 @@
   /** Validate and store atomically. Returns { exercise, session }. */
   function importText(text) {
     const result = validate(text);
+    if (result.deck) {
+      if (!BK.store.putItem("deck", result.deck)) fail("storage");
+      return result;
+    }
     if (!BK.store.putItem("exercise", result.exercise)) fail("storage");
     if (result.session && !BK.store.putItem("session", result.session)) {
       BK.store.removeItem("exercise", result.exercise.id); // roll back: never half-imported

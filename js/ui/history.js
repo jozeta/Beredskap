@@ -21,6 +21,11 @@
     try {
       const res = await BK.io.import.pickAndImport();
       if (!res) return;
+      if (res.deck) {
+        BK.ui.toast(t("import.ok", { title: res.deck.title }), "ok");
+        BK.router.navigate("#/builder/" + encodeURIComponent(res.deck.id));
+        return;
+      }
       BK.ui.toast(t("import.ok", { title: BK.loc(res.exercise.title) }), "ok");
       BK.router.navigate(res.session ? "#/debrief/" + encodeURIComponent(res.session.id) : "#/edit/" + encodeURIComponent(res.exercise.id));
     } catch (err) {

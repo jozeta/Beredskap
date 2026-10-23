@@ -184,6 +184,41 @@
       assert.deepEqual(problems, []);
     });
 
+    test("every builder template stays inside its area, read-only and in edit mode (both languages)", () => {
+      const h = host();
+      const problems = [];
+      try {
+        const C = BK.engine.custom;
+        ["en", "sv"].forEach((lang) => {
+          const d = C.normaliseDeck({ id: "deck-layout", title: "Layout", lang, slides: C.TEMPLATES.map((x) => C.fromTemplate(x.id, lang)) });
+          const ex = Object.assign(C.toExercise(d), { id: "ex-layout-custom" });
+          let s = S().create(ex, T0);
+          d.slides.forEach((slide, i) => {
+            [false, true].forEach((edit) => {
+              const p = S().project(Object.assign({}, s, { lang }), T0);
+              h.textContent = "";
+              const canvas = BK.ui.stageRenderer.renderCanvas(p, { preview: true });
+              if (edit) {
+                const area = canvas.querySelector(".s-slide");
+                area.textContent = "";
+                const wrap = document.createElement("div");
+                wrap.className = "s-custom";
+                wrap.appendChild(BK.ui.customSlide.render(ex.slides[i], lang, { edit: true }));
+                area.appendChild(wrap);
+              }
+              h.appendChild(canvas);
+              BK.ui.stageRenderer.settle(canvas);
+              layoutProblems(canvas).forEach((x) => problems.push(C.TEMPLATES[i].id + " (" + lang + (edit ? ", edit" : "") + "): " + x));
+            });
+            s = S().apply(s, { type: "next" }, T0 + i);
+          });
+        });
+      } finally {
+        h.remove();
+      }
+      assert.deepEqual(problems, []);
+    });
+
     test("every slide of every scenario stays inside its area (both languages, every audience, two seeds)", () => {
       const h = host();
       const problems = new Set();

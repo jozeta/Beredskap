@@ -166,7 +166,20 @@
     heart: '<path d="M12 19.5s-7.5-4.3-7.5-9.5a4 4 0 0 1 7.5-2 4 4 0 0 1 7.5 2c0 5.2-7.5 9.5-7.5 9.5z"/>',
     send: '<path d="M4 11.5l16-7-5.5 15-3-6.5z"/><path d="M11.5 13l8.5-8.5"/>',
     more: '<path d="M6 12h.01M12 12h.01M18 12h.01"/>',
-    archive: '<rect x="3.5" y="4.5" width="17" height="4" rx="1"/><path d="M5 8.5v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-10M10 12.5h4"/>'
+    archive: '<rect x="3.5" y="4.5" width="17" height="4" rx="1"/><path d="M5 8.5v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-10M10 12.5h4"/>',
+    // Slide builder toolbar.
+    "list-ul": '<path d="M9 6.5h11M9 12h11M9 17.5h11"/><path d="M4.5 6.5h.01M4.5 12h.01M4.5 17.5h.01"/>',
+    "list-ol": '<path d="M10 6.5h10M10 12h10M10 17.5h10"/><path d="M4 5.5l1.5-1v4.5M4 14a1.5 1.5 0 0 1 3 0c0 1-3 2-3 3.5h3"/>',
+    "quote-mark": '<path d="M6 16.5c-1.2-1-1.8-2.4-1.8-4.2 0-2.8 1.8-5 4.3-5.8M15 16.5c-1.2-1-1.8-2.4-1.8-4.2 0-2.8 1.8-5 4.3-5.8"/><circle cx="7" cy="15" r="2.2"/><circle cx="16" cy="15" r="2.2"/>',
+    image: '<rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M20.5 16l-5-5-8 8"/>',
+    "text-t": '<path d="M5 6.5V5h14v1.5M12 5v14M9.5 19h5"/>',
+    copy: '<rect x="8.5" y="8.5" width="11" height="11" rx="2"/><path d="M15.5 8.5V6a1.5 1.5 0 0 0-1.5-1.5H6A1.5 1.5 0 0 0 4.5 6v8A1.5 1.5 0 0 0 6 15.5h2.5"/>',
+    "arrow-up": '<path d="M12 19V5M6.5 10.5L12 5l5.5 5.5"/>',
+    "arrow-down": '<path d="M12 5v14M6.5 13.5L12 19l5.5-5.5"/>',
+    "align-left": '<path d="M4.5 6.5h15M4.5 10.5h9M4.5 14.5h15M4.5 18.5h9"/>',
+    "align-center": '<path d="M4.5 6.5h15M7.5 10.5h9M4.5 14.5h15M7.5 18.5h9"/>',
+    layout: '<rect x="3.5" y="4.5" width="17" height="15" rx="2"/><path d="M3.5 9h17M9.5 9v10.5"/>',
+    divider: '<path d="M4 12h16"/><path d="M8 7h8M8 17h8" opacity=".5"/>'
   };
 
 
