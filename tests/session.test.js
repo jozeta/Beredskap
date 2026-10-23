@@ -222,6 +222,91 @@
     });
   });
 
+  suite("pressure meters and complication deck", () => {
+    test("meters appear only when switched on, and the facilitator moves them within 0–5", () => {
+      assert.equal(S().project(session(), T0).meters, null, "off by default");
+      let s = session({ meters: true });
+      const start = S().project(s, T0).meters;
+      assert.deepEqual(start.map((m) => [m.id, m.value]), [["trust", 4], ["regulator", 1], ["media", 1]]);
+      for (let i = 0; i < 8; i++) s = S().apply(s, { type: "meterAdjust", meter: "trust", delta: 1 }, T0);
+      assert.equal(S().meterValues(s)[0].value, 5, "clamped at 5");
+      for (let i = 0; i < 9; i++) s = S().apply(s, { type: "meterAdjust", meter: "trust", delta: -1 }, T0);
+      assert.equal(S().meterValues(s)[0].value, 0, "clamped at 0");
+      s = S().apply(s, { type: "meterAdjust", meter: "trust", delta: 1 }, T0);
+      assert.equal(S().meterValues(s)[0].value, 1, "one step back up from the floor");
+    });
+
+    test("branching option effects move the meters, and undoing the choice undoes them", () => {
+      const tpl = BK.scenarios.get("b01-lost-laptop");
+      const inst = Object.assign({ id: "ex-m" }, BK.engine.generator.generate(tpl, { seed: "FJORD-4821", meters: true, length: "short" }));
+      let s = S().create(inst, T0);
+      // Walk to the 72-hour page and choose "decide it is not notifiable" (regulator +2).
+      for (let i = 0; i < 400 && !(S().locate(s).slide.type === "choice" && S().locate(s).slide.pageId === "c8"); i++) {
+        const sl = S().locate(s).slide;
+        s = S().apply(s, sl.type === "choice" ? { type: "choose", nth: 1 } : { type: "next" }, T0 + i);
+      }
+      const before = S().meterValues(s).find((m) => m.id === "regulator").value;
+      s = S().apply(s, { type: "choose", option: "C" }, T0 + 9000);
+      assert.equal(S().meterValues(s).find((m) => m.id === "regulator").value, Math.min(5, before + 2));
+      s = S().apply(s, { type: "unchoose" }, T0 + 9500);
+      assert.equal(S().meterValues(s).find((m) => m.id === "regulator").value, before);
+    });
+
+    test("draws are seeded, never repeat, and only unseen cards go back", () => {
+      let a = session();
+      let b = session();
+      for (let i = 0; i < 5; i++) {
+        a = S().apply(a, { type: "complicationDraw" }, T0 + i);
+        b = S().apply(b, { type: "complicationDraw" }, T0 + i);
+      }
+      assert.deepEqual(a.complications.map((c) => c.id), b.complications.map((c) => c.id), "same seed, same cards");
+      assert.equal(new Set(a.complications.map((c) => c.id)).size, 5, "no repeats");
+      const [first, second] = a.complications.map((c) => c.id);
+      a = S().apply(a, { type: "complicationShow", id: first }, T0);
+      a = S().apply(a, { type: "complicationDiscard", id: first }, T0);
+      a = S().apply(a, { type: "complicationDiscard", id: second }, T0);
+      assert.ok(a.complications.some((c) => c.id === first), "a shown card stays on record");
+      assert.ok(!a.complications.some((c) => c.id === second), "an unseen card goes back");
+    });
+
+    test("only the shown card's title and text reach the stage; the facilitator note never does", () => {
+      let s = session();
+      s = S().apply(s, { type: "complicationDraw" }, T0);
+      const id = s.complications[0].id;
+      assert.equal(S().project(s, T0).complication, null, "drawn is not shown");
+      s = S().apply(s, { type: "complicationShow", id }, T0);
+      const card = BK.data.complications.get(id);
+      ["en", "sv"].forEach((lang) => {
+        const p = S().project(Object.assign({}, s, { lang }), T0);
+        assert.equal(p.complication.title, card.title[lang]);
+        const json = JSON.stringify(p);
+        const dom = BK.ui.stageRenderer.renderCanvas(p, {}).textContent;
+        assert.ok(!json.includes(card.note[lang]) && !dom.includes(card.note[lang]), "note leaked (" + lang + ")");
+        assert.ok(dom.includes(card.text[lang]), "card text on stage");
+      });
+      s = S().apply(s, { type: "complicationHide" }, T0);
+      assert.equal(S().project(s, T0).complication, null);
+    });
+
+    test("auto mode readies one card per new stage, not on stage one", () => {
+      let s = session({ complications: "auto", stageCount: 4 });
+      for (let i = 0; i < 400 && S().locate(s).slide.type !== "debrief"; i++) s = S().apply(s, { type: "next" }, T0 + i);
+      const keys = s.complications.map((c) => c.key);
+      assert.equal(keys.length, 3, "stages 2–4 each got one: " + keys.join(","));
+      assert.ok(!keys.includes(s.instance.stages[0].id));
+      assert.ok(s.complications.every((c) => !c.shownAt), "auto never shows a card by itself");
+    });
+
+    test("the validator rejects unknown or oversized meter effects", () => {
+      const tpl = JSON.parse(JSON.stringify(BK.scenarios.get("b11-reply-all"), (k, v) => (typeof v === "function" ? undefined : v)));
+      const t2 = Object.assign({}, BK.scenarios.get("b11-reply-all"));
+      t2.pages = tpl.pages;
+      t2.pages[0].choice.options[0].effects = { morale: 1, trust: 5 };
+      const issues = BK.engine.validator.validateTemplate(t2).map((x) => x.detail).join(" ");
+      assert.ok(issues.includes("effect morale") && issues.includes("effect trust 5"), issues);
+    });
+  });
+
   suite("confidentiality boundary", () => {
     const configs = [
       { stageCount: 4, audience: "technical", injectDensity: "high", difficulty: "advanced" },

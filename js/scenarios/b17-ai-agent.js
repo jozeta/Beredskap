@@ -126,8 +126,8 @@
           ], { tests: ["lo3"] })
         ],
         choice: ask(["What do you do about the parcels?", "Vad gör ni med paketen?"], ["Stops dispatch and redirects, and tells the real customers.", "Stoppar utskicket och omdirigerar, och berättar för de verkliga kunderna."], [
-          opt(["Stop or redirect the parcels with the carrier, and contact the customers", "Stoppa eller omdirigera paketen hos transportören, och kontakta kunderna"], "c4", ["Saves most of them.", "Räddar de flesta."], { set: "parcelsStopped" }),
-          opt(["Let them go; recover the cost later", "Låt dem gå; ta igen kostnaden senare"], "c4", ["Cheaper today. Customers find out when nothing arrives.", "Billigare i dag. Kunderna får veta när inget kommer."])
+          opt(["Stop or redirect the parcels with the carrier, and contact the customers", "Stoppa eller omdirigera paketen hos transportören, och kontakta kunderna"], "c4", ["Saves most of them.", "Räddar de flesta."], { effects: { trust: 1 }, set: "parcelsStopped" }),
+          opt(["Let them go; recover the cost later", "Låt dem gå; ta igen kostnaden senare"], "c4", ["Cheaper today. Customers find out when nothing arrives.", "Billigare i dag. Kunderna får veta när inget kommer."], { effects: { trust: -2 } })
         ])
       }),
 
@@ -207,9 +207,9 @@
           ], { headline: ["50,000 views", "50 000 visningar"], tests: ["lo1"] })
         ],
         choice: ask(["How do you respond publicly?", "Hur svarar ni offentligt?"], ["Says plainly what happened, that the agent's powers are limited now, and that fraudulent refunds will be reversed.", "Säger rakt ut vad som hände, att agentens befogenheter nu är begränsade och att bedrägliga återbetalningar kommer att återkallas."], [
-          opt(["A plain statement: what happened, what changed, refunds reversed", "Ett rakt uttalande: vad som hände, vad som ändrats, återbetalningar återkallas"], "c7", ["Takes the fun out of trying.", "Tar bort nöjet i att försöka."], { set: "honestStatement" }),
-          opt(["No comment; fix it quietly", "Ingen kommentar; rätta det i tysthet"], "c7", ["The screenshots keep circulating.", "Skärmbilderna fortsätter att cirkulera."]),
-          opt(["Keep the agent running with a prompt patch to avoid “AI fails” headlines", "Låt agenten vara igång med ändrade instruktioner för att undvika rubriker om ”AI-haveri”"], "x1", ["The internet is a very large test team.", "Internet är ett mycket stort testteam."], { set: "promptPatched" })
+          opt(["A plain statement: what happened, what changed, refunds reversed", "Ett rakt uttalande: vad som hände, vad som ändrats, återbetalningar återkallas"], "c7", ["Takes the fun out of trying.", "Tar bort nöjet i att försöka."], { effects: { media: -1 }, set: "honestStatement" }),
+          opt(["No comment; fix it quietly", "Ingen kommentar; rätta det i tysthet"], "c7", ["The screenshots keep circulating.", "Skärmbilderna fortsätter att cirkulera."], { effects: { media: 1 } }),
+          opt(["Keep the agent running with a prompt patch to avoid “AI fails” headlines", "Låt agenten vara igång med ändrade instruktioner för att undvika rubriker om ”AI-haveri”"], "x1", ["The internet is a very large test team.", "Internet är ett mycket stort testteam."], { effects: { media: 2 }, set: "promptPatched" })
         ])
       }),
 
@@ -218,8 +218,8 @@
         "{{person.dpo.name}} har också läst konversationerna. För att hjälpa ”cheferna” läste agenten ibland upp orderuppgifter: namn, adresser, vad som köpts. Och att ändra leveransadresser på andras order innebär att någon annan nu vet var de kunderna bor.\n\nDet är en personuppgiftsincident, orsakad av ett system som fungerade som det var konfigurerat."
       ], {
         choice: ask(["Do you notify?", "Anmäler ni?"], ["Notifies the regulator and tells affected customers.", "Anmäler till tillsynsmyndigheten och berättar för berörda kunder."], [
-          opt(["Notify and tell affected customers", "Anmäl och berätta för berörda kunder"], "l4", ["Meets the duty.", "Uppfyller skyldigheten."]),
-          opt(["Argue it was the customers' own data", "Argumentera för att det var kundernas egna uppgifter"], "l4", ["For some of it. Not the redirected parcels.", "För en del av det. Inte de omdirigerade paketen."])
+          opt(["Notify and tell affected customers", "Anmäl och berätta för berörda kunder"], "l4", ["Meets the duty.", "Uppfyller skyldigheten."], { effects: { regulator: -1 } }),
+          opt(["Argue it was the customers' own data", "Argumentera för att det var kundernas egna uppgifter"], "l4", ["For some of it. Not the redirected parcels.", "För en del av det. Inte de omdirigerade paketen."], { effects: { regulator: 1 } })
         ])
       }),
 

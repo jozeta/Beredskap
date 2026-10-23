@@ -146,6 +146,44 @@
       }
     });
 
+    test("the rail with pressure meters and a shown complication card fit the canvas", () => {
+      const h = host();
+      const problems = [];
+      try {
+        ["s20-perfect-storm", "s35-grey-zone", "b17-ai-agent"].forEach((id) => {
+          const tpl = BK.scenarios.get(id);
+          const inst = Object.assign({ id: "ex-m-" + id }, BK.engine.generator.generate(tpl, { seed: "LAYOUT-0003", stageCount: tpl.maxStages, meters: true, length: "long", mode: "hybrid" }));
+          let s = S().create(inst, T0);
+          for (let i = 0; i < 6; i++) s = S().apply(s, { type: "next" }, T0 + i);
+          ["en", "sv"].forEach((lang) => {
+            [false, true].forEach((withCard) => {
+              let x = s;
+              if (withCard) {
+                x = S().apply(x, { type: "complicationDraw" }, T0);
+                x = S().apply(x, { type: "complicationShow", id: x.complications[x.complications.length - 1].id }, T0);
+              }
+              const p = S().project(Object.assign({}, x, { lang }), T0);
+              h.textContent = "";
+              const canvas = BK.ui.stageRenderer.renderCanvas(p, { preview: true });
+              h.appendChild(canvas);
+              BK.ui.stageRenderer.settle(canvas);
+              const rail = canvas.querySelector(".s-rail");
+              if (rail && rail.scrollWidth > rail.clientWidth + 1) problems.push(id + " " + lang + ": rail overflows by " + (rail.scrollWidth - rail.clientWidth) + "px");
+              const card = canvas.querySelector(".s-complication__card");
+              if (card) {
+                const r = card.getBoundingClientRect();
+                const c = canvas.getBoundingClientRect();
+                if (r.bottom > c.bottom || r.top < c.top) problems.push(id + " " + lang + ": complication card leaves the canvas");
+              }
+            });
+          });
+        });
+      } finally {
+        h.remove();
+      }
+      assert.deepEqual(problems, []);
+    });
+
     test("every slide of every scenario stays inside its area (both languages, every audience, two seeds)", () => {
       const h = host();
       const problems = new Set();

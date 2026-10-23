@@ -323,6 +323,8 @@
         : el("p", { text: t("report.noObservations", null, l) }),
       el("h2", { text: t("report.unresolved", null, l) }),
       list(r.unresolved.map((u) => u.source + ": " + u.text)),
+      r.complications.length ? [el("h2", { text: t("report.complications", null, l) }), list(r.complications.map((x) => x.category + ": " + x.title + " — " + x.text))] : null,
+      r.meters ? [el("h2", { text: t("report.meters", null, l) }), list(r.meters.map((m) => m.label + ": " + m.value + "/5"))] : null,
       el("h2", { text: t("report.actions", null, l) }),
       table([t("plan.action", null, l), t("plan.owner", null, l), t("plan.priority", null, l), t("plan.due", null, l), t("plan.verify", null, l), t("plan.status", null, l)], r.actions.map((a) => [a.text, a.owner, t("obs.prio." + a.priority, null, l), a.due, a.verify || "", t("plan.st." + a.status, null, l)])),
       el("h2", { text: t("report.scorecard", null, l) }),

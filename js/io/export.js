@@ -182,6 +182,14 @@
       observations,
       unresolved,
       actions,
+      meters: inst.settings.meters ? S.meterValues(session).map((m) => ({ id: m.id, label: t("meter." + m.id, null, lang), value: m.value })) : null,
+      complications: (session.complications || [])
+        .filter((x) => x.shownAt)
+        .map((x) => {
+          const card = BK.data.complications.get(x.id);
+          return card ? { title: L(card.title, lang), text: L(card.text, lang), category: t("complication.cat." + card.cat, null, lang), shownAt: x.shownAt } : null;
+        })
+        .filter(Boolean),
       frameworks: inst.frameworks,
       scorecard,
       resolution: inst.resolution ? L(inst.resolution.text, lang) : "",
@@ -320,6 +328,15 @@
 
     h(2, t("report.unresolved", null, l));
     r.unresolved.forEach((u) => li(u.source + ": " + u.text));
+
+    if (r.complications.length) {
+      h(2, t("report.complications", null, l));
+      r.complications.forEach((x) => li(x.category + ": " + x.title + " — " + x.text));
+    }
+    if (r.meters) {
+      h(2, t("report.meters", null, l));
+      r.meters.forEach((m) => li(m.label + ": " + m.value + "/5"));
+    }
 
     h(2, t("report.actions", null, l));
     out.push("| " + [t("plan.action", null, l), t("plan.owner", null, l), t("plan.priority", null, l), t("plan.due", null, l), t("plan.verify", null, l), t("plan.status", null, l)].join(" | ") + " |", "|---|---|---|---|---|---|");

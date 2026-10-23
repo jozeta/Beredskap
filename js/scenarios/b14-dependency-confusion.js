@@ -135,7 +135,7 @@
         ],
         choice: ask(["How do you respond to the researcher?", "Hur bemöter ni forskaren?"], ["Engages in good faith while verifying, and agrees a disclosure timeline.", "Bemöter i god tro men kontrollerar, och kommer överens om en tidsplan för publicering."], [
           opt(["Thank them, verify their claims, and agree a disclosure date", "Tacka, kontrollera påståendena och kom överens om ett publiceringsdatum"], "c4", ["Turns a risk into a partner.", "Gör en risk till en partner."], { set: "researcherEngaged" }),
-          opt(["Tell them their actions were unlawful and demand silence", "Säg att agerandet var olagligt och kräv tystnad"], "c4", ["They will publish anyway, and mention this email.", "Hen kommer att publicera ändå, och nämna det här mejlet."], { set: "threatened" })
+          opt(["Tell them their actions were unlawful and demand silence", "Säg att agerandet var olagligt och kräv tystnad"], "c4", ["They will publish anyway, and mention this email.", "Hen kommer att publicera ändå, och nämna det här mejlet."], { effects: { media: 1 }, set: "threatened" })
         ])
       }),
 
@@ -177,8 +177,8 @@
       ], {
         discuss: [q("Is a build that pulled harmless foreign code a problem for customers, or only for you?", "Är ett bygge som hämtade ofarlig främmande kod ett problem för kunderna, eller bara för er?", ["serviceOwner", "legal"])],
         choice: ask(["What do you do about the shipped agent?", "Vad gör ni med den levererade agenten?"], ["Rebuilds cleanly, ships an update, and tells customers plainly what happened.", "Bygger om rent, levererar en uppdatering och berättar tydligt för kunderna vad som hände."], [
-          opt(["Rebuild, ship a clean update, and tell customers what happened", "Bygg om, leverera en ren uppdatering och berätta för kunderna vad som hände"], "l3", ["Honest and reassuring.", "Ärligt och lugnande."], { set: "disclosed" }),
-          opt(["Rebuild and ship quietly as a routine update", "Bygg om och leverera i tysthet som en vanlig uppdatering"], "l3", ["Clean, and customers may learn from the write-up.", "Rent, och kunderna kan få veta det från forskarens text."])
+          opt(["Rebuild, ship a clean update, and tell customers what happened", "Bygg om, leverera en ren uppdatering och berätta för kunderna vad som hände"], "l3", ["Honest and reassuring.", "Ärligt och lugnande."], { effects: { trust: 1 }, set: "disclosed" }),
+          opt(["Rebuild and ship quietly as a routine update", "Bygg om och leverera i tysthet som en vanlig uppdatering"], "l3", ["Clean, and customers may learn from the write-up.", "Rent, och kunderna kan få veta det från forskarens text."], { effects: { trust: -1 } })
         ])
       }),
 
@@ -205,7 +205,7 @@
         choice: ask(["What do you do?", "Vad gör ni?"], ["Rewards responsible disclosure and sets up a proper channel for the future.", "Belönar ansvarsfullt avslöjande och inrättar en ordentlig kanal för framtiden."], [
           opt(["Pay a modest reward and set up a disclosure policy", "Betala en måttlig belöning och inför en policy för sårbarhetsrapporter"], "c7", ["Encourages the next researcher to come to you first.", "Uppmuntrar nästa forskare att komma till er först."], { set: "researcherEngaged" }),
           opt(["Thank them, but decline a reward", "Tacka, men avböj en belöning"], "c7", ["Defensible, and a little cold.", "Försvarbart, och lite kallt."]),
-          opt(["Report the researcher to the police and demand the write-up be stopped", "Polisanmäl forskaren och kräv att texten stoppas"], "x1", ["Turns the story around: you become the story.", "Vänder på berättelsen: ni blir berättelsen."], { set: "threatened" })
+          opt(["Report the researcher to the police and demand the write-up be stopped", "Polisanmäl forskaren och kräv att texten stoppas"], "x1", ["Turns the story around: you become the story.", "Vänder på berättelsen: ni blir berättelsen."], { effects: { media: 2, trust: -1 }, set: "threatened" })
         ])
       }),
 
@@ -240,7 +240,7 @@
         "{{person.legal.name}} tar upp reglerna om produktsäkerhet. Ett bygge av en produkt ni levererar hämtade kod från en okänd källa, och en fientlig version av samma trick var aktiv i flera timmar.\n\nDet är oklart om det räknas som en allvarlig incident som påverkar produktens säkerhet. Om det gör det skulle en tidig varning ha lämnats inom 24 timmar från kännedom."
       ], {
         choice: ask(["Do you report?", "Rapporterar ni?"], ["Reports with a clear account, erring on the side of transparency.", "Rapporterar med en tydlig redogörelse, och väljer hellre öppenhet."], [
-          opt(["Report with a clear account of what reached the product", "Rapportera med en tydlig redogörelse för vad som nådde produkten"], "c9", ["Transparent, and shows control.", "Öppet, och visar kontroll."]),
+          opt(["Report with a clear account of what reached the product", "Rapportera med en tydlig redogörelse för vad som nådde produkten"], "c9", ["Transparent, and shows control.", "Öppet, och visar kontroll."], { effects: { regulator: -1 } }),
           opt(["Document the decision not to report", "Dokumentera beslutet att inte rapportera"], "c9", ["Defensible if the reasoning is sound.", "Försvarbart om resonemanget håller."])
         ])
       }),

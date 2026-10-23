@@ -53,6 +53,8 @@
       decisionMode: "options",
       mode: "pure",
       length: "short",
+      meters: false,
+      complications: "manual",
       seed: BK.rng.newSeed()
     };
   }
@@ -502,6 +504,21 @@
           { class: "check-row" },
           opts.pressures.map((p) => c.checkbox(t("pressure." + p), draft.pressures[p], (on) => (draft.pressures[p] = on)))
         )
+      ),
+      el(
+        "fieldset",
+        { class: "fieldset" },
+        el("legend", { class: "field__label", text: t("wizard.extras") }),
+        c.checkbox(t("wizard.meters"), draft.meters, (on) => (draft.meters = on)),
+        el("p", { class: "field__hint", text: t("wizard.metersHint") }),
+        c.segmented({
+          label: t("wizard.complications"),
+          name: "wz-complications",
+          value: draft.complications,
+          options: ["off", "manual", "auto"].map((m) => ({ value: m, label: t("complication.mode." + m) })),
+          onChange: (v) => (draft.complications = v)
+        }),
+        el("p", { class: "field__hint", text: t("wizard.complicationsHint") })
       ),
       rolesField(),
       objectivesField(),

@@ -75,7 +75,7 @@
         facilitator: { notes: L(["Move fast. Every minute more people open the attachment.", "Håll tempot. Varje minut öppnar fler personer bilagan."]) },
         choice: ask(["What do you do first?", "Vad gör ni först?"], ["Uses central tools to remove the email before more people open it, and brings in the DPO early.", "Använder centrala verktyg för att ta bort mejlet innan fler öppnar det, och tar in dataskyddsombudet tidigt."], [
           opt(["Have IT purge the email from every mailbox now", "Låt IT rensa bort mejlet ur varje brevlåda nu"], "c2", ["The fastest real fix. It cannot reach the outside address or anyone who already saved the file.", "Den snabbaste verkliga åtgärden. Den når inte den externa adressen eller den som redan sparat filen."], { set: "purged" }),
-          opt(["Email everyone asking them to delete it unopened", "Mejla alla och be dem radera det oöppnat"], "c2", ["Polite, and it makes curious people open it.", "Artigt, och det får nyfikna att öppna det."], { set: "askedDelete" }),
+          opt(["Email everyone asking them to delete it unopened", "Mejla alla och be dem radera det oöppnat"], "c2", ["Polite, and it makes curious people open it.", "Artigt, och det får nyfikna att öppna det."], { effects: { trust: -1 }, set: "askedDelete" }),
           opt(["Call the DPO and legal before doing anything", "Ring dataskyddsombudet och juristen innan ni gör något"], "c2", ["Good advice arrives, but the email stays in inboxes while you talk.", "Goda råd kommer, men mejlet ligger kvar i inkorgarna medan ni pratar."], { set: "dpoEarly" })
         ])
       }),
@@ -151,9 +151,9 @@
         ], ["Because the assistant was blamed, the union now has two issues.", "Eftersom assistenten pekades ut har facket nu två frågor."])],
         discuss: [q("What do the people on sick leave need from you today?", "Vad behöver de sjukskrivna från er i dag?", ["hr"])],
         choice: ask(["What do you tell staff?", "Vad säger ni till personalen?"], ["Tells everyone the truth today, with an apology and a clear request, and contacts the most affected individually.", "Berättar sanningen för alla i dag, med en ursäkt och en tydlig begäran, och kontaktar de mest berörda personligen."], [
-          opt(["An honest message to all staff today, and personal calls to those with sick leave noted", "Ett ärligt meddelande till all personal i dag, och personliga samtal till dem med sjukfrånvaro noterad"], "l2", ["Hard to write, and it lowers the temperature.", "Svårt att skriva, och det sänker temperaturen."], { set: "staffInformed" }),
+          opt(["An honest message to all staff today, and personal calls to those with sick leave noted", "Ett ärligt meddelande till all personal i dag, och personliga samtal till dem med sjukfrånvaro noterad"], "l2", ["Hard to write, and it lowers the temperature.", "Svårt att skriva, och det sänker temperaturen."], { effects: { trust: 1 }, set: "staffInformed" }),
           opt(["A short note asking people to delete the file", "En kort notis som ber folk radera filen"], "l2", ["Quick, and it says nothing to the people who were hurt.", "Snabbt, och det säger ingenting till dem som skadades."]),
-          opt(["Say nothing more until the investigation is done", "Säg inget mer förrän utredningen är klar"], "l2", ["The corridor fills the silence.", "Korridoren fyller tystnaden."])
+          opt(["Say nothing more until the investigation is done", "Säg inget mer förrän utredningen är klar"], "l2", ["The corridor fills the silence.", "Korridoren fyller tystnaden."], { effects: { trust: -1 } })
         ])
       }),
 
@@ -183,9 +183,9 @@
           { id: "k3", label: ["Forwards found", "Hittade vidarebefordringar"], value: (v) => v.forwards, tone: "danger" }
         ]) },
         choice: ask(["Do you notify the regulator?", "Anmäler ni till tillsynsmyndigheten?"], ["Notifies in time with what is known; health data and external copies make it clear.", "Anmäler i tid med det som är känt; hälsouppgifter och externa kopior gör saken tydlig."], [
-          opt(["Notify within 72 hours and supplement later", "Anmäl inom 72 timmar och komplettera senare"], "l3", ["Meets the duty. The regulator will ask what you are changing.", "Uppfyller skyldigheten. Myndigheten kommer att fråga vad ni ändrar."], { set: "notified" }),
-          opt(["Wait to see whether it spreads further", "Vänta och se om det sprids vidare"], "l3", ["Likely to miss the deadline.", "Missar troligen tidsfristen."], { set: "notifyLate" }),
-          opt(["Decide it was internal and not notifiable", "Bedöm att det var internt och inte anmälningspliktigt"], "l3", ["Hard to defend with private forwards and an external copy.", "Svårt att försvara med privata vidarebefordringar och en extern kopia."], { set: "denied" })
+          opt(["Notify within 72 hours and supplement later", "Anmäl inom 72 timmar och komplettera senare"], "l3", ["Meets the duty. The regulator will ask what you are changing.", "Uppfyller skyldigheten. Myndigheten kommer att fråga vad ni ändrar."], { effects: { regulator: -1 }, set: "notified" }),
+          opt(["Wait to see whether it spreads further", "Vänta och se om det sprids vidare"], "l3", ["Likely to miss the deadline.", "Missar troligen tidsfristen."], { effects: { regulator: 1 }, set: "notifyLate" }),
+          opt(["Decide it was internal and not notifiable", "Bedöm att det var internt och inte anmälningspliktigt"], "l3", ["Hard to defend with private forwards and an external copy.", "Svårt att försvara med privata vidarebefordringar och en extern kopia."], { effects: { regulator: 2 }, set: "denied" })
         ])
       }),
 
@@ -197,7 +197,7 @@
         skipTo: "c6",
         choice: ask(["How do you handle the public post?", "Hur hanterar ni det offentliga inlägget?"], ["Asks the forum to remove it and supports the manager without starting a hunt.", "Ber forumet ta bort det och stöttar chefen utan att starta en jakt."], [
           opt(["Ask the forum to remove it and support the manager", "Be forumet ta bort det och stötta chefen"], "c6", ["Removes the most visible copy without escalating.", "Tar bort den mest synliga kopian utan att trappa upp."]),
-          opt(["Investigate which employee posted it", "Utred vilken anställd som publicerade det"], "c6", ["Satisfies the manager and sours the building further.", "Tillfredsställer chefen och försämrar stämningen ytterligare."])
+          opt(["Investigate which employee posted it", "Utred vilken anställd som publicerade det"], "c6", ["Satisfies the manager and sours the building further.", "Tillfredsställer chefen och försämrar stämningen ytterligare."], { effects: { trust: -1 } })
         ])
       }),
 
@@ -212,9 +212,9 @@
           ], { headline: ["Business desk enquiry", "Fråga från ekonomiredaktionen"], tests: ["lo3"] })
         ],
         choice: ask(["What do you tell the journalist?", "Vad säger ni till journalisten?"], ["Confirms the facts briefly and describes what has been done, without details about individuals.", "Bekräftar fakta kortfattat och beskriver vad som gjorts, utan detaljer om enskilda."], [
-          opt(["Confirm briefly and describe what you have done", "Bekräfta kortfattat och beskriv vad ni har gjort"], "c7", ["A small story, accurately told.", "En liten nyhet, korrekt berättad."]),
+          opt(["Confirm briefly and describe what you have done", "Bekräfta kortfattat och beskriv vad ni har gjort"], "c7", ["A small story, accurately told.", "En liten nyhet, korrekt berättad."], { effects: { media: -1 } }),
           opt(["Confirm, apologise and offer a short interview", "Bekräfta, be om ursäkt och erbjud en kort intervju"], "c7", ["Open and human. Prepare the spokesperson well.", "Öppet och mänskligt. Förbered talespersonen väl."]),
-          opt(["Deny that any sensitive data was involved", "Förneka att några känsliga uppgifter berördes"], "x1", ["The journalist has a source inside the building.", "Journalisten har en källa inne i byggnaden."])
+          opt(["Deny that any sensitive data was involved", "Förneka att några känsliga uppgifter berördes"], "x1", ["The journalist has a source inside the building.", "Journalisten har en källa inne i byggnaden."], { effects: { media: 2, trust: -1 } })
         ])
       }),
 

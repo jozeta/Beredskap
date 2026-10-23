@@ -516,3 +516,9 @@ Manually verify the presentation flow in Chrome, Edge and Firefox at projector r
 8. JSON/Markdown/CSV/print exports work; import is validated and safe.
 9. Light/dark themes and EN/SV work throughout, including live switching on stage.
 10. tests.html passes, with results reported honestly.
+
+## Additions (October 2026)
+
+- **Improvement plan.** Sessions hold `actions: [{ id, text, owner, due, verify, priority, status: open|progress|done|dropped, source: manual|suggested|observation, sourceRef, createdAt, doneAt }]`, edited in the debrief (commands `actionAdd`, `actionUpdate`, `actionRemove`). Scenario `suggestedActions` and observation actions can be adopted into the plan. History lists open actions across sessions. Exported in the report, Markdown, print and an action-plan CSV.
+- **Pressure meters** (`settings.meters`, wizard option, default off). Three 0–5 meters describing the story's world, not the team: customer trust (starts 4), regulator attention (1), media pressure (1). Moved by the facilitator (`meterAdjust`) and, in branching exercises, by option `effects: { trust|regulator|media: ±1..2 }`, recomputed from the route so undo reverses them. Shown in the stage rail. Never a score.
+- **Complication deck** (`settings.complications`: off | manual (default) | auto). A deck of bilingual cards in `js/data/complications.js` (title and text for the room, a note for the facilitator). Draws are seeded from the exercise seed and never repeat; only a card the facilitator shows reaches the stage, as an overlay; unseen cards can be put back. "auto" readies one card at each stage after the first (every fourth choice in branching). Shown cards are listed in the debrief.
