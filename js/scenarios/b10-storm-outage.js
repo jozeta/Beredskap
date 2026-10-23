@@ -58,8 +58,8 @@
     start: "c1",
     pages: [
       pg("c1", ["Lights out", "Mörker"], [
-        "{{time.T+0|weekday|cap}}, {{time.T+0|clock}}. The storm hits. Head office and two sites lose power; mobile calls drop after a few seconds. The data room's batteries last 45 minutes.",
-        "{{time.T+0|weekday|cap}}, klockan {{time.T+0|clock}}. Stormen slår till. Huvudkontoret och två anläggningar blir strömlösa; mobilsamtal bryts efter några sekunder. Datarummets batterier räcker i 45 minuter."
+        "{{time.T+0|weekday|cap}}, {{time.T+0|clock}}. The storm that was forecast for tonight arrives early and harder than expected. Within an hour, head office and two sites have lost power.\n\nMobile calls drop after a few seconds, and messages arrive late or not at all. In the data room, the batteries give you 45 minutes before the generator has to take over. Nobody has attacked you. Nothing works anyway.",
+        "{{time.T+0|weekday|cap}}, klockan {{time.T+0|clock}}. Stormen som var utlovad till i natt kommer tidigt och hårdare än väntat. Inom en timme har huvudkontoret och två anläggningar förlorat strömmen.\n\nMobilsamtal bryts efter några sekunder, och meddelanden kommer fram sent eller inte alls. I datahallen ger batterierna er 45 minuter innan reservkraften måste ta över. Ingen har attackerat er. Ingenting fungerar ändå."
       ], {
         injects: [
           inj("b10-1", 5, "advisory", "management", "high", "confirmed", [
@@ -77,12 +77,12 @@
       }),
 
       pg("c2", ["The night shift", "Nattskiftet"], [
-        "{{num.onShift}} people are on shift at the depot. Roads are closing because of fallen trees.",
-        "{{num.onShift}} personer är i tjänst vid depån. Vägar stängs på grund av nedfallna träd."
+        "{{num.onShift}} people are on the night shift at the depot, loading tomorrow's deliveries.\n\nThe police are closing roads because of fallen trees, and some of the staff live far out in the countryside. Their families are calling, when the calls get through, to ask whether they are coming home.",
+        "{{num.onShift}} personer arbetar nattskift på depån och lastar morgondagens leveranser.\n\nPolisen stänger vägar på grund av nedfallna träd, och en del av personalen bor långt ute på landet. Deras familjer ringer, när samtalen går fram, och frågar om de kommer hem."
       ], {
         variants: [vr("waited", [
-          "By morning you learn that one of the {{num.onShift}} on the night shift drove home through a closed road and hit a fallen tree. They are injured but alive.",
-          "På morgonen får ni veta att en av de {{num.onShift}} på nattskiftet körde hem på en avstängd väg och krockade med ett nedfallet träd. Hen är skadad men vid liv."
+          "Nobody gathered the crisis team overnight. By morning you learn that one of the {{num.onShift}} people on the night shift drove home through a closed road and hit a fallen tree.\n\nThey are injured but alive, and in hospital. Nobody at the company knew where they were for six hours. The rest of the shift is still at the depot, waiting for instructions.",
+          "Ingen samlade krisledningen under natten. På morgonen får ni veta att en av de {{num.onShift}} personerna på nattskiftet körde hem på en avstängd väg och krockade med ett nedfallet träd.\n\nPersonen är skadad men vid liv, och ligger på sjukhus. Ingen på företaget visste var hen var på sex timmar. Resten av skiftet är fortfarande kvar på depån och väntar på besked."
         ], ["Because nobody led the night, people made their own decisions.", "Eftersom ingen ledde under natten fattade folk egna beslut."])],
         discuss: [q("How do you know everyone is safe if you can't call them?", "Hur vet ni att alla är i säkerhet om ni inte kan ringa dem?", ["hr", "facilities"])],
         choice: ask(["What about the people on shift?", "Vad gäller för dem som är i tjänst?"], ["Accounts for everyone and keeps them safe where they are.", "Redovisar alla och håller dem säkra där de är."], [
@@ -93,8 +93,8 @@
       }),
 
       pg("l1", ["Fuel", "Bränsle"], [
-        "The data room's generator starts. It has fuel for {{num.fuelHours}} hours, and the fuel supplier cannot reach you before the roads clear.",
-        "Datarummets reservkraftverk startar. Det har bränsle för {{num.fuelHours}} timmar, och bränsleleverantören kan inte ta sig fram förrän vägarna är röjda."
+        "The data room's generator starts as it should. But someone checks the tank: it holds fuel for {{num.fuelHours}} hours at full load.\n\nThe fuel supplier cannot reach you until the roads are cleared, and nobody knows when that will be. Every system you keep running burns fuel you may need later.",
+        "Datahallens reservkraft startar som den ska. Men någon kontrollerar tanken: den räcker i {{num.fuelHours}} timmar vid full last.\n\nBränsleleverantören kan inte nå er förrän vägarna är röjda, och ingen vet när det blir. Varje system ni låter vara igång förbrukar bränsle som ni kanske behöver senare."
       ], {
         long: true,
         skipTo: "c3",
@@ -105,12 +105,12 @@
       }),
 
       pg("c3", ["The data room", "Datarummet"], [
-        "The question is whether to keep the data room running, and for how long.",
-        "Frågan är om datarummet ska hållas igång, och hur länge."
+        "Day one, evening. Power is still out and the forecast says it may take another day.\n\nThe data room runs everything: the warehouse system, orders, email and the customer portal. If the fuel runs out with the servers still running, they crash hard, and some may not come back.",
+        "Dag ett, kväll. Strömmen är fortfarande borta och prognosen säger att det kan ta ett dygn till.\n\nDatahallen driver allt: lagersystemet, orderhanteringen, e-posten och kundportalen. Om bränslet tar slut medan servrarna är igång kraschar de hårt, och en del kanske inte kommer tillbaka."
       ], {
         variants: [vr("fuelStretched", [
-          "Because non-critical systems were shut down, the generator will last about thirty hours instead of {{num.fuelHours}}. The question is how to use them.",
-          "Eftersom det icke-kritiska stängdes ned räcker reservkraften i ungefär trettio timmar i stället för {{num.fuelHours}}. Frågan är hur de ska användas."
+          "Day one, evening. Because non-critical systems were shut down, the generator will last about thirty hours instead of {{num.fuelHours}}.\n\nPower is still out, and the forecast says it may take another day. Thirty hours is more time, but not enough to be sure. The question is how to use it.",
+          "Dag ett, kväll. Eftersom icke-kritiska system stängdes av räcker reservkraften i ungefär trettio timmar i stället för {{num.fuelHours}}.\n\nStrömmen är fortfarande borta, och prognosen säger att det kan ta ett dygn till. Trettio timmar är mer tid, men inte tillräckligt för att vara säker. Frågan är hur ni använder den."
         ], ["Because you stretched the fuel, you have time to choose.", "Eftersom ni drygade ut bränslet har ni tid att välja."])],
         choice: ask(["What do you do with the data room?", "Vad gör ni med datarummet?"], ["Shuts down in a controlled order rather than letting systems crash.", "Stänger ned i kontrollerad ordning i stället för att låta systemen krascha."], [
           opt(["A controlled shutdown before the fuel runs out", "En kontrollerad nedstängning innan bränslet tar slut"], "c4", ["Clean restart later.", "En ren omstart senare."]),
@@ -120,8 +120,8 @@
       }),
 
       pg("c3b", ["The secondary site", "Den sekundära anläggningen"], [
-        "The secondary site has power, but replication is {{num.replicationLag}} hours behind.",
-        "Den sekundära anläggningen har ström, men replikeringen ligger {{num.replicationLag}} timmar efter."
+        "The secondary site, in another town, still has power and working connections.\n\nBut data replication between the sites runs {{num.replicationLag}} hours behind. Switching over means losing the most recent orders, deliveries and changes, which someone will have to find and re-enter by hand.",
+        "Reservanläggningen, i en annan ort, har fortfarande ström och fungerande förbindelser.\n\nMen datareplikeringen mellan anläggningarna ligger {{num.replicationLag}} timmar efter. Att växla över innebär att de senaste beställningarna, leveranserna och ändringarna försvinner, och någon måste leta upp och lägga in dem för hand."
       ], {
         choice: ask(["Do you run from there?", "Kör ni därifrån?"], ["Accepts known data loss deliberately, and records what must be re-entered.", "Accepterar en känd dataförlust medvetet, och dokumenterar vad som måste föras in igen."], [
           opt(["Yes, and list what must be re-entered", "Ja, och lista vad som måste föras in igen"], "c4", ["A deliberate trade.", "En medveten avvägning."]),
@@ -130,8 +130,8 @@
       }),
 
       pg("c4", ["Customers", "Kunderna"], [
-        "Deliveries for tomorrow cannot leave. The customer portal is down and customers are calling numbers nobody can answer.",
-        "Morgondagens leveranser kan inte gå iväg. Kundportalen ligger nere och kunderna ringer nummer som ingen kan svara på."
+        "Tomorrow's deliveries cannot leave the depot: the roads are closed and the warehouse system is struggling.\n\nThe customer portal is down. Customers are calling the usual phone numbers, which ring in offices without power where nobody can answer. Some of your customers are shops and care homes waiting for supplies.",
+        "Morgondagens leveranser kan inte lämna depån: vägarna är avstängda och lagersystemet har problem.\n\nKundportalen ligger nere. Kunderna ringer de vanliga telefonnumren, som ringer på kontor utan ström där ingen kan svara. En del av era kunder är butiker och äldreboenden som väntar på leveranser."
       ], {
         choice: ask(["How do you reach customers?", "Hur når ni kunderna?"], ["Uses whatever channel still works, with honest expectations.", "Använder den kanal som fortfarande fungerar, med ärliga förväntningar."], [
           opt(["A status page hosted elsewhere and messages where possible", "En statussida som ligger någon annanstans och meddelanden där det går"], "l2", ["Some reach, honest expectations.", "Viss räckvidd, ärliga förväntningar."]),
@@ -140,8 +140,8 @@
       }),
 
       pg("l2", ["The municipality", "Kommunen"], [
-        "The municipality's crisis meeting asks whether you can lend trucks and fuel for priority needs.",
-        "Kommunens krisledning frågar om ni kan låna ut lastbilar och bränsle till prioriterade behov."
+        "Someone from the municipality's crisis meeting gets through on a landline. They know you have trucks and diesel.\n\nThey ask whether you can lend vehicles and fuel for priority needs: moving elderly residents and supplying water to an area without it. Your own generator is running on the same diesel.",
+        "Någon från kommunens krisledning når fram via en fast telefon. De vet att ni har lastbilar och diesel.\n\nDe frågar om ni kan låna ut fordon och bränsle för prioriterade behov: att flytta äldre invånare och leverera vatten till ett område som saknar det. Er egen reservkraft går på samma diesel."
       ], {
         long: true,
         skipTo: "c5",
@@ -152,12 +152,12 @@
       }),
 
       pg("c5", ["Storm scams", "Stormbedrägerier"], [
-        "Staff receive emails: “Storm emergency payment for employees, enter your bank details” and “IT: reset your password after the outage”.",
-        "Personalen får mejl: ”Krisersättning för anställda efter stormen, ange dina bankuppgifter” och ”IT: återställ ditt lösenord efter avbrottet”."
+        "The first scams arrive while people are tired and cut off. Staff receive emails: “Storm emergency payment for employees, enter your bank details” and “IT: reset your password after the outage”.\n\nBoth look official, both use the company logo, and both arrive when nobody can easily call anyone to check. Several people have already clicked.",
+        "De första bedrägerierna kommer medan folk är trötta och avskurna. Personalen får mejl: ”Krisersättning för anställda på grund av stormen, ange dina bankuppgifter” och ”IT: återställ ditt lösenord efter avbrottet”.\n\nBåda ser officiella ut, båda använder företagets logotyp och båda kommer när ingen enkelt kan ringa någon och kontrollera. Flera personer har redan klickat."
       ], {
         variants: [vr("fallbackComms", [
-          "Scam emails reach staff: a “storm emergency payment” and an “IT password reset”. Because the crisis team has a known, verified channel, staff know where real instructions come from.",
-          "Bluffmejl når personalen: en ”krisersättning efter stormen” och en ”lösenordsåterställning från IT”. Eftersom krisgruppen har en känd, verifierad kanal vet personalen var de riktiga instruktionerna kommer ifrån."
+          "The first scams arrive while people are tired and cut off: a “storm emergency payment” asking for bank details, and an “IT password reset after the outage”.\n\nBecause the crisis team has a known, agreed channel, staff know where real instructions come from. Several forward the emails to the crisis team instead of clicking. A few have already clicked.",
+          "De första bedrägerierna kommer medan folk är trötta och avskurna: en ”krisersättning på grund av stormen” som ber om bankuppgifter, och en ”lösenordsåterställning efter avbrottet” från IT.\n\nEftersom krisledningen har en känd, överenskommen kanal vet personalen var riktiga instruktioner kommer ifrån. Flera vidarebefordrar mejlen till krisledningen i stället för att klicka. Några har redan klickat."
         ], ["Because the crisis channel was established, fakes stand out.", "Eftersom krisgruppens kanal var etablerad sticker förfalskningarna ut."])],
         injects: [
           inj("b10-2", 1200, "phishingEmail", "attacker", "high", "confirmed", [
@@ -173,8 +173,8 @@
       }),
 
       pg("l3", ["The helpdesk calls", "”IT-supporten” ringer"], [
-        "Staff on the landline get calls from “IT support” asking for the code from their authenticator to “restore access after the outage”.",
-        "Personal på fast telefon får samtal från ”IT-supporten” som ber om koden från deras autentiseringsapp för att ”återställa åtkomsten efter avbrottet”."
+        "The scammers switch to the phone. Staff working from the few landlines still in service get calls from “IT support”.\n\nThe caller is friendly and patient, and asks for the code from the staff member's authenticator app “to restore your access after the outage”. One person in finance has already read out a code.",
+        "Bedragarna byter till telefonen. Anställda som arbetar vid de få fasta telefoner som fortfarande fungerar får samtal från ”IT-supporten”.\n\nDen som ringer är vänlig och tålmodig, och ber om koden från den anställdes autentiseringsapp ”för att återställa din åtkomst efter avbrottet”. En person på ekonomi har redan läst upp en kod."
       ], {
         long: true,
         skipTo: "c6",
@@ -185,12 +185,12 @@
       }),
 
       pg("c6", ["Day two", "Dag två"], [
-        "Power returns to head office. Everyone wants everything back now.",
-        "Strömmen kommer tillbaka till huvudkontoret. Alla vill ha allt tillbaka nu."
+        "Day two. Power returns to head office in the afternoon, and the network starts coming back.\n\nEvery department wants its systems back immediately: the warehouse, sales, finance, customer service. The IT team is small and has been awake for thirty hours.",
+        "Dag två. Strömmen kommer tillbaka till huvudkontoret på eftermiddagen och nätet börjar fungera igen.\n\nVarje avdelning vill ha sina system tillbaka omedelbart: lagret, försäljningen, ekonomi, kundtjänst. IT-teamet är litet och har varit vakna i trettio timmar."
       ], {
         variants: [vr("hardCrash", [
-          "Power returns. Two servers did not come back after the hard crash, and the warehouse database reports corruption. Everyone wants everything back now.",
-          "Strömmen kommer tillbaka. Två servrar startade inte efter den hårda kraschen, och lagerdatabasen rapporterar fel. Alla vill ha allt tillbaka nu."
+          "Day two. Power returns to head office in the afternoon.\n\nTwo servers did not come back after the hard crash when the fuel ran out, and the warehouse database reports corruption. Every department still wants everything back immediately, and the IT team has been awake for thirty hours.",
+          "Dag två. Strömmen kommer tillbaka till huvudkontoret på eftermiddagen.\n\nTvå servrar kom inte tillbaka efter den hårda kraschen när bränslet tog slut, och lagerdatabasen rapporterar skadad data. Alla avdelningar vill ändå ha allt tillbaka omedelbart, och IT-teamet har varit vakna i trettio timmar."
         ], ["Because the data room ran until it crashed, the restart is harder.", "Eftersom datarummet gick tills det kraschade blir omstarten svårare."])],
         choice: ask(["How do you restart?", "Hur startar ni igen?"], ["Restarts in priority order with checks at each step.", "Startar i prioritetsordning med kontroller i varje steg."], [
           opt(["In priority order, checking each system", "I prioritetsordning, med kontroll av varje system"], "c7", ["Slower first hour, fewer surprises.", "Långsammare första timme, färre överraskningar."]),
@@ -201,8 +201,8 @@
       }),
 
       pg("c7", ["The costs", "Kostnaderna"], [
-        "Spoiled goods, overtime, hired generators. The insurer asks for documentation.",
-        "Förstörda varor, övertid, hyrda reservkraftverk. Försäkringsbolaget vill ha dokumentation."
+        "The bills start arriving: spoiled chilled goods, overtime for everyone who worked through, hired generators and emergency repairs.\n\nThe insurer asks for documentation of every cost, with dates and decisions. Nobody kept a proper log during the first night.",
+        "Räkningarna börjar komma: förstörda kylvaror, övertid för alla som arbetade igenom, hyrda elverk och akuta reparationer.\n\nFörsäkringsbolaget begär dokumentation för varje kostnad, med datum och beslut. Ingen förde en ordentlig logg under den första natten."
       ], {
         choice: ask(["How do you handle the claim?", "Hur hanterar ni anspråket?"], ["Documents decisions and costs as they happen.", "Dokumenterar beslut och kostnader allteftersom."], [
           opt(["Assemble the crisis log and receipts now", "Sammanställ krisloggen och kvittona nu"], "l4", ["Memory fades by the week.", "Minnet bleknar för varje vecka."]),
@@ -211,8 +211,8 @@
       }),
 
       pg("l4", ["The suppliers", "Leverantörerna"], [
-        "The telecom provider's service level promised four hours; it took thirty.",
-        "Teleoperatörens servicenivå lovade fyra timmar; det tog trettio."
+        "The review of suppliers finds a gap between paper and reality. The telecom provider's service level promised to restore your connections within four hours.\n\nIt took thirty. The contract gives you a small service credit, which does nothing for the deliveries that never left.",
+        "Genomgången av leverantörerna visar ett glapp mellan papper och verklighet. Teleoperatörens servicenivå lovade att återställa era förbindelser inom fyra timmar.\n\nDet tog trettio. Avtalet ger er en liten kreditering, som inte hjälper de leveranser som aldrig lämnade depån."
       ], {
         long: true,
         skipTo: "c8",
@@ -223,8 +223,8 @@
       }),
 
       pg("c8", ["Back to normal", "Tillbaka till det normala"], [
-        "A week later everything runs again.",
-        "En vecka senare fungerar allt igen."
+        "A week later, everything runs again. The roads are clear, deliveries have caught up and the depot is back to normal routines.\n\nEveryone is tired, and many would like to put the storm behind them as quickly as possible.",
+        "En vecka senare fungerar allt igen. Vägarna är röjda, leveranserna har kommit ikapp och depån är tillbaka i sina vanliga rutiner.\n\nAlla är trötta, och många vill gärna lägga stormen bakom sig så fort som möjligt."
       ], {
         choice: ask(["What happens now?", "Vad händer nu?"], ["Holds an after-action review with the people who were there.", "Håller en genomgång efteråt med dem som var där."], [
           opt(["An after-action review with staff from every site", "En genomgång efteråt med personal från alla anläggningar"], "c9", ["Captures what really happened.", "Fångar vad som verkligen hände."]),
@@ -233,8 +233,8 @@
       }),
 
       pg("c9", ["The continuity plan", "Kontinuitetsplanen"], [
-        "The continuity plan assumed phones would work.",
-        "Kontinuitetsplanen förutsatte att telefonerna skulle fungera."
+        "Someone reads the business continuity plan aloud. It assumed, on almost every page, that phones would work and that people could be reached.\n\nIt was written four years ago, and nobody had ever tested it.",
+        "Någon läser kontinuitetsplanen högt. På nästan varje sida utgick den från att telefonerna skulle fungera och att folk gick att nå.\n\nDen skrevs för fyra år sedan, och ingen hade någonsin testat den."
       ], {
         choice: ask(["What do you change?", "Vad ändrar ni?"], ["Tests the plan in a blackout exercise and adds offline fallbacks.", "Testar planen i en övning med strömavbrott och lägger till reservlösningar som fungerar utan nät."], [
           opt(["A yearly blackout exercise and an offline crisis kit", "En årlig övning med strömavbrott och en krislåda som fungerar utan nät"], "c10", ["Practice, not paper.", "Övning, inte papper."]),
@@ -243,8 +243,8 @@
       }),
 
       pg("c10", ["The scam lesson", "Lärdomen om bedrägerierna"], [
-        "The review shows that scams peaked when people were most tired and least able to check.",
-        "Genomgången visar att bedrägerierna nådde sin topp när folk var som tröttast och minst kunde kontrollera."
+        "The last finding of the review is about the scams. They peaked exactly when people were most tired and least able to check anything: on the first night and the morning after.\n\nThe crisis plan says nothing about fraud. Next time, the scammers will be just as quick.",
+        "Det sista fyndet i genomgången handlar om bedrägerierna. De nådde sin topp precis när folk var som tröttast och minst kunde kontrollera något: den första natten och morgonen efter.\n\nKrisplanen säger ingenting om bedrägerier. Nästa gång kommer bedragarna att vara lika snabba."
       ], {
         choice: ask(["What goes into the crisis plan?", "Vad förs in i krisplanen?"], ["Puts security warnings into crisis communications from the first hour.", "För in säkerhetsvarningar i kriskommunikationen från första timmen."], [
           opt(["Scam warnings in the first crisis message", "Varningar för bedrägerier i det första krismeddelandet"], "r-end", ["Prevents the predictable.", "Förebygger det förutsägbara."]),
@@ -261,25 +261,25 @@
         ])
       }),
 
-      pg("e1", ["Contained", "Begränsad"], ["Ending", "Slut"], {
+      pg("e1", ["A month later", "En månad senare"], ["The crisis team met within the hour, everyone on the night shift was accounted for and safe, and staff recognised a scam when they saw one.\n\nThe storm cost money, in spoiled goods and overtime, but nothing more. The municipality thanked you publicly for the trucks.", "Krisledningen möttes inom en timme, alla på nattskiftet var kontrollerade och i säkerhet, och personalen kände igen ett bedrägeri när de såg ett.\n\nStormen kostade pengar, i förstörda varor och övertid, men inget mer. Kommunen tackade er offentligt för lastbilarna."], {
         ending: end(1, ["Ready for the dark", "Redo för mörkret"], [
           "The crisis team met within the hour, everyone on shift was safe, and staff knew a scam when they saw one. The storm cost money, nothing more.",
           "Krisgruppen samlades inom en timme, alla i tjänst var i säkerhet och personalen kände igen ett bedrägeri när de såg det. Stormen kostade pengar, inget mer."
         ])
       }),
-      pg("e2", ["Managed", "Hanterad"], ["Ending", "Slut"], {
+      pg("e2", ["A month later", "En månad senare"], ["Staff were safe and the scams were blocked.\n\nBut it took hours to get the crisis team together, because the plan depended on phones that did not work. The review asks for a fallback that works without phones, and a date when it will be tested.", "Personalen var i säkerhet och bedrägerierna stoppades.\n\nMen det tog timmar att samla krisledningen, eftersom planen byggde på telefoner som inte fungerade. Genomgången kräver en reservlösning som fungerar utan telefoner, och ett datum då den ska testas."], {
         ending: end(2, ["Safe, but slow to gather", "Säkert, men långsamt att samlas"], [
           "Staff were safe and scams were blocked, but it took hours to get the crisis team together. The review asks for a fallback that works without phones.",
           "Personalen var i säkerhet och bedrägerierna stoppades, men det tog timmar att samla krisgruppen. Genomgången efterfrågar en reservlösning som fungerar utan telefoner."
         ])
       }),
-      pg("e3", ["Damaging", "Skadlig"], ["Ending", "Slut"], {
+      pg("e3", ["A month later", "En månad senare"], ["Everyone was safe, which mattered most.\n\nBut staff handed over bank details and authenticator codes to the storm scammers. Accounts have to be cleaned, salary payments checked by hand, and one employee's salary went to a criminal's account.", "Alla var i säkerhet, vilket var det viktigaste.\n\nMen personalen lämnade ut bankuppgifter och autentiseringskoder till stormbedragarna. Konton måste rensas, lönebetalningar kontrolleras för hand, och en anställds lön gick till en kriminells konto."], {
         ending: end(3, ["Safe, then scammed", "I säkerhet, sedan lurade"], [
           "Everyone was safe, but staff handed over bank details and authenticator codes to storm scammers. Accounts must be cleaned and salaries checked.",
           "Alla var i säkerhet, men personal lämnade ut bankuppgifter och koder till stormbedragare. Konton måste saneras och löner kontrolleras."
         ])
       }),
-      pg("e4", ["Severe", "Allvarlig"], ["Ending", "Slut"], {
+      pg("e4", ["Two months later", "Två månader senare"], ["Nobody accounted for the night shift, and someone was hurt on a closed road on their way home.\n\nThe work environment authority has opened an inquiry into how the company protects staff in a crisis. The colleague is recovering, but the question of why nobody called them is still unanswered.", "Ingen kontrollerade nattskiftet, och en person skadades på en avstängd väg på väg hem.\n\nArbetsmiljömyndigheten har inlett en utredning om hur företaget skyddar personalen i en kris. Kollegan återhämtar sig, men frågan om varför ingen ringde är fortfarande obesvarad."], {
         ending: end(4, ["Nobody counted", "Ingen räknade"], [
           "Nobody accounted for the night shift, and someone was hurt on a closed road. The work environment authority opens an inquiry.",
           "Ingen redovisade nattskiftet, och någon skadades på en avstängd väg. Arbetsmiljömyndigheten inleder en utredning."
@@ -288,8 +288,8 @@
 
       // Break-away: "it was a cyberattack".
       pg("x1", ["A convenient attack", "Ett lägligt angrepp"], [
-        "The evening news reports that {{org.name}} was hit by a cyberattack during the storm. {{reg.csirt}} calls and asks for details.",
-        "Kvällsnyheterna rapporterar att {{org.name}} drabbades av ett cyberangrepp under stormen. {{reg.csirt}} ringer och frågar efter detaljer."
+        "Your statement to the press blames a cyberattack for the delays. It sounds better than “we had no plan for a storm”.\n\nThe evening news reports that {{org.name}} was hit by a cyberattack during the storm. The next morning {{reg.csirt}} calls: they want details of the attack, so they can warn others.",
+        "Ert uttalande till pressen skyller förseningarna på en cyberattack. Det låter bättre än ”vi hade ingen plan för en storm”.\n\nKvällsnyheterna rapporterar att {{org.name}} drabbades av en cyberattack under stormen. Nästa morgon ringer {{reg.csirt}}: de vill ha detaljer om attacken, så att de kan varna andra."
       ], {
         choice: ask(["What do you tell the CSIRT?", "Vad säger ni till CSIRT?"], ["Tells the authority the truth immediately.", "Berättar sanningen för myndigheten omedelbart."], [
           opt(["The truth: it was the storm", "Sanningen: det var stormen"], "x2", ["Now the press statement is the problem.", "Nu är pressuttalandet problemet."]),
@@ -297,8 +297,8 @@
         ])
       }),
       pg("x2", ["Staff talk", "Personalen pratar"], [
-        "Staff who worked through the night tell the local paper there was no attack, only a storm and no plan.",
-        "Personal som arbetade genom natten berättar för lokaltidningen att det inte var något angrepp, bara en storm och ingen plan."
+        "Staff who worked through the night read the news. Several of them tell the local paper there was no attack, only a storm and no plan.\n\nThe article quotes them by name, next to your statement.",
+        "Anställda som arbetade igenom natten läser nyheterna. Flera av dem berättar för lokaltidningen att det inte var någon attack, bara en storm och ingen plan.\n\nArtikeln citerar dem med namn, bredvid ert uttalande."
       ], {
         choice: ask(["How do you respond?", "Hur svarar ni?"], ["Corrects the record publicly.", "Rättar uppgifterna offentligt."], [
           opt(["Correct it publicly", "Rätta det offentligt"], "x3", ["Necessary.", "Nödvändigt."]),
@@ -306,8 +306,8 @@
         ])
       }),
       pg("x3", ["The insurer", "Försäkringsbolaget"], [
-        "Your insurer notes the cyberattack claim and asks whether you intend to claim under the cyber policy.",
-        "Ert försäkringsbolag noterar påståendet om ett cyberangrepp och frågar om ni tänker göra anspråk på cyberförsäkringen."
+        "Your insurer has seen the news too. It notes the claim of a cyberattack, and asks whether you intend to claim under the cyber policy rather than the property policy.\n\nThe answer will be put in writing and compared with the evidence.",
+        "Ert försäkringsbolag har också sett nyheterna. Det noterar påståendet om en cyberattack och frågar om ni tänker göra anspråk på cyberförsäkringen i stället för egendomsförsäkringen.\n\nSvaret kommer att dokumenteras skriftligt och jämföras med bevisen."
       ], {
         choice: ask(["What do you answer?", "Vad svarar ni?"], ["Keeps insurance claims strictly factual.", "Håller försäkringsanspråken strikt sakliga."], [
           opt(["No: the loss was weather", "Nej: förlusten berodde på vädret"], "x4", ["Correct, and awkward.", "Korrekt, och pinsamt."]),
@@ -315,15 +315,15 @@
         ])
       }),
       pg("x4", ["Trust", "Förtroende"], [
-        "Customers and staff now question every statement from management.",
-        "Kunder och personal ifrågasätter nu varje uttalande från ledningen."
+        "Customers and staff now question every statement from management, not only about the storm.\n\nThe union asks for an independent review, and two large customers ask for written assurances about your continuity planning.",
+        "Kunder och personal ifrågasätter nu varje uttalande från ledningen, inte bara om stormen.\n\nFacket begär en oberoende granskning, och två stora kunder ber om skriftliga försäkringar om er kontinuitetsplanering."
       ], {
         choice: ask(["How do you rebuild it?", "Hur bygger ni upp det igen?"], ["Admits the misstatement and shares the honest review.", "Erkänner det felaktiga uttalandet och delar den ärliga genomgången."], [
           opt(["Admit it and publish the honest review", "Erkänn det och publicera den ärliga genomgången"], "e5", ["The slow way back.", "Den långsamma vägen tillbaka."]),
           opt(["Wait for it to blow over", "Vänta tills det blåser över"], "e5", ["It doesn't.", "Det gör det inte."])
         ])
       }),
-      pg("e5", ["Disaster", "Katastrof"], ["Ending", "Slut"], {
+      pg("e5", ["Three months later", "Tre månader senare"], ["Blaming an invented cyberattack misled an authority, your insurer and your own staff.\n\nThe storm passed in two days. The loss of trust did not: customers want written guarantees, staff doubt management's word, and {{reg.csirt}} remembers the wasted morning.", "Att skylla på en påhittad cyberattack vilseledde en myndighet, ert försäkringsbolag och er egen personal.\n\nStormen drog förbi på två dagar. Förtroendeförlusten gjorde det inte: kunderna vill ha skriftliga garantier, personalen tvivlar på ledningens ord och {{reg.csirt}} minns den bortkastade morgonen."], {
         ending: end(5, ["The storm after the storm", "Stormen efter stormen"], [
           "Blaming an invented cyberattack misled an authority, your insurer and your own staff. The storm passed; the loss of trust did not.",
           "Att skylla på ett påhittat cyberangrepp vilseledde en myndighet, ert försäkringsbolag och er egen personal. Stormen gick över; förtroendeförlusten gjorde det inte."

@@ -78,8 +78,8 @@
         clock: 0,
         title: L(["The bill that tripled", "Fakturan som tredubblades"]),
         narrative: L([
-          "{{time.T+0|weekday}} morning, {{time.T+0|clock}}. The cloud team at {{org.name}} opens a billing alert from {{supplier.cloud}}.",
-          "{{time.T+0|weekday|cap}} morgon, klockan {{time.T+0|clock}}. Molnteamet hos {{org.name}} öppnar ett larm om fakturering från {{supplier.cloud}}."
+          "{{time.T+0|weekday|cap}} {{time.T+0|daypart}}, {{time.T+0|clock}}. The cloud team at {{org.name}} opens a billing alert from {{supplier.cloud}}: spending in your account has tripled over the weekend.\n\nDozens of large compute instances have been running in regions you never use. A big release is planned for this week, and the developers would like the problem to be a runaway test script that can simply be switched off.",
+          "{{time.T+0|weekday|cap}} {{time.T+0|daypart}}, klockan {{time.T+0|clock}}. Molnteamet hos {{org.name}} öppnar ett larm om fakturering från {{supplier.cloud}}: kostnaderna i ert konto har tredubblats under helgen.\n\nDussintals stora beräkningsinstanser har körts i regioner ni aldrig använder. En stor release är planerad den här veckan, och utvecklarna hoppas att problemet är ett testskript som skenat och som bara kan stängas av."
         ]),
         injects: [
           inj("i1-1", 0, "ticket", "itOps", "high", "confirmed", [
@@ -144,8 +144,8 @@
         assumptionChallenged: L(["The key was stolen recently.", "Nyckeln stals nyligen."]),
         reveals: ["hf-keys"],
         narrative: L([
-          "{{time.T+120|clock}}. A secret-scanning search turns up the key in an unexpected place.",
-          "Klockan {{time.T+120|clock}}. En sökning efter hemligheter hittar nyckeln på ett oväntat ställe."
+          "{{time.T+120|clock}}. The instances are stopped, and the team searches for the access key that launched them.\n\nThey expected to find it on a build server or in a colleague's laptop. A secret-scanning search turns it up somewhere else entirely, somewhere anyone in the world could have read it.",
+          "Klockan {{time.T+120|clock}}. Instanserna är stoppade, och teamet letar efter åtkomstnyckeln som startade dem.\n\nDe räknade med att hitta den på en byggserver eller i en kollegas dator. En sökning efter hemligheter hittar den på ett helt annat ställe, ett ställe där vem som helst i världen kunde ha läst den."
         ]),
         injects: [
           inj("i2-1", 120, "forensicFinding", "soc", "high", "confirmed", [
@@ -201,8 +201,8 @@
         assumptionChallenged: L(["The attacker only used your cloud for mining.", "Angriparen använde bara ert moln för utvinning."]),
         reveals: ["hf-pipeline"],
         narrative: L([
-          "{{time.T+300|clock}}. The development lead compares the pipeline definition with version control.",
-          "Klockan {{time.T+300|clock}}. Utvecklingsansvarig jämför pipelinens definition med versionshanteringen."
+          "{{time.T+300|clock}}. The key had administrator rights in the build account, so the development lead checks what else it could have touched.\n\nThey compare the pipeline definition running on the build server with the version stored in version control, step by step. The two should be identical.",
+          "Klockan {{time.T+300|clock}}. Nyckeln hade administratörsrättigheter i byggkontot, så utvecklingschefen kontrollerar vad mer den kan ha rört.\n\nHen jämför pipelinedefinitionen som körs på byggservern med versionen i versionshanteringen, steg för steg. De två ska vara identiska."
         ]),
         injects: [
           inj("i3-1", 300, "forensicFinding", "person.devLead", "critical", "confirmed", [
@@ -269,8 +269,8 @@
         assumptionChallenged: L(["Releases signed outside the pipeline are safe.", "Versioner som signerats utanför pipelinen är säkra."]),
         reveals: ["hf-signing"],
         narrative: L([
-          "{{time.T+600|clock}}. The cloud team checks who could read the signing key.",
-          "Klockan {{time.T+600|clock}}. Molnteamet kontrollerar vem som kunde läsa signeringsnyckeln."
+          "{{time.T+600|clock}}. The question everyone has been avoiding: the releases are signed, and customers trust the signature. Who could read the signing key?\n\nThe cloud team checks the secret store and its access logs. The answer decides whether your signature still means anything.",
+          "Klockan {{time.T+600|clock}}. Frågan som alla har undvikit: versionerna är signerade, och kunderna litar på signaturen. Vem kunde läsa signeringsnyckeln?\n\nMolnteamet kontrollerar hemlighetslagret och dess åtkomstloggar. Svaret avgör om er signatur fortfarande betyder något."
         ]),
         injects: [
           inj("i4-1", 600, "logExcerpt", "itOps", "critical", "confirmed", [
@@ -321,8 +321,8 @@
         twistKind: "authority",
         assumptionChallenged: L(["We decide when our product is safe again.", "Vi bestämmer när vår produkt är säker igen."]),
         narrative: L([
-          "The next day. Customers have read the notice.",
-          "Nästa dag. Kunderna har läst underrättelsen."
+          "The next day. Customers have read your security notice, and the account managers' phones have not stopped ringing.\n\nMost customers want reassurance. One of the largest wants something else: proof, in writing, of exactly which releases can be trusted, and their own regulator is asking them the same question.",
+          "Nästa dag. Kunderna har läst ert säkerhetsmeddelande, och kundansvarigas telefoner har inte slutat ringa.\n\nDe flesta kunder vill bli lugnade. En av de största vill ha något annat: bevis, skriftligt, för exakt vilka versioner som går att lita på, och deras egen tillsynsmyndighet ställer samma fråga till dem."
         ]),
         injects: [
           inj("i5-1", 1440, "email", "customer", "high", "confirmed", [
@@ -374,8 +374,8 @@
         assumptionChallenged: L(["Only your paying customers are affected.", "Bara era betalande kunder är drabbade."]),
         reveals: ["hf-registry"],
         narrative: L([
-          "The day after. A security researcher gets in touch.",
-          "Dagen därpå. En säkerhetsforskare hör av sig."
+          "The day after. The team is still working through the customer releases when a security researcher gets in touch.\n\nYour organisation also publishes an open-source library, used by thousands of developers who are not your customers and have never heard of this incident.",
+          "Dagen därpå. Teamet arbetar fortfarande med kundversionerna när en säkerhetsforskare hör av sig.\n\nEr organisation publicerar också ett bibliotek med öppen källkod, som används av tusentals utvecklare som inte är era kunder och aldrig har hört talas om den här incidenten."
         ]),
         injects: [
           inj("i6-1", 2160, "threatIntel", "threatIntel", "high", "confirmed", [
@@ -426,8 +426,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["We can freeze releases until the rebuild is done.", "Vi kan frysa releaser tills återuppbyggnaden är klar."]),
         narrative: L([
-          "Three days later. The rebuild of the build environment is under way.",
-          "Tre dagar senare. Återuppbyggnaden av byggmiljön pågår."
+          "Three days later. The old build environment has been shut down and a clean one is being built from scratch, slowly and carefully.\n\nThen an advisory lands that cannot wait for the rebuild: a component you ship has a critical vulnerability that attackers are already using.",
+          "Tre dagar senare. Den gamla byggmiljön har stängts ned och en ren byggs upp från grunden, långsamt och noggrant.\n\nSedan kommer en varning som inte kan vänta på ombyggnaden: en komponent ni levererar har en kritisk sårbarhet som angripare redan utnyttjar."
         ]),
         injects: [
           inj("i7-1", 4320, "advisory", "vendor", "high", "confirmed", [
@@ -489,8 +489,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["This was one developer's mistake.", "Det här var en enskild utvecklares misstag."]),
         narrative: L([
-          "A week later. The secret-scanning results for the whole organisation arrive.",
-          "En vecka senare. Resultaten från genomsökningen efter hemligheter i hela organisationen kommer."
+          "A week later. The organisation-wide secret scan, started on the first day, has finished.\n\nThe leaked key was supposed to be an unlucky one-off. The results show whether it was a mistake or a habit, and how many other doors are standing open.",
+          "En vecka senare. Den organisationsövergripande sökningen efter hemligheter, som startades första dagen, är klar.\n\nDen läckta nyckeln skulle vara ett enstaka olyckligt misstag. Resultatet visar om det var ett misstag eller en vana, och hur många andra dörrar som står öppna."
         ]),
         injects: [
           inj("i8-1", 10080, "impactReport", "soc", "medium", "confirmed", [

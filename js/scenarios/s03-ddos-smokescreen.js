@@ -83,8 +83,8 @@
         clock: 0,
         title: L(["The shop goes dark", "Butiken släcks ner"]),
         narrative: L([
-          "{{time.T+0|day}}, {{time.T+0|clock}}. The biggest sales evening of the year has just started. {{org.service.primary|cap}} is timing out for most visitors, and monitoring shows traffic many times the normal peak.",
-          "{{time.T+0|day}}, klockan {{time.T+0|clock}}. Årets största försäljningskväll har just börjat. {{org.service.primary|cap}} svarar inte för de flesta besökare, och övervakningen visar trafik som är många gånger högre än en normal topp."
+          "{{time.T+0|day|cap}}, {{time.T+0|clock}}. The biggest sales evening of the year has just started; the campaign has been advertised for weeks and the warehouse is fully staffed.\n\n{{org.service.primary|cap}} is timing out for most visitors, and monitoring shows traffic many times the normal peak. Shoppers are already complaining on social media, and every minute offline is money that will not come back.",
+          "{{time.T+0|day|cap}}, klockan {{time.T+0|clock}}. Årets största försäljningskväll har just börjat; kampanjen har annonserats i veckor och lagret är fullt bemannat.\n\n{{org.service.primary|cap}} svarar inte för de flesta besökare, och övervakningen visar trafik som är många gånger högre än en normal topp. Kunderna klagar redan i sociala medier, och varje minut offline är pengar som inte kommer tillbaka."
         ]),
         injects: [
           inj("i1-1", 0, "networkEvidence", "itOps", "critical", "confirmed", [
@@ -153,8 +153,8 @@
         twistKind: "scope",
         assumptionChallenged: L(["Upstream scrubbing will end the attack.", "Rensning uppströms gör slut på attacken."]),
         narrative: L([
-          "{{time.T+60|clock}}. The links are clear again, but the site is still crawling. The web servers are overloaded by requests that look exactly like customers browsing, searching and logging in.",
-          "Klockan {{time.T+60|clock}}. Förbindelserna är fria igen, men webbplatsen är fortfarande seg. Webbservrarna är överbelastade av anrop som ser exakt ut som kunder som bläddrar, söker och loggar in."
+          "{{time.T+60|clock}}. The internet links are clear again and the traffic graphs look almost normal. People in the room start to relax.\n\nBut the site is still crawling. The web servers are overloaded by requests that look exactly like customers browsing, searching and logging in. Telling a bot from a real shopper is suddenly the hardest problem of the evening.",
+          "Klockan {{time.T+60|clock}}. Internetförbindelserna är fria igen och trafikgraferna ser nästan normala ut. Folk i rummet börjar slappna av.\n\nMen webbplatsen är fortfarande seg. Webbservrarna är överbelastade av anrop som ser exakt ut som kunder som bläddrar, söker och loggar in. Att skilja en bot från en riktig kund är plötsligt kvällens svåraste problem."
         ]),
         injects: [
           inj("i2-1", 60, "logExcerpt", "itOps", "high", "confirmed", [
@@ -218,8 +218,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["This is random vandalism that will pass.", "Det här är slumpmässig skadegörelse som går över."]),
         narrative: L([
-          "{{time.T+150|clock}}. An email arrives at the press address and the CEO's personal address at the same time.",
-          "Klockan {{time.T+150|clock}}. Ett mejl kommer till pressadressen och vd:s personliga adress samtidigt."
+          "{{time.T+150|clock}}. An email arrives at the press address and at the CEO's personal address at the same moment.\n\nWhoever sent it knows who runs the company, and wants to be sure management reads it tonight. The subject line says only: “About your weekend.”",
+          "Klockan {{time.T+150|clock}}. Ett mejl kommer till pressadressen och till vd:s personliga adress i samma ögonblick.\n\nDen som skickade det vet vem som leder företaget och vill vara säker på att ledningen läser det i kväll. Ämnesraden lyder bara: ”Angående er helg.”"
         ]),
         injects: [
           inj("i3-1", 150, "ransomNote", "attacker", "critical", "unverified", [
@@ -279,8 +279,8 @@
         assumptionChallenged: L(["This is an availability incident.", "Det här är en tillgänglighetsincident."]),
         reveals: ["hf-stuffing"],
         narrative: L([
-          "{{time.T+300|clock}}. An analyst who finally had time to look at the authentication logs asks everyone to stop talking.",
-          "Klockan {{time.T+300|clock}}. En analytiker som äntligen hade tid att titta på inloggningsloggarna ber alla att vara tysta."
+          "{{time.T+300|clock}}. For five hours every eye in the room has been on the bandwidth graphs and the web servers.\n\nAn analyst who finally had time to look at the authentication logs asks everyone to stop talking. What they found has been happening quietly in the background since early in the evening, and it has nothing to do with the traffic.",
+          "Klockan {{time.T+300|clock}}. I fem timmar har alla i rummet stirrat på bandbreddsgraferna och webbservrarna.\n\nEn analytiker som äntligen hade tid att titta på inloggningsloggarna ber alla att vara tysta. Det hen hittade har pågått tyst i bakgrunden sedan tidigt i kväll, och det har ingenting med trafiken att göra."
         ]),
         injects: [
           inj("i4-1", 300, "authLog", "siem", "critical", "confirmed", [
@@ -353,8 +353,8 @@
         assumptionChallenged: L(["Stolen accounts only expose data; no money is lost.", "Stulna konton exponerar bara uppgifter; inga pengar går förlorade."]),
         reveals: ["hf-orders"],
         narrative: L([
-          "Saturday, {{time.T+900|clock}}. Customer service opens to a queue of people asking about orders they never placed, sent to addresses they have never heard of.",
-          "Lördag, klockan {{time.T+900|clock}}. Kundtjänst öppnar med en kö av kunder som frågar om beställningar de aldrig har lagt, skickade till adresser de aldrig hört talas om."
+          "Saturday, {{time.T+900|clock}}. Customer service opens to a long queue.\n\nPeople are calling about orders they never placed, sent to addresses they have never heard of, and about loyalty points that have vanished overnight. Some of the parcels are already on their way. Every caller wants to know who will pay.",
+          "Lördag, klockan {{time.T+900|clock}}. Kundtjänst öppnar med en lång kö.\n\nFolk ringer om beställningar de aldrig har lagt, skickade till adresser de aldrig hört talas om, och om bonuspoäng som har försvunnit under natten. En del av paketen är redan på väg. Varje kund vill veta vem som betalar."
         ]),
         injects: [
           inj("i5-1", 900, "impactReport", "person.serviceOwner", "high", "confirmed", [
@@ -419,8 +419,8 @@
         assumptionChallenged: L(["We control when the shop reopens.", "Vi bestämmer när butiken öppnar igen."]),
         reveals: ["hf-same"],
         narrative: L([
-          "Saturday, {{time.T+1500|clock}}. Fraud rates on your merchant account have crossed the provider's threshold.",
-          "Lördag, klockan {{time.T+1500|clock}}. Bedrägerinivån på ert handlarkonto har passerat leverantörens gräns."
+          "Saturday, {{time.T+1500|clock}}. A call from the payment provider that handles every card payment in the shop.\n\nFraud rates on your merchant account have crossed the provider's threshold overnight. The provider is polite, but clear that its rules, not your sales calendar, will decide what happens next.",
+          "Lördag, klockan {{time.T+1500|clock}}. Ett samtal från betalleverantören som hanterar varje kortbetalning i butiken.\n\nBedrägerinivån på ert handlarkonto har passerat leverantörens gräns under natten. Leverantören är artig, men tydlig med att det är dess regler, inte er försäljningskalender, som avgör vad som händer härnäst."
         ]),
         injects: [
           inj("i6-1", 1500, "supplierNotice", "supplier", "critical", "confirmed", [
@@ -480,8 +480,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["Fixing our own login ends the customers' exposure.", "När vi har rättat vår egen inloggning är kunderna inte längre exponerade."]),
         narrative: L([
-          "Sunday, {{time.T+2700|clock}}. The attack has stopped. The communications team is drafting Monday's message, and the question is how much to say about where the passwords came from.",
-          "Söndag, klockan {{time.T+2700|clock}}. Attacken har upphört. Kommunikationsavdelningen skriver måndagens budskap, och frågan är hur mycket ni ska säga om varifrån lösenorden kom."
+          "Sunday, {{time.T+2700|clock}}. The attack has stopped, and the shop is running normally again.\n\nThe communications team is drafting Monday's message to all customers. The forensic team has a clear answer about where the passwords came from, and the question is how much of that answer to share, and how to say it without blaming customers.",
+          "Söndag, klockan {{time.T+2700|clock}}. Attacken har upphört och butiken fungerar normalt igen.\n\nKommunikationsavdelningen skriver måndagens budskap till alla kunder. Forensikteamet har ett tydligt svar på varifrån lösenorden kom, och frågan är hur mycket av det svaret ni ska dela, och hur ni säger det utan att skylla på kunderna."
         ]),
         injects: [
           inj("i7-1", 2700, "forensicFinding", "forensics", "medium", "confirmed", [

@@ -78,8 +78,8 @@
         clock: 0,
         title: L(["Prompts in the night", "Förfrågningar mitt i natten"]),
         narrative: L([
-          "{{time.T+0|day}}, {{time.T+0|clock}}. The security on-call phone rings. A payroll administrator's account received {{num.prompts}} sign-in prompts in twenty minutes — and the last one was approved.",
-          "{{time.T+0|day}}, klockan {{time.T+0|clock}}. Säkerhetsjourens telefon ringer. En löneadministratörs konto fick {{num.prompts}} inloggningsförfrågningar på tjugo minuter – och den sista godkändes."
+          "{{time.T+0|day|cap}}, {{time.T+0|clock}}. The security on-call phone rings in the middle of the night. A payroll administrator's account received {{num.prompts}} sign-in prompts in twenty minutes, and the last one was approved.\n\nThe administrator is awake now, embarrassed, and says the phone would not stop buzzing. Somebody abroad is signed in to an account that can see every salary in the company. It is still dark, and most of the team is asleep.",
+          "{{time.T+0|day|cap}}, klockan {{time.T+0|clock}}. Säkerhetsjourens telefon ringer mitt i natten. En lönehandläggares konto fick {{num.prompts}} inloggningsförfrågningar på tjugo minuter, och den sista godkändes.\n\nHandläggaren är vaken nu, generad, och säger att telefonen inte slutade surra. Någon utomlands är inloggad på ett konto som kan se varje lön i företaget. Det är fortfarande mörkt, och större delen av teamet sover."
         ]),
         injects: [
           inj("i1-1", 0, "siemAlert", "siem", "high", "confirmed", [
@@ -140,8 +140,8 @@
         assumptionChallenged: L(["The approved prompt was how the attacker got in.", "Den godkända förfrågan var vägen in för angriparen."]),
         reveals: ["hf-aitm"],
         narrative: L([
-          "{{time.T+240|clock}}. The morning shift reviews the sign-in logs from the previous day.",
-          "Klockan {{time.T+240|clock}}. Morgonskiftet går igenom inloggningsloggarna från dagen innan."
+          "{{time.T+240|clock}}. The password was reset overnight and the attacker's sign-in was blocked. Most of the team believes the incident is over.\n\nThe morning shift reviews the sign-in logs from the previous day, to write up the night's events. They scroll back further than anyone did in the night, and stop at something that happened hours before the first prompt.",
+          "Klockan {{time.T+240|clock}}. Lösenordet byttes under natten och angriparens inloggning blockerades. De flesta i teamet tror att incidenten är över.\n\nMorgonskiftet går igenom inloggningsloggarna från föregående dag för att skriva ihop nattens händelser. De bläddrar längre bakåt än någon gjorde under natten, och stannar vid något som hände timmar före den första förfrågan."
         ]),
         injects: [
           inj("i2-1", 240, "authLog", "siem", "critical", "confirmed", [
@@ -197,8 +197,8 @@
         assumptionChallenged: L(["The attacker only had a few minutes.", "Angriparen hade bara några minuter på sig."]),
         reveals: ["hf-access"],
         narrative: L([
-          "{{time.T+300|clock}}. The audit logs for mail and file activity have been exported.",
-          "Klockan {{time.T+300|clock}}. Granskningsloggarna för e-post och filaktivitet har exporterats."
+          "{{time.T+300|clock}}. The audit logs for mail and file activity have been exported for the whole period the attacker was inside.\n\nThe analysts start reading them in silence. A payroll account opens doors to salaries, bank details and HR folders, and the logs show which of those doors were opened.",
+          "Klockan {{time.T+300|clock}}. Granskningsloggarna för e-post och filaktivitet har exporterats för hela perioden då angriparen var inne.\n\nAnalytikerna börjar läsa dem under tystnad. Ett lönekonto öppnar dörrar till löner, bankuppgifter och HR-mappar, och loggarna visar vilka av de dörrarna som öppnades."
         ]),
         injects: [
           inj("i3-1", 300, "logExcerpt", "siem", "high", "confirmed", [
@@ -262,8 +262,8 @@
         assumptionChallenged: L(["The compromise is contained to one user.", "Intrånget är begränsat till en användare."]),
         reveals: ["hf-spread"],
         narrative: L([
-          "{{time.T+420|clock}}. The service desk receives calls about a “salary adjustment” email that seems to come from payroll.",
-          "Klockan {{time.T+420|clock}}. Servicedesken får samtal om ett mejl om ”lönejustering” som verkar komma från lönefunktionen."
+          "{{time.T+420|clock}}. The working day has started, and the service desk begins receiving calls.\n\nStaff are asking about a “salary adjustment” email that seems to come from payroll, from a colleague many of them know by name. It looks routine, and it arrived just as people sat down with their first coffee.",
+          "Klockan {{time.T+420|clock}}. Arbetsdagen har börjat och servicedesken börjar ta emot samtal.\n\nPersonal frågar om ett mejl om ”lönejustering” som verkar komma från lön, från en kollega som många av dem känner till namnet. Det ser rutinmässigt ut, och det kom precis när folk satte sig med sitt första kaffe."
         ]),
         injects: [
           inj("i4-1", 420, "phishingEmail", "employee", "high", "confirmed", [
@@ -327,8 +327,8 @@
         assumptionChallenged: L(["Resetting passwords and revoking sessions removed all access.", "Nya lösenord och återkallade sessioner tog bort all åtkomst."]),
         reveals: ["hf-oauth"],
         narrative: L([
-          "The next day, {{time.T+1440|clock}}. Mail is still being read from an unfamiliar location, although every password has been reset.",
-          "Nästa dag, klockan {{time.T+1440|clock}}. E-posten läses fortfarande från en okänd plats, trots att alla lösenord har bytts."
+          "The next day, {{time.T+1440|clock}}. Every affected password has been reset, every session revoked, and the relay page is blocked. The team expected a quiet day.\n\nInstead, the logs show mail still being read from an unfamiliar location. No password was used and no prompt was sent. Something is still inside, and it does not care about passwords.",
+          "Nästa dag, klockan {{time.T+1440|clock}}. Varje berört lösenord har bytts, varje session har återkallats och den förmedlande sidan är blockerad. Teamet räknade med en lugn dag.\n\nI stället visar loggarna att e-post fortfarande läses från en okänd plats. Inget lösenord användes och ingen förfrågan skickades. Något finns fortfarande kvar, och det bryr sig inte om lösenord."
         ]),
         injects: [
           inj("i5-1", 1440, "forensicFinding", "soc", "critical", "confirmed", [
@@ -379,8 +379,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["The stolen data has not been used yet.", "De stulna uppgifterna har inte använts ännu."]),
         narrative: L([
-          "{{time.T+1500|clock}}. HR forwards several messages employees received on their private phones.",
-          "Klockan {{time.T+1500|clock}}. HR vidarebefordrar flera meddelanden som anställda har fått på sina privata telefoner."
+          "{{time.T+1500|clock}}. HR forwards several text messages that employees received on their private phones over lunch.\n\nThe messages look like they come from payroll, and they are frighteningly specific. The staff who received them want to know how a stranger could know such details about them.",
+          "Klockan {{time.T+1500|clock}}. HR vidarebefordrar flera sms som anställda fick på sina privata telefoner under lunchen.\n\nMeddelandena ser ut att komma från lön, och de är skrämmande specifika. De anställda som fick dem vill veta hur en främling kan känna till sådana detaljer om dem."
         ]),
         injects: [
           inj("i6-1", 1500, "sms", "employee", "high", "confirmed", [
@@ -431,8 +431,8 @@
         twistKind: "authority",
         assumptionChallenged: L(["User error caused this incident.", "Ett användarfel orsakade den här incidenten."]),
         narrative: L([
-          "Two days later. A meeting about consequences turns into an argument about responsibility.",
-          "Två dagar senare. Ett möte om konsekvenser blir en diskussion om ansvar."
+          "Two days later. The immediate incident is under control, and a meeting about consequences is called.\n\nIt quickly turns into an argument about responsibility. One person approved a prompt they did not start, and clicked a link before that. The room has to decide whether that person is the cause, or the last line of a defence that was built to fail.",
+          "Två dagar senare. Den akuta incidenten är under kontroll, och ett möte om konsekvenser kallas in.\n\nDet blir snabbt ett gräl om ansvar. En person godkände en förfrågan som hen inte själv hade startat, och klickade på en länk innan dess. Rummet måste avgöra om den personen är orsaken, eller den sista linjen i ett försvar som var byggt för att brista."
         ]),
         injects: [
           inj("i7-1", 2880, "executiveMessage", "person.hr", "medium", "disputed", [
@@ -487,8 +487,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["The fix is a simple setting.", "Lösningen är en enkel inställning."]),
         narrative: L([
-          "Three days later. The board receives the incident summary and asks for the remediation plan.",
-          "Tre dagar senare. Styrelsen får sammanfattningen av incidenten och ber om åtgärdsplanen."
+          "Three days later. The board receives the incident summary and asks for a remediation plan with costs and dates.\n\nEveryone agrees that pressing “approve” should never be enough again. The difficulty is what the real fix costs, what it breaks, and why it was not already in place.",
+          "Tre dagar senare. Styrelsen får incidentsammanfattningen och begär en åtgärdsplan med kostnader och datum.\n\nAlla är överens om att ett tryck på ”godkänn” aldrig mer ska räcka. Svårigheten är vad den riktiga lösningen kostar, vad den slår ut och varför den inte redan fanns på plats."
         ]),
         injects: [
           inj("i8-1", 4320, "impactReport", "person.cloudLead", "medium", "confirmed", [

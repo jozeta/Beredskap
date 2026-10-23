@@ -116,13 +116,22 @@
       )
     );
 
+  /**
+   * Story text: a blank line in the authored text starts a new paragraph, and a long story
+   * gets a smaller type step so it stays readable from the back of the room.
+   */
+  function story(text, cls) {
+    const paras = String(text || "").split(/\n\s*\n/).map((x) => x.trim()).filter(Boolean);
+    return el("div", { class: ["s-story", cls, String(text || "").length > 360 && "s-story--long"] }, paras.map((x) => el("p", { class: "s-narrative", text: x })));
+  }
+
   R.situation = (s, p, lang) =>
     el(
       "div",
       { class: "s-situation" },
       el("div", { class: "s-situation__top" }, kicker(t("stage.stageOf", { n: s.stageNumber, total: s.stageCount }, lang)), el("p", { class: "s-clock", text: s.clock })),
       el("h1", { class: "s-h1", text: s.title }),
-      el("p", { class: "s-narrative", text: s.narrative })
+      story(s.narrative)
     );
 
   R.timeline = (s, p, lang) =>
@@ -255,7 +264,7 @@
         el("p", { class: "s-page__num", "aria-label": t("branch.pageNum", { n: s.num }, lang) }, el("span", { class: "s-page__mark", "aria-hidden": "true", text: "§" }), el("span", { text: String(s.num) })),
         el("div", { class: "s-page__emblem", "aria-hidden": "true" }, BK.dom.emblem(s.emblem, { size: 220 }))
       ),
-      el("div", { class: "s-page__body" }, kicker(t("branch.choiceN", { n: s.choiceNumber }, lang)), el("h1", { class: "s-h1", text: s.title }), s.because ? el("p", { class: "s-page__because" }, svgIcon("link", { size: 32 }), el("span", { text: s.because })) : null, el("p", { class: "s-narrative", text: s.narrative }))
+      el("div", { class: "s-page__body" }, kicker(s.isEnding ? t("branch.epilogue", null, lang) : t("branch.choiceN", { n: s.choiceNumber }, lang)), el("h1", { class: "s-h1", text: s.title }), s.because ? el("p", { class: "s-page__because" }, svgIcon("link", { size: 32 }), el("span", { text: s.because })) : null, story(s.narrative))
     );
 
   R.choice = (s, p, lang) =>
@@ -298,7 +307,7 @@
         { class: "s-ending__text" },
         kicker(t("branch.ending", null, lang) + " · " + t("branch.pageNum", { n: s.num }, lang)),
         el("h1", { class: "s-h1 s-ending__label", text: s.label }),
-        el("p", { class: "s-narrative s-ending__summary", text: s.summary }),
+        story(s.summary, "s-ending__summary"),
         gradeScale(s.scale, s.grade),
         el("p", { class: "s-muted", text: t("branch.choicesMade", { n: s.choices }, lang) })
       ),

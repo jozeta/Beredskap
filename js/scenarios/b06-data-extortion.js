@@ -59,8 +59,8 @@
     start: "c1",
     pages: [
       pg("c1", ["The email", "Mejlet"], [
-        "{{time.T+0|weekday|cap}}, {{time.T+0|clock}}. {{person.ceo.name}} forwards an email: “We have {{num.gigabytes}} GB of your client files. Proof attached. Contact us within 72 hours, or we contact your clients.”",
-        "{{time.T+0|weekday|cap}}, klockan {{time.T+0|clock}}. {{person.ceo.name}} vidarebefordrar ett mejl: ”Vi har {{num.gigabytes}} GB av era klientfiler. Bevis bifogas. Kontakta oss inom 72 timmar, annars kontaktar vi era klienter.”"
+        "{{time.T+0|weekday|cap}}, {{time.T+0|clock}}. {{person.ceo.name}} forwards an email that arrived overnight: “We have {{num.gigabytes}} GB of your client files. Proof attached. Contact us within 72 hours, or we contact your clients.”\n\nEvery system works. Nothing is encrypted, nobody has seen an alert, and the attached samples look like real client documents. The attackers are not asking you to recover anything; they are threatening your reputation.",
+        "{{time.T+0|weekday|cap}}, klockan {{time.T+0|clock}}. {{person.ceo.name}} vidarebefordrar ett mejl som kom under natten: ”Vi har {{num.gigabytes}} GB av era klientfiler. Bevis bifogat. Kontakta oss inom 72 timmar, annars kontaktar vi era klienter.”\n\nAlla system fungerar. Ingenting är krypterat, ingen har sett något larm och de bifogade proven ser ut som riktiga klientdokument. Angriparna ber er inte återställa något; de hotar ert rykte."
       ], {
         injects: [
           inj("b6-1", 0, "ransomNote", "attacker", "critical", "unverified", [
@@ -78,12 +78,12 @@
       }),
 
       pg("c2", ["Where from?", "Varifrån?"], [
-        "The file server logs show large uploads to a cloud storage service over two weeks, through the VPN account of an IT contractor.",
-        "Filserverns loggar visar stora uppladdningar till en molnlagringstjänst under två veckor, via VPN-kontot för en IT-konsult."
+        "IT and the forensics firm confirm the samples are genuine. The file server logs show where they came from: large uploads to a cloud storage service, a little every night for two weeks.\n\nEvery upload went through the VPN account of an IT contractor who helped with a migration last year. The account had no MFA, and nobody had switched it off.",
+        "IT och forensikfirman bekräftar att proven är äkta. Filserverns loggar visar var de kom ifrån: stora uppladdningar till en molnlagringstjänst, lite varje natt i två veckor.\n\nVarje uppladdning gick via vpn-kontot för en IT-konsult som hjälpte till med en migrering förra året. Kontot saknade MFA, och ingen hade stängt av det."
       ], {
         variants: [vr("engaged", [
-          "The attacker answered your reply within minutes, with a second sample and a lower deadline. The file server logs show uploads over two weeks, through an IT contractor's VPN account.",
-          "Angriparen besvarade ert svar inom några minuter, med ett nytt exempel och en kortare tidsfrist. Filserverns loggar visar uppladdningar under två veckor, via en IT-konsults VPN-konto."
+          "Your reply was answered within minutes, with a second sample and a shorter deadline: 48 hours now, not 72. The attackers clearly have someone watching the mailbox.\n\nMeanwhile, the file server logs show uploads to a cloud storage service every night for two weeks, all through the VPN account of an IT contractor. The account had no MFA, and nobody had switched it off.",
+          "Ert svar besvarades inom några minuter, med ett andra prov och en kortare tidsfrist: 48 timmar nu, inte 72. Angriparna har uppenbarligen någon som bevakar brevlådan.\n\nUnder tiden visar filserverns loggar uppladdningar till en molnlagringstjänst varje natt i två veckor, alla via vpn-kontot för en IT-konsult. Kontot saknade MFA, och ingen hade stängt av det."
         ], ["Because you replied, they know someone is listening.", "Eftersom ni svarade vet de att någon lyssnar."])],
         injects: [
           inj("b6-2", 240, "networkEvidence", "itOps", "high", "confirmed", [
@@ -99,14 +99,14 @@
       }),
 
       pg("l1", ["Which clients?", "Vilka klienter?"], [
-        "Mapping the {{num.gigabytes}} GB to clients: {{num.clients}} clients, including three active deal rooms for listed companies.",
-        "Kartläggningen av {{num.gigabytes}} GB till klienter: {{num.clients}} klienter, däribland tre aktiva datarum för börsnoterade bolag."
+        "The team starts matching the {{num.gigabytes}} GB of stolen files to clients.\n\nThe first count is {{num.clients}} clients. Among them are three active deal rooms for listed companies, where nothing has been announced to the market yet.",
+        "Teamet börjar matcha de {{num.gigabytes}} GB stulna filerna mot klienter.\n\nDen första räkningen ger {{num.clients}} klienter. Bland dem finns tre aktiva datarum för börsnoterade bolag, där ingenting ännu har offentliggjorts för marknaden."
       ], {
         long: true,
         skipTo: "c3",
         variants: [vr("wiped", [
-          "Because the file server was wiped, mapping the stolen files to clients has to be rebuilt from backups and upload logs. First estimate: {{num.clients}} clients, including three active deal rooms.",
-          "Eftersom filservern raderades måste kartläggningen av de stulna filerna byggas upp igen från säkerhetskopior och uppladdningsloggar. Första uppskattning: {{num.clients}} klienter, däribland tre aktiva datarum."
+          "Because the file server was wiped and rebuilt, the evidence on it is gone. Matching the stolen files to clients now has to be pieced together from backups and the upload logs.\n\nThe first rough estimate is {{num.clients}} clients, including three active deal rooms for listed companies. It will take days to be sure.",
+          "Eftersom filservern raderades och byggdes om är bevisen på den borta. Att matcha de stulna filerna mot klienter måste nu pusslas ihop från säkerhetskopior och uppladdningsloggar.\n\nDen första grova uppskattningen är {{num.clients}} klienter, däribland tre aktiva datarum för börsnoterade bolag. Det tar dagar att bli säker."
         ], ["Because the server was wiped, the scope is an estimate.", "Eftersom servern raderades är omfattningen en uppskattning."])],
         chart: { id: "b6-scope", type: "kpi", title: L(["What was taken", "Vad som togs"]), data: kpi([
           { id: "k1", label: ["Gigabytes", "Gigabyte"], value: (v) => v.gigabytes, tone: "warn" },
@@ -119,12 +119,12 @@
       }),
 
       pg("c3", ["Professional secrecy", "Tystnadsplikt"], [
-        "{{person.legal.name}} reminds the room: you owe clients confidentiality. Some files concern listed companies and may be inside information.",
-        "{{person.legal.name}} påminner rummet: ni har en skyldighet att skydda klienternas förtroende. En del filer gäller börsnoterade bolag och kan vara insiderinformation."
+        "{{person.legal.name}} reminds the room what kind of firm this is. You owe your clients confidentiality, and for some of them professional secrecy is a legal duty, not a courtesy.\n\nSome of the files concern listed companies and may be inside information. The attackers have promised to contact clients. The question is who reaches them first.",
+        "{{person.legal.name}} påminner rummet om vilken sorts byrå det här är. Ni är skyldiga era klienter konfidentialitet, och för en del av dem är tystnadsplikten en rättslig skyldighet, inte en artighet.\n\nEn del av filerna rör börsnoterade bolag och kan vara insiderinformation. Angriparna har lovat att kontakta klienterna. Frågan är vem som når dem först."
       ], {
         variants: [vr("ignored", [
-          "Half of the 72 hours are gone while it was treated as a bluff. {{person.legal.name}} reminds the room: you owe clients confidentiality, and some files may be inside information.",
-          "Hälften av de 72 timmarna har gått medan det behandlades som en bluff. {{person.legal.name}} påminner rummet: ni har en skyldighet mot klienterna, och en del filer kan vara insiderinformation."
+          "Half of the 72 hours have gone while the threat was treated as a bluff, and the samples have turned out to be real.\n\n{{person.legal.name}} reminds the room that you owe clients confidentiality, and that some files concern listed companies and may be inside information. The attackers have promised to contact clients. The question is who reaches them first.",
+          "Halva tiden av de 72 timmarna har gått medan hotet behandlades som en bluff, och proven har visat sig vara äkta.\n\n{{person.legal.name}} påminner rummet om att ni är skyldiga klienterna konfidentialitet, och att en del filer rör börsnoterade bolag och kan vara insiderinformation. Angriparna har lovat att kontakta klienterna. Frågan är vem som når dem först."
         ], ["Because it was treated as a bluff, the attacker's deadline is close.", "Eftersom det behandlades som en bluff är angriparens tidsgräns nära."])],
         discuss: [q("Which clients would you call yourself, today?", "Vilka klienter skulle ni själva ringa i dag?", ["ceo", "legal"])],
         choice: ask(["Do you tell clients before the attacker does?", "Berättar ni för klienterna innan angriparen gör det?"], ["Tells affected clients personally, first, with what is known.", "Berättar personligen för berörda klienter, först, med det som är känt."], [
@@ -135,12 +135,12 @@
       }),
 
       pg("c4", ["The drip", "Droppandet"], [
-        "Three clients receive emails from the attackers containing their own documents and an invitation to “ask your advisers why”.",
-        "Tre klienter får mejl från angriparna med sina egna dokument och en uppmaning att ”fråga era rådgivare varför”."
+        "The attackers keep their promise. Three clients receive emails containing their own confidential documents, with a short note: “Ask your advisers why we have these.”\n\nOne of the three is a family business whose owner calls {{person.ceo.name}} directly, furious, within ten minutes.",
+        "Angriparna håller sitt löfte. Tre klienter får mejl med sina egna konfidentiella dokument och en kort rad: ”Fråga era rådgivare varför vi har de här.”\n\nEn av de tre är ett familjeföretag vars ägare ringer {{person.ceo.name}} direkt, rasande, inom tio minuter."
       ], {
         variants: [vr("clientsTold", [
-          "The attackers email three clients their own documents. Because you called them first, two of the three already knew and forward the email to you.",
-          "Angriparna mejlar tre klienter deras egna dokument. Eftersom ni ringde dem först visste två av de tre redan och vidarebefordrar mejlet till er."
+          "The attackers keep their promise and email three clients their own confidential documents.\n\nBecause you called first, two of the three already knew what had happened. They forward the email to you as evidence and ask what they should do. The third had not been reached yet.",
+          "Angriparna håller sitt löfte och mejlar tre klienter deras egna konfidentiella dokument.\n\nEftersom ni ringde först visste två av de tre redan vad som hade hänt. De vidarebefordrar mejlet till er som bevis och frågar vad de ska göra. Den tredje hade ni ännu inte nått."
         ], ["Because you told clients first, the attacker's pressure lost its surprise.", "Eftersom ni informerade klienterna först förlorade angriparens påtryckning sin överraskning."])],
         choice: ask(["Who else do you tell?", "Vem mer informerar ni?"], ["Notifies the authority and the police; extortion and a breach are both crimes and duties.", "Anmäler till myndigheten och polisen; utpressning och en incident innebär både brott och skyldigheter."], [
           opt(["Notify {{reg.dpaShort}} and report to {{reg.police}}", "Anmäl till {{reg.dpaShort}} och polisanmäl till {{reg.police}}"], "l2", ["Both duties met.", "Båda skyldigheterna uppfyllda."], { set: "notified" }),
@@ -150,8 +150,8 @@
       }),
 
       pg("l2", ["The insurer", "Försäkringsbolaget"], [
-        "The cyber policy covers extortion costs only if you use the insurer's negotiator and notify within 48 hours.",
-        "Cyberförsäkringen täcker utpressningskostnader bara om ni använder försäkringsbolagets förhandlare och anmäler inom 48 timmar."
+        "{{person.legal.name}} checks the cyber insurance policy. It covers extortion costs and legal fees, but only if you use the insurer's own negotiator and notify the insurer within 48 hours.\n\nThe insurer's involvement brings expertise, but also another party in the room, with its own interests.",
+        "{{person.legal.name}} går igenom cyberförsäkringen. Den täcker kostnader för utpressning och juridiska avgifter, men bara om ni använder försäkringsbolagets egen förhandlare och anmäler till försäkringsbolaget inom 48 timmar.\n\nFörsäkringsbolagets medverkan ger expertis, men också ytterligare en part i rummet, med egna intressen."
       ], {
         long: true,
         skipTo: "c5",
@@ -162,8 +162,8 @@
       }),
 
       pg("c5", ["The price", "Priset"], [
-        "The attackers name a price: {{num.demand|currency}}, for “permanent deletion and silence”.",
-        "Angriparna nämner ett pris: {{num.demand|currency}}, för ”permanent radering och tystnad”."
+        "The attackers name their price: {{num.demand|currency}}, for what they call “permanent deletion and silence”.\n\nThey promise to delete every copy and never contact your clients again. There is no way to check whether they keep that promise, and paying criminals may also have legal consequences.",
+        "Angriparna nämner sitt pris: {{num.demand|currency}}, för det de kallar ”permanent radering och tystnad”.\n\nDe lovar att radera varje kopia och aldrig kontakta era klienter igen. Det finns inget sätt att kontrollera om de håller det löftet, och att betala kriminella kan också få rättsliga följder."
       ], {
         discuss: [q("What would paying actually buy you?", "Vad skulle en betalning faktiskt ge er?", ["ceo", "legal"])],
         choice: ask(["Do you pay?", "Betalar ni?"], ["Recognises that without encryption, payment buys only a promise.", "Inser att utan kryptering köper en betalning bara ett löfte."], [
@@ -174,8 +174,8 @@
       }),
 
       pg("c5b", ["Proof of deletion", "Bevis på radering"], [
-        "The attackers offer a video of files being deleted. The negotiator's view: it proves nothing about other copies.",
-        "Angriparna erbjuder en video där filer raderas. Förhandlarens bedömning: den bevisar ingenting om andra kopior."
+        "The negotiator asks for proof that the files will really be deleted. The attackers offer a video showing the files being deleted from a server.\n\nThe negotiator's view is blunt: a video proves only that one copy was deleted on camera. It says nothing about the other copies they almost certainly have.",
+        "Förhandlaren ber om bevis för att filerna verkligen raderas. Angriparna erbjuder en video där filerna raderas från en server.\n\nFörhandlarens bedömning är rak: en video bevisar bara att en kopia raderades framför kameran. Den säger ingenting om de andra kopior som de nästan säkert har."
       ], {
         choice: ask(["What now?", "Vad gör ni nu?"], ["Stops paying for theatre.", "Slutar betala för teater."], [
           opt(["Stop negotiating", "Sluta förhandla"], "l3", ["Accepts reality.", "Accepterar verkligheten."], { set: "refused" }),
@@ -184,8 +184,8 @@
       }),
 
       pg("l3", ["A client's lawyer", "En klients advokat"], [
-        "Your largest client's lawyers write: they reserve the right to claim damages for breach of confidentiality.",
-        "Er största klients advokater skriver: de förbehåller sig rätten att kräva skadestånd för brott mot sekretessen."
+        "A letter arrives from the lawyers of your largest client. They reserve the right to claim damages for breach of confidentiality.\n\nThey also ask for a meeting within the week, and a full account of what was taken and what you have done since.",
+        "Ett brev kommer från juristerna för er största klient. De förbehåller sig rätten att kräva skadestånd för brott mot konfidentialiteten.\n\nDe begär också ett möte inom en vecka och en fullständig redogörelse för vad som togs och vad ni har gjort sedan dess."
       ], {
         long: true,
         skipTo: "c6",
@@ -196,12 +196,12 @@
       }),
 
       pg("c6", ["The leak site", "Läcksajten"], [
-        "{{org.name}} appears on a leak site with a countdown and a first sample: a tax file for a well-known family business.",
-        "{{org.name}} dyker upp på en läcksajt med nedräkning och ett första utdrag: en skattefil för ett välkänt familjeföretag."
+        "{{org.name}} appears on the attackers' leak site, with a countdown to full publication.\n\nThe first sample is already public: a complete tax file for a well-known family business, with names and figures. A business news site has picked it up within the hour.",
+        "{{org.name}} dyker upp på angriparnas läcksajt, med en nedräkning till fullständig publicering.\n\nDet första provet är redan offentligt: en komplett skatteakt för ett känt familjeföretag, med namn och siffror. En ekonominyhetssajt har plockat upp det inom en timme."
       ], {
         variants: [vr("paid", [
-          "You paid, and {{org.name}} still appears on a leak site, marked “partial data, more available”.",
-          "Ni betalade, och {{org.name}} finns ändå på en läcksajt, markerat ”delar av datan, mer finns”."
+          "You paid. And {{org.name}} still appears on the attackers' leak site, marked “partial data, more available”.\n\nThe listing also mentions that you paid. A business news site picks it up within the hour, and the headline is about the payment as much as the leak.",
+          "Ni betalade. Och {{org.name}} finns ändå på angriparnas läcksajt, märkt ”delvis data, mer finns”.\n\nAnnonsen nämner också att ni betalade. En ekonominyhetssajt plockar upp det inom en timme, och rubriken handlar lika mycket om betalningen som om läckan."
         ], ["Because you paid, they know you will pay again.", "Eftersom ni betalade vet de att ni betalar igen."])],
         injects: [
           inj("b6-3", 4320, "newsHeadline", "media", "high", "confirmed", [
@@ -218,8 +218,8 @@
       }),
 
       pg("c7", ["Staff", "Personalen"], [
-        "Staff are asking questions, and some work on the affected deals.",
-        "Personalen ställer frågor, och en del arbetar med de berörda affärerna."
+        "The firm's staff have seen the news. They are asking questions in corridors and chats: is my work affected, what can I tell my clients, can I trade shares?\n\nSome of them work on the affected deals and know exactly which documents are now in criminal hands.",
+        "Byråns personal har sett nyheterna. De ställer frågor i korridorer och chattar: berörs mitt arbete, vad får jag säga till mina klienter, får jag handla aktier?\n\nEn del av dem arbetar med de berörda affärerna och vet exakt vilka dokument som nu finns i kriminella händer."
       ], {
         choice: ask(["What do you tell staff?", "Vad säger ni till personalen?"], ["Briefs staff, sets trading restrictions and a legal hold.", "Informerar personalen, inför handelsrestriktioner och bevarandeplikt."], [
           opt(["Brief everyone, restrict trading, preserve documents", "Informera alla, begränsa handel, bevara dokument"], "l4", ["Protects staff and clients.", "Skyddar personal och klienter."]),
@@ -228,8 +228,8 @@
       }),
 
       pg("l4", ["The market moves", "Marknaden rör sig"], [
-        "Shares in a listed client rise sharply on rumours of a bid. The leaked deal room may be why.",
-        "Aktien i en börsnoterad klient stiger kraftigt på rykten om ett bud. Det läckta datarummet kan vara orsaken."
+        "Shares in one of your listed clients rise eleven percent in an afternoon, on rumours of a takeover bid.\n\nThe bid is real, and the documents describing it were in the leaked deal room. Someone may be trading on what was stolen from you.",
+        "Aktien i en av era börsnoterade klienter stiger elva procent på en eftermiddag, på rykten om ett uppköpserbjudande.\n\nBudet är verkligt, och dokumenten som beskriver det fanns i det läckta datarummet. Någon kanske handlar på det som stals från er."
       ], {
         long: true,
         skipTo: "c8",
@@ -240,8 +240,8 @@
       }),
 
       pg("c8", ["The supervisor", "Tillsynen"], [
-        "The financial supervisor asks for an account of the incident, your controls and how clients were informed.",
-        "Finanstillsynen begär en redogörelse för incidenten, era kontroller och hur klienterna informerades."
+        "The financial supervisor writes. It wants a written account of the incident, your security controls, and how and when clients were informed.\n\nIt sets a deadline of two weeks. The answer will decide whether this becomes a formal investigation.",
+        "Tillsynsmyndigheten för finansmarknaden skriver. Den vill ha en skriftlig redogörelse för incidenten, era säkerhetskontroller och hur och när klienterna informerades.\n\nDen sätter en tidsfrist på två veckor. Svaret avgör om det här blir en formell utredning."
       ], {
         choice: ask(["How do you answer?", "Hur svarar ni?"], ["Gives a complete, documented account including weaknesses.", "Ger en fullständig, dokumenterad redogörelse inklusive svagheter."], [
           opt(["A full account with the contractor weakness", "En fullständig redogörelse med konsultsvagheten"], "c9", ["Builds credibility with the supervisor.", "Bygger trovärdighet hos tillsynen."]),
@@ -250,8 +250,8 @@
       }),
 
       pg("c9", ["Rebuilding trust", "Bygga upp förtroendet"], [
-        "Clients ask the same question: why should we trust you with our files again?",
-        "Klienterna ställer samma fråga: varför ska vi anförtro er våra filer igen?"
+        "A month on, the worst is over, but client meetings all start the same way.\n\nWhatever the meeting is about, clients ask the same question first: why should we trust you with our files again?",
+        "En månad senare är det värsta över, men klientmötena börjar alla på samma sätt.\n\nVad mötet än handlar om ställer klienterna samma fråga först: varför ska vi lita på er med våra filer igen?"
       ], {
         choice: ask(["What is your answer?", "Vad är ert svar?"], ["Offers independent evidence, not reassurance.", "Erbjuder oberoende belägg, inte lugnande ord."], [
           opt(["An independent review, with a summary shared with clients", "En oberoende granskning, med en sammanfattning till klienterna"], "c10", ["Evidence they can check.", "Belägg de kan kontrollera."]),
@@ -260,8 +260,8 @@
       }),
 
       pg("c10", ["Contractor access", "Konsulternas åtkomst"], [
-        "The way in was a contractor's VPN account without MFA. What changes?",
-        "Vägen in var en konsults VPN-konto utan MFA. Vad ändras?"
+        "Last item in the review. The way in was a contractor's VPN account without MFA, still active a year after the job ended.\n\nThe firm uses more than thirty external suppliers with some kind of remote access. Nobody has a full list.",
+        "Sista punkten i genomgången. Vägen in var en konsults vpn-konto utan MFA, fortfarande aktivt ett år efter att uppdraget avslutades.\n\nByrån använder mer än trettio externa leverantörer med någon form av fjärråtkomst. Ingen har en fullständig lista."
       ], {
         choice: ask(["What do you change?", "Vad ändrar ni?"], ["Puts all third-party access behind MFA, time limits and monitoring.", "Sätter all tredjepartsåtkomst bakom MFA, tidsgränser och bevakning."], [
           opt(["MFA, time-limited and monitored access for all third parties", "MFA, tidsbegränsad och bevakad åtkomst för alla tredje parter"], "r-end", ["Closes the door you came through.", "Stänger dörren ni kom genom."]),
@@ -278,25 +278,25 @@
         ])
       }),
 
-      pg("e1", ["Contained", "Begränsad"], ["Ending", "Slut"], {
+      pg("e1", ["Two months later", "Två månader senare"], ["Clients heard about the theft from you first, the authorities were told in time, and nobody was paid.\n\nThe leak hurt, and a few documents are still circulating. But your clients stayed, and several told you that the phone call on the first day was the reason.", "Klienterna fick höra om stölden från er först, myndigheterna informerades i tid och ingen fick betalt.\n\nLäckan gjorde ont, och några dokument cirkulerar fortfarande. Men klienterna stannade, och flera sa att telefonsamtalet den första dagen var anledningen."], {
         ending: end(1, ["Clients heard it from you", "Klienterna fick höra det av er"], [
           "Clients heard it from you first, the authorities were told on time, and nobody was paid. The leak hurt, but your clients stayed.",
           "Klienterna fick höra det av er först, myndigheterna informerades i tid och ingen fick betalt. Läckan gjorde ont, men klienterna stannade."
         ])
       }),
-      pg("e2", ["Managed", "Hanterad"], ["Ending", "Slut"], {
+      pg("e2", ["Two months later", "Två månader senare"], ["You refused to pay and notified the authorities in time, which was right.\n\nBut the attackers reached some clients before you did, and those clients heard it from criminals rather than from their advisers. A few of them have moved their business elsewhere.", "Ni vägrade betala och anmälde till myndigheterna i tid, vilket var rätt.\n\nMen angriparna nådde en del klienter före er, och de klienterna fick höra det från kriminella i stället för från sina rådgivare. Några av dem har flyttat sina uppdrag till andra byråer."], {
         ending: end(2, ["Right, but second", "Rätt, men i andra hand"], [
           "You refused to pay and notified on time, but the attackers reached some clients before you did. A few move their business.",
           "Ni vägrade betala och anmälde i tid, men angriparna nådde en del klienter före er. Några flyttar sina uppdrag."
         ])
       }),
-      pg("e3", ["Damaging", "Skadlig"], ["Ending", "Slut"], {
+      pg("e3", ["Three months later", "Tre månader senare"], ["You notified the authorities, but you also paid for a promise the attackers never intended to keep.\n\nThe files appeared anyway, and the payment became part of the story. Clients ask why their fees helped fund the people who stole their documents.", "Ni anmälde till myndigheterna, men ni betalade också för ett löfte som angriparna aldrig tänkte hålla.\n\nFilerna dök upp ändå, och betalningen blev en del av historien. Klienterna frågar varför deras arvoden hjälpte till att finansiera dem som stal deras dokument."], {
         ending: end(3, ["Paid and published", "Betalat och publicerat"], [
           "You notified, but paid for a promise the attackers did not keep. The files appear anyway, and the payment becomes part of the story.",
           "Ni anmälde, men betalade för ett löfte angriparna inte höll. Filerna dyker upp ändå, och betalningen blir en del av historien."
         ])
       }),
-      pg("e4", ["Severe", "Allvarlig"], ["Ending", "Slut"], {
+      pg("e4", ["Four months later", "Fyra månader senare"], ["There was no notification, and clients learned about the theft from the attackers or from the news.\n\nThe supervisor has opened a formal investigation into your controls and your silence. Two clients are suing for breach of confidentiality.", "Någon anmälan gjordes inte, och klienterna fick veta om stölden från angriparna eller från nyheterna.\n\nTillsynsmyndigheten har inlett en formell utredning om era kontroller och er tystnad. Två klienter stämmer byrån för brott mot konfidentialiteten."], {
         ending: end(4, ["Silent until it was public", "Tysta tills det var offentligt"], [
           "No notification, and clients learned it from the attackers or the news. The supervisor opens an investigation and two clients sue.",
           "Ingen anmälan, och klienterna fick veta det av angriparna eller nyheterna. Tillsynen inleder en utredning och två klienter stämmer."
@@ -305,8 +305,8 @@
 
       // Break-away: the "consultant".
       pg("x1", ["The consultant", "Konsulten"], [
-        "A man introduced through a friend of a partner promises the leak site will be gone within a day, for a fee in cryptocurrency.",
-        "En man som introducerats via en bekant till en delägare lovar att läcksajten är borta inom ett dygn, mot ett arvode i kryptovaluta."
+        "Through a friend of one of the partners, a man is introduced who says he can make leak sites disappear.\n\nHe promises the site will be gone within a day, for a fee paid in cryptocurrency. He will not say how he does it, and he does not want a contract.",
+        "Via en vän till en av delägarna introduceras en man som säger att han kan få läcksajter att försvinna.\n\nHan lovar att sajten är borta inom ett dygn, mot ett arvode i kryptovaluta. Han vill inte säga hur han gör, och han vill inte ha något avtal."
       ], {
         choice: ask(["Do you go ahead?", "Går ni vidare?"], ["Walks away from unlawful or unknown actors.", "Går ifrån olagliga eller okända aktörer."], [
           opt(["Go ahead", "Gå vidare"], "x2", ["You are now in business with someone you can't name.", "Ni gör nu affärer med någon ni inte kan namnge."]),
@@ -314,8 +314,8 @@
         ])
       }),
       pg("x2", ["It's back", "Den är tillbaka"], [
-        "The site goes down for six hours, then returns on three mirrors, with a new message: “For the trick, everything goes public tomorrow.”",
-        "Sajten ligger nere i sex timmar och kommer sedan tillbaka på tre speglar, med ett nytt meddelande: ”För tricket blir allt offentligt i morgon.”"
+        "The leak site goes down for six hours. Then it returns, on three mirror sites at once, with a new message at the top.\n\n“For the trick, everything goes public tomorrow.” The attackers know exactly what you tried.",
+        "Läcksajten går ner i sex timmar. Sedan kommer den tillbaka, på tre spegelsajter samtidigt, med ett nytt meddelande överst.\n\n”För tricket blir allt offentligt i morgon.” Angriparna vet exakt vad ni försökte."
       ], {
         choice: ask(["What now?", "Vad gör ni nu?"], ["Stops, and goes to the police with everything.", "Stannar upp och går till polisen med allt."], [
           opt(["Go to the police with all of it", "Gå till polisen med alltihop"], "x3", ["Including the consultant.", "Inklusive konsulten."]),
@@ -323,8 +323,8 @@
         ])
       }),
       pg("x3", ["Everything", "Allt"], [
-        "All {{num.gigabytes}} GB are published. Journalists search it for famous names.",
-        "Alla {{num.gigabytes}} GB publiceras. Journalister söker igenom dem efter kända namn."
+        "All {{num.gigabytes}} GB are published the next morning, searchable by anyone.\n\nJournalists start searching the files for famous names, and every client of the firm is now wondering whether their documents are in there.",
+        "Alla {{num.gigabytes}} GB publiceras nästa morgon, sökbara för vem som helst.\n\nJournalister börjar söka i filerna efter kända namn, och varje klient till byrån undrar nu om deras dokument finns där."
       ], {
         choice: ask(["Who do you call first?", "Vem ringer ni först?"], ["Calls every client before the journalists do.", "Ringer varje klient innan journalisterna gör det."], [
           opt(["Every client, today", "Varje klient, i dag"], "x4", ["Too late to be first, not too late to be decent.", "För sent för att vara först, inte för sent för att vara anständig."]),
@@ -332,15 +332,15 @@
         ])
       }),
       pg("x4", ["Questions", "Frågor"], [
-        "The police ask about your payments to the consultant. So does the financial supervisor.",
-        "Polisen frågar om era betalningar till konsulten. Det gör även finanstillsynen."
+        "The police contact you, not about the attackers, but about your payments to the “consultant”, whom they have been investigating for months.\n\nThe financial supervisor asks about the same payments a day later.",
+        "Polisen kontaktar er, inte om angriparna, utan om era betalningar till ”konsulten”, som de har utrett i månader.\n\nTillsynsmyndigheten frågar om samma betalningar en dag senare."
       ], {
         choice: ask(["How do you answer?", "Hur svarar ni?"], ["Answers fully, with the documents.", "Svarar fullständigt, med dokumenten."], [
           opt(["Full disclosure", "Full öppenhet"], "e5", ["The only way through.", "Den enda vägen igenom."]),
           opt(["Through lawyers only", "Bara via advokater"], "e5", ["Makes it look worse.", "Får det att se värre ut."])
         ])
       }),
-      pg("e5", ["Disaster", "Katastrof"], ["Ending", "Slut"], {
+      pg("e5", ["Six months later", "Sex månader senare"], ["A shortcut through an unknown “consultant” made the attackers publish everything, and drew the police and the supervisor to your own payments.\n\nThe firm's name is now linked to both a data leak and a criminal investigation. Several partners have left, taking their clients with them.", "En genväg via en okänd ”konsult” fick angriparna att publicera allt och riktade polisens och tillsynsmyndighetens uppmärksamhet mot era egna betalningar.\n\nByråns namn förknippas nu med både en dataläcka och en brottsutredning. Flera delägare har lämnat och tagit med sig sina klienter."], {
         ending: end(5, ["Paying the wrong people", "Betalade fel personer"], [
           "A shortcut through an unknown “consultant” made the attackers publish everything and drew the police and the supervisor to your own payments.",
           "En genväg via en okänd ”konsult” fick angriparna att publicera allt och riktade polisens och tillsynens intresse mot era egna betalningar."

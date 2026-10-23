@@ -83,7 +83,7 @@
         { class: "p-stage" },
         el("h2", { text: t("editor.stageN", { n: i + 1 }, lang) + " · " + L(s.title, lang) }),
         el("p", { class: "p-sub", text: L(s.clockLabel, lang) + " · " + t("editor.discussion", { n: s.discussionMinutes }, lang) }),
-        el("p", { text: L(s.narrative, lang) }),
+        el("p", { class: "p-story", text: L(s.narrative, lang) }),
         s.twist ? el("p", { class: "p-twist" }, el("strong", { text: t("editor.twist", null, lang) + ": " }), L(s.twist, lang), el("br"), el("em", { text: t("editor.assumption", null, lang) + ": " + L(s.assumptionChallenged, lang) })) : null,
         el("h3", { text: t("editor.injects", null, lang) }),
         table(
@@ -181,8 +181,8 @@
           pg.route
             ? table([t("presenter.flags", null, lang), "→"], pg.route.map((r) => [cond(r.if) || "—", where(r.to)]))
             : [
-                el("p", { text: L(pg.narrative, lang) }),
-                pg.variants.map((v) => el("p", { class: "p-twist" }, el("strong", { text: "§ " + v.num + " · " + cond(v.if) + ": " }), L(v.narrative, lang))),
+                el("p", { class: "p-story", text: L(pg.narrative, lang) }),
+                pg.variants.map((v) => el("p", { class: "p-twist p-story" }, el("strong", { text: "§ " + v.num + " · " + cond(v.if) + ": " }), L(v.narrative, lang))),
                 pg.injects.length
                   ? table(
                       [t("csv.type", null, lang), t("csv.reliability", null, lang), t("csv.text", null, lang), t("editor.facilitatorNote", null, lang)],

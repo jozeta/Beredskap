@@ -2,7 +2,7 @@
  * template.js — Placeholder resolver bound to the structured entity graph.
  *
  * Syntax: {{path}} or {{path|formatter}}, e.g. {{person.ciso.name}},
- * {{num.ransom|currency}}, {{time.T+45|clock}}, {{env.edrAlert|cap}}.
+ * {{num.ransom|currency}}, {{time.T+45|clock}}, {{time.T+45|daypart}}, {{env.edrAlert|cap}}.
  *
  * Every text is resolved into BOTH languages at generation time, so switching
  * language live never changes a fact: names, numbers and times are identical,
@@ -142,6 +142,11 @@
 
   // ---- Formatting --------------------------------------------------------------------------
 
+  const DAYPART = { en: ["night", "morning", "afternoon", "evening"], sv: ["natt", "morgon", "eftermiddag", "kväll"] };
+  function daypartIndex(h) {
+    return h < 5 || h >= 22 ? 0 : h < 12 ? 1 : h < 17 ? 2 : 3;
+  }
+
   function cap(s) {
     return s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
   }
@@ -156,6 +161,8 @@
         case "weekday": return new Intl.DateTimeFormat(BK.i18n.locale(lang), { weekday: "long" }).format(value);
         case "day": return fmt.weekdayDate(value, lang);
         case "datetime": return fmt.weekdayDate(value, lang) + " " + fmt.time(value, lang);
+        // Part of the day for the rolled clock, so text never says "evening" at 14:05.
+        case "daypart": return DAYPART[lang === "sv" ? "sv" : "en"][daypartIndex(value.getHours())];
         default: return null;
       }
     }

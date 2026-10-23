@@ -23,8 +23,8 @@
     emblem: "hospital",
     title: L(["Patients Still Arriving", "Patienterna fortsätter att komma"]),
     summary: L([
-      "The electronic patient record goes dark in the middle of the evening. The emergency department is full and ambulances are on their way. Paper is all you have.",
-      "Den elektroniska patientjournalen slocknar mitt under kvällen. Akutmottagningen är full och ambulanser är på väg. Papper är allt ni har."
+      "The electronic patient record goes dark in the middle of the night. The emergency department is full and ambulances are on their way. Paper is all you have.",
+      "Den elektroniska patientjournalen slocknar mitt i natten. Akutmottagningen är full och ambulanser är på väg. Papper är allt ni har."
     ]),
     learningObjectives: [
       { id: "lo1", text: L(["Keep patients safe on downtime procedures", "Hålla patienterna säkra med reservrutiner"]) },
@@ -78,8 +78,8 @@
         clock: 0,
         title: L(["The record goes dark", "Journalen slocknar"]),
         narrative: L([
-          "{{time.T+0|day}}, {{time.T+0|clock}}. At {{org.name}}, screens across the wards show the same message. The emergency department has {{num.edPatients}} patients.",
-          "{{time.T+0|day}}, klockan {{time.T+0|clock}}. Hos {{org.name}} visar skärmar på alla avdelningar samma meddelande. Akutmottagningen har {{num.edPatients}} patienter."
+          "{{time.T+0|day|cap}}, {{time.T+0|clock}}. At {{org.name}}, screens across the wards go dark one after another and show the same message. The electronic patient record, lab results and medication lists are gone from every computer.\n\nThe emergency department has {{num.edPatients}} patients and more ambulances on the way. Staff are pulling out the paper downtime folders, and the doctor in charge wants to know one thing: how long?",
+          "{{time.T+0|day|cap}}, klockan {{time.T+0|clock}}. Hos {{org.name}} slocknar skärmarna på avdelningarna en efter en och visar samma meddelande. Den elektroniska patientjournalen, provsvaren och läkemedelslistorna är borta från varje dator.\n\nAkutmottagningen har {{num.edPatients}} patienter och fler ambulanser på väg. Personalen tar fram pärmarna med reservrutiner på papper, och ansvarig läkare vill veta en sak: hur länge?"
         ]),
         injects: [
           inj("i1-1", 0, "ransomNote", "attacker", "critical", "confirmed", [
@@ -144,8 +144,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["Downtime procedures will carry us through.", "Reservrutinerna kommer att bära oss."]),
         narrative: L([
-          "{{time.T+60|clock}}. The emergency physician in charge calls the incident command.",
-          "Klockan {{time.T+60|clock}}. Ansvarig akutläkare ringer sjukhusledningen."
+          "{{time.T+60|clock}}. The paper procedures are running, but every step takes longer: results are carried by hand, orders are written twice, and nobody can check a patient's history.\n\nThe emergency physician in charge calls the incident command. The question on the table is whether this hospital can still safely receive the ambulances that are coming.",
+          "Klockan {{time.T+60|clock}}. Pappersrutinerna är igång, men varje steg tar längre tid: svar bärs för hand, ordinationer skrivs två gånger och ingen kan kontrollera en patients historik.\n\nAnsvarig akutläkare ringer incidentledningen. Frågan på bordet är om sjukhuset fortfarande kan ta emot de ambulanser som är på väg på ett säkert sätt."
         ]),
         injects: [
           inj("i2-1", 60, "phoneTranscript", "person.clinicalLead", "critical", "confirmed", [
@@ -202,8 +202,8 @@
         assumptionChallenged: L(["Only administrative and record systems are hit.", "Bara administrativa system och journalsystem är drabbade."]),
         reveals: ["hf-devices"],
         narrative: L([
-          "{{time.T+150|clock}}. A biomedical engineer comes to the command room.",
-          "Klockan {{time.T+150|clock}}. En medicintekniker kommer till ledningsrummet."
+          "{{time.T+150|clock}}. A biomedical engineer comes to the command room with a laptop and a worried face.\n\nUntil now the incident has been about the patient record and office systems. The engineer explains that medical devices also depend on servers in the same network, and some of those servers are now affected.",
+          "Klockan {{time.T+150|clock}}. En medicinteknisk ingenjör kommer till ledningsrummet med en dator och en orolig min.\n\nHittills har incidenten handlat om journalen och kontorssystemen. Ingenjören förklarar att även medicintekniska apparater är beroende av servrar i samma nätverk, och en del av de servrarna är nu drabbade."
         ]),
         injects: [
           inj("i3-1", 150, "impactReport", "facilities", "critical", "confirmed", [
@@ -267,8 +267,8 @@
         assumptionChallenged: L(["A staff member clicked something.", "Någon i personalen klickade på något."]),
         reveals: ["hf-vendor"],
         narrative: L([
-          "{{time.T+300|clock}}. The incident-response team traces the first access.",
-          "Klockan {{time.T+300|clock}}. Incidentteamet spårar den första åtkomsten."
+          "{{time.T+300|clock}}. The incident-response team has been tracing how the attackers first got into the hospital network, working backwards from the encrypted servers.\n\nThe trail leads not to a clicked email or a stolen staff password, but to an account that belongs to someone outside the hospital and is always switched on.",
+          "Klockan {{time.T+300|clock}}. Incidentteamet har spårat hur angriparna först kom in i sjukhusets nätverk, bakåt från de krypterade servrarna.\n\nSpåret leder inte till ett klickat mejl eller ett stulet personallösenord, utan till ett konto som tillhör någon utanför sjukhuset och alltid är påslaget."
         ]),
         injects: [
           inj("i4-1", 300, "forensicFinding", "irRetainer", "critical", "confirmed", [
@@ -319,8 +319,8 @@
         twistKind: "authority",
         assumptionChallenged: L(["One person can decide how the hospital recovers.", "En person kan bestämma hur sjukhuset återhämtar sig."]),
         narrative: L([
-          "{{time.T+480|clock}}. Three parties, three demands.",
-          "Klockan {{time.T+480|clock}}. Tre parter, tre krav."
+          "{{time.T+480|clock}}. A rebuild of the patient record is possible, but the servers it runs on are also the best evidence of what happened.\n\nThree parties each have a legitimate demand: clinicians, the police and the region. The demands cannot all be met at the same time, and someone has to decide.",
+          "Klockan {{time.T+480|clock}}. Det går att bygga upp journalsystemet igen, men servrarna det körs på är också det bästa beviset på vad som hände.\n\nTre parter har var sitt legitimt krav: vårdpersonalen, polisen och regionen. Kraven kan inte uppfyllas samtidigt, och någon måste besluta."
         ]),
         injects: [
           inj("i5-1", 480, "phoneTranscript", "police", "high", "confirmed", [
@@ -377,8 +377,8 @@
         assumptionChallenged: L(["This was only about availability.", "Det här handlade bara om tillgänglighet."]),
         reveals: ["hf-exfil"],
         narrative: L([
-          "The next day. The record is partly back. Then the leak site updates.",
-          "Nästa dag. Journalen är delvis tillbaka. Sedan uppdateras läckagesajten."
+          "The next day. The patient record is partly back, and the wards are slowly catching up. Staff are exhausted but relieved.\n\nThen the attackers' leak site updates. The incident changes from a hospital that could not work to patients whose most private information may become public.",
+          "Nästa dag. Patientjournalen är delvis tillbaka och avdelningarna kommer sakta ikapp. Personalen är utmattad men lättad.\n\nSedan uppdateras angriparnas läcksajt. Incidenten förvandlas från ett sjukhus som inte kunde arbeta till patienter vars mest privata uppgifter kan bli offentliga."
         ]),
         injects: [
           inj("i6-1", 1440, "socialPost", "attacker", "critical", "confirmed", [
@@ -442,8 +442,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["Redirection only affects us.", "Omdirigeringen påverkar bara oss."]),
         narrative: L([
-          "Day two. The regional coordination meeting.",
-          "Dag två. Regionens samordningsmöte."
+          "Day two. The regional coordination meeting brings together the hospitals and the ambulance service.\n\nYour decisions in the first night have had consequences beyond your walls. The region needs the healthcare system as a whole to work, and that may mean asking your hospital to do more than it feels ready for.",
+          "Dag två. Regionens samordningsmöte samlar sjukhusen och ambulanssjukvården.\n\nEra beslut den första natten har fått följder utanför era väggar. Regionen behöver att vården som helhet fungerar, och det kan innebära att ert sjukhus ombeds göra mer än det känner sig redo för."
         ]),
         injects: [
           inj("i7-1", 2160, "email", "regulator", "high", "confirmed", [
@@ -494,8 +494,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["Restore order is a technical question.", "Ordningen för återställning är en teknisk fråga."]),
         narrative: L([
-          "Day three. The recovery plan is on the wall.",
-          "Dag tre. Återställningsplanen sitter på väggen."
+          "Day three. The recovery plan is on the wall of the command room, and capacity is limited: only a few systems can be restored at a time.\n\nIT has a technical order, based on what depends on what. The clinicians have a different order, based on what keeps patients safe. Both are reasonable.",
+          "Dag tre. Återställningsplanen sitter på väggen i ledningsrummet, och kapaciteten är begränsad: bara några system kan återställas åt gången.\n\nIT har en teknisk ordning, baserad på vad som är beroende av vad. Vårdpersonalen har en annan ordning, baserad på vad som håller patienterna säkra. Båda är rimliga."
         ]),
         injects: [
           inj("i8-1", 2880, "impactReport", "itOps", "medium", "confirmed", [
@@ -554,8 +554,8 @@
         twistKind: "authority",
         assumptionChallenged: L(["Hospital management decides on payment.", "Sjukhusledningen beslutar om betalning."]),
         narrative: L([
-          "Day four. The pressure moves into politics.",
-          "Dag fyra. Trycket flyttar in i politiken."
+          "Day four. The hospital is coping, slowly, but the story has moved from the wards to politics.\n\nElected members of the hospital's board are being asked on television what they will do. One of them has already given an answer, and the attackers were listening.",
+          "Dag fyra. Sjukhuset klarar sig, långsamt, men historien har flyttat från avdelningarna till politiken.\n\nFörtroendevalda i sjukhusets styrelse får frågor i tv om vad de tänker göra. En av dem har redan svarat, och angriparna lyssnade."
         ]),
         injects: [
           inj("i9-1", 4320, "newsHeadline", "media", "high", "confirmed", [
@@ -610,8 +610,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["When systems are back, the crisis is over.", "När systemen är tillbaka är krisen över."]),
         narrative: L([
-          "A week later. The hospital is running, but not normally.",
-          "En vecka senare. Sjukhuset är i drift, men inte normalt."
+          "A week later. The hospital is running, but not normally.\n\nMost systems are back, and the crisis team is about to stand down. What remains is the long tail: work that was put off, paper that has to become data, and staff who have been running on adrenaline for a week.",
+          "En vecka senare. Sjukhuset är i drift, men inte normalt.\n\nDe flesta system är tillbaka och krisledningen ska snart avvecklas. Det som återstår är den långa svansen: arbete som skjutits upp, papper som måste bli data och personal som har gått på adrenalin i en vecka."
         ]),
         injects: [
           inj("i10-1", 10080, "impactReport", "person.clinicalLead", "medium", "confirmed", [

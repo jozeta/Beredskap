@@ -74,8 +74,8 @@
         clock: 0,
         title: L(["The report", "Rapporten"]),
         narrative: L([
-          "{{time.T+0|weekday|cap}}, {{time.T+0|clock}}. An email reaches the security mailbox at {{org.name}}: a researcher can take control of customers' devices through the device-management portal, without a password.",
-          "{{time.T+0|weekday|cap}}, klockan {{time.T+0|clock}}. Ett mejl når säkerhetsbrevlådan hos {{org.name}}: en forskare kan ta kontroll över kunders enheter via portalen för enhetshantering, utan lösenord."
+          "{{time.T+0|weekday|cap}}, {{time.T+0|clock}}. An email reaches the security mailbox at {{org.name}}. A researcher says they can take control of customers' devices through the device-management portal, without a password, and attaches a proof of concept.\n\nThey follow a 90-day disclosure policy: in ninety days they will publish, fixed or not. Nobody has confirmed the claim yet, and the lawyers' first instinct is to send a warning letter.",
+          "{{time.T+0|weekday|cap}}, klockan {{time.T+0|clock}}. Ett mejl når säkerhetsbrevlådan hos {{org.name}}. En forskare säger sig kunna ta kontroll över kundernas enheter via portalen för enhetshantering, utan lösenord, och bifogar ett konceptbevis.\n\nForskaren följer en policy om offentliggörande efter 90 dagar: om nittio dagar publiceras uppgifterna, rättade eller inte. Ingen har ännu bekräftat påståendet, och juristernas första instinkt är att skicka ett varningsbrev."
         ]),
         injects: [
           inj("i1-1", 0, "email", "employee", "high", "unverified", [
@@ -135,8 +135,8 @@
         assumptionChallenged: L(["It is a bug in one portal.", "Det är ett fel i en portal."]),
         reveals: ["hf-oem"],
         narrative: L([
-          "{{time.T+1440|weekday|cap}}. {{person.devLead.name}} has reproduced the bypass in a test environment and traced it to its source.",
-          "{{time.T+1440|weekday|cap}}. {{person.devLead.name}} har återskapat förbigåendet i en testmiljö och spårat det till källan."
+          "{{time.T+1440|weekday|cap}}. {{person.devLead.name}} has spent the day reproducing the bypass in a test environment and tracing it back to its source in the code.\n\nThe researcher was right. The question now is how far the flaw reaches, because the code where it lives has been copied into more places than your own product.",
+          "{{time.T+1440|weekday|cap}}. {{person.devLead.name}} har ägnat dagen åt att återskapa förbigåendet i en testmiljö och spåra det tillbaka till källan i koden.\n\nForskaren hade rätt. Frågan nu är hur långt felet sträcker sig, eftersom koden där det sitter har kopierats till fler ställen än er egen produkt."
         ]),
         injects: [
           inj("i2-1", 1440, "forensicFinding", "person.devLead", "high", "confirmed", [
@@ -191,8 +191,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["Once the fix ships, customers are safe.", "När rättningen är släppt är kunderna säkra."]),
         narrative: L([
-          "{{time.T+14400|weekday|cap}}, day 10. The fix is ready for testing. {{person.serviceOwner.name}} looks at the installed base.",
-          "{{time.T+14400|weekday|cap}}, dag 10. Rättningen är redo för test. {{person.serviceOwner.name}} tittar på den installerade basen."
+          "{{time.T+14400|weekday|cap}}, day 10. The developers have a fix ready for testing, well ahead of the deadline. The mood in the room is good.\n\nThen {{person.serviceOwner.name}} looks at the installed base, the devices actually out there in customers' buildings, and at how many of them will ever receive the fix.",
+          "{{time.T+14400|weekday|cap}}, dag 10. Utvecklarna har en rättning klar för test, långt före tidsgränsen. Stämningen i rummet är god.\n\nSedan tittar {{person.serviceOwner.name}} på den installerade basen, de enheter som faktiskt finns ute i kundernas byggnader, och på hur många av dem som någonsin kommer att få rättningen."
         ]),
         injects: [
           inj("i3-1", 14400, "impactReport", "management", "high", "confirmed", [
@@ -253,8 +253,8 @@
         assumptionChallenged: L(["Only the researcher knows about the flaw.", "Bara forskaren känner till felet."]),
         reveals: ["hf-exploited"],
         narrative: L([
-          "{{time.T+43200|weekday|cap}}, day 30. {{person.socLead.name}} searches six months of portal logs for the bypass pattern.",
-          "{{time.T+43200|weekday|cap}}, dag 30. {{person.socLead.name}} söker igenom sex månaders portalloggar efter mönstret för förbigåendet."
+          "{{time.T+43200|weekday|cap}}, day 30. Until now, everyone has treated the flaw as a secret shared between you and the researcher.\n\n{{person.socLead.name}} searches six months of portal logs for the bypass pattern, to be sure. At the same time, customer service receives a call from a customer whose devices are behaving strangely.",
+          "{{time.T+43200|weekday|cap}}, dag 30. Hittills har alla behandlat felet som en hemlighet mellan er och forskaren.\n\n{{person.socLead.name}} söker igenom sex månaders portalloggar efter mönstret för förbigåendet, för säkerhets skull. Samtidigt får kundtjänst ett samtal från en kund vars enheter beter sig konstigt."
         ]),
         injects: [
           inj("i4-1", 43200, "logExcerpt", "siem", "critical", "confirmed", [
@@ -316,8 +316,8 @@
         assumptionChallenged: L(["Disclosure is between us and the researcher.", "Offentliggörandet är en sak mellan oss och forskaren."]),
         reveals: ["hf-duty"],
         narrative: L([
-          "{{time.T+44640|weekday|cap}}, day 31. {{person.legal.name}} has read the regulation again.",
-          "{{time.T+44640|weekday|cap}}, dag 31. {{person.legal.name}} har läst regelverket igen."
+          "{{time.T+44640|weekday|cap}}, day 31. The discovery that the flaw has been exploited has changed the legal picture, and {{person.legal.name}} has read the product regulation again, carefully.\n\nSome rules about vulnerabilities apply only once they are known to be used by attackers. That moment has already passed.",
+          "{{time.T+44640|weekday|cap}}, dag 31. Upptäckten att felet har utnyttjats har förändrat den rättsliga bilden, och {{person.legal.name}} har läst produktregleringen igen, noggrant.\n\nEn del regler om sårbarheter gäller först när det är känt att angripare använder dem. Det ögonblicket har redan passerat."
         ]),
         injects: [
           inj("i5-1", 44640, "advisory", "csirt", "high", "confirmed", [
@@ -368,8 +368,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["Publication day is the end of the incident.", "Publiceringsdagen är slutet på incidenten."]),
         narrative: L([
-          "{{time.T+129600|weekday|cap}}, day 90.",
-          "{{time.T+129600|weekday|cap}}, dag 90."
+          "{{time.T+129600|weekday|cap}}, day 90. The deadline has arrived, as agreed. The researcher publishes their write-up this morning.\n\nThe fix exists, the advisory is ready, and the partners have been told. But not every device has been updated, and the journalists who read the write-up are asking questions you will have to answer in public.",
+          "{{time.T+129600|weekday|cap}}, dag 90. Tidsgränsen är här, som överenskommet. Forskaren publicerar sin genomgång i dag.\n\nRättningen finns, säkerhetsinformationen är klar och partnerna har informerats. Men alla enheter har inte uppdaterats, och journalisterna som läser genomgången ställer frågor som ni måste besvara offentligt."
         ]),
         injects: [
           inj("i6-1", 129600, "newsHeadline", "media", "medium", "confirmed", [

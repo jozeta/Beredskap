@@ -70,6 +70,17 @@
       assert.ok(/^\d\d:\d\d$/.test(at0));
       assert.equal((h(at60) - h(at0) + 24) % 24, 1);
     });
+
+    test("daypart follows the rolled clock", () => {
+      const c = ctx();
+      for (let off = 0; off < 1440; off += 60) {
+        const clock = BK.engine.template.resolveString("{{time.T+" + off + "|clock}}", "en", c, new Set());
+        const h = Number(clock.split(":")[0]);
+        const want = h < 5 || h >= 22 ? ["night", "natt"] : h < 12 ? ["morning", "morgon"] : h < 17 ? ["afternoon", "eftermiddag"] : ["evening", "kväll"];
+        assert.equal(BK.engine.template.resolveString("{{time.T+" + off + "|daypart}}", "en", c, new Set()), want[0], clock);
+        assert.equal(BK.engine.template.resolveString("{{time.T+" + off + "|daypart}}", "sv", c, new Set()), want[1], clock);
+      }
+    });
   });
 
   suite("scenario s01 validation", () => {

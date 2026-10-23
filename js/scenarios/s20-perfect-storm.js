@@ -77,8 +77,8 @@
         clock: 0,
         title: L(["A sign-in glitch", "Ett inloggningsfel"]),
         narrative: L([
-          "{{time.T+0|day}}, {{time.T+0|clock}}. Some staff at {{org.name}} can't sign in to {{env.mail}}. It looks small.",
-          "{{time.T+0|day}}, klockan {{time.T+0|clock}}. En del anställda hos {{org.name}} kan inte logga in i {{env.mail}}. Det ser litet ut."
+          "{{time.T+0|day|cap}}, {{time.T+0|clock}}. A normal working day at {{org.name}}. Some staff cannot sign in to {{env.mail}}: they get a message that access is blocked by policy. Others are fine.\n\nIt looks small, the kind of thing the service desk fixes several times a month. Nobody has called an incident, and the executive team is in its weekly meeting, talking about something else entirely.",
+          "{{time.T+0|day|cap}}, klockan {{time.T+0|clock}}. En vanlig arbetsdag hos {{org.name}}. En del anställda kan inte logga in i {{env.mail}}: de får ett meddelande om att åtkomsten är blockerad av en policy. Andra loggar in som vanligt.\n\nDet ser litet ut, den sortens problem som servicedesken löser flera gånger i månaden. Ingen har utlyst någon incident, och ledningsgruppen sitter i sitt veckomöte och pratar om något helt annat."
         ]),
         injects: [
           inj("i1-1", 0, "ticket", "serviceDesk", "medium", "confirmed", [
@@ -134,8 +134,8 @@
         assumptionChallenged: L(["This is a misconfiguration.", "Det här är en felkonfiguration."]),
         reveals: ["hf-trust"],
         narrative: L([
-          "{{time.T+60|clock}}. The cloud lead reads the identity audit log.",
-          "Klockan {{time.T+60|clock}}. Molnansvarig läser identitetsplattformens granskningslogg."
+          "{{time.T+60|clock}}. The cloud lead opens the identity platform's audit log to find the policy change that blocked the users.\n\nThey find it, and they find what happened just before it. The person whose account made the change is on parental leave and has not logged in for weeks.",
+          "Klockan {{time.T+60|clock}}. Molnansvarig öppnar identitetsplattformens granskningslogg för att hitta policyändringen som blockerade användarna.\n\nHen hittar den, och hen hittar vad som hände strax innan. Personen vars konto gjorde ändringen är föräldraledig och har inte loggat in på flera veckor."
         ]),
         injects: [
           inj("i2-1", 60, "authLog", "siem", "critical", "confirmed", [
@@ -187,8 +187,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["Our supplier will help us through this.", "Vår leverantör kommer att hjälpa oss igenom det här."]),
         narrative: L([
-          "{{time.T+120|clock}}. The supplier manager calls the service manager at {{supplier.msp}}.",
-          "Klockan {{time.T+120|clock}}. Leverantörsansvarig ringer tjänsteansvarig hos {{supplier.msp}}."
+          "{{time.T+120|clock}}. The situation is serious, and you need help from the people who know your systems best. The supplier manager calls the service manager at {{supplier.msp}}, which runs much of your IT.\n\nThe call is answered by a recorded message, then by a stressed person who has clearly had this conversation many times today.",
+          "Klockan {{time.T+120|clock}}. Läget är allvarligt, och ni behöver hjälp av dem som känner era system bäst. Leverantörsansvarig ringer servicechefen hos {{supplier.msp}}, som sköter stora delar av er IT.\n\nSamtalet besvaras av ett inspelat meddelande, sedan av en stressad person som uppenbarligen har haft det här samtalet många gånger i dag."
         ]),
         injects: [
           inj("i3-1", 120, "supplierNotice", "msp", "high", "confirmed", [
@@ -240,8 +240,8 @@
         assumptionChallenged: L(["Our break-glass accounts guarantee we can always get back in.", "Våra nödkonton garanterar att vi alltid kan ta oss in igen."]),
         reveals: ["hf-breakglass"],
         narrative: L([
-          "{{time.T+240|clock}}. The attacker has re-added the trust. The cloud lead reaches for the sealed envelope.",
-          "Klockan {{time.T+240|clock}}. Angriparen har lagt till förtroendet igen. Molnansvarig tar fram det förseglade kuvertet."
+          "{{time.T+240|clock}}. The cloud lead removed the strange trust an hour ago. Now it is back: the attacker has added it again.\n\nThe plan for exactly this moment is in a sealed envelope in the safe: two emergency administrator accounts, kept outside normal sign-in, for when everything else fails. The cloud lead opens the envelope.",
+          "Klockan {{time.T+240|clock}}. Molnansvarig tog bort det märkliga förtroendet för en timme sedan. Nu är det tillbaka: angriparen har lagt till det igen.\n\nPlanen för precis det här ögonblicket ligger i ett förseglat kuvert i kassaskåpet: två administratörskonton för nödlägen, som hålls utanför den vanliga inloggningen, för när allt annat fallerar. Molnansvarig öppnar kuvertet."
         ]),
         injects: [
           inj("i4-1", 240, "authLog", "itOps", "critical", "confirmed", [
@@ -302,8 +302,8 @@
         twistKind: "authority",
         assumptionChallenged: L(["We speak with one voice.", "Vi talar med en röst."]),
         narrative: L([
-          "{{time.T+360|clock}}. The crisis room is full and the phones won't stop.",
-          "Klockan {{time.T+360|clock}}. Krisrummet är fullt och telefonerna slutar inte ringa."
+          "{{time.T+360|clock}}. The crisis room is full and the phones will not stop. Word has spread, inside and outside the company.\n\nSeveral executives have already been asked about the problems by people they know, and each of them gave a different answer. Now two calls arrive within ten minutes that cannot be handled with a different answer each.",
+          "Klockan {{time.T+360|clock}}. Krisrummet är fullt och telefonerna slutar inte ringa. Ryktet har spridit sig, inom och utanför företaget.\n\nFlera chefer har redan fått frågor om problemen av folk de känner, och var och en gav ett eget svar. Nu kommer två samtal inom tio minuter som inte kan hanteras med olika svar."
         ]),
         injects: [
           inj("i5-1", 360, "mediaEnquiry", "media", "high", "confirmed", [
@@ -360,8 +360,8 @@
         assumptionChallenged: L(["We'll know what was exposed before we have to say anything.", "Vi kommer att veta vad som exponerades innan vi måste säga något."]),
         reveals: ["hf-mail"],
         narrative: L([
-          "{{time.T+600|clock}}. The platform provider has given control back. The audit logs are readable again.",
-          "Klockan {{time.T+600|clock}}. Plattformsleverantören har lämnat tillbaka kontrollen. Granskningsloggarna går att läsa igen."
+          "{{time.T+600|clock}}. With the platform provider's help, you have regained control of the identity platform, and the audit logs are readable again.\n\nThe relief lasts until the logs show what the attacker did with their access during the hours you were locked out.",
+          "Klockan {{time.T+600|clock}}. Med plattformsleverantörens hjälp har ni återtagit kontrollen över identitetsplattformen, och granskningsloggarna går att läsa igen.\n\nLättnaden varar tills loggarna visar vad angriparen gjorde med sin åtkomst under de timmar ni var utelåsta."
         ]),
         injects: [
           inj("i6-1", 600, "forensicFinding", "irRetainer", "critical", "confirmed", [
@@ -424,8 +424,8 @@
         assumptionChallenged: L(["The supplier's outage was a coincidence.", "Leverantörens avbrott var ett sammanträffande."]),
         reveals: ["hf-supplier"],
         narrative: L([
-          "The next morning. Your response partner and the supplier's compare findings.",
-          "Nästa morgon. Er incidentpartner och leverantörens jämför sina fynd."
+          "The next morning. Your incident-response partner and the supplier's own investigators meet to compare findings.\n\nUntil now the supplier's outage and your break-in have been treated as two separate, unlucky events on the same day. The comparison tests that assumption.",
+          "Nästa morgon. Er incidentpartner och leverantörens egna utredare möts för att jämföra fynd.\n\nHittills har leverantörens avbrott och ert intrång behandlats som två separata, olyckliga händelser samma dag. Jämförelsen prövar det antagandet."
         ]),
         injects: [
           inj("i7-1", 1080, "forensicFinding", "irRetainer", "critical", "confirmed", [
@@ -476,8 +476,8 @@
         twistKind: "scope",
         assumptionChallenged: L(["The exposure was email.", "Exponeringen gällde e-post."]),
         narrative: L([
-          "Day two. The response partner checks sign-ins to connected apps.",
-          "Dag två. Incidentpartnern kontrollerar inloggningar till anslutna appar."
+          "Day two. The response partner widens the review beyond email, to every application that lets people sign in with their company account.\n\nThe identity platform is the front door to far more than mail. Each connected application keeps its own logs, of very different quality, and each may have been opened with a forged key.",
+          "Dag två. Incidentpartnern vidgar granskningen bortom e-posten, till varje applikation där folk loggar in med sitt företagskonto.\n\nIdentitetsplattformen är ytterdörren till mycket mer än e-post. Varje ansluten applikation har egna loggar, av mycket varierande kvalitet, och var och en kan ha öppnats med en förfalskad nyckel."
         ]),
         injects: [
           inj("i8-1", 1440, "authLog", "irRetainer", "high", "confirmed", [
@@ -528,8 +528,8 @@
         twistKind: "authority",
         assumptionChallenged: L(["This is our incident to manage.", "Det här är vår incident att hantera."]),
         narrative: L([
-          "Day three. A coordination call with dozens of organisations.",
-          "Dag tre. Ett samordningsmöte med dussintals organisationer."
+          "Day three. A national coordination call brings together dozens of organisations that use the same supplier.\n\nSome of them have not yet found anything, because they do not know what to look for. You do. Sharing would help them; your own lawyers are thinking about the claim against the supplier.",
+          "Dag tre. Ett nationellt samordningsmöte samlar dussintals organisationer som använder samma leverantör.\n\nEn del av dem har ännu inte hittat något, eftersom de inte vet vad de ska leta efter. Det vet ni. Att dela skulle hjälpa dem; era egna jurister tänker på anspråket mot leverantören."
         ]),
         injects: [
           inj("i9-1", 2880, "email", "csirt", "high", "confirmed", [
@@ -584,8 +584,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["When control is back, the crisis is over.", "När kontrollen är tillbaka är krisen över."]),
         narrative: L([
-          "A week later. The board meets.",
-          "En vecka senare. Styrelsen sammanträder."
+          "A week later. The board meets to review the incident, with the executive team that ran the crisis.\n\nThe attacker is out, but rebuilding trust in the identity platform will take weeks, and the crisis team is exhausted. The chair has prepared three questions and wants straight answers.",
+          "En vecka senare. Styrelsen möts för att gå igenom incidenten, tillsammans med ledningsgruppen som ledde krisen.\n\nAngriparen är ute, men att återuppbygga förtroendet för identitetsplattformen tar veckor, och krisledningen är utmattad. Ordföranden har förberett tre frågor och vill ha raka svar."
         ]),
         injects: [
           inj("i10-1", 10080, "executiveMessage", "management", "medium", "confirmed", [

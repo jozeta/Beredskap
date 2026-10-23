@@ -77,8 +77,8 @@
         clock: 0,
         title: L(["Everything at once", "Allt på en gång"]),
         narrative: L([
-          "{{time.T+0|day}}, {{time.T+0|clock}}. At {{org.name}}, the duty officer's phone hasn't stopped for an hour.",
-          "{{time.T+0|day}}, klockan {{time.T+0|clock}}. Hos {{org.name}} har tjänstgörande beredskapsansvarigs telefon inte slutat ringa på en timme."
+          "{{time.T+0|day|cap}}, {{time.T+0|clock}}. At {{org.name}}, the duty officer's phone has not stopped for an hour. Three things are happening at once: a customer service is down, a phishing email has reached hundreds of staff, and an administrator account is doing strange things.\n\nYou have {{num.responders}} people available to respond. Each fire looks urgent, and each has someone in the room arguing that it should come first.",
+          "{{time.T+0|day|cap}}, klockan {{time.T+0|clock}}. Hos {{org.name}} har jourhavandes telefon inte slutat ringa på en timme. Tre saker pågår samtidigt: en kundtjänst ligger nere, ett nätfiskemejl har nått hundratals anställda och ett administratörskonto gör konstiga saker.\n\nNi har {{num.responders}} personer tillgängliga. Varje brand ser brådskande ut, och för varje brand finns någon i rummet som hävdar att den ska komma först."
         ]),
         injects: [
           inj("i1-1", 0, "statusPage", "itOps", "high", "confirmed", [
@@ -148,8 +148,8 @@
         assumptionChallenged: L(["Three incidents at once must be one attack.", "Tre incidenter samtidigt måste vara ett och samma angrepp."]),
         reveals: ["hf-change"],
         narrative: L([
-          "{{time.T+60|clock}}. The operations engineer on the outage reports back.",
-          "Klockan {{time.T+60|clock}}. Driftteknikern som arbetar med avbrottet återkommer."
+          "{{time.T+60|clock}}. The operations engineer working on the outage reports back with a clear explanation.\n\nFor a moment the room relaxes: one fire has a simple cause and a known fix. But the SOC analyst is not convinced that three problems in one hour can be a coincidence.",
+          "Klockan {{time.T+60|clock}}. Driftteknikern som arbetar med avbrottet återkommer med en tydlig förklaring.\n\nEtt ögonblick slappnar rummet av: en av bränderna har en enkel orsak och en känd lösning. Men SOC-analytikern är inte övertygad om att tre problem på en timme kan vara en slump."
         ]),
         injects: [
           inj("i2-1", 60, "logExcerpt", "itOps", "medium", "confirmed", [
@@ -205,8 +205,8 @@
         assumptionChallenged: L(["The phishing is a nuisance; the privileged access is separate.", "Nätfisket är ett irritationsmoment; den privilegierade åtkomsten är något annat."]),
         reveals: ["hf-link"],
         narrative: L([
-          "{{time.T+120|clock}}. The SOC matches the list of clickers with the privileged sign-ins.",
-          "Klockan {{time.T+120|clock}}. SOC jämför listan över dem som klickade med de privilegierade inloggningarna."
+          "{{time.T+120|clock}}. The SOC puts two lists side by side: the staff who clicked the phishing link, and the privileged sign-ins of the last two hours.\n\nUntil now the phishing wave and the strange admin activity have been handled as separate problems, by different people. The two lists share a name.",
+          "Klockan {{time.T+120|clock}}. SOC lägger två listor bredvid varandra: de anställda som klickade på nätfiskelänken, och de privilegierade inloggningarna under de senaste två timmarna.\n\nHittills har nätfiskevågen och den konstiga administratörsaktiviteten hanterats som separata problem, av olika personer. De två listorna har ett namn gemensamt."
         ]),
         injects: [
           inj("i3-1", 120, "forensicFinding", "soc", "critical", "confirmed", [
@@ -257,8 +257,8 @@
         twistKind: "authority",
         assumptionChallenged: L(["Everyone knows who is in charge.", "Alla vet vem som leder."]),
         narrative: L([
-          "{{time.T+180|clock}}. Two leaders join the bridge from different meetings.",
-          "Klockan {{time.T+180|clock}}. Två chefer ansluter till samtalet från olika möten."
+          "{{time.T+180|clock}}. Two senior leaders join the incident bridge from different meetings, each briefed by different people.\n\nWithin minutes they are giving orders to the same four responders, and the orders point in opposite directions. The responders look at the incident lead to find out whom to follow.",
+          "Klockan {{time.T+180|clock}}. Två höga chefer ansluter till incidentmötet från olika möten, informerade av olika personer.\n\nInom några minuter ger de order till samma fyra personer, och orderna pekar åt motsatta håll. De som arbetar med incidenten tittar på incidentledaren för att se vem de ska följa."
         ]),
         injects: [
           inj("i4-1", 180, "chat", "person.cio", "high", "confirmed", [
@@ -315,8 +315,8 @@
         assumptionChallenged: L(["The attacker only had a foothold.", "Angriparen hade bara ett fotfäste."]),
         reveals: ["hf-backup"],
         narrative: L([
-          "{{time.T+300|clock}}. The incident-response partner reviews the new account's activity.",
-          "Klockan {{time.T+300|clock}}. Incidentpartnern granskar det nya kontots aktivitet."
+          "{{time.T+300|clock}}. The incident-response partner has been going through everything the attacker's accounts did since the phishing click.\n\nMost of it is reconnaissance: listing groups, reading settings. One action is different. It is quiet, small and set to take effect tonight.",
+          "Klockan {{time.T+300|clock}}. Incidentpartnern har gått igenom allt som angriparens konton har gjort sedan klicket på nätfiskelänken.\n\nDet mesta är kartläggning: listning av grupper, läsning av inställningar. En åtgärd skiljer sig. Den är tyst, liten och inställd att få effekt i natt."
         ]),
         injects: [
           inj("i5-1", 300, "backupReport", "backupSystem", "critical", "confirmed", [
@@ -367,8 +367,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["Response actions on one fire don't affect another.", "Åtgärder för en brand påverkar inte en annan."]),
         narrative: L([
-          "{{time.T+420|clock}}. The rollback fails halfway.",
-          "Klockan {{time.T+420|clock}}. Tillbakarullningen misslyckas halvvägs."
+          "{{time.T+420|clock}}. The security team revoked every session on the network an hour ago, to throw the attacker out.\n\nAt the same time, the operations team was in the middle of rolling back the failed database change. Nobody told them about the revocation, and nobody told the security team about the rollback.",
+          "Klockan {{time.T+420|clock}}. Säkerhetsteamet återkallade alla sessioner i nätverket för en timme sedan, för att kasta ut angriparen.\n\nSamtidigt var driftteamet mitt i att rulla tillbaka den misslyckade databasändringen. Ingen berättade om återkallandet för dem, och ingen berättade om tillbakarullningen för säkerhetsteamet."
         ]),
         injects: [
           inj("i6-1", 420, "logExcerpt", "itOps", "high", "confirmed", [
@@ -420,8 +420,8 @@
         assumptionChallenged: L(["The phishing was a coincidence too.", "Nätfisket var också ett sammanträffande."]),
         reveals: ["hf-lure"],
         narrative: L([
-          "{{time.T+600|clock}}. The incident-response partner compares the email with your status page.",
-          "Klockan {{time.T+600|clock}}. Incidentpartnern jämför meddelandet med er driftstatussida."
+          "{{time.T+600|clock}}. With the immediate threats under control, the incident-response partner looks again at the phishing email itself.\n\nThe email was well written and timely, which is why so many people clicked. The partner compares its wording with your own public messages from the afternoon.",
+          "Klockan {{time.T+600|clock}}. Med de akuta hoten under kontroll tittar incidentpartnern igen på själva nätfiskemejlet.\n\nMejlet var välskrivet och kom vid rätt tidpunkt, vilket är varför så många klickade. Partnern jämför formuleringarna med era egna offentliga meddelanden från eftermiddagen."
         ]),
         injects: [
           inj("i7-1", 600, "threatIntel", "irRetainer", "medium", "confirmed", [
@@ -483,8 +483,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["The team can keep going until it's over.", "Teamet kan hålla på tills det är över."]),
         narrative: L([
-          "Late night. The service is back and the attacker is out — probably.",
-          "Sent på natten. Tjänsten är tillbaka och angriparen är ute – troligen."
+          "{{time.T+720|daypart|cap}}, {{time.T+720|clock}}. The customer service is back and the attacker is out, probably.\n\nThe same {{num.responders}} people have handled all three fires since the first alarm, without a proper break. Small mistakes are starting to appear, and tomorrow is a normal working day.",
+          "{{time.T+720|daypart|cap}}, klockan {{time.T+720|clock}}. Kundtjänsten fungerar igen och angriparen är ute, troligen.\n\nSamma {{num.responders}} personer har hanterat alla tre bränderna sedan första larmet, utan ordentlig paus. Små misstag börjar dyka upp, och i morgon är en vanlig arbetsdag."
         ]),
         injects: [
           inj("i8-1", 1080, "employeeReport", "employee", "medium", "confirmed", [

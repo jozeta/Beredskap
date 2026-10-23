@@ -395,6 +395,7 @@
           narrative: L(v && v.narrative ? v.narrative : pg.narrative, lang),
           because: v && v.because ? L(v.because, lang) : "",
           emblem: inst.emblem,
+          isEnding: Boolean(pg.ending),
           choiceNumber: sess.route.filter((r) => !r.auto).findIndex((r) => r.pageId === pg.id) + 1
         });
       }

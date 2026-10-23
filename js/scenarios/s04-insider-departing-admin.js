@@ -82,8 +82,8 @@
         clock: 0,
         title: L(["Handover or exfiltration?", "Överlämning eller dataläcka?"]),
         narrative: L([
-          "{{time.T+0|day}}, {{time.T+0|clock}}. Data-loss prevention flags large uploads to a personal cloud storage service from {{asset.adminAccount}}, the account of a senior administrator who has resigned and leaves in {{num.daysLeft}} days.",
-          "{{time.T+0|day}}, klockan {{time.T+0|clock}}. Dataförlustskyddet larmar om stora uppladdningar till en privat molnlagringstjänst från {{asset.adminAccount}}, kontot för en erfaren administratör som har sagt upp sig och slutar om {{num.daysLeft}} dagar."
+          "{{time.T+0|day|cap}}, {{time.T+0|clock}}. Data-loss prevention flags large uploads to a personal cloud storage service from {{asset.adminAccount}}.\n\nThe account belongs to a senior administrator, fifteen years at the company, who has resigned and leaves in {{num.daysLeft}} days. They hold the keys to almost everything: firewalls, the directory and customer systems. Their manager says they are simply documenting before they go.",
+          "{{time.T+0|day|cap}}, klockan {{time.T+0|clock}}. Dataförlustskyddet larmar om stora uppladdningar till en privat molnlagringstjänst från {{asset.adminAccount}}.\n\nKontot tillhör en erfaren administratör, femton år på företaget, som har sagt upp sig och slutar om {{num.daysLeft}} dagar. Hen har nycklarna till nästan allt: brandväggar, katalogtjänsten och kundsystem. Chefen säger att hen bara dokumenterar innan hen slutar."
         ]),
         injects: [
           inj("i1-1", 0, "siemAlert", "siem", "medium", "confirmed", [
@@ -151,8 +151,8 @@
         twistKind: "authority",
         assumptionChallenged: L(["Security can investigate an employee freely when there is a risk.", "Säkerhetsfunktionen kan utreda en anställd fritt när det finns en risk."]),
         narrative: L([
-          "{{time.T+240|clock}}. A meeting with HR, legal and the data protection officer turns tense. The plan to review the administrator's mailbox and browsing history is stopped at the door.",
-          "Klockan {{time.T+240|clock}}. Ett möte med HR, juridik och dataskyddsombudet blir spänt. Planen att gå igenom administratörens e-post och webbhistorik stoppas redan vid dörren."
+          "{{time.T+240|clock}}. A meeting with HR, legal and the data protection officer turns tense.\n\nThe security team arrived with a plan to review the administrator's mailbox and browsing history. It is stopped at the door. Employees have rights too, even when they have access to everything, and the company has to be able to defend whatever it does next.",
+          "Klockan {{time.T+240|clock}}. Ett möte med HR, juridik och dataskyddsombudet blir spänt.\n\nSäkerhetsteamet kom med en plan att gå igenom administratörens e-post och webbhistorik. Den stoppas redan vid dörren. Även anställda med åtkomst till allt har rättigheter, och företaget måste kunna försvara det som görs härnäst."
         ]),
         injects: [
           inj("i2-1", 240, "executiveMessage", "person.hr", "medium", "confirmed", [
@@ -212,8 +212,8 @@
         assumptionChallenged: L(["Everything was done by the employee personally.", "Allt gjordes av den anställda personligen."]),
         reveals: ["hf-leave"],
         narrative: L([
-          "Two days later, {{time.T+2880|clock}}. The log review agreed under the plan is done. The VPN records do not fit the story anyone has been telling.",
-          "Två dagar senare, klockan {{time.T+2880|clock}}. Logggenomgången enligt planen är klar. VPN-loggarna stämmer inte med den bild som någon hittills har haft."
+          "Two days later, {{time.T+2880|clock}}. The log review agreed under the plan is done, limited to the security logs the company already keeps.\n\nThe VPN records do not fit the story anyone has been telling, neither the “innocent handover” nor the “disloyal employee”. The account was used in a way the administrator could not have used it.",
+          "Två dagar senare, klockan {{time.T+2880|clock}}. Logggenomgången enligt planen är klar, begränsad till de säkerhetsloggar som företaget redan sparar.\n\nVPN-loggarna stämmer inte med den bild som någon hittills har haft, varken ”den oskyldiga överlämningen” eller ”den illojala medarbetaren”. Kontot användes på ett sätt som administratören inte kan ha använt det."
         ]),
         injects: [
           inj("i3-1", 2880, "authLog", "siem", "high", "confirmed", [
@@ -285,8 +285,8 @@
         assumptionChallenged: L(["This is a disloyal employee stealing data on the way out.", "Det här är en illojal anställd som stjäl data på vägen ut."]),
         reveals: ["hf-coerced"],
         narrative: L([
-          "{{time.T+3000|clock}}. Before the planned meeting, the administrator asks to speak to {{person.securityOfficer.name}} alone.",
-          "Klockan {{time.T+3000|clock}}. Före det planerade mötet ber administratören om att få prata ensam med {{person.securityOfficer.name}}."
+          "{{time.T+3000|clock}}. A meeting with the administrator is planned for the afternoon, with HR present.\n\nBefore it starts, the administrator asks to speak to {{person.securityOfficer.name}} alone, in a room without windows. They look as if they have not slept, and they ask whether the conversation can stay confidential.",
+          "Klockan {{time.T+3000|clock}}. Ett möte med administratören är planerat till eftermiddagen, med HR närvarande.\n\nInnan det börjar ber administratören om att få prata ensam med {{person.securityOfficer.name}}, i ett rum utan fönster. Hen ser ut som om hen inte har sovit, och frågar om samtalet kan förbli konfidentiellt."
         ]),
         injects: [
           inj("i4-1", 3000, "phoneTranscript", "person.securityOfficer", "high", "confirmed", [
@@ -343,8 +343,8 @@
         assumptionChallenged: L(["Disabling the employee's account removes the attacker's access.", "Att spärra medarbetarens konto tar bort angriparens åtkomst."]),
         reveals: ["hf-backdoors"],
         narrative: L([
-          "{{time.T+3120|clock}}. A search of privileged groups for recently created accounts returns names that look like ordinary integrations.",
-          "Klockan {{time.T+3120|clock}}. En sökning i de privilegierade grupperna efter nyligen skapade konton ger träffar med namn som ser ut som vanliga integrationer."
+          "{{time.T+3120|clock}}. The administrator's account and token have been dealt with. But the security team is not satisfied that the problem ends there.\n\nA search of the privileged groups for recently created accounts returns names that look like ordinary integrations: monitoring, backup, synchronisation. Nobody can say who asked for them.",
+          "Klockan {{time.T+3120|clock}}. Administratörens konto och token är omhändertagna. Men säkerhetsteamet är inte övertygat om att problemet slutar där.\n\nEn sökning i de privilegierade grupperna efter nyligen skapade konton ger träffar med namn som ser ut som vanliga integrationer: övervakning, säkerhetskopiering, synkronisering. Ingen kan säga vem som beställde dem."
         ]),
         injects: [
           inj("i5-1", 3120, "forensicFinding", "forensics", "critical", "confirmed", [
@@ -404,8 +404,8 @@
         twistKind: "authority",
         assumptionChallenged: L(["We decide when to close the door on the attacker.", "Vi bestämmer när vi stänger dörren för angriparen."]),
         narrative: L([
-          "Three days after the first alert. {{reg.police|cap}} has taken the case seriously — and has a request that makes the security team uncomfortable.",
-          "Tre dagar efter det första larmet. {{reg.police|cap}} tar ärendet på stort allvar – och har en begäran som gör säkerhetsteamet obekvämt."
+          "Three days after the first alert. {{reg.police|cap}} has taken the case seriously: threats against an employee's family are a serious crime, and the same group may be behind other cases.\n\nThe investigators have a request, and it makes the security team uncomfortable. Saying yes could help catch the group. Saying no keeps your network simpler to defend.",
+          "Tre dagar efter det första larmet. {{reg.police|cap}} tar ärendet på stort allvar: hot mot en anställds familj är ett allvarligt brott, och samma grupp kan ligga bakom andra fall.\n\nUtredarna har en begäran, och den gör säkerhetsteamet obekvämt. Att säga ja kan hjälpa till att gripa gruppen. Att säga nej gör ert nätverk enklare att försvara."
         ]),
         injects: [
           inj("i6-1", 4320, "phoneTranscript", "police", "high", "confirmed", [
@@ -460,8 +460,8 @@
         twistKind: "impact",
         assumptionChallenged: L(["Only our internal data was taken.", "Bara vår interna data har tagits."]),
         narrative: L([
-          "{{time.T+5760|clock}}. The review of the uploaded files is complete.",
-          "Klockan {{time.T+5760|clock}}. Genomgången av de uppladdade filerna är klar."
+          "{{time.T+5760|clock}}. The forensic review of the uploaded files is complete. Until now the room has focused on the company's own systems.\n\nThe file list tells a different story about who is affected. Some of the files concern systems you run on behalf of others, and those others do not yet know anything has happened.",
+          "Klockan {{time.T+5760|clock}}. Den forensiska genomgången av de uppladdade filerna är klar. Hittills har rummet fokuserat på företagets egna system.\n\nFillistan berättar något annat om vilka som berörs. En del av filerna rör system som ni driver åt andra, och de andra vet ännu inte att något har hänt."
         ]),
         injects: [
           inj("i7-1", 5760, "forensicFinding", "forensics", "high", "confirmed", [
@@ -517,8 +517,8 @@
         assumptionChallenged: L(["This was an isolated case.", "Det här var ett enstaka fall."]),
         reveals: ["hf-approach"],
         narrative: L([
-          "A week later. After a careful message from management about threats against staff, two more administrators come forward.",
-          "En vecka senare. Efter ett varsamt budskap från ledningen om hot mot personal träder ytterligare två administratörer fram."
+          "A week later. Management sent a careful message to all technical staff: threats against employees happen, they are not your fault, and the company will protect anyone who comes forward.\n\nWithin two days, two more administrators ask to talk. The room has to decide what the company changes for good, not just for this case.",
+          "En vecka senare. Ledningen skickade ett varsamt budskap till all teknisk personal: hot mot anställda förekommer, det är inte ert fel, och företaget skyddar den som träder fram.\n\nInom två dagar ber ytterligare två administratörer om att få prata. Rummet måste bestämma vad företaget ändrar på riktigt, inte bara för det här fallet."
         ]),
         injects: [
           inj("i8-1", 10080, "employeeReport", "person.securityOfficer", "high", "confirmed", [
