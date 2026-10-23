@@ -24,3 +24,7 @@ node_modules/
 beredskap-*.json
 beredskap-*.md
 beredskap-*.csv
+
+# Internal design documents (kept locally, not published)
+/SPEC.md
+/docs/superpowers/
