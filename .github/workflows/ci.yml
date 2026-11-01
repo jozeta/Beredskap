@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Forbidden-API source scan
+        run: |
+          if grep -rnE "eval\(|new Function|innerHTML\s*=|fetch\(|XMLHttpRequest" js | grep -v "js/graphics/icons.js"; then
+            echo "::error::Forbidden API found (see README §5 'Safe rendering')"; exit 1
+          fi
+      - name: In-browser test suite (tests.html, headless Chrome over HTTP)
+        run: |
+          python3 -m http.server 8000 >/dev/null 2>&1 &
+          sleep 2
+          CHROME="$(command -v google-chrome || command -v chromium)"
+          "$CHROME" --headless=new --disable-gpu --no-sandbox --window-size=1920,1080 \
+            --virtual-time-budget=900000 --dump-dom http://localhost:8000/tests.html > result.html
+          summary=$(grep -oE 'class="summary[^"]*">[^<]*' result.html || true)
+          echo "$summary"
+          echo "$summary" | grep -q 'is-pass' || { echo "::error::Beredskap tests failed or did not finish"; exit 1; }
