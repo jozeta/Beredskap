@@ -10,7 +10,9 @@ permissions:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    # macOS runner: the layout tests measure text against the fonts the app is designed for
+    # (Segoe UI / system-ui / Helvetica). Ubuntu only has wider fallback fonts, so text overflows there.
+    runs-on: macos-15
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
@@ -23,7 +25,7 @@ jobs:
         run: |
           python3 -m http.server 8000 >/dev/null 2>&1 &
           sleep 2
-          CHROME="$(command -v google-chrome || command -v chromium)"
+          CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
           "$CHROME" --headless=new --disable-gpu --no-sandbox --window-size=1920,1080 \
             --virtual-time-budget=900000 --dump-dom http://localhost:8000/tests.html > result.html
           summary=$(grep -oE 'class="summary[^"]*">[^<]*' result.html || true)
