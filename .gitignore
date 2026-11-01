@@ -28,3 +28,13 @@ beredskap-*.csv
 # Internal design documents (kept locally, not published)
 /SPEC.md
 /docs/superpowers/
+
+# --- Baseline: macOS, Claude Code and secrets ---
+._*
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
