@@ -28,4 +28,5 @@ jobs:
             --virtual-time-budget=900000 --dump-dom http://localhost:8000/tests.html > result.html
           summary=$(grep -oE 'class="summary[^"]*">[^<]*' result.html || true)
           echo "$summary"
+          grep -oE '<li class="fail">[^<]*' result.html | sed 's/<li class="fail">/FAILED: /' || true
           echo "$summary" | grep -q 'is-pass' || { echo "::error::Beredskap tests failed or did not finish"; exit 1; }
