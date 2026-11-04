@@ -139,6 +139,9 @@
         title: L(["It really is maintenance", "Det är verkligen underhåll"]),
         twist: L(["The application team confirms: the activity you can see is their maintenance, and they can prove it.", "Applikationsteamet bekräftar: aktiviteten ni ser är deras underhåll, och de kan bevisa det."]),
         twistKind: "cause",
+        branches: [
+          { when: { decision: "d1", option: "C" }, narrativeAppend: { en: "Because the server was isolated in the middle of the maintenance, the application team's upgrade broke half-way, and they blame security.", sv: "Eftersom servern isolerades mitt i underhållet gick applikationsteamets uppgradering sönder halvvägs, och de skyller på säkerhet." } }
+        ],
         assumptionChallenged: L(["This is an attack.", "Det här är ett angrepp."]),
         narrative: L([
           "{{time.T+40|clock}}. The application team lead joins the call, a little annoyed at being interrupted in the middle of the work.\n\nThey have a run log, named accounts and a clear explanation. Month-end close starts in a few hours and they want the server left alone. Almost everything the SOC has seen fits their story. Almost.",
@@ -203,6 +206,7 @@
         title: L(["Someone else in the window", "Någon annan i fönstret"]),
         twist: L(["Network and identity logs show a second actor, unrelated to the maintenance, using the window as cover.", "Nätverks- och identitetsloggar visar en andra aktör, utan koppling till underhållet, som använder fönstret som täckmantel."]),
         twistKind: "scope",
+        reconsider: { decision: "d2", pressure: { en: "There is a second actor, hiding inside the maintenance window. Does the way you handled the host outside the change still look careful enough?", sv: "Det finns en andra aktör som gömmer sig i underhållsfönstret. Ser ert sätt att hantera värden utanför ändringen fortfarande tillräckligt noggrant ut?" } },
         assumptionChallenged: L(["All the activity has one explanation.", "All aktivitet har en och samma förklaring."]),
         reveals: ["hf-second"],
         narrative: L([
@@ -261,6 +265,9 @@
         title: L(["Why nobody saw it", "Varför ingen såg det"]),
         twist: L(["The SOC had suppressed these alerts during every maintenance window — and the actor had worked only inside them.", "SOC hade undertryckt de här larmen under varje underhållsfönster – och aktören hade bara arbetat inom dem."]),
         twistKind: "cause",
+        branches: [
+          { when: { decision: "d3", option: "B" }, narrativeAppend: { en: "Because the maintenance was stopped mid-way, the business system now runs a half-upgraded version, and support has a growing backlog.", sv: "Eftersom underhållet stoppades halvvägs kör affärssystemet nu en halvt uppgraderad version, och supporten har en växande kö." } }
+        ],
         assumptionChallenged: L(["Our monitoring would have caught this earlier.", "Vår bevakning hade upptäckt det här tidigare."]),
         reveals: ["hf-suppress"],
         narrative: L([
@@ -355,7 +362,7 @@
         decision: dec("d5", "incidentCommander", ["Does the close run?", "Körs bokslutet?"], [
           ["Run it under enhanced monitoring, with payments approved manually and a named risk owner.", "Kör det med förstärkt bevakning, manuellt godkända betalningar och en utsedd riskägare."],
           ["Postpone the close until the system is verified.", "Skjut upp bokslutet tills systemet är kontrollerat."],
-          ["Run it as normal.", "Kör det som vanligt."]
+          ["Run the close as normal: the actor has only been seen inside maintenance windows, and month-end is not one.", "Kör bokslutet som vanligt: aktören har bara setts inne i underhållsfönster, och månadsskiftet är inget sådant."]
         ], {
           knowns: [["The actor's known access is contained.", "Aktörens kända åtkomst är begränsad."]],
           uncertainties: [["Whether they left anything behind.", "Om de har lämnat något efter sig."]],
@@ -380,6 +387,10 @@
         title: L(["They read the payroll", "De läste lönerna"]),
         twist: L(["Weeks ago, the actor's account queried the payroll database, including bank details.", "För flera veckor sedan frågade aktörens konto mot lönedatabasen, inklusive bankuppgifter."]),
         twistKind: "scope",
+        reconsider: { decision: "d3", pressure: { en: "The actor read the payroll weeks ago. If you watched them to learn more, they kept their access while you did. If you cut them off, you may never know what else they took.", sv: "Aktören läste lönedatabasen för flera veckor sedan. Om ni bevakade dem för att lära er mer behöll de sin åtkomst under tiden. Om ni stängde ute dem får ni kanske aldrig veta vad mer de tog." } },
+        branches: [
+          { when: { decision: "d5", option: "B" }, narrativeAppend: { en: "Because month-end was postponed, suppliers were paid late, and two have put your account on hold.", sv: "Eftersom månadsbokslutet sköts upp fick leverantörerna betalt för sent, och två har spärrat ert kundkonto." } }
+        ],
         assumptionChallenged: L(["The actor only got as far as the business system.", "Aktören kom bara så långt som till affärssystemet."]),
         reveals: ["hf-payroll"],
         narrative: L([
@@ -446,6 +457,7 @@
         title: L(["The fatigue review", "Granskningen av larmtröttheten"]),
         twist: L(["The account came from a credential broker, and the maintenance calendar was readable by every employee.", "Kontot kom från en mäklare av inloggningsuppgifter, och underhållskalendern kunde läsas av alla anställda."]),
         twistKind: "impact",
+        reconsider: { decision: "d5", pressure: { en: "Finance ran month-end on your terms, and two salary-account changes went through during the close. Would you make the same call again?", sv: "Ekonomi körde månadsbokslutet på era villkor, och två ändringar av lönekonton gick igenom under bokslutet. Skulle ni fatta samma beslut igen?" } },
         assumptionChallenged: L(["Fixing one rule fixes the problem.", "Att rätta en regel löser problemet."]),
         narrative: L([
           "Two days later. The immediate incident is handled, and the SOC presents what made it possible.\n\nIt was not one mistake but several small, reasonable-looking decisions: a muted alert, a calendar anyone could read, a credential nobody knew was for sale. The room has a budget for fixes, and it will not cover everything.",

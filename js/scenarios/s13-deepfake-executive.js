@@ -114,7 +114,7 @@
         decision: dec("d1", "cfo", ["What do you do with the payments?", "Vad gör ni med betalningarna?"], [
           ["Stop the second payment, ask the bank to recall the first, and verify with the CEO through a known channel.", "Stoppa den andra betalningen, be banken återkalla den första och stäm av med vd via en känd kanal."],
           ["Pause the second payment until the CEO confirms.", "Pausa den andra betalningen tills vd bekräftar."],
-          ["Complete it; the CEO was on camera.", "Genomför den; vd syntes i bild."]
+          ["Complete it: the CEO was on camera, the deal is real, and missing today's deadline could cost the acquisition.", "Genomför den: vd syntes i bild, affären är verklig, och att missa dagens tidsgräns kan kosta förvärvet."]
         ], {
           knowns: [["One payment has gone abroad.", "En betalning har gått utomlands."], ["Secrecy was demanded.", "Hemlighållande krävdes."]],
           uncertainties: [["Whether the call was real.", "Om samtalet var äkta."]],
@@ -139,6 +139,9 @@
         title: L(["The CEO was in the air", "Vd var i luften"]),
         twist: L(["The CEO lands and calls: they were on a flight during the call. Someone used a synthetic copy of their face and voice.", "Vd landar och ringer: de satt på ett flygplan under samtalet. Någon använde en syntetisk kopia av deras ansikte och röst."]),
         twistKind: "cause",
+        branches: [
+          { when: { decision: "d1", option: "A" }, narrativeAppend: { en: "Because the second payment was stopped, the real counterparty in the acquisition, who did expect a payment this week, asks whether the deal is off.", sv: "Eftersom den andra betalningen stoppades frågar den verkliga motparten i förvärvet, som faktiskt väntade sig en betalning den här veckan, om affären är avbruten." } }
+        ],
         assumptionChallenged: L(["Seeing and hearing someone on a video call proves it is them.", "Att se och höra någon i ett videosamtal bevisar att det är de."]),
         reveals: ["hf-fake"],
         narrative: L([
@@ -196,6 +199,7 @@
         title: L(["The voice at the service desk", "Rösten på servicedesken"]),
         twist: L(["Before the payment, the same voice phoned the service desk and had the CEO's MFA reset.", "Före betalningen ringde samma röst servicedesken och fick vd:ns MFA återställd."]),
         twistKind: "scope",
+        reconsider: { decision: "d2", pressure: { en: "The same voice had the CEO's MFA reset before the payment. If you warned finance and the assistants, the attackers may now know you are onto them. If you kept it quiet, the service desk never heard.", sv: "Samma röst fick vd:s MFA återställd före betalningen. Om ni varnade ekonomi och assistenterna kan angriparna nu veta att ni är dem på spåren. Om ni höll tyst fick servicedesken aldrig veta." } },
         assumptionChallenged: L(["This was only payment fraud.", "Det här var bara betalningsbedrägeri."]),
         reveals: ["hf-helpdesk"],
         narrative: L([
@@ -253,6 +257,9 @@
         title: L(["Words the CEO never said", "Ord som vd aldrig sa"]),
         twist: L(["Audio of the CEO making offensive remarks about staff and customers is published. It is fabricated — and spreading.", "Ljud där vd fäller kränkande kommentarer om personal och kunder publiceras. Det är fabricerat – och sprids."]),
         twistKind: "impact",
+        branches: [
+          { when: { decision: "d2", option: "A" }, narrativeAppend: { en: "Because finance and the assistants were warned, the story reached a journalist before the fake audio did.", sv: "Eftersom ekonomi och assistenterna varnades nådde historien en journalist innan det falska ljudklippet gjorde det." } }
+        ],
         assumptionChallenged: L(["The damage was the money.", "Skadan var pengarna."]),
         narrative: L([
           "The next morning. The fraud has been reported and the CEO's account has been secured. The crisis team hoped to handle the rest quietly.\n\nThen the CEO's name starts trending on social media. A clip is spreading fast, and the comments are furious. Customers, staff and journalists are all asking the same question.",
@@ -288,8 +295,8 @@
         challenges: [ch("A denial from the CEO sounds exactly like what a guilty CEO would say.", "Ett förnekande från vd låter precis som det en skyldig vd skulle säga.")],
         decision: dec("d4", "ceo", ["How do you respond publicly?", "Hur svarar ni offentligt?"], [
           ["Tell the whole story: the fraud attempt, the fake media and the police report, with the CEO on camera in person.", "Berätta hela historien: bedrägeriförsöket, de falska medierna och polisanmälan, med vd framför kameran personligen."],
-          ["Deny the clip briefly and say nothing about the fraud.", "Förneka klippet kort och säg ingenting om bedrägeriet."],
-          ["Say nothing until the platforms remove it.", "Säg ingenting tills plattformarna har tagit bort det."]
+          ["Call the clip fabricated in one short statement, and keep the fraud attempt out of it while the police investigate.", "Kalla klippet förfalskat i ett kort uttalande, och håll bedrägeriförsöket utanför medan polisen utreder."],
+          ["Say nothing yourselves and push the platforms to remove it; every statement spreads the clip further.", "Säg ingenting själva och pressa plattformarna att ta bort det; varje uttalande sprider klippet vidare."]
         ], {
           knowns: [["The clip is fabricated.", "Klippet är fabricerat."], ["Fraud was attempted.", "Ett bedrägeri har försökts."]],
           uncertainties: [["Whether more fakes will follow.", "Om fler förfalskningar kommer att följa."]],
@@ -315,6 +322,7 @@
         title: L(["Not the only call", "Inte det enda samtalet"]),
         twist: L(["{{num.calledExecs}} other executives and assistants received similar calls this week; some went unreported.", "{{num.calledExecs}} andra chefer och assistenter fick liknande samtal i veckan; en del rapporterades aldrig."]),
         twistKind: "scope",
+        reconsider: { decision: "d3", pressure: { en: "{{num.calledExecs}} more people received calls, and some never reported them. Was your change to resets wide enough?", sv: "Ytterligare {{num.calledExecs}} personer har fått samtal, och några rapporterade dem aldrig. Var er ändring av återställningar tillräckligt bred?" } },
         assumptionChallenged: L(["One employee was targeted.", "En anställd var måltavla."]),
         reveals: ["hf-others"],
         narrative: L([
@@ -377,6 +385,10 @@
         title: L(["Verification, not blame", "Kontroll, inte skuld"]),
         twist: L(["A board member asks for the finance manager to be dismissed. HR and the CFO disagree on who decides.", "En styrelseledamot vill att den ekonomiansvariga ska sägas upp. HR och ekonomichefen är oense om vem som beslutar."]),
         twistKind: "authority",
+        reconsider: { decision: "d1", pressure: { en: "A board member wants the finance manager dismissed. The board will judge your first decision about the payments as well.", sv: "En styrelseledamot vill att ekonomichefen avskedas. Styrelsen kommer också att bedöma ert första beslut om betalningarna." } },
+        branches: [
+          { when: { decision: "d4", option: "A" }, narrativeAppend: { en: "Because you told the whole story, the fraud attempt now leads every article, and two major investors have called the CEO.", sv: "Eftersom ni berättade hela historien toppar bedrägeriförsöket nu varje artikel, och två stora investerare har ringt vd." } }
+        ],
         assumptionChallenged: L(["The employee who paid is the problem.", "Den anställda som betalade är problemet."]),
         narrative: L([
           "Three days later. The bank has partly recovered the first payment; the rest has moved on through other accounts.\n\nThe board meets to review the incident. The finance manager, who raised the alarm and came forward on the first morning, is waiting outside to find out what happens to them.",

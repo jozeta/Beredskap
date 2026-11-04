@@ -107,8 +107,8 @@
         challenges: [ch("Every hour the page stays up, more screenshots spread.", "För varje timme sidan ligger kvar sprids fler skärmbilder.")],
         decision: dec("d1", "incidentCommander", ["What do you do first?", "Vad gör ni först?"], [
           ["Take the content pages offline, preserve evidence, restore from a clean copy and issue a short factual statement.", "Ta ned innehållssidorna, säkra spår, återställ från en ren kopia och gå ut med ett kort sakligt uttalande."],
-          ["Restore the pages immediately and say nothing.", "Återställ sidorna omedelbart och säg ingenting."],
-          ["Leave the page up until the investigation is done.", "Låt sidan ligga kvar tills utredningen är klar."]
+          ["Restore the pages from a backup at once and let the clean site speak for itself.", "Återställ sidorna från en säkerhetskopia direkt och låt den rena webbplatsen tala för sig själv."],
+          ["Leave the defaced page up for an hour, so the police can capture it exactly as it is.", "Låt den vandaliserade sidan ligga kvar en timme, så att polisen kan säkra den precis som den är."]
         ], {
           knowns: [["Content pages are defaced.", "Innehållssidorna är vandaliserade."], ["E-services still work.", "E-tjänsterna fungerar fortfarande."]],
           uncertainties: [["How they got in.", "Hur de tog sig in."]],
@@ -133,6 +133,9 @@
         title: L(["Through the contractor", "Via konsulten"]),
         twist: L(["The pages were changed through a web contractor's publishing account, not a flaw in your site.", "Sidorna ändrades via ett publiceringskonto hos en webbkonsult, inte genom en brist i er webbplats."]),
         twistKind: "cause",
+        branches: [
+          { when: { decision: "d1", option: "A" }, narrativeAppend: { en: "Because the pages were taken offline, residents could not reach the council's information about the decision for half a day.", sv: "Eftersom sidorna togs ner kunde invånarna inte nå kommunens information om beslutet under en halv dag." } }
+        ],
         assumptionChallenged: L(["The attackers exploited the website.", "Angriparna utnyttjade webbplatsen."]),
         reveals: ["hf-cms"],
         narrative: L([
@@ -190,6 +193,7 @@
         title: L(["Names and addresses", "Namn och adresser"]),
         twist: L(["The group publishes names, home addresses and phone numbers of {{num.staffDoxxed}} staff linked to the decision. Threats follow.", "Gruppen publicerar namn, hemadresser och telefonnummer till {{num.staffDoxxed}} anställda med koppling till beslutet. Hot följer."]),
         twistKind: "scope",
+        reconsider: { decision: "d1", pressure: { en: "Staff names and home addresses are now public. Whatever you said, or did not say, on the first day is being quoted by the group.", sv: "Personalens namn och hemadresser är nu offentliga. Det ni sa, eller inte sa, den första dagen citeras nu av gruppen." } },
         assumptionChallenged: L(["This is about the website.", "Det här handlar om webbplatsen."]),
         reveals: ["hf-dox"],
         narrative: L([
@@ -253,6 +257,9 @@
         title: L(["E-services down", "E-tjänsterna ligger nere"]),
         twist: L(["A traffic flood of {{num.gbps}} Gbit/s takes down the public e-services.", "En trafikflod på {{num.gbps}} Gbit/s slår ut de offentliga e-tjänsterna."]),
         twistKind: "impact",
+        branches: [
+          { when: { decision: "d3", option: "A" }, narrativeAppend: { en: "Because every named person was contacted today, the group posts that the council protects its decision-makers, not its residents.", sv: "Eftersom varje namngiven person kontaktades i dag skriver gruppen att kommunen skyddar sina beslutsfattare, inte sina invånare." } }
+        ],
         assumptionChallenged: L(["The e-services are not a target.", "E-tjänsterna är inte en måltavla."]),
         narrative: L([
           "{{time.T+480|clock}}. While HR and security deal with the threats, a new problem appears on the public side.\n\nCitizens cannot book, apply or pay: the e-services are unreachable, and so is the call-back system the switchboard uses. People who need the services today have no way to reach you.",
@@ -284,7 +291,7 @@
         decision: dec("d4", "incidentCommander", ["How do you restore service?", "Hur återställer ni tjänsterna?"], [
           ["Enable provider filtering, publish manual alternatives for critical services and keep staff protection as top priority.", "Aktivera leverantörens filtrering, publicera manuella alternativ för kritiska tjänster och behåll skyddet av personalen som högsta prioritet."],
           ["Shift all IT staff to the flood and pause other work.", "Flytta all IT-personal till trafikfloden och pausa annat arbete."],
-          ["Wait it out; floods end.", "Vänta ut det; trafikfloder tar slut."]
+          ["Ride it out behind a static notice: the flood is noise, and your staff need you more.", "Rid ut stormen bakom ett statiskt meddelande: trafikfloden är brus, och personalen behöver er mer."]
         ], {
           knowns: [["E-services are down from a traffic flood.", "E-tjänsterna ligger nere på grund av en trafikflod."]],
           uncertainties: [["How long it will last.", "Hur länge den kommer att pågå."]],
@@ -309,6 +316,7 @@
         title: L(["The police take the lead", "Polisen tar ledningen"]),
         twist: L(["{{reg.police|cap}} takes over the threat investigation and asks you not to comment on the group or contact them.", "{{reg.police|cap}} tar över utredningen av hoten och ber er att inte kommentera gruppen eller ta kontakt med dem."]),
         twistKind: "authority",
+        reconsider: { decision: "d3", pressure: { en: "The threats keep coming, and the police now lead. Was your protection for the named staff enough, or only a first step?", sv: "Hoten fortsätter, och polisen leder nu arbetet. Räckte ert skydd för den namngivna personalen, eller var det bara ett första steg?" } },
         assumptionChallenged: L(["We control our own crisis communication.", "Vi styr vår egen kriskommunikation."]),
         narrative: L([
           "The next day. Staff are frightened, the unions want answers and the press is covering every development.\n\nThe threats against staff have been reported, and the police have taken a close interest. Their involvement brings protection, but also conditions on what the organisation may say, and to whom.",
@@ -365,6 +373,9 @@
         title: L(["Where the list came from", "Var listan kom ifrån"]),
         twist: L(["The staff data came from a directory export sent to the web contractor for a redesign — stored in the publishing tool.", "Personaluppgifterna kom från en export av personalkatalogen som skickats till webbkonsulten inför en omgörning – lagrad i publiceringsverktyget."]),
         twistKind: "cause",
+        branches: [
+          { when: { decision: "d4", option: "A" }, narrativeAppend: { en: "Because manual alternatives were published, the phone lines are overwhelmed, and elderly residents who depend on the e-services are waiting hours.", sv: "Eftersom manuella alternativ publicerades är telefonlinjerna överbelastade, och äldre invånare som är beroende av e-tjänsterna väntar i timmar." } }
+        ],
         assumptionChallenged: L(["The group found staff details from public sources.", "Gruppen hittade personaluppgifterna i offentliga källor."]),
         reveals: ["hf-export"],
         narrative: L([
@@ -402,7 +413,7 @@
         decision: dec("d6", "ceo", ["How do you handle the internal source?", "Hur hanterar ni den interna källan?"], [
           ["Tell staff the truth, apologise, report the breach and review all data shared with suppliers.", "Berätta sanningen för personalen, be om ursäkt, anmäl incidenten och granska alla uppgifter som delats med leverantörer."],
           ["Report the breach but keep the source internal to management.", "Anmäl incidenten men håll källan inom ledningen."],
-          ["Blame the agency.", "Skyll på byrån."]
+          ["Report the breach and name the agency's storage as the source: the contract made them responsible for it.", "Anmäl incidenten och ange byråns lagring som källan: avtalet gjorde dem ansvariga för den."]
         ], {
           knowns: [["The list came from your own export.", "Listan kom från er egen export."]],
           uncertainties: [["What else was shared.", "Vad mer som har delats."]],
@@ -427,6 +438,7 @@
         title: L(["The second wave", "Den andra vågen"]),
         twist: L(["The group announces a “second wave” for the day of the council vote, {{num.daysToVote}} days away.", "Gruppen tillkännager en ”andra våg” till dagen för omröstningen, om {{num.daysToVote}} dagar."]),
         twistKind: "impact",
+        reconsider: { decision: "d6", pressure: { en: "The second wave is set for the day of the vote, and staff now know where the list came from. Does your decision about the source still hold?", sv: "Den andra vågen är utlyst till omröstningsdagen, och personalen vet nu var listan kom ifrån. Håller ert beslut om källan fortfarande?" } },
         assumptionChallenged: L(["The attack is over.", "Angreppet är över."]),
         narrative: L([
           "Three days in. Things have calmed down. The website is secure, the e-services are back and the threatened staff have support.\n\nThen a new post from the group appears, with a date. The council vote on the decision is coming up, and the group has noticed.",

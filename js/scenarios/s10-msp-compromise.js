@@ -137,6 +137,9 @@
         title: L(["Nobody answers", "Ingen svarar"]),
         twist: L(["You are not the target — your provider is. The provider itself has been breached.", "Det är inte ni som är målet – det är er leverantör. Leverantören har själv drabbats av ett intrång."]),
         twistKind: "cause",
+        branches: [
+          { when: { decision: "d1", option: "A" }, narrativeAppend: { en: "Because the provider's remote access was blocked, the patching and backups that run through it stopped as well.", sv: "Eftersom leverantörens fjärråtkomst blockerades stoppades även de uppdateringar och säkerhetskopieringar som går via den." } }
+        ],
         assumptionChallenged: L(["This is an attack on our organisation.", "Det här är ett angrepp mot vår organisation."]),
         reveals: ["hf-msp"],
         narrative: L([
@@ -203,6 +206,7 @@
         title: L(["Their accounts, your network", "Deras konton, ert nätverk"]),
         twist: L(["The provider's administrator accounts live in your network with full rights — and the attackers are using them.", "Leverantörens administratörskonton finns i ert nätverk med fullständiga rättigheter – och angriparna använder dem."]),
         twistKind: "scope",
+        reconsider: { decision: "d1", pressure: { en: "The provider's accounts live in your network with full rights. If you blocked the agent, the attackers still had the accounts. If you called the provider first, nobody answered.", sv: "Leverantörens konton finns i ert nät med fulla rättigheter. Om ni blockerade agenten hade angriparna fortfarande kontona. Om ni ringde leverantören först svarade ingen." } },
         assumptionChallenged: L(["Blocking the agent removed the attackers' access.", "Att blockera agenten tog bort angriparnas åtkomst."]),
         reveals: ["hf-admins"],
         narrative: L([
@@ -268,6 +272,9 @@
         title: L(["What the contract says", "Vad avtalet säger"]),
         twist: L(["Your contract has no incident clauses — and the provider's lawyers forbid its staff from sharing anything.", "Ert avtal saknar incidentklausuler – och leverantörens advokater förbjuder personalen att dela någonting."]),
         twistKind: "authority",
+        branches: [
+          { when: { decision: "d3", option: "A" }, narrativeAppend: { en: "Because every provider account was disabled, the backup jobs that ran under them failed overnight.", sv: "Eftersom varje leverantörskonto stängdes av misslyckades de säkerhetskopieringsjobb som kördes med dem under natten." } }
+        ],
         assumptionChallenged: L(["Our provider is obliged to help us in an incident.", "Vår leverantör är skyldig att hjälpa oss vid en incident."]),
         narrative: L([
           "{{time.T+300|clock}}. The provider finally answers, but not the technicians you know by name. The reply comes from its lawyers.\n\nYour team needs answers quickly: what did the attackers do, what do they have, what should you look for? Someone pulls out the contract with the provider to see what you can demand.",
@@ -377,6 +384,7 @@
         title: L(["The machines EDR could not see", "Datorerna som EDR inte såg"]),
         twist: L(["On {{num.unprotected}} machines without your EDR, ransomware is staged and timed for tonight.", "På {{num.unprotected}} datorer utan ert EDR finns ransomware utplacerad, inställd att utlösas i natt."]),
         twistKind: "scope",
+        reconsider: { decision: "d3", pressure: { en: "Ransomware is staged on machines your EDR could not see. Was shutting the provider out complete enough to stop tonight's timer?", sv: "Utpressningsprogram är utplacerat på datorer som ert EDR inte kunde se. Var utestängningen av leverantören tillräckligt fullständig för att stoppa nattens timer?" } },
         assumptionChallenged: L(["EDR blocked the script everywhere that matters.", "EDR blockerade skriptet överallt där det spelar roll."]),
         reveals: ["hf-timed"],
         narrative: L([
@@ -412,7 +420,7 @@
         challenges: [ch("Some of these machines run lab and kiosk systems nobody has documented.", "En del av de här datorerna kör labb- och kiosksystem som ingen har dokumenterat.")],
         decision: dec("d6", "cio", ["How do you defuse the timed ransomware?", "Hur desarmerar ni den tidsinställda ransomwaren?"], [
           ["Power off all uncovered machines before 02:00, then clean them one by one.", "Stäng av alla datorer utan skydd före klockan 02 och rensa dem sedan en och en."],
-          ["Try to delete the scheduled tasks remotely and hope it works everywhere.", "Försök radera de schemalagda aktiviteterna på distans och hoppas att det fungerar överallt."],
+          ["Delete the scheduled tasks remotely tonight; powering off {{num.unprotected}} machines would stop the night shift.", "Radera de schemalagda aktiviteterna på distans i natt; att stänga av {{num.unprotected}} datorer skulle stoppa nattskiftet."],
           ["Isolate them from the network and let them run.", "Isolera dem från nätverket och låt dem gå."]
         ], {
           knowns: [["Ransomware triggers at 02:00 on uncovered machines.", "Ransomware utlöses klockan 02 på datorer utan skydd."]],
@@ -438,6 +446,9 @@
         title: L(["One of {{num.mspCustomers}}", "En av {{num.mspCustomers}}"]),
         twist: L(["{{reg.csirt|cap}} now coordinates all {{num.mspCustomers}} affected customers — your response is part of a larger one.", "{{reg.csirt|cap}} samordnar nu alla {{num.mspCustomers}} drabbade kunder – er hantering är en del av en större."]),
         twistKind: "authority",
+        branches: [
+          { when: { decision: "d6", option: "A" }, narrativeAppend: { en: "Because {{num.unprotected}} machines were powered off before 02:00, the warehouse label printers and two production PCs stayed down all morning.", sv: "Eftersom {{num.unprotected}} datorer stängdes av före 02.00 var lagrets etikettskrivare och två produktionsdatorer nere hela förmiddagen." } }
+        ],
         assumptionChallenged: L(["We manage our incident on our own.", "Vi hanterar vår incident på egen hand."]),
         narrative: L([
           "Two days later. {{reg.csirt|cap}} hosts a coordination call that brings together dozens of the provider's customers, from small offices to large companies.\n\nEveryone is dealing with the same attack, at different stages and with different levels of help. What you do now affects the others, and what they do affects you.",
@@ -469,7 +480,7 @@
         decision: dec("d7", "ceo", ["How do you take part in the joint response?", "Hur deltar ni i den gemensamma hanteringen?"], [
           ["Share indicators openly, coordinate statements and pursue joint claims.", "Dela indikatorer öppet, samordna uttalanden och driv gemensamma krav."],
           ["Share selectively and handle claims alone.", "Dela selektivt och hantera kraven på egen hand."],
-          ["Stay out; your response is done.", "Stå utanför; er hantering är klar."]
+          ["Stay out of the joint response and keep your two-person team on your own recovery.", "Stå utanför den gemensamma hanteringen och låt ert tvåpersonsteam fokusera på er egen återställning."]
         ], {
           knowns: [["Many organisations face the same attacker.", "Många organisationer möter samma angripare."]],
           uncertainties: [["Whether the provider will survive the incident.", "Om leverantören klarar sig genom incidenten."]],
@@ -494,6 +505,7 @@
         title: L(["Independence takes time", "Oberoende tar tid"]),
         twist: L(["A new provider takes {{num.newMspMonths}} months to procure — and your two-person IT team cannot run everything meanwhile.", "En ny leverantör tar {{num.newMspMonths}} månader att upphandla – och ert IT-team på två personer kan inte driva allt under tiden."]),
         twistKind: "impact",
+        reconsider: { decision: "d4", pressure: { en: "{{reg.csirt|cap}} now coordinates {{num.mspCustomers}} customers. How you dealt with the provider's silence decides whether you are a partner in this, or a plaintiff.", sv: "{{reg.csirt|cap}} samordnar nu {{num.mspCustomers}} kunder. Hur ni hanterade leverantörens tystnad avgör om ni är en partner i det här, eller en motpart." } },
         assumptionChallenged: L(["We can switch providers quickly.", "Vi kan snabbt byta leverantör."]),
         narrative: L([
           "Five days later. The immediate crisis is over: the timed ransomware never ran, and the provider is locked out.\n\nThe board asks the question nobody has had time for: what happens now? You depended on one provider for everything, and it is not obvious that you can do without one.",
@@ -521,7 +533,7 @@
         decision: dec("d8", "ceo", ["What is your provider strategy?", "Vilken är er leverantörsstrategi?"], [
           ["Stay temporarily under new security and incident terms, keep keys in-house and plan a managed exit.", "Stanna tillfälligt på nya villkor för säkerhet och incidenter, behåll nycklarna internt och planera en ordnad avveckling."],
           ["Leave immediately and cope with interim staff.", "Lämna omedelbart och klara er med tillfällig personal."],
-          ["Stay with the discount.", "Stanna för rabatten."]
+          ["Stay with the provider and take the discount they offer, while your two-person team rebuilds its own skills.", "Stanna hos leverantören och ta rabatten de erbjuder, medan ert tvåpersonsteam bygger upp sin egen kompetens."]
         ], {
           knowns: [["The provider is the only realistic short-term option.", "Leverantören är det enda realistiska alternativet på kort sikt."]],
           uncertainties: [["Whether the provider has truly fixed its security.", "Om leverantören verkligen har åtgärdat sin säkerhet."]],

@@ -145,6 +145,9 @@
         title: L(["Just a bad change", "Bara en dålig ändring"]),
         twist: L(["The outage is a failed database change. It is unrelated to the other two.", "Avbrottet är en misslyckad databasändring. Det har inget med de andra två att göra."]),
         twistKind: "cause",
+        branches: [
+          { when: { decision: "d1", option: "A" }, narrativeAppend: { en: "Because one person went to each fire, the customer outage has a single engineer, and the rollback is moving slowly.", sv: "Eftersom en person gick till varje brand har kundavbrottet en enda tekniker, och återställningen går långsamt." } }
+        ],
         assumptionChallenged: L(["Three incidents at once must be one attack.", "Tre incidenter samtidigt måste vara ett och samma angrepp."]),
         reveals: ["hf-change"],
         narrative: L([
@@ -202,6 +205,7 @@
         title: L(["Two fires, one attacker", "Två bränder, en angripare"]),
         twist: L(["The privileged account belongs to a service-desk administrator who entered their password on the phishing page.", "Det privilegierade kontot tillhör en administratör på servicedesken som angav sitt lösenord på nätfiskesidan."]),
         twistKind: "scope",
+        reconsider: { decision: "d2", pressure: { en: "The privileged account and the phishing were one attack. If you moved people off the outage, customers are still down. If you kept the split, the attacker had the time.", sv: "Det privilegierade kontot och nätfisket var ett och samma angrepp. Om ni flyttade folk från avbrottet är kunderna fortfarande drabbade. Om ni behöll fördelningen fick angriparen tiden." } },
         assumptionChallenged: L(["The phishing is a nuisance; the privileged access is separate.", "Nätfisket är ett irritationsmoment; den privilegierade åtkomsten är något annat."]),
         reveals: ["hf-link"],
         narrative: L([
@@ -255,6 +259,9 @@
         title: L(["Two commanders", "Två ledare"]),
         twist: L(["The CIO and the CISO are giving contradictory orders to the same people.", "IT-chefen och säkerhetschefen ger motstridiga order till samma personer."]),
         twistKind: "authority",
+        branches: [
+          { when: { decision: "d3", option: "A" }, narrativeAppend: { en: "Because both admin accounts were disabled, the service desk cannot unlock anyone, and the phone queue is growing.", sv: "Eftersom båda administratörskontona stängdes av kan servicedesken inte låsa upp någon, och telefonkön växer." } }
+        ],
         assumptionChallenged: L(["Everyone knows who is in charge.", "Alla vet vem som leder."]),
         narrative: L([
           "{{time.T+180|clock}}. Two senior leaders join the incident bridge from different meetings, each briefed by different people.\n\nWithin minutes they are giving orders to the same four responders, and the orders point in opposite directions. The responders look at the incident lead to find out whom to follow.",
@@ -365,6 +372,10 @@
         title: L(["Actions that collide", "Åtgärder som krockar"]),
         twist: L(["Revoking sessions broke the deployment account used for the rollback. Your own response stopped your recovery.", "Återkallandet av sessioner slog ut driftsättningskontot som användes för tillbakarullningen. Er egen hantering stoppade er återställning."]),
         twistKind: "impact",
+        reconsider: { decision: "d3", pressure: { en: "Revoking sessions broke your own rollback. Was containing the linked attack the right priority in that hour?", sv: "Att återkalla sessionerna slog ut er egen återställning. Var det rätt att prioritera det sammanlänkade angreppet just den timmen?" } },
+        branches: [
+          { when: { decision: "d4", option: "A" }, narrativeAppend: { en: "Because one commander now leads both fires, the leader who was passed over has stopped attending the briefings.", sv: "Eftersom en enda incidentledare nu leder båda bränderna har den chef som förbigicks slutat komma till genomgångarna." } }
+        ],
         assumptionChallenged: L(["Response actions on one fire don't affect another.", "Åtgärder för en brand påverkar inte en annan."]),
         narrative: L([
           "{{time.T+420|clock}}. The security team revoked every session on the network an hour ago, to throw the attacker out.\n\nAt the same time, the operations team was in the middle of rolling back the failed database change. Nobody told them about the revocation, and nobody told the security team about the rollback.",
@@ -456,7 +467,7 @@
         decision: dec("d7", "ciso", ["What do you change?", "Vad ändrar ni?"], [
           ["Keep the status page open, but send an automatic staff warning about themed phishing with every outage.", "Behåll en öppen driftstatussida, men skicka en automatisk varning till personalen om nätfiske med avbrottet som tema vid varje avbrott."],
           ["Make the status page less detailed.", "Gör driftstatussidan mindre detaljerad."],
-          ["Leave it as it is.", "Låt det vara som det är."]
+          ["Leave the status page as it is: customers need the detail, and attackers will read it anyway.", "Låt statussidan vara som den är: kunderna behöver detaljerna, och angriparna läser den ändå."]
         ], {
           knowns: [["The attacker exploited your outage.", "Angriparen utnyttjade ert avbrott."]],
           uncertainties: [["Whether this will happen again.", "Om det här kommer att hända igen."]],
@@ -481,6 +492,7 @@
         title: L(["Running on empty", "På reservtanken"]),
         twist: L(["The same {{num.responders}} people have been working for {{num.hoursAwake}} hours. Mistakes are starting.", "Samma {{num.responders}} personer har arbetat i {{num.hoursAwake}} timmar. Misstagen börjar komma."]),
         twistKind: "impact",
+        reconsider: { decision: "d5", pressure: { en: "Your team has been awake for {{num.hoursAwake}} hours. Looking back, was your order between the backups and the rollback the right one?", sv: "Ert team har varit vaket i {{num.hoursAwake}} timmar. I efterhand, var er ordning mellan säkerhetskopiorna och återställningen den rätta?" } },
         assumptionChallenged: L(["The team can keep going until it's over.", "Teamet kan hålla på tills det är över."]),
         narrative: L([
           "{{time.T+720|daypart|cap}}, {{time.T+720|clock}}. The customer service is back and the attacker is out, probably.\n\nThe same {{num.responders}} people have handled all three fires since the first alarm, without a proper break. Small mistakes are starting to appear, and tomorrow is a normal working day.",

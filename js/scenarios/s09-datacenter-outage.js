@@ -136,6 +136,9 @@
         title: L(["The failover that wasn't", "Övergången som uteblev"]),
         twist: L(["The disaster-recovery site does not take over: three hidden problems block it.", "Reservplatsen tar inte över: tre dolda problem stoppar den."]),
         twistKind: "scope",
+        branches: [
+          { when: { decision: "d1", option: "A" }, narrativeAppend: { en: "Because the failover started early, half the systems are now split between two sites, and nobody can say which copy of the data is current.", sv: "Eftersom omkopplingen startades tidigt är hälften av systemen nu delade mellan två platser, och ingen kan säga vilken kopia av data som är aktuell." } }
+        ],
         assumptionChallenged: L(["Our disaster-recovery site takes over automatically.", "Vår reservplats tar över automatiskt."]),
         reveals: ["hf-deps"],
         narrative: L([
@@ -186,7 +189,7 @@
         decision: dec("d2", "cio", ["How do you restore service?", "Hur får ni tillbaka tjänsten?"], [
           ["Escalate to the vendor's management for an emergency licence and rebuild the licence server at the standby site.", "Eskalera till leverantörens ledning för en akutlicens och bygg upp licensservern på reservplatsen."],
           ["Cool hall A with portable units and restart there.", "Kyl hall A med mobila aggregat och starta om där."],
-          ["Wait for normal vendor hours.", "Vänta till leverantörens normala öppettider."]
+          ["Wait for the vendor's normal hours rather than risk a rushed, untested rebuild of the licence server at night.", "Vänta till leverantörens normala öppettider hellre än att riskera en forcerad, otestad ombyggnad av licensservern mitt i natten."]
         ], {
           knowns: [["Three separate problems block failover.", "Tre separata problem stoppar övergången."]],
           uncertainties: [["Whether hall A can be cooled safely.", "Om hall A kan kylas ned på ett säkert sätt."]],
@@ -211,6 +214,7 @@
         title: L(["Someone changed the setpoint", "Någon ändrade börvärdet"]),
         twist: L(["The cooling did not fail. Someone changed the setpoints remotely through the building management system.", "Kylningen gick inte sönder. Någon ändrade börvärdena på distans via fastighetssystemet."]),
         twistKind: "cause",
+        reconsider: { decision: "d1", pressure: { en: "The cooling did not fail: someone turned it off. Your first move was a response to a fault. Would you make it the same way against an attacker?", sv: "Kylningen gick inte sönder: någon stängde av den. Ert första drag var ett svar på ett fel. Skulle ni göra likadant mot en angripare?" } },
         assumptionChallenged: L(["This is an equipment failure.", "Det här är ett utrustningsfel."]),
         reveals: ["hf-bms"],
         narrative: L([
@@ -268,6 +272,9 @@
         title: L(["The lost minutes", "De förlorade minuterna"]),
         twist: L(["{{num.lagMinutes}} minutes of transactions exist only in the overheated hall.", "{{num.lagMinutes}} minuters transaktioner finns bara i den överhettade hallen."]),
         twistKind: "impact",
+        branches: [
+          { when: { decision: "d2", option: "A" }, narrativeAppend: { en: "Because the vendor was escalated in the middle of the night, they granted the emergency licence and sent an invoice at three times the normal rate.", sv: "Eftersom leverantören eskalerades mitt i natten beviljade de nödlicensen och skickade en faktura till tre gånger normalpriset." } }
+        ],
         assumptionChallenged: L(["We lose no data on failover.", "Vi förlorar inga data vid en övergång."]),
         reveals: ["hf-loss"],
         narrative: L([
@@ -330,6 +337,7 @@
         title: L(["A door left open", "En dörr som stod öppen"]),
         twist: L(["The building system was on the internet with a default password — and someone has used it for weeks.", "Fastighetssystemet låg ute på internet med ett standardlösenord – och någon har använt det i flera veckor."]),
         twistKind: "scope",
+        reconsider: { decision: "d3", pressure: { en: "The building system has been open with a default password for weeks. If you treated it as a security incident, facilities and the contractor feel accused. If you only changed a password, the way in may still be open.", sv: "Fastighetssystemet har stått öppet med ett standardlösenord i veckor. Om ni behandlade det som en säkerhetsincident känner sig fastighet och entreprenören anklagade. Om ni bara bytte ett lösenord kan vägen in fortfarande vara öppen." } },
         assumptionChallenged: L(["Someone got lucky last night.", "Någon hade tur i natt."]),
         reveals: ["hf-account"],
         narrative: L([
@@ -395,6 +403,9 @@
         title: L(["Not your building", "Inte er byggnad"]),
         twist: L(["The building owner controls the building system — and refuses to share its logs.", "Fastighetsägaren styr fastighetssystemet – och vägrar dela loggarna."]),
         twistKind: "authority",
+        branches: [
+          { when: { decision: "d3", option: "A" }, narrativeAppend: { en: "Because all remote access to the building system was cut, the contractor cannot reach it to fix the cooling, and an engineer has to drive four hours.", sv: "Eftersom all fjärråtkomst till fastighetssystemet kapades kan entreprenören inte nå det för att laga kylningen, och en tekniker måste köra fyra timmar." } }
+        ],
         assumptionChallenged: L(["We control everything in our data centre.", "Vi styr allt i vår datahall."]),
         narrative: L([
           "The next day. The police want the building system's logs to investigate the sabotage, and the insurer wants them to assess the claim.\n\nBut the building system is not yours. It belongs to the building owner and serves other tenants too. You rent the space; someone else holds the evidence.",
@@ -451,6 +462,7 @@
         title: L(["Sabotage and negligence", "Sabotage och försumlighet"]),
         twist: L(["Both are true: someone sabotaged the cooling, and the failover had not been tested in {{num.yearsUntested}} years.", "Båda är sanna: någon saboterade kylningen, och övergången hade inte testats på {{num.yearsUntested}} år."]),
         twistKind: "impact",
+        reconsider: { decision: "d4", pressure: { en: "Sabotage and negligence are both true. Customers you told early now ask for compensation. Customers you have not told yet will read it in your report.", sv: "Både sabotage och försumlighet är sant. Kunder som ni informerade tidigt kräver nu ersättning. Kunder som ni ännu inte informerat kommer att läsa det i er rapport." } },
         assumptionChallenged: L(["If it was sabotage, we are not responsible.", "Om det var sabotage är vi inte ansvariga."]),
         narrative: L([
           "Three days later. The board receives the root-cause summary, and the directors read it closely.\n\nIt would be convenient to present the outage as an attack by an unknown third party. It would also be convenient to present it as a maintenance failure. The summary on the table says something less convenient.",
