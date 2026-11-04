@@ -103,7 +103,7 @@
         decision: dec("d1", "incidentCommander", ["What do you do first?", "Vad gör ni först?"], [
           ["Close the tunnel and integrations as a precaution, and set up a crisis contact with the provider.", "Stäng tunneln och integrationerna som en försiktighetsåtgärd, och upprätta en kriskontakt med leverantören."],
           ["Leave the connections open so deliveries resume quickly when they recover.", "Låt förbindelserna vara öppna så att leveranserna snabbt kan komma igång när de återhämtar sig."],
-          ["Wait for the provider's update before deciding anything.", "Vänta på leverantörens uppdatering innan något beslutas."]
+          ["Wait for the provider's 10:00 update: closing the tunnel now could strand every order in transit.", "Vänta på leverantörens uppdatering klockan 10: att stänga tunneln nu kan strandsätta varje order som är på väg."]
         ], {
           knowns: [["The provider is down and the tunnel to your systems is open.", "Leverantören ligger nere och tunneln till era system är öppen."]],
           uncertainties: [["Whether it is an outage or an attack.", "Om det är ett avbrott eller ett angrepp."]],
@@ -128,6 +128,9 @@
         title: L(["It is ransomware", "Det är ransomware"]),
         twist: L(["The provider confirms ransomware since Sunday night. Their transport system is encrypted and they cannot say when it returns. The tunnel into your warehouse system was open for the whole of that time.", "Leverantören bekräftar ransomware sedan söndag kväll. Deras transportsystem är krypterat och de kan inte säga när det kommer tillbaka. Tunneln in i ert lagersystem var öppen under hela den tiden."]),
         twistKind: "cause",
+        branches: [
+          { when: { decision: "d1", option: "A" }, narrativeAppend: { en: "Because the tunnel was closed, the last two hundred orders are stranded: neither delivered nor cancellable.", sv: "Eftersom tunneln stängdes är de sista tvåhundra ordrarna strandsatta: varken levererade eller möjliga att avbeställa." } }
+        ],
         assumptionChallenged: L(["It is an ordinary outage at the supplier.", "Det är ett vanligt avbrott hos leverantören."]),
         reveals: ["hf-tunnel"],
         narrative: L([
@@ -185,6 +188,7 @@
         title: L(["Ten days", "Tio dagar"]),
         twist: L(["The provider estimates ten days to restore. Their system held every shipment, address and delivery slot for your orders. You have no copy, and alternative carriers need that data to book anything.", "Leverantören uppskattar tio dagar för att återställa. Deras system innehöll varje sändning, adress och leveranstid för era beställningar. Ni har ingen kopia, och alternativa transportörer behöver den datan för att kunna boka något."]),
         twistKind: "impact",
+        reconsider: { decision: "d1", pressure: { en: "The provider will be down for ten days. If you closed the connections, you were safe and blind. If you left them open, you were exposed for six hours with nothing to show for it.", sv: "Leverantören kommer att vara nere i tio dagar. Om ni stängde förbindelserna var ni skyddade men blinda. Om ni lät dem vara öppna var ni exponerade i sex timmar utan att få något för det." } },
         assumptionChallenged: L(["We can switch to another carrier tomorrow.", "Vi kan byta till en annan transportör i morgon."]),
         narrative: L([
           "{{time.T+720|clock}}. Two alternative carriers have capacity and are willing to help. Both ask for the same thing before they can take a single pallet: a booking file with addresses, weights, delivery windows and customer references.\n\n{{person.itOps.name}} looks for it in the warehouse system. Then everyone in the room realises where that information has always lived.",
@@ -243,6 +247,9 @@
         title: L(["On the leak site", "På läcksajten"]),
         twist: L(["The provider appears on a ransomware leak site. The samples include your end customers' names, home addresses and delivery notes: about {{num.addresses|number}} people. You are the controller of that data.", "Leverantören dyker upp på en läcksajt för ransomware. Utdragen innehåller era slutkunders namn, hemadresser och leveransanteckningar: omkring {{num.addresses|number}} personer. Ni är personuppgiftsansvariga för den datan."]),
         twistKind: "scope",
+        branches: [
+          { when: { decision: "d3", option: "A" }, narrativeAppend: { en: "Because volume was split across two carriers, delivery slots are in confusion, and customer complaints have tripled.", sv: "Eftersom volymen delades mellan två transportörer råder förvirring kring leveranstiderna, och kundklagomålen har tredubblats." } }
+        ],
         assumptionChallenged: L(["This is a logistics problem, not a data breach.", "Det här är ett logistikproblem, inte ett dataintrång."]),
         reveals: ["hf-leak"],
         narrative: L([
@@ -284,7 +291,7 @@
         decision: dec("d4", "dpo", ["What do you do about the leaked data?", "Vad gör ni med den läckta datan?"], [
           ["Notify the regulator now, tell affected customers with practical advice, and demand the provider's findings under your agreement.", "Anmäl till tillsynsmyndigheten nu, berätta för berörda kunder med praktiska råd och kräv leverantörens resultat enligt ert avtal."],
           ["Wait for the provider's investigation as they asked.", "Vänta på leverantörens utredning som de bad om."],
-          ["Leave notification to the provider, since it was their breach.", "Låt leverantören sköta anmälan, eftersom det var deras intrång."]
+          ["Let the provider notify, as it holds the delivery data, and support them: two notices for one breach confuse customers.", "Låt leverantören anmäla, eftersom de förvaltar leveransuppgifterna, och stöd dem: två meddelanden om samma intrång förvirrar kunderna."]
         ], {
           knowns: [["Your customers' personal data is on a leak site.", "Era kunders personuppgifter finns på en läcksajt."]],
           uncertainties: [["The full set of records stolen.", "Hela mängden poster som stals."]],
@@ -309,6 +316,7 @@
         title: L(["Back online?", "Igång igen?"]),
         twist: L(["The provider says it is clean and wants to reopen the tunnel tomorrow. It offers a one-page statement from its own IT team, no forensic report, and no answer on how the attacker got in.", "Leverantören säger att den är ren och vill öppna tunneln igen i morgon. Den erbjuder ett försäkrande på en sida från sitt eget IT-team, ingen forensisk rapport och inget svar på hur angriparen kom in."]),
         twistKind: "authority",
+        reconsider: { decision: "d4", pressure: { en: "The provider wants to reconnect tomorrow on a one-page statement. Did the way you handled the leaked data give you leverage, or spend it?", sv: "Leverantören vill koppla upp igen i morgon på ett ensidigt uttalande. Gav ert sätt att hantera de läckta uppgifterna er ett övertag, eller förbrukade det?" } },
         assumptionChallenged: L(["When the supplier says it is safe, we reconnect.", "När leverantören säger att det är säkert kopplar vi in igen."]),
         narrative: L([
           "{{time.T+7200|weekday|cap}}. Day five. The provider is recovering faster than expected and is eager to have its customers back. Every day without your volume costs it money too.\n\nIts head of IT calls with good news and a request. {{person.networkLead.name}} listens to the good news and then asks three questions that do not get clear answers.",
@@ -361,6 +369,10 @@
         title: L(["Twelve suppliers", "Tolv leverantörer"]),
         twist: L(["A review of suppliers finds twelve that are critical, three with network access into your systems, and not one with a tested exit or continuity plan.", "En genomgång av leverantörerna hittar tolv som är kritiska, tre med nätverksåtkomst in i era system och inte en enda med en testad plan för avveckling eller kontinuitet."]),
         twistKind: "scope",
+        reconsider: { decision: "d3", pressure: { en: "Twelve critical suppliers, none with a tested exit. Looking back at the stopped trucks, was your way of keeping goods moving the right bet?", sv: "Tolv kritiska leverantörer, ingen med en testad exitplan. Med de stillastående lastbilarna i backspegeln, var ert sätt att hålla varorna i rörelse rätt satsning?" } },
+        branches: [
+          { when: { decision: "d5", option: "A" }, narrativeAppend: { en: "Because you insisted on independent confirmation, the provider has hinted it may serve other customers first as it recovers.", sv: "Eftersom ni krävde oberoende bekräftelse har leverantören antytt att den kan prioritera andra kunder när den återhämtar sig." } }
+        ],
         assumptionChallenged: L(["The logistics provider was our only weak link.", "Logistikleverantören var vår enda svaga länk."]),
         reveals: ["hf-suppliers"],
         narrative: L([

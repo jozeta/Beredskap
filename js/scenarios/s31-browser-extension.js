@@ -128,6 +128,9 @@
         title: L(["PDF Quick Tools", "PDF Quick Tools"]),
         twist: L(["All nine have the same browser extension, a free PDF helper installed by {{num.installs}} staff. It was sold to a new owner last month, and Sunday's update sends session cookies from every website to an outside server.", "Alla nio har samma webbläsartillägg, ett kostnadsfritt PDF-verktyg som {{num.installs}} anställda installerat. Det såldes till en ny ägare förra månaden, och söndagens uppdatering skickar sessionskakor från varje webbplats till en extern server."]),
         twistKind: "cause",
+        branches: [
+          { when: { decision: "d1", option: "A" }, narrativeAppend: { en: "Because all sessions were revoked, the nine were signed out in the middle of a quarter-end sales push, and sales leadership has complained to the CEO.", sv: "Eftersom alla sessioner återkallades loggades de nio ut mitt i kvartalets sista försäljningsrusch, och försäljningsledningen har klagat hos vd." } }
+        ],
         assumptionChallenged: L(["Staff were phished.", "Personalen har blivit nätfiskad."]),
         reveals: ["hf-sold"],
         narrative: L([
@@ -185,6 +188,7 @@
         title: L(["No central control", "Ingen central styrning"]),
         twist: L(["You cannot remove the extension centrally: browsers are not managed, staff use personal browser profiles, and a third of laptops are on home networks today.", "Ni kan inte ta bort tillägget centralt: webbläsarna styrs inte, personalen använder personliga webbläsarprofiler och en tredjedel av datorerna är på hemnätverk i dag."]),
         twistKind: "impact",
+        reconsider: { decision: "d1", pressure: { en: "All nine share one extension, installed by {{num.installs}} staff. If you revoked sessions first, it kept stealing new ones. If you reset passwords, it did not matter: it steals sessions, not passwords.", sv: "Alla nio har samma tillägg, installerat av {{num.installs}} anställda. Om ni återkallade sessionerna först fortsatte det att stjäla nya. Om ni bytte lösenord spelade det ingen roll: det stjäl sessioner, inte lösenord." } },
         assumptionChallenged: L(["IT can push a removal to every machine.", "IT kan skicka ut en borttagning till varje maskin."]),
         narrative: L([
           "{{time.T+300|clock}}. {{person.itOps.name}} opens the endpoint management tool to push a removal and stops. The tool manages operating systems and updates, but nobody ever set up control of the browsers themselves.\n\nEvery browser is configured by whoever uses it. Some staff sync their work browser with their personal one at home, so the extension follows them from device to device.",
@@ -237,6 +241,10 @@
         title: L(["Where the sessions went", "Vart sessionerna tog vägen"]),
         twist: L(["The stolen sessions reached far beyond the CRM: a finance user's bank portal, two cloud admin consoles and the HR system. In the CRM, a non-expiring API token was created at 06:10 and is exporting customer records.", "De stulna sessionerna nådde långt bortom CRM-systemet: en ekonomianvändares bankportal, två administrationskonsoler i molnet och HR-systemet. I CRM-systemet skapades en API-token utan utgångsdatum 06.10, och den exporterar kundposter."]),
         twistKind: "scope",
+        reconsider: { decision: "d2", pressure: { en: "Stolen sessions reached a bank portal and two cloud admin consoles. Was the way you stopped the spread fast enough?", sv: "Stulna sessioner nådde en bankportal och två administrationskonsoler i molnet. Var ert sätt att stoppa spridningen tillräckligt snabbt?" } },
+        branches: [
+          { when: { decision: "d3", option: "A" }, narrativeAppend: { en: "Because the policy blocks every unapproved extension, accessibility tools that several colleagues rely on have stopped working.", sv: "Eftersom policyn blockerar varje ej godkänt tillägg har tillgänglighetsverktyg som flera kollegor är beroende av slutat fungera." } }
+        ],
         assumptionChallenged: L(["It is a CRM incident.", "Det är en incident i CRM-systemet."]),
         reveals: ["hf-token"],
         narrative: L([
@@ -341,6 +349,10 @@
         title: L(["140 extensions", "140 tillägg"]),
         twist: L(["With browser management finally in place, IT can see what is installed: 140 different extensions, 31 of which can read and change every website you visit.", "När webbläsarhanteringen äntligen är på plats kan IT se vad som är installerat: 140 olika tillägg, varav 31 kan läsa och ändra varje webbplats ni besöker."]),
         twistKind: "scope",
+        reconsider: { decision: "d3", pressure: { en: "IT can now see 140 extensions, 31 of them able to read every website. Was the browser policy you chose the right first step?", sv: "IT kan nu se 140 tillägg, varav 31 kan läsa varje webbplats. Var webbläsarpolicyn ni valde rätt första steg?" } },
+        branches: [
+          { when: { decision: "d4", option: "C" }, narrativeAppend: { en: "Because the CRM was shut down, sales has worked from spreadsheets for two days, and two deals have slipped into next quarter.", sv: "Eftersom CRM-systemet stängdes ner har säljarna arbetat i kalkylblad i två dagar, och två affärer har glidit över till nästa kvartal." } }
+        ],
         assumptionChallenged: L(["It was one bad extension.", "Det var ett dåligt tillägg."]),
         reveals: ["hf-ext"],
         narrative: L([

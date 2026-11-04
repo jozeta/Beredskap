@@ -113,7 +113,7 @@
         decision: dec("d1", "incidentCommander", ["What do you do in the first hour?", "Vad gör ni under den första timmen?"], [
           ["Confirm with the provider and peers whether it is regional, start preparing failover, and tell customers you know.", "Bekräfta med leverantören och andra om det är regionalt, börja förbereda reservdrift och berätta för kunderna att ni vet."],
           ["Treat it as an attack and isolate everything.", "Behandla det som ett angrepp och isolera allt."],
-          ["Wait for the provider's 60-minute update.", "Vänta på leverantörens uppdatering om 60 minuter."]
+          ["Wait for the provider's 60-minute update: preparing failover on a guess costs money and people you may need later.", "Vänta på leverantörens uppdatering om 60 minuter: att förbereda omkoppling på en gissning kostar pengar och folk som ni kan behöva senare."]
         ], {
           knowns: [["Everything in one region failed at once.", "Allt i en region fallerade på en gång."]],
           uncertainties: [["The cause, and how long it will last.", "Orsaken, och hur länge det varar."]],
@@ -138,6 +138,9 @@
         title: L(["A fire", "En brand"]),
         twist: L(["The provider confirms a fire and power failure that has forced a shutdown of the whole region, management services included. There is no estimate. Their message says “at least 24 hours”.", "Leverantören bekräftar en brand och ett strömavbrott som tvingat fram en nedstängning av hela regionen, administrationstjänsterna inräknade. Det finns ingen uppskattning. Deras meddelande säger ”minst 24 timmar”."]),
         twistKind: "cause",
+        branches: [
+          { when: { decision: "d1", option: "A" }, narrativeAppend: { en: "Because you told customers early that you knew of the outage, they now expect hourly updates you cannot yet give.", sv: "Eftersom ni tidigt berättade för kunderna att ni kände till avbrottet förväntar de sig nu uppdateringar varje timme som ni ännu inte kan ge." } }
+        ],
         assumptionChallenged: L(["Three zones mean we cannot lose everything.", "Tre zoner betyder att vi inte kan förlora allt."]),
         reveals: ["hf-fire"],
         narrative: L([
@@ -191,6 +194,7 @@
         title: L(["The runbook", "Driftrutinen"]),
         twist: L(["The failover runbook has never been run. Step 3 says “open the management console”, which is in the dead region. Step 7 retrieves secrets from a vault that also lives there.", "Driftrutinen för reservdrift har aldrig körts. Steg 3 säger ”öppna administrationskonsolen”, som ligger i den döda regionen. Steg 7 hämtar hemligheter från ett valv som också ligger där."]),
         twistKind: "impact",
+        reconsider: { decision: "d2", pressure: { en: "The runbook has never been run, and step 3 needs a console in the dead region. Was your failover decision built on a plan you could actually use?", sv: "Driftboken har aldrig körts, och steg 3 kräver en konsol i den döda regionen. Byggde ert beslut om omkoppling på en plan ni faktiskt kunde använda?" } },
         assumptionChallenged: L(["We have a tested disaster recovery plan.", "Vi har en testad plan för katastrofåterställning."]),
         narrative: L([
           "{{time.T+300|clock}}. {{person.cloudLead.name}} opens the disaster recovery runbook. It is well written, with screenshots, and it was approved by the board two years ago as part of an audit.\n\nIt has never actually been run. The team starts at step one, reading aloud, and by step three it is already clear who wrote it and what they assumed would always be there.",
@@ -243,6 +247,10 @@
         title: L(["Locked out, and abroad", "Utelåsta, och utomlands"]),
         twist: L(["Two discoveries at once. Staff sign-in runs in the dead region, so most people cannot log in to anything, including email. And the secondary region chosen years ago for cost is outside the EU, where your customer contracts forbid processing their personal data.", "Två upptäckter på en gång. Personalens inloggning körs i den döda regionen, så de flesta kan inte logga in någonstans, inte ens i e-posten. Och den sekundära regionen, som valdes för flera år sedan av kostnadsskäl, ligger utanför EU, där era kundavtal förbjuder behandling av deras personuppgifter."]),
         twistKind: "scope",
+        reconsider: { decision: "d1", pressure: { en: "Staff cannot sign in to anything, including email. Whatever you told customers in the first hour is all they have heard from you since.", sv: "Personalen kan inte logga in någonstans, inte ens i e-posten. Det ni sa till kunderna under den första timmen är allt de har hört från er sedan dess." } },
+        branches: [
+          { when: { decision: "d2", option: "A" }, narrativeAppend: { en: "Because the most critical services were failed over first, running in two regions has already used up the quarter's cloud budget.", sv: "Eftersom de mest kritiska tjänsterna kopplades om först har driften i två regioner redan förbrukat kvartalets molnbudget." } }
+        ],
         assumptionChallenged: L(["Only customer services are affected, and the backup region is ours to use.", "Bara kundtjänsterna är drabbade, och reservregionen kan vi använda fritt."]),
         reveals: ["hf-deps"],
         narrative: L([
@@ -347,6 +355,10 @@
         title: L(["One basket", "En korg"]),
         twist: L(["A dependency review shows that nearly all critical services, the monitoring, the status page, staff sign-in and the backups' management all depend on the same provider, mostly in one region.", "En genomgång av beroenden visar att nästan alla kritiska tjänster, övervakningen, statussidan, personalens inloggning och hanteringen av säkerhetskopiorna är beroende av samma leverantör, mestadels i en region."]),
         twistKind: "scope",
+        reconsider: { decision: "d4", pressure: { en: "{{reg.supervisor}} now calls it a significant incident. Was the way you continued the right trade between speed and the data rules?", sv: "{{reg.supervisor}} kallar det nu en betydande incident. Var ert sätt att fortsätta rätt avvägning mellan snabbhet och reglerna för data?" } },
+        branches: [
+          { when: { decision: "d4", option: "A" }, narrativeAppend: { en: "Because you rebuilt only in an EU region from backups, customers lost the last twelve hours of data that a non-EU copy still held.", sv: "Eftersom ni bara byggde om i en EU-region från säkerhetskopior förlorade kunderna de senaste tolv timmarnas data, som en kopia utanför EU fortfarande hade." } }
+        ],
         assumptionChallenged: L(["This was a rare event at the provider.", "Det här var en ovanlig händelse hos leverantören."]),
         reveals: ["hf-concentration"],
         narrative: L([
@@ -375,7 +387,7 @@
         decision: dec("d5", "cio", ["What do you change?", "Vad ändrar ni?"], [
           ["A second EU region for critical services and identity, offline break-glass access, monitoring outside the provider, and twice-yearly failover tests.", "En andra EU-region för kritiska tjänster och identitet, frånkopplad nödåtkomst, övervakning utanför leverantören och reservdriftstester två gånger om året."],
           ["Move everything to a second provider.", "Flytta allt till en andra leverantör."],
-          ["Accept the risk; regional outages are rare.", "Acceptera risken; regionala avbrott är ovanliga."]
+          ["Accept the risk in a written decision: a second region doubles the cost for an event that happens once a decade.", "Acceptera risken i ett skriftligt beslut: en andra region fördubblar kostnaden för något som händer en gång per decennium."]
         ], {
           knowns: [["Almost everything depends on one provider and one region.", "Nästan allt är beroende av en leverantör och en region."]],
           uncertainties: [["How likely and how long the next outage is.", "Hur sannolikt och hur långt nästa avbrott blir."]],

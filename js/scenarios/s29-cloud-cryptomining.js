@@ -109,7 +109,7 @@
         decision: dec("d1", "incidentCommander", ["What do you do first?", "Vad gör ni först?"], [
           ["Disable the identity that started them, snapshot one machine, then stop the rest.", "Spärra identiteten som startade dem, ta en ögonblicksbild av en maskin och stoppa sedan resten."],
           ["Delete every machine in that region immediately.", "Radera alla maskiner i regionen omedelbart."],
-          ["Ask around internally before touching anything.", "Fråga runt internt innan ni rör något."]
+          ["Ask the cloud team and contractors first: deleting a project's machines without asking could wipe legitimate work.", "Fråga molnteamet och konsulterna först: att radera ett projekts maskiner utan att fråga kan sudda ut legitimt arbete."]
         ], {
           knowns: [["Unfamiliar GPU machines run in an unused region.", "Okända GPU-maskiner körs i en region som inte används."]],
           uncertainties: [["How the attacker got in and what else they did.", "Hur angriparen kom in och vad mer hen gjorde."]],
@@ -134,6 +134,9 @@
         title: L(["Yesterday's commit", "Gårdagens incheckning"]),
         twist: L(["The machines were started with an access key belonging to a contractor's reporting project. The key was committed to a public code repository yesterday afternoon and found within hours.", "Maskinerna startades med en åtkomstnyckel som hör till en konsults rapportprojekt. Nyckeln checkades in i ett öppet kodförråd i går eftermiddag och hittades inom några timmar."]),
         twistKind: "cause",
+        branches: [
+          { when: { decision: "d1", option: "B" }, narrativeAppend: { en: "Because every machine in the region was deleted, a data team's legitimate weekend job was wiped along with the miners.", sv: "Eftersom varje maskin i regionen raderades suddades ett datateams legitima helgjobb ut tillsammans med utvinningen." } }
+        ],
         assumptionChallenged: L(["Someone hacked into our cloud account.", "Någon har hackat sig in i vårt molnkonto."]),
         reveals: ["hf-key"],
         narrative: L([
@@ -191,6 +194,7 @@
         title: L(["Notice of abuse", "Meddelande om missbruk"]),
         twist: L(["The cloud provider has flagged the account for abuse. Unless you confirm containment within 24 hours, it will suspend the whole account, including production.", "Molnleverantören har flaggat kontot för missbruk. Om ni inte bekräftar att det är stoppat inom ett dygn kommer hela kontot att stängas av, inklusive produktionen."]),
         twistKind: "authority",
+        reconsider: { decision: "d1", pressure: { en: "The provider will suspend the whole account unless you confirm containment. If you took a snapshot first, you have the evidence and the bill ran on. If you deleted everything, you stopped it and have little to show them.", sv: "Leverantören stänger av hela kontot om ni inte bekräftar att det är under kontroll. Om ni tog en ögonblicksbild först har ni bevisen och fakturan fortsatte ticka. Om ni raderade allt stoppade ni det och har lite att visa dem." } },
         assumptionChallenged: L(["Our cloud provider is on our side.", "Vår molnleverantör står på vår sida."]),
         narrative: L([
           "{{time.T+300|clock}}. The machines are stopped and the key deleted. The team is starting to relax when an automated email arrives from the cloud provider's trust and safety team.\n\nIt is polite and firm. The provider's systems noticed the mining before you did, and its rules allow it to protect its platform from accounts that misbehave, whether or not the owner meant it.",
@@ -243,6 +247,10 @@
         title: L(["Before the miners", "Före brytningen"]),
         twist: L(["The mining started at 01:20. Hours earlier, the same key listed the test cluster's secrets, copied a database credential, and read a storage bucket holding about {{num.records|number}} customer records.", "Brytningen startade 01.20. Flera timmar tidigare listade samma nyckel testklustrets hemligheter, kopierade en databasinloggning och läste en lagringsbucket med omkring {{num.records|number}} kundposter."]),
         twistKind: "scope",
+        reconsider: { decision: "d2", pressure: { en: "Hours before the miners, the same key listed secrets and copied a database credential. Was your handling of the key wide enough?", sv: "Timmar före utvinningen listade samma nyckel hemligheter och kopierade en databasinloggning. Var er hantering av nyckeln tillräckligt bred?" } },
+        branches: [
+          { when: { decision: "d3", option: "A" }, narrativeAppend: { en: "Because your report listed what you were still checking, the provider has extended its review to the whole account.", sv: "Eftersom er rapport listade det ni fortfarande kontrollerade har leverantören utvidgat sin granskning till hela kontot." } }
+        ],
         assumptionChallenged: L(["The attacker wanted free computing power.", "Angriparen ville ha gratis datorkraft."]),
         reveals: ["hf-secrets"],
         narrative: L([
@@ -347,6 +355,10 @@
         title: L(["Three more keys", "Tre nycklar till"]),
         twist: L(["A secrets scan of every repository finds three more live cloud keys, one of them in a public repository published by your own team last year.", "En genomsökning efter hemligheter i alla kodförråd hittar ytterligare tre aktiva molnnycklar, varav en i ett öppet kodförråd som ert eget team publicerade förra året."]),
         twistKind: "scope",
+        reconsider: { decision: "d3", pressure: { en: "The provider will credit the bill only with an independent report. Was the answer you gave them the right foundation?", sv: "Leverantören krediterar fakturan bara mot en oberoende rapport. Var svaret ni gav dem rätt grund att stå på?" } },
+        branches: [
+          { when: { decision: "d4", option: "A" }, narrativeAppend: { en: "Because all 14 secrets were rotated at once, the test environment and two integrations were down for a day.", sv: "Eftersom alla 14 hemligheter byttes på en gång var testmiljön och två integrationer nere en dag." } }
+        ],
         assumptionChallenged: L(["The contractor made a one-off mistake.", "Konsulten gjorde ett enstaka misstag."]),
         reveals: ["hf-repos"],
         narrative: L([
