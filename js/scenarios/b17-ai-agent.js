@@ -13,7 +13,7 @@
   "use strict";
 
   const BK = window.BK;
-  const { L, q, inj, act, kpi, line, pg, ask, opt, end, vr, rt } = BK.scenarios.h;
+  const { L, q, inj, act, kpi, pg, ask, opt, end, vr, rt } = BK.scenarios.h;
 
   BK.scenarios.register({
     id: "b17-ai-agent",

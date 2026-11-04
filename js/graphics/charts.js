@@ -357,7 +357,6 @@
 
   // ---- Service dependency diagram ----------------------------------------------------------------------------------
 
-  const STATUS_ICON = { down: "cross", degraded: "warning", compromised: "skull-lock", ok: "check", unknown: "question" };
   const STATUS_CLASS = { down: "c-danger", degraded: "c-warn", compromised: "c-danger", ok: "c-ok", unknown: "c-muted" };
 
   function statusChip(g, x, y, status, lang) {

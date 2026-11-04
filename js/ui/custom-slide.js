@@ -15,7 +15,6 @@
   const BK = window.BK;
   const { el, svgIcon } = BK.dom;
   const t = BK.t;
-  const C = () => BK.engine.custom;
 
   // ---- Runs ----------------------------------------------------------------------------------------------
 

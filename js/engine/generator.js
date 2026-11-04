@@ -21,7 +21,6 @@
   const BK = window.BK;
   const N = () => BK.data.names;
   const T = () => BK.engine.template;
-  const opts = () => BK.data.options;
 
   // ---- 1. Params --------------------------------------------------------------------
 

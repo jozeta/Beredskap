@@ -13,6 +13,8 @@ https://jozeta.github.io/Beredskap/ (GitHub Pages from `main`, root folder).
 
 ```sh
 python3 -m http.server 8000      # then open http://localhost:8000/ (app) and /tests.html (tests)
+bash tests/test.sh               # forbidden-API scan + headless tests.html over HTTP (what CI runs)
+npx --yes eslint@9.39.5 .        # lint, incl. rules blocking innerHTML/outerHTML/insertAdjacentHTML/document.write
 ```
 
 - `index.html` also works from `file://`, but run tests **over HTTP**: from `file://` three
@@ -64,3 +66,8 @@ checks the lists match). Open `tests.html` and fix whatever the validator report
 The root `_*.html` / `_*.js` dev pages and `js/scenarios/_*.js` are excluded via
 `.git/info/exclude` patterns but some are tracked; check `git ls-files` before assuming a file
 is or isn't committed. `SPEC.md` and `docs/superpowers/` are deliberately not published.
+
+## Standards
+
+Follows `~/Desktop/code/tools/standards/STANDARDS.md`; per-repo decisions are in `.claude-standards`
+(`design=own`: Beredskap keeps its own look, not the Låda Glass family style).

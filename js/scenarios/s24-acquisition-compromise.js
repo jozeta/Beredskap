@@ -13,7 +13,7 @@
   "use strict";
 
   const BK = window.BK;
-  const { L, q, ch, inj, dec, fac, act, avr, kpi, line } = BK.scenarios.h;
+  const { L, q, ch, inj, dec, fac, act, avr, kpi } = BK.scenarios.h;
 
   BK.scenarios.register({
     id: "s24-acquisition-compromise",

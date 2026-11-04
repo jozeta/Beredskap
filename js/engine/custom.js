@@ -216,7 +216,6 @@
   const TL = (rows) => (lang) => ({ type: "timeline", rows: rows.map(([time, text]) => ({ time, text: pick(text, lang) })) });
   const OPT = (pairs) => (lang) => ({ type: "options", items: pairs.map((p) => runs(pick(p, lang))) });
   const IMG = () => () => ({ type: "image", src: "", alt: "" });
-  const DIV = () => () => ({ type: "divider" });
 
   function bt(id, group, name, layout, parts, extra) {
     return { id, group, name, make: (lang) => Object.assign(blocks(layout, parts.map((f) => f(lang))), { template: id }, extra || {}) };

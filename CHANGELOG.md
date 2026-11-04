@@ -6,6 +6,10 @@ The project has no tagged releases yet, so changes are grouped by date. Entries 
 
 ## Unreleased
 
+- Add ESLint (`eslint.config.js`) with rules blocking unsafe DOM sinks, dynamic code and string timers; CI runs it
+- Add `tests/test.sh`: one command for the source scan and the headless test suite, used by CI
+- Remove unused variables found by the linter
+
 ## 2026-11-02
 
 - Add CI workflow, Dependabot config, security policy
