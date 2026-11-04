@@ -6,8 +6,10 @@ The project has no tagged releases yet, so changes are grouped by date. Entries 
 
 ## Unreleased
 
+- Nine new scenarios for three new sectors. Insurance: s36 "The Storm and the Broker Portal", s37 "The Model That Said No", b18 "Insured by Us, Hit by Them". News media: s38 "Protect the Source", s39 "Election Night", b19 "Published at 05:58". Government agency: s40 "Payday", s41 "The Fake Evacuation", b20 "Protected Identities"
+- Scenario engagement pass: every discussion scenario now has Reconsider moments and consequences, where earlier decisions change later stages; weak "straw-man" options were rewritten so every option is defensible; every branching scenario gained a reversal choice that lets the room undo an earlier decision under pressure
 - Money follows the language in every scenario: kronor in Swedish, euros in English (fixed exercise rate, 11 kr = €1), whatever the jurisdiction, in text and in figure tiles. Amounts are rolled in kronor and converted when shown, so switching language live shows the same amount. Fixes s34's payroll, which showed as a few kronor
-- Reconsider: a stage can put an earlier decision back in front of the room under new pressure ("Do you stand by it, or reverse it?"); the presenter records keep / reverse / undecided with a reason, and the debrief, report and Markdown list every reconsidered decision. s01 has four such moments
+- Reconsider: a stage can put an earlier decision back in front of the room under new pressure ("Do you stand by it, or reverse it?"); the presenter records keep / reverse / undecided with a reason, and the debrief, report and Markdown list every reconsidered decision
 - Decision and choice options are shown in a seeded order, re-lettered A–D, so the strongest answer is no longer always the first and longest one
 - Add ESLint (`eslint.config.js`) with rules blocking unsafe DOM sinks, dynamic code and string timers; CI runs it
 - Add `tests/test.sh`: one command for the source scan and the headless test suite, used by CI

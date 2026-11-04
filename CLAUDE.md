@@ -4,8 +4,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-Beredskap is a bilingual (English/Swedish) tabletop-exercise app for cyber crises: 35 staged
-discussion scenarios, 17 branching "gamebook" scenarios and a slide builder. It is a single
+Beredskap is a bilingual (English/Swedish) tabletop-exercise app for cyber crises: 41 staged
+discussion scenarios, 20 branching "gamebook" scenarios and a slide builder. It is a single
 static page: no backend, no build step, no dependencies, no network. Live at
 https://jozeta.github.io/Beredskap/ (GitHub Pages from `main`, root folder).
 

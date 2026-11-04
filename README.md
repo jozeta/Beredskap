@@ -14,12 +14,16 @@ a facilitator walks a group through a realistic cyber incident, one stage or one
 decision at a time, and the room discusses what they would do. Afterwards, you get a
 debrief, an after-action report and an improvement plan with owners and due dates.
 
-- **52 ready-made scenarios.** 35 *discussion* exercises unfold in stages, with injects
-  (emails, chats, calls, alerts, news), a timed discussion and a decision. 17 *branching*
+- **61 ready-made scenarios.** 41 *discussion* exercises unfold in stages, with injects
+  (emails, chats, calls, alerts, news), a timed discussion and a decision. 20 *branching*
   exercises work like a gamebook: every page ends in a choice and the story follows the
   room to one of five endings. Topics range from ransomware, phishing and insider threats
   to supply-chain attacks, cloud outages, cryptomining, malicious npm packages, shadow AI
-  and disaster recovery.
+  and disaster recovery, with sets written for insurers, newsrooms and government agencies.
+- **Hard calls, revisited.** Options appear in a seeded order, so the best answer is not
+  always first. Later stages put earlier decisions back in front of the room under new
+  pressure ("do you stand by it, or reverse it?"), and earlier choices change what happens
+  next. The debrief lists every decision the room kept or reversed.
 - **Build your own.** A slide editor with 53 templates (questions, decisions, email and
   chat threads, phone calls, social posts, alerts, logs, reports) lets you create custom
   exercises.
@@ -38,7 +42,7 @@ are used.
 | | |
 |---|---|
 | ![Dashboard](docs/screenshots/dashboard.png) | ![Scenario library](docs/screenshots/library.png) |
-| **Dashboard.** Start an exercise, resume a running one or open a recent one. | **Scenario library.** 52 scenarios to search and filter, plus your own exercises. |
+| **Dashboard.** Start an exercise, resume a running one or open a recent one. | **Scenario library.** 61 scenarios to search and filter, plus your own exercises. |
 | ![Exercise setup](docs/screenshots/setup.png) | ![Presenter view](docs/screenshots/presenter.png) |
 | **Setup.** Organisation, length, audience, roles, objectives and extra pressure. | **Presenter view.** What the room sees, plus notes, hints, timer and logs. |
 | ![Stage](docs/screenshots/stage.png) | ![Exercise builder](docs/screenshots/builder.png) |
@@ -173,7 +177,7 @@ troubleshooting.
 
 ### 3.1 From zero to running (about one minute)
 
-1. **Library** (`#/library`). Browse the 52 scenarios. You can filter by
+1. **Library** (`#/library`). Browse the 61 scenarios. You can filter by
    category, structure (archetype A–F) and format (discussion or branching), or
    search. A card's preview shows
    the summary, learning objectives, key lessons, stage titles and framework
@@ -367,7 +371,7 @@ js/core/            namespace (window.BK), store, rng, i18n, theme, safe DOM bui
 js/data/            options/vocabulary, roles, sectors, environments, name pools, frameworks, complications, help
 js/engine/          template resolver, generator, validator, pacing, slide compiler, branching, session, edit, custom (builder decks)
 js/graphics/        icon sprite + emblems, SVG charts, route map, inject artefact mock-ups, title artwork
-js/scenarios/       _registry, _helpers, s01 … s35 (discussion), b01 … b17 (branching), one file each
+js/scenarios/       _registry, _helpers, s01 … s41 (discussion), b01 … b20 (branching), one file each
 js/io/              export (JSON/Markdown/CSV), import (validation), print
 js/ui/              router, sync, dialog, components, and one module per view (incl. builder, custom-slide, help)
 js/app.js           boot: preferences, shell, routes, storage-problem banner
@@ -459,7 +463,12 @@ A **stage** has these fields:
   `assumptionChallenged`, on every stage after the first;
 - `reveals[]`;
 - `injects[]` and `branchInjects[]`, plus `branches[]{ when: { decision,
-  option? }, addInjects[], narrativeAppend? }`;
+  option? }, addInjects[], narrativeAppend? }` (`option` is the authored letter;
+  options are shown in a seeded order, and `fixedOptionOrder: true` on the template
+  turns that off);
+- `reconsider{ decision, pressure{ en, sv } }`: puts an earlier decision back in
+  front of the room after the twist (dropped if that decision's stage is not in the
+  run);
 - `charts[]`, and `questions{ technical[], executive[] }` (with `revisits` on
   questions that look back at an earlier decision);
 - `challenges[]`;
