@@ -130,3 +130,6 @@
 .pres-card-item p { margin: 0; }
 .pres-custom-notes { margin: 0; white-space: pre-wrap; line-height: 1.5; }
 .pres-reconsider.is-current { box-shadow: 0 0 0 2px var(--warn); }
+
+/* A card covering the room's slide: what it is, and a quick way to hide it. */
+.pres-cover { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; justify-content: space-between; margin: 8px 0 0; }

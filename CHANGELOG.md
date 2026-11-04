@@ -6,6 +6,11 @@ Changes are grouped by app version (shown in Settings, set in `js/core/namespace
 
 ## Unreleased
 
+## 0.2.1 (2026-11-04)
+
+- Fix: moving into another stage (or, in branching runs, another page) always starts that stage's countdown fresh and stopped; before, a countdown that was still running or already past zero carried over
+- Fix: a challenge card leaves the stage when you move on, and the presenter's "Next" preview no longer shows it; a "Hide card" bar under the stage preview shows whenever a card covers the room's slide
+
 ## 0.2.0 (2026-11-04)
 
 - Settings shows the app version (also written into every export); a test keeps it in step with this changelog

@@ -393,6 +393,35 @@
   });
 
   suite("decision deadline and challenge cards", () => {
+    test("moving into another stage always starts that stage's countdown fresh and stopped", () => {
+      const ex = exercise({ stageCount: 8 });
+      let s = S().create(ex, T0);
+      const disc = S().slides(s).find((x) => x.type === "discussion" && x.stageId === "p1");
+      s = S().apply(s, { type: "gotoSlide", slideId: disc.id }, T0);
+      s = S().apply(s, { type: "timerToggle" }, T0);
+      const firstOfP2 = S().slides(s).find((x) => x.stageId === "p2");
+      // Still running when the room moves on, and long past zero: either way stage 2 starts fresh.
+      [T0 + 60000, T0 + 24 * 3600000].forEach((at) => {
+        const n = S().apply(s, { type: "gotoSlide", slideId: firstOfP2.id }, at);
+        assert.equal(n.timer.stageId, "p2");
+        assert.equal(n.timer.runningSince, null, "stopped");
+        assert.equal(S().timerRemaining(n, at + 5000), ex.stages[1].discussionMinutes * 60000, "full time");
+      });
+    });
+
+    test("in a branching run with discussion stops, a new page never inherits the last page's countdown", () => {
+      const inst = Object.assign({ id: "ex-t" }, BK.engine.generator.generate(BK.scenarios.get("b01-lost-laptop"), { seed: "FJORD-4821", mode: "hybrid" }));
+      let s = S().create(inst, T0);
+      let i = 0;
+      for (; i < 60 && S().locate(s).slide.type !== "discussion"; i++) s = S().apply(s, { type: "next" }, T0 + i);
+      const page = S().locate(s).slide.pageId;
+      s = S().apply(s, { type: "timerToggle" }, T0 + i);
+      for (; i < 120 && S().locate(s).slide.type !== "choice"; i++) s = S().apply(s, { type: "next" }, T0 + i);
+      s = S().apply(s, { type: "choose", nth: 1 }, T0 + 10 * 3600000);
+      assert.notEqual(S().locate(s).slide.pageId, page);
+      assert.ok(s.timer.stageId !== page && !s.timer.runningSince, "fresh on the new page");
+    });
+
     /** A session on stage 1's first discussion slide with its countdown running from `at`. */
     function onDiscussion(params, at) {
       const ex = exercise(Object.assign({ stageCount: 8 }, params));
@@ -473,6 +502,12 @@
       c = S().apply(c, { type: "challengeOutcome", key: "d1", outcome: "held" }, T0);
       c = S().apply(c, { type: "challengeHide" }, T0);
       assert.equal(S().project(c, T0).challenge, null);
+      // Moving on takes the card off the stage, and the "next" preview never shows it.
+      const shown = S().apply(c, { type: "challengeShow", key: "d1" }, T0);
+      const nx = S().nextPosition(shown);
+      assert.equal(S().projectSlide(shown, nx.slideId, nx.step, T0).challenge, null, "next preview shows no challenge");
+      assert.equal(S().apply(shown, { type: "next" }, T0).activeChallenge, null, "next clears it");
+      assert.equal(S().apply(shown, { type: "gotoStage", index: 2 }, T0).activeChallenge, null, "jumping clears it");
       const row = BK.io.export.report(c, "en").challenges[0];
       assert.ok(row && row.outcome === "held" && row.card === S().challengeContent(c, "d1", "en").title);
       assert.ok(BK.io.export.markdown(c, "en").includes("Challenged decisions"));

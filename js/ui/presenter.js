@@ -148,6 +148,18 @@
     if (ok) view.ctrl.dispatch({ type: "end" });
   }
 
+  /** When a card covers the room's slide, say which and offer to hide it right under the preview. */
+  function coverBar(p) {
+    const cover = p.deadline ? ["deadline.title", { type: "deadlineHide" }] : p.challenge ? ["challenge.title", { type: "challengeHide" }] : p.complication ? ["complication.title", { type: "complicationHide" }] : null;
+    if (!cover || p.paused || p.screen !== "normal") return null;
+    return el(
+      "div",
+      { class: "pres-cover notice notice--warn small" },
+      el("span", { text: t(p.deadline || p.challenge ? "presenter.coverOn" : "presenter.coverOnStays", { card: t(cover[0]) }) }),
+      c.button({ label: t("presenter.coverHide"), icon: "eye-off", size: "sm", kind: "primary", onClick: () => view.ctrl.dispatch(cover[1]) })
+    );
+  }
+
   function navCard(sess, f) {
     const now = Date.now();
     const current = S().project(sess, now);
@@ -157,6 +169,7 @@
       "section",
       { class: "pres-nav" },
       preview(current, t("presenter.current"), "stage-frame--current"),
+      coverBar(current),
       el(
         "div",
         { class: "pres-nav__controls" },

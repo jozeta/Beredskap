@@ -413,6 +413,9 @@
   }
 
   /** Landing on a slide releases what it shows; entering a discussion arms that stage's timer. */
+  /** The branching page a countdown belongs to (page discussion: the page id; choice deadline: "choice:<page>"). */
+  const timerPage = (id) => (id && id.startsWith("choice:") ? id.slice(7) : id);
+
   function onPosition(sess, now) {
     const { slide } = locate(sess);
     if (!slide) return;
@@ -436,11 +439,18 @@
         const ms = CHOICE_DEADLINE_MINUTES * 60000;
         sess.timer = { stageId: slide.id, durationMs: ms, remainingMs: ms, runningSince: sess.paused ? null : now };
       }
-    } else if (!isBranching(sess) && slide.stageId && sess.timer.stageId !== slide.stageId && !sess.timer.runningSince) {
-      // Earlier slides of a stage already show (and can start) that stage's discussion time, instead of 00:00.
+    } else if (!isBranching(sess) && slide.stageId && sess.timer.stageId !== slide.stageId) {
+      // Moving into another stage always gives that stage a fresh countdown, stopped: the previous one
+      // (still running, or already past zero) never carries over. Earlier slides of a stage already show
+      // (and can start) that stage's discussion time, instead of 00:00.
       const stage = stageById(sess, slide.stageId);
       const ms = ((stage && stage.discussionMinutes) || 5) * 60000;
       sess.timer = { stageId: slide.stageId, durationMs: ms, remainingMs: ms, runningSince: null };
+    } else if (isBranching(sess) && slide.pageId && timerPage(sess.timer.stageId) !== slide.pageId) {
+      // Branching: the same on a new page. Its discussion time is ready when it has a discussion stop.
+      const pg = B().page(sess.instance, slide.pageId);
+      const ms = sess.instance.settings.mode === "hybrid" && pg && pg.discuss ? ((pg.discuss.minutes) || 4) * 60000 : 0;
+      sess.timer = { stageId: ms ? slide.pageId : null, durationMs: ms, remainingMs: ms, runningSince: null };
     }
   }
 
@@ -454,6 +464,8 @@
     let step = 0;
     if (n > 0) step = forward ? Math.max(1, slide.type === "timeline" ? releasedCount(sess, slide.stageId) : 1) : n;
     sess.position = { slideId: slide.id, step: Math.min(step, n), index: slide.index };
+    // A challenge is about the moment it was played: moving to another slide takes it off the stage.
+    sess.activeChallenge = null;
   }
 
   // ---- Reducer ------------------------------------------------------------------------------------
@@ -483,6 +495,7 @@
       // falls through
       case "next": {
         sess.activeDeadline = null;
+        sess.activeChallenge = null;
         const n = stepCount(sess, slide);
         if (sess.position.step < n) sess.position.step++;
         else if (idx < list.length - 1) moveTo(sess, list, idx + 1, true);
@@ -490,6 +503,7 @@
       }
       case "prev": {
         sess.activeDeadline = null;
+        sess.activeChallenge = null;
         const min = slide && slide.type === "timeline" ? 1 : slide && stepCount(sess, slide) ? 1 : 0;
         if (sess.position.step > min) sess.position.step--;
         else if (idx > 0) moveTo(sess, list, idx - 1, false);
@@ -1053,6 +1067,9 @@
     const p = project(sess, now);
     p.progress = progress(sess, list, idx, sess.lang);
     p.slide = slideContent(sess, list[idx], step, sess.lang);
+    // Moving on clears the deadline and challenge cards, so the preview of what comes next shows neither.
+    p.deadline = null;
+    p.challenge = null;
     return p;
   }
 
