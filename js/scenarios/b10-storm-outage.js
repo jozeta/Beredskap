@@ -47,6 +47,7 @@
     roles: ["incidentCommander", "ceo", "itOps", "facilities", "hr", "comms", "serviceOwner", "dutyOfficer", "ciso", "supplierManager"],
 
     flags: {
+      calledIn: L(["Team called in after waiting overnight", "Teamet inkallat efter att ha väntat över natten"]),
       fallbackComms: L(["Crisis team reached through the fallback channel", "Krisgruppen nådd via reservkanalen"]),
       waited: L(["Waited until morning", "Väntade till morgonen"]),
       staffSafe: L(["Every person on shift accounted for", "Alla i tjänst redovisade"]),
@@ -168,7 +169,8 @@
         discuss: [q("Why do scams work so well during a real crisis?", "Varför fungerar bedrägerier så bra under en verklig kris?", ["ciso", "hr"])],
         choice: ask(["What do you do?", "Vad gör ni?"], ["Warns staff through the crisis channel and states what real messages will look like.", "Varnar personalen via krisgruppens kanal och anger hur riktiga meddelanden kommer att se ut."], [
           opt(["Warn through the crisis channel; block the senders", "Varna via krisgruppens kanal; blockera avsändarna"], "l3", ["Fast and believable.", "Snabbt och trovärdigt."], { set: "phishWarned" }),
-          opt(["Too busy; deal with it later", "För mycket att göra; ta det senare"], "l3", ["The scammers aren't busy.", "Bedragarna har inte för mycket att göra."])
+          opt(["Too busy; deal with it later", "För mycket att göra; ta det senare"], "l3", ["The scammers aren't busy.", "Bedragarna har inte för mycket att göra."]),
+          opt(["Call everyone in now, reversing last night's decision to wait until morning", "Kalla in alla nu, och upphäv gårdagens beslut att vänta till morgonen"], "l3", ["Reverses your first call; the night is already lost.", "Upphäver ert första beslut; natten är redan förlorad."], { requires: "waited", set: "calledIn", effects: { trust: 1 } })
         ])
       }),
 

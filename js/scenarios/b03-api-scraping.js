@@ -47,6 +47,7 @@
     roles: ["incidentCommander", "ciso", "devLead", "socLead", "serviceOwner", "legal", "dpo", "comms", "ceo", "cio"],
 
     flags: {
+      dismissalRetracted: L(["Early dismissal publicly retracted", "Det tidiga avfärdandet offentligt tillbakadraget"]),
       dismissed: L(["Dismissed the sale at first", "Avfärdade försäljningen först"]),
       patched: L(["Authorisation flaw fixed quickly", "Behörighetsfelet rättat snabbt"]),
       reviewAll: L(["Every endpoint reviewed", "Alla ändpunkter granskade"]),
@@ -174,7 +175,8 @@
         choice: ask(["How do you inform customers?", "Hur informerar ni kunderna?"], ["Tells customers directly, with concrete advice about the scams that will follow.", "Berättar direkt för kunderna, med konkreta råd om bedrägerierna som kommer att följa."], [
           opt(["Message every affected customer with fraud advice", "Meddela varje berörd kund med råd om bedrägerier"], "l3", ["Big, and the right size.", "Stort, och lagom stort."], { set: "customersTold" }),
           opt(["A notice on the website", "Ett meddelande på webbplatsen"], "l3", ["Most affected customers will never see it.", "De flesta berörda kunder kommer aldrig att se det."]),
-          opt(["Nothing unless they ask", "Ingenting om de inte frågar"], "l3", ["They will ask, after the scams start.", "De kommer att fråga, när bedrägerierna har börjat."])
+          opt(["Nothing unless they ask", "Ingenting om de inte frågar"], "l3", ["They will ask, after the scams start.", "De kommer att fråga, när bedrägerierna har börjat."]),
+          opt(["Retract this morning's dismissal and tell customers the sample was real", "Ta tillbaka morgonens avfärdande och berätta för kunderna att utdraget var äkta"], "l3", ["Contradicts your first answer in public: honest, but it will be quoted.", "Motsäger ert första svar offentligt: ärligt, men det kommer att citeras."], { requires: "dismissed", set: "dismissalRetracted", effects: { media: 1 } })
         ])
       }),
 

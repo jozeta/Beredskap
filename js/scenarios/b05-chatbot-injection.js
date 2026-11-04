@@ -47,6 +47,7 @@
     roles: ["incidentCommander", "ciso", "devLead", "serviceOwner", "dpo", "legal", "comms", "ceo", "supplierManager", "cio"],
 
     flags: {
+      botRestored: L(["Assistant switched back on under queue pressure", "Assistenten påslagen igen under trycket från kön"]),
       botOff: L(["Assistant switched off", "Assistenten avstängd"]),
       promptPatched: L(["Tried to fix it in the prompt", "Försökte rätta det i prompten"]),
       authInCode: L(["Authorisation moved into code", "Behörighetskontrollen flyttad till koden"]),
@@ -142,7 +143,8 @@
         choice: ask(["When does the assistant come back?", "När kommer assistenten tillbaka?"], ["Brings it back only when access is checked in code, outside the model.", "Tar tillbaka den först när åtkomsten kontrolleras i koden, utanför modellen."], [
           opt(["Only when the tool checks ownership in code", "Först när verktyget kontrollerar ägarskapet i koden"], "c5", ["Takes a sprint. It is the fix.", "Tar en sprint. Det är rättningen."], { set: "authInCode" }),
           opt(["Monday, with improved instructions", "På måndag, med förbättrade instruktioner"], "c4b", ["Meets the deadline with the same flaw.", "Håller tidsplanen med samma fel."]),
-          opt(["Monday, with a human checking every order answer", "På måndag, med en människa som granskar varje ordersvar"], "c5", ["Safe-ish and expensive.", "Någorlunda säkert och dyrt."])
+          opt(["Monday, with a human checking every order answer", "På måndag, med en människa som granskar varje ordersvar"], "c5", ["Safe-ish and expensive.", "Någorlunda säkert och dyrt."]),
+          opt(["Switch the assistant back on tonight with the order lookup: the chat queue is four hours long", "Slå på assistenten igen i kväll med orderuppslaget: chattkön är fyra timmar lång"], "c5", ["Reverses your first shutdown under queue pressure, before the fix exists.", "Upphäver er första avstängning under trycket från kön, innan rättningen finns."], { requires: "botOff", set: "botRestored", effects: { trust: -1 } })
         ])
       }),
 

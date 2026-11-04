@@ -47,6 +47,7 @@
     roles: ["incidentCommander", "cfo", "ceo", "ciso", "socLead", "itOps", "legal", "comms", "supplierManager", "hr"],
 
     flags: {
+      freezeLifted: L(["Payment freeze lifted under pressure", "Betalningsstoppet hävt under tryck"]),
       assumedFault: L(["Assumed a network fault", "Antog ett nätfel"]),
       paymentsFrozen: L(["Corporate payments frozen at once", "Företagets betalningar frysta direkt"]),
       smsRemoved: L(["SMS codes removed as a sign-in method", "Sms-koder borttagna som inloggningsmetod"]),
@@ -168,7 +169,8 @@
       ], {
         choice: ask(["Do you report?", "Anmäler ni?"], ["Reports promptly; recalls and insurance depend on it.", "Anmäler snabbt; återkallelser och försäkring hänger på det."], [
           opt(["Report to both today", "Anmäl till båda i dag"], "l3", ["Required for recall and insurance.", "Krävs för återkallelse och försäkring."], { set: "reported" }),
-          opt(["Avoid publicity; handle it internally", "Undvik publicitet; hantera det internt"], "l3", ["Recalls and claims will stall.", "Återkallelser och anspråk kommer att stanna av."])
+          opt(["Avoid publicity; handle it internally", "Undvik publicitet; hantera det internt"], "l3", ["Recalls and claims will stall.", "Återkallelser och anspråk kommer att stanna av."]),
+          opt(["Lift the payment freeze: suppliers and payroll are blocked, and the bank says the fraud is contained", "Häv betalningsstoppet: leverantörer och löner är blockerade, och banken säger att bedrägeriet är under kontroll"], "l3", ["Reverses your first move on the bank's word; the attacker still has the number.", "Upphäver ert första drag på bankens ord; angriparen har fortfarande numret."], { requires: "paymentsFrozen", set: "freezeLifted", effects: { trust: 1 } })
         ])
       }),
 

@@ -47,6 +47,7 @@
     roles: ["incidentCommander", "ceo", "legal", "ciso", "itOps", "socLead", "dpo", "comms", "supplierManager"],
 
     flags: {
+      contactBroken: L(["Contact with the extortionists broken off", "Kontakten med utpressarna avbruten"]),
       ignored: L(["Treated the email as a bluff", "Behandlade mejlet som en bluff"]),
       engaged: L(["Replied to the extortionist", "Svarade utpressaren"]),
       wiped: L(["Wiped the file server", "Raderade filservern"]),
@@ -169,7 +170,8 @@
         choice: ask(["Do you pay?", "Betalar ni?"], ["Recognises that without encryption, payment buys only a promise.", "Inser att utan kryptering köper en betalning bara ett löfte."], [
           opt(["Refuse to pay", "Vägra betala"], "l3", ["The data is out either way.", "Uppgifterna är ute oavsett."], { set: "refused" }),
           opt(["Negotiate for proof of deletion", "Förhandla om bevis på radering"], "c5b", ["There is no such proof.", "Något sådant bevis finns inte."]),
-          opt(["Pay quietly to keep it out of the news", "Betala i tysthet för att hålla det borta från nyheterna"], "l3", ["You fund the next attack and keep no guarantee.", "Ni finansierar nästa angrepp och får ingen garanti."], { set: "paid" })
+          opt(["Pay quietly to keep it out of the news", "Betala i tysthet för att hålla det borta från nyheterna"], "l3", ["You fund the next attack and keep no guarantee.", "Ni finansierar nästa angrepp och får ingen garanti."], { set: "paid" }),
+          opt(["Break off the contact you opened with the extortionists this morning", "Bryt kontakten som ni inledde med utpressarna i morse"], "l3", ["Reverses the channel you opened; they may publish sooner to make a point.", "Upphäver kanalen ni öppnade; de kan publicera tidigare för att markera."], { requires: "engaged", set: "contactBroken", effects: { media: 1 } })
         ])
       }),
 

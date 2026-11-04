@@ -46,6 +46,7 @@
     roles: ["incidentCommander", "hr", "dpo", "legal", "itOps", "ciso", "comms", "ceo", "cfo"],
 
     flags: {
+      deleteRequestRetracted: L(["“Delete unopened” request retracted", "Uppmaningen att radera oöppnat tillbakadragen"]),
       purged: L(["Mail purged centrally", "E-post rensad centralt"]),
       askedDelete: L(["Asked staff to delete it", "Bad personalen radera det"]),
       dpoEarly: L(["DPO involved in the first hour", "Dataskyddsombudet inkopplat första timmen"]),
@@ -153,7 +154,8 @@
         choice: ask(["What do you tell staff?", "Vad säger ni till personalen?"], ["Tells everyone the truth today, with an apology and a clear request, and contacts the most affected individually.", "Berättar sanningen för alla i dag, med en ursäkt och en tydlig begäran, och kontaktar de mest berörda personligen."], [
           opt(["An honest message to all staff today, and personal calls to those with sick leave noted", "Ett ärligt meddelande till all personal i dag, och personliga samtal till dem med sjukfrånvaro noterad"], "l2", ["Hard to write, and it lowers the temperature.", "Svårt att skriva, och det sänker temperaturen."], { effects: { trust: 1 }, set: "staffInformed" }),
           opt(["A short note asking people to delete the file", "En kort notis som ber folk radera filen"], "l2", ["Quick, and it says nothing to the people who were hurt.", "Snabbt, och det säger ingenting till dem som skadades."]),
-          opt(["Say nothing more until the investigation is done", "Säg inget mer förrän utredningen är klar"], "l2", ["The corridor fills the silence.", "Korridoren fyller tystnaden."], { effects: { trust: -1 } })
+          opt(["Say nothing more until the investigation is done", "Säg inget mer förrän utredningen är klar"], "l2", ["The corridor fills the silence.", "Korridoren fyller tystnaden."], { effects: { trust: -1 } }),
+          opt(["Retract the “delete it unopened” email and admit the file was opened by many", "Ta tillbaka mejlet om att radera oöppnat och medge att filen har öppnats av många"], "l2", ["Contradicts your first message; staff will compare the two.", "Motsäger ert första meddelande; personalen kommer att jämföra de två."], { requires: "askedDelete", set: "deleteRequestRetracted", effects: { trust: 1 } })
         ])
       }),
 

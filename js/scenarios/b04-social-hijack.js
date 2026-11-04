@@ -47,6 +47,7 @@
     roles: ["incidentCommander", "comms", "ciso", "socLead", "legal", "ceo", "serviceOwner", "itOps", "dpo"],
 
     flags: {
+      reportWithdrawn: L(["Platform report withdrawn", "Anmälan till plattformen tillbakadragen"]),
       reported: L(["Reported to the platform at once", "Anmält till plattformen direkt"]),
       toolsRevoked: L(["Connected apps removed", "Anslutna appar borttagna"]),
       warned: L(["Followers warned on other channels", "Följarna varnade i andra kanaler"]),
@@ -170,7 +171,8 @@
         discuss: [q("How does a real CEO prove they are real?", "Hur bevisar en riktig vd att hen är på riktigt?", ["ceo", "comms"])],
         choice: ask(["How do you answer the fake video?", "Hur bemöter ni den falska videon?"], ["Answers quickly with a verifiable message from a channel the organisation controls.", "Svarar snabbt med ett verifierbart besked från en kanal organisationen kontrollerar."], [
           opt(["The CEO records a short real video for the website and other channels", "Vd spelar in en kort riktig video till webbplatsen och övriga kanaler"], "l3", ["Fast, human, verifiable through your own site.", "Snabbt, mänskligt, verifierbart via er egen webbplats."], { set: "ceoVideo" }),
-          opt(["A written statement only", "Bara ett skriftligt uttalande"], "l3", ["Safe, and much less effective against a video.", "Säkert, och mycket mindre effektivt mot en video."])
+          opt(["A written statement only", "Bara ett skriftligt uttalande"], "l3", ["Safe, and much less effective against a video.", "Säkert, och mycket mindre effektivt mot en video."]),
+          opt(["Withdraw the platform report and try to win the account back yourselves", "Dra tillbaka anmälan till plattformen och försök ta tillbaka kontot själva"], "l3", ["Reverses the report: maybe faster, but you lose the platform's case.", "Upphäver anmälan: kanske snabbare, men ni förlorar plattformens ärende."], { requires: "reported", set: "reportWithdrawn", effects: { media: 1 } })
         ])
       }),
 

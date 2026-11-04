@@ -47,6 +47,7 @@
     roles: ["incidentCommander", "ciso", "socLead", "itOps", "hr", "legal", "facilities", "serviceOwner", "cio"],
 
     flags: {
+      logsDeleted: L(["Collected logs deleted after union objection", "Insamlade loggar raderade efter fackets invändning"]),
       evidenceKept: L(["Logs preserved before action", "Loggar säkrade före åtgärd"]),
       tunnelFound: L(["Tunnel found and closed", "Tunneln hittad och stängd"]),
       costDocumented: L(["Cost documented", "Kostnaden dokumenterad"]),
@@ -172,7 +173,8 @@
         ], ["Because you closed the tunnel, the question is only about the past.", "Eftersom ni stängde tunneln gäller frågan bara det som redan hänt."])],
         choice: ask(["How do you treat the security question?", "Hur hanterar ni säkerhetsfrågan?"], ["Closes the tunnel if still open and checks the cluster for any other access.", "Stänger tunneln om den fortfarande är öppen och undersöker klustret efter annan åtkomst."], [
           opt(["Close it if open, and check the cluster forensically", "Stäng den om den är öppen, och undersök klustret forensiskt"], "l3", ["The only way to know about the customer data.", "Det enda sättet att få veta om kunddatan."], { set: ["tunnelFound", "forensics"] }),
-          opt(["Remove the proxy and assume nothing happened", "Ta bort proxyn och anta att inget hände"], "l3", ["Probably true. You will not know.", "Troligen sant. Ni kommer inte att veta."])
+          opt(["Remove the proxy and assume nothing happened", "Ta bort proxyn och anta att inget hände"], "l3", ["Probably true. You will not know.", "Troligen sant. Ni kommer inte att veta."]),
+          opt(["Delete the logs you pulled: the union calls the monitoring disproportionate", "Radera loggarna ni tog fram: facket kallar bevakningen oproportionerlig"], "l3", ["Reverses your first step to calm the union; you lose your evidence.", "Upphäver ert första steg för att lugna facket; ni förlorar era bevis."], { requires: "evidenceKept", set: "logsDeleted", effects: { regulator: 1 } })
         ])
       }),
 

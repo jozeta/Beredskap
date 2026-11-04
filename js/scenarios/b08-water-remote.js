@@ -48,6 +48,7 @@
     roles: ["incidentCommander", "otEngineer", "itOps", "ciso", "ceo", "comms", "dutyOfficer", "legal", "serviceOwner"],
 
     flags: {
+      watchingEnded: L(["Stopped watching the intruder", "Slutade bevaka inkräktaren"]),
       manualOps: L(["Plant run manually", "Verket kört manuellt"]),
       watched: L(["Watched the intruder before cutting access", "Bevakade inkräktaren innan åtkomsten kapades"]),
       healthAlerted: L(["Health authority alerted early", "Hälsomyndigheten larmad tidigt"]),
@@ -166,7 +167,8 @@
         choice: ask(["What do you say?", "Vad säger ni?"], ["Explains what happened, that the water is safe and how you know.", "Förklarar vad som hänt, att vattnet är säkert och hur ni vet det."], [
           opt(["What happened, why the water is safe, how you know", "Vad som hände, varför vattnet är säkert, hur ni vet det"], "l3", ["Honest and calming when backed by data.", "Ärligt och lugnande när det backas upp av data."], { set: "publicTold" }),
           opt(["“Routine maintenance”", "”Rutinunderhåll”"], "l3", ["Plausible until it isn't.", "Rimligt tills det inte är det."], { set: "coverStory" }),
-          opt(["No comment", "Ingen kommentar"], "l3", ["Fills the space with speculation.", "Fyller tomrummet med spekulationer."])
+          opt(["No comment", "Ingen kommentar"], "l3", ["Fills the space with speculation.", "Fyller tomrummet med spekulationer."]),
+          opt(["Stop watching and take the plant to manual operation now, admitting you let them act for an hour", "Sluta bevaka och ta anläggningen till manuell drift nu, och medge att ni lät dem agera i en timme"], "l3", ["Reverses your first choice to watch; the supervisor will ask why you waited.", "Upphäver ert första val att bevaka; tillsynen kommer att fråga varför ni väntade."], { requires: "watched", set: "watchingEnded", effects: { regulator: 1 } })
         ])
       }),
 

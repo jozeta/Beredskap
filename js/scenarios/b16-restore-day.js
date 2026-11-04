@@ -46,6 +46,7 @@
     roles: ["incidentCommander", "cio", "itOps", "cloudLead", "serviceOwner", "ciso", "cfo", "ceo", "supplierManager"],
 
     flags: {
+      testMoved: L(["Restore test moved out of isolation", "Återställningstestet flyttat ut ur isoleringen"]),
       isolatedTest: L(["Restored into an isolated environment", "Återställt i en isolerad miljö"]),
       logFindings: L(["Findings logged as they happened", "Fynd dokumenterade löpande"]),
       measuredReal: L(["Measured the real restore time", "Mätte den verkliga återställningstiden"]),
@@ -160,7 +161,8 @@
         ]) },
         choice: ask(["How do you record the result?", "Hur dokumenterar ni resultatet?"], ["Records the real time and the data loss as the main results.", "Dokumenterar den verkliga tiden och dataförlusten som de viktigaste resultaten."], [
           opt(["Record the measured time and the data loss as headline results", "Dokumentera den uppmätta tiden och dataförlusten som huvudresultat"], "l3", ["The truth, on one page.", "Sanningen, på en sida."]),
-          opt(["Record “restore successful” with notes", "Dokumentera ”återställningen lyckades” med anteckningar"], "l3", ["Technically true.", "Tekniskt sant."])
+          opt(["Record “restore successful” with notes", "Dokumentera ”återställningen lyckades” med anteckningar"], "l3", ["Technically true.", "Tekniskt sant."]),
+          opt(["Move the test into staging to finish today, abandoning the isolated restore", "Flytta testet till stagingmiljön för att bli klar i dag, och överge den isolerade återställningen"], "l3", ["Reverses your first choice to keep the test isolated; the result means less.", "Upphäver ert första val att hålla testet isolerat; resultatet blir mindre värt."], { requires: "isolatedTest", set: "testMoved", effects: { regulator: 1 } })
         ])
       }),
 

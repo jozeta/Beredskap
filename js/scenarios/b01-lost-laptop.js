@@ -47,6 +47,7 @@
     roles: ["incidentCommander", "ciso", "cfo", "ceo", "itOps", "socLead", "legal", "dpo", "comms", "securityOfficer"],
 
     flags: {
+      sessionsRestored: L(["CFO's access restored for the deal call", "Ekonomichefens åtkomst återställd för affärssamtalet"]),
       sessionsRevoked: L(["Sessions revoked early", "Sessioner återkallade tidigt"]),
       wipeSent: L(["Remote wipe sent", "Fjärrradering skickad"]),
       policeReport: L(["Police report filed", "Polisanmälan gjord"]),
@@ -172,7 +173,8 @@
         choice: ask(["What do you do about the deal?", "Vad gör ni med affären?"], ["Recognises market-abuse obligations and brings the deal team and legal in without delay.", "Inser skyldigheterna kring marknadsmissbruk och tar in affärsteamet och juristen utan dröjsmål."], [
           opt(["Tell the deal team and legal; review disclosure duties", "Informera affärsteamet och juristen; se över informationsplikten"], "l3", ["Right, and it widens the circle of people who know.", "Rätt, och det vidgar kretsen av personer som vet."]),
           opt(["Leave the deal out of it: it is a theft, not a leak", "Låt affären vara: det är en stöld, inte en läcka"], "l3", ["Keeps things simple until someone trades on the information.", "Håller det enkelt tills någon handlar på informationen."], { effects: { regulator: 1 }, set: "dealIgnored" }),
-          opt(["Pause the deal talks until you know more", "Pausa förhandlingarna tills ni vet mer"], "l3", ["Safe for the market, costly for the deal, and hard to explain to the other side.", "Säkert för marknaden, dyrt för affären och svårt att förklara för motparten."])
+          opt(["Pause the deal talks until you know more", "Pausa förhandlingarna tills ni vet mer"], "l3", ["Safe for the market, costly for the deal, and hard to explain to the other side.", "Säkert för marknaden, dyrt för affären och svårt att förklara för motparten."]),
+          opt(["Give the CFO their access back for tonight's deal call, and revoke it again tomorrow", "Ge ekonomichefen åtkomsten tillbaka inför kvällens affärssamtal, och återkalla den igen i morgon"], "l3", ["Undoes your own containment for one evening; the attacker may still hold a session.", "Upphäver er egen inneslutning för en kväll; angriparen kan fortfarande ha en session."], { requires: "sessionsRevoked", set: "sessionsRestored", effects: { regulator: 1 } })
         ])
       }),
 

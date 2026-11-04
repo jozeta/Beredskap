@@ -46,6 +46,7 @@
     roles: ["incidentCommander", "ciso", "itOps", "socLead", "hr", "legal", "cfo", "ceo", "comms"],
 
     flags: {
+      reImaged: L(["Restored server taken down again for evidence", "Den återställda servern nedtagen igen för bevisning"]),
       restoredFast: L(["Restored before preserving evidence", "Återställt innan bevisen säkrades"]),
       evidenceKept: L(["Evidence preserved first", "Bevisen säkrade först"]),
       huntedTasks: L(["Searched for other planted tasks", "Sökte efter andra utplacerade uppgifter"]),
@@ -164,7 +165,8 @@
         choice: ask(["Do you report it?", "Polisanmäler ni?"], ["Reports to the police with preserved evidence.", "Polisanmäler med säkrade bevis."], [
           opt(["Report to the police with the evidence you have", "Polisanmäl med de bevis ni har"], "l3", ["The right step. It may become public.", "Rätt steg. Det kan bli offentligt."], { set: "policeReport" }),
           opt(["Handle it through employment lawyers only", "Hantera det enbart via arbetsrättsjurister"], "l3", ["Quiet, and he faces no criminal consequence.", "Tyst, och han möter inga straffrättsliga följder."]),
-          opt(["Do nothing formal; the damage is repaired", "Gör inget formellt; skadan är reparerad"], "l3", ["The cheapest today, and it tells everyone something.", "Billigast i dag, och det säger något till alla."])
+          opt(["Do nothing formal; the damage is repaired", "Gör inget formellt; skadan är reparerad"], "l3", ["The cheapest today, and it tells everyone something.", "Billigast i dag, och det säger något till alla."]),
+          opt(["Take the restored server down again and image it after all, so the police have evidence", "Ta ner den återställda servern igen och avbilda den ändå, så att polisen får bevis"], "l3", ["Reverses your fast restore; the business loses another afternoon.", "Upphäver er snabba återställning; verksamheten förlorar ytterligare en eftermiddag."], { requires: "restoredFast", set: "reImaged", effects: { trust: -1 } })
         ])
       }),
 

@@ -48,6 +48,7 @@
     roles: ["incidentCommander", "ciso", "devLead", "serviceOwner", "cfo", "legal", "dpo", "comms", "supplierManager", "ceo"],
 
     flags: {
+      agentRestored: L(["Agent restored unchanged", "Agenten återställd oförändrad"]),
       agentPaused: L(["Agent paused entirely", "Agenten helt pausad"]),
       toolsLimited: L(["Agent tools limited or gated by people", "Agentens verktyg begränsade eller styrda av människor"]),
       logsKept: L(["Conversation logs preserved", "Konversationsloggar säkrade"]),
@@ -180,7 +181,8 @@
         choice: ask(["How do you redesign the agent's powers?", "Hur gör ni om agentens befogenheter?"], ["Moves limits into the systems: caps, human approval above thresholds, no address changes without verification.", "Flyttar gränserna till systemen: tak, mänskligt godkännande över tröskelvärden, inga adressändringar utan verifiering."], [
           opt(["Hard limits in the refund and address systems, human approval above a threshold", "Hårda gränser i systemen för återbetalning och adress, mänskligt godkännande över ett tröskelvärde"], "l3", ["The model can be fooled; the system cannot.", "Modellen kan luras; systemet kan inte det."], { set: "toolsLimited" }),
           opt(["A stronger prompt and a filter for “ignore your instructions”", "Starkare instruktioner och ett filter för ”ignorera dina instruktioner”"], "l3", ["The next phrasing gets through.", "Nästa formulering kommer igenom."], { set: "promptPatched" }),
-          opt(["Remove all tools: answers only", "Ta bort alla verktyg: bara svar"], "l3", ["Safe and much less useful.", "Säkert och mycket mindre användbart."], { set: "toolsLimited" })
+          opt(["Remove all tools: answers only", "Ta bort alla verktyg: bara svar"], "l3", ["Safe and much less useful.", "Säkert och mycket mindre användbart."], { set: "toolsLimited" }),
+          opt(["Bring the agent back as it was: the customer queue is unmanageable", "Ta tillbaka agenten som den var: kundkön går inte att hantera"], "l3", ["Reverses your pause before anything is fixed.", "Upphäver er paus innan något är åtgärdat."], { requires: "agentPaused", set: "agentRestored", effects: { trust: -1 } })
         ])
       }),
 

@@ -48,6 +48,7 @@
     roles: ["incidentCommander", "devLead", "ciso", "socLead", "itOps", "cloudLead", "legal", "comms", "serviceOwner", "ceo"],
 
     flags: {
+      buildsUnfrozen: L(["Build freeze lifted early", "Byggstoppet hävt i förtid"]),
       buildsFrozen: L(["Builds frozen early", "Byggen frysta tidigt"]),
       secretsRotated: L(["Secrets on affected machines rotated", "Hemligheter på drabbade maskiner bytta"]),
       scopedRegistry: L(["Build config fixed to trust only the internal registry for internal names", "Byggkonfigurationen rättad så att interna namn bara hämtas från det interna registret"]),
@@ -178,7 +179,8 @@
         discuss: [q("Is a build that pulled harmless foreign code a problem for customers, or only for you?", "Är ett bygge som hämtade ofarlig främmande kod ett problem för kunderna, eller bara för er?", ["serviceOwner", "legal"])],
         choice: ask(["What do you do about the shipped agent?", "Vad gör ni med den levererade agenten?"], ["Rebuilds cleanly, ships an update, and tells customers plainly what happened.", "Bygger om rent, levererar en uppdatering och berättar tydligt för kunderna vad som hände."], [
           opt(["Rebuild, ship a clean update, and tell customers what happened", "Bygg om, leverera en ren uppdatering och berätta för kunderna vad som hände"], "l3", ["Honest and reassuring.", "Ärligt och lugnande."], { effects: { trust: 1 }, set: "disclosed" }),
-          opt(["Rebuild and ship quietly as a routine update", "Bygg om och leverera i tysthet som en vanlig uppdatering"], "l3", ["Clean, and customers may learn from the write-up.", "Rent, och kunderna kan få veta det från forskarens text."], { effects: { trust: -1 } })
+          opt(["Rebuild and ship quietly as a routine update", "Bygg om och leverera i tysthet som en vanlig uppdatering"], "l3", ["Clean, and customers may learn from the write-up.", "Rent, och kunderna kan få veta det från forskarens text."], { effects: { trust: -1 } }),
+          opt(["Unfreeze builds now to ship the customer release; the hunt continues in parallel", "Häv byggstoppet nu för att leverera kundreleasen; jakten fortsätter parallellt"], "l3", ["Reverses your freeze before you know the build chain is clean.", "Upphäver ert stopp innan ni vet att byggkedjan är ren."], { requires: "buildsFrozen", set: "buildsUnfrozen", effects: { trust: -1 } })
         ])
       }),
 

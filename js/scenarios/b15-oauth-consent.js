@@ -47,6 +47,7 @@
     roles: ["incidentCommander", "ciso", "socLead", "itOps", "cfo", "dpo", "legal", "comms", "hr", "serviceOwner"],
 
     flags: {
+      appRestored: L(["App re-enabled for finance", "Appen påslagen igen för ekonomi"]),
       appRevoked: L(["App and its tokens revoked company-wide", "Appen och dess token återkallade i hela företaget"]),
       scoped: L(["Full audit of what the app accessed", "Fullständig granskning av vad appen kom åt"]),
       consentLocked: L(["Admin approval required for new apps", "Administratörsgodkännande krävs för nya appar"]),
@@ -171,7 +172,8 @@
         ], ["Because you scoped fully, the notification can be precise.", "Eftersom ni kartlade fullständigt kan anmälan bli exakt."])],
         choice: ask(["When do you notify?", "När anmäler ni?"], ["Notifies within 72 hours with what is known and supplements.", "Anmäler inom 72 timmar med det som är känt och kompletterar."], [
           opt(["Within 72 hours, supplementing later", "Inom 72 timmar, med senare kompletteringar"], "l3", ["Meets the duty.", "Uppfyller skyldigheten."], { effects: { regulator: -1 }, set: "notified" }),
-          opt(["After the scoping is complete", "När kartläggningen är klar"], "l3", ["More complete, probably late.", "Mer komplett, troligen sent."], { effects: { regulator: 1 }, set: "notifyLate" })
+          opt(["After the scoping is complete", "När kartläggningen är klar"], "l3", ["More complete, probably late.", "Mer komplett, troligen sent."], { effects: { regulator: 1 }, set: "notifyLate" }),
+          opt(["Re-enable the app for the finance team: their month-end reports depend on it", "Slå på appen igen för ekonomiteamet: deras månadsrapporter är beroende av den"], "l3", ["Reverses your first containment for one team, on a deadline.", "Upphäver er första inneslutning för ett team, på grund av en tidsgräns."], { requires: "appRevoked", set: "appRestored", effects: { regulator: 1 } })
         ])
       }),
 

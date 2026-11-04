@@ -47,6 +47,7 @@
     roles: ["incidentCommander", "cfo", "hr", "ciso", "supplierManager", "legal", "dpo", "comms", "itOps", "ceo"],
 
     flags: {
+      manualCancelled: L(["Manual payroll fallback cancelled", "Manuell reservlösning för lönen avbruten"]),
       manualPrep: L(["Manual payroll prepared early", "Manuell löneutbetalning förberedd tidigt"]),
       paidManual: L(["Salaries paid manually", "Löner utbetalda manuellt"]),
       payDelayed: L(["Salaries delayed", "Lönerna försenade"]),
@@ -189,7 +190,8 @@
         ],
         choice: ask(["How do you respond to the phishing?", "Hur hanterar ni nätfisket?"], ["Warns staff fast through a channel that doesn't look like the phishing.", "Varnar personalen snabbt via en kanal som inte liknar nätfisket."], [
           opt(["Warn staff, block the domain, report the site", "Varna personalen, blockera domänen, anmäl sidan"], "l3", ["Standard and effective if it happens within the hour.", "Standard och effektivt om det sker inom en timme."]),
-          opt(["Leave it to IT security as a routine case", "Lämna det till IT-säkerhet som ett rutinärende"], "l3", ["Routine speed is too slow on payday.", "Rutintempo är för långsamt på lönedagen."])
+          opt(["Leave it to IT security as a routine case", "Lämna det till IT-säkerhet som ett rutinärende"], "l3", ["Routine speed is too slow on payday.", "Rutintempo är för långsamt på lönedagen."]),
+          opt(["Cancel the manual payment file: the provider now promises payroll by 15:00", "Avbryt den manuella betalfilen: leverantören lovar nu lönen till klockan 15"], "l3", ["Reverses your early fallback on the provider's word alone.", "Upphäver er tidiga reservlösning enbart på leverantörens ord."], { requires: "manualPrep", set: "manualCancelled", effects: { trust: -1 } })
         ])
       }),
 
