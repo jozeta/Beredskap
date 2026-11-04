@@ -215,7 +215,7 @@
             q("Would you handle the caseworkers the same way, now that the ministry is watching?", "Skulle ni hantera handläggarna på samma sätt, nu när departementet tittar på?", ["securityOfficer"], "d2")
           ]
         },
-        challenges: [ch("The state secretary adds: “If this goes wrong tomorrow, the minister will need to know who told her otherwise.”", "Statssekreteraren lägger till: ”Om det här går fel i morgon behöver ministern veta vem som sa något annat.”")],
+        challenges: [ch("The state secretary adds: “If this goes wrong tomorrow, the minister will need to know who said otherwise.”", "Statssekreteraren lägger till: ”Om det här går fel i morgon behöver ministern veta vem som sa något annat.”")],
         decision: dec("d3", "ceo", ["What do you tell the ministry, and the public?", "Vad säger ni till departementet, och till allmänheten?"], [
           ["Tell the ministry in writing that most people will be paid but some will not, and publish the same tonight.", "Säg skriftligt till departementet att de flesta får sina pengar men inte alla, och publicera samma sak i kväll."],
           ["Keep the minister's promise: release the held records and pay them all tomorrow.", "Håll ministerns löfte: släpp de innehållna posterna och betala alla i morgon."],
