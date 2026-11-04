@@ -437,48 +437,59 @@
     return f.decision ? f.decision.id : null;
   }
 
-  /** Challenge cards: pushback built from the option the room chose; show it, then record how they responded. */
+  /**
+   * Challenge cards: the three challenges written for the option the room chose. The facilitator
+   * picks one to put on the stage, then records whether the room stood firm or changed its mind.
+   */
   function challengeCard(sess, f) {
     const key = challengeKey(sess, f);
     if (!key || sess.status === "ended") return null;
     const d = view.ctrl.dispatch;
+    const lang = BK.i18n.getLang();
     const dp = S().decisionPoint(sess, key);
-    const answered = !!(dp && dp.log && (dp.chosen || dp.log.text));
-    const ch = answered ? S().challengeContent(sess, key, BK.i18n.getLang()) : null;
+    const choices = S().challengeChoices(sess, key, lang);
+    const entry = (sess.challenges || {})[key] || null;
+    const current = entry && dp && dp.chosen && entry.option === dp.chosen.key ? entry : null;
     const active = sess.activeChallenge === key;
     return c.card(
       { class: ["card", "pres-card", "pres-challenge", active && "is-current"] },
       el("h2", { text: t("challenge.presenterTitle") + (f.branching && dp ? " · § " + dp.num : "") }),
-      el("p", { class: "muted small", text: answered ? t("challenge.hint") : t("challenge.none") }),
-      ch
-        ? [
-            el("div", { class: "badges" }, active ? c.badge(t("challenge.onStage"), "warn") : null),
-            el("p", null, el("strong", { text: ch.title })),
-            el("p", { class: "small", text: ch.text })
-          ]
-        : null,
-      answered
+      dp && dp.chosen
+        ? el("p", { class: "small" }, el("span", { class: "muted", text: t("challenge.forOption") + " " }), el("strong", { text: (f.branching ? "" : dp.chosen.key + " — ") + BK.loc(dp.chosen.text) }))
+        : el("p", { class: "muted small", text: t("challenge.none") }),
+      choices.length ? el("p", { class: "muted small", text: t("challenge.hint") }) : dp && dp.chosen ? el("p", { class: "muted small", text: t("challenge.noneWritten") }) : null,
+      choices.length
         ? el(
-            "div",
-            { class: "actions" },
-            ch
-              ? active
-                ? c.button({ label: t("challenge.hide"), icon: "eye-off", size: "sm", onClick: () => d({ type: "challengeHide" }) })
-                : c.button({ label: t("challenge.show"), icon: "eye", size: "sm", kind: "primary", onClick: () => d({ type: "challengeShow", key }) })
-              : null,
-            c.button({ label: ch ? t("challenge.drawAnother") : t("challenge.draw"), icon: "dice", size: "sm", kind: ch ? "ghost" : "primary", onClick: () => d({ type: "challengeDraw", key }) })
+            "ol",
+            { class: "pres-options" },
+            choices.map((ch) => {
+              const on = active && current && current.index === ch.index;
+              return el(
+                "li",
+                { class: ["pres-option", on && "is-chosen", current && current.index === ch.index && !on && "is-shown"] },
+                el("div", { class: "pres-option__head" }, el("strong", { class: "pres-option__text", text: ch.title }), on ? c.badge(t("challenge.onStage"), "warn") : current && current.index === ch.index ? c.badge(t("complication.shown"), "neutral") : null),
+                el("p", { class: "small", text: ch.text }),
+                el(
+                  "div",
+                  { class: "actions" },
+                  on
+                    ? c.button({ label: t("challenge.hide"), icon: "eye-off", size: "sm", onClick: () => d({ type: "challengeHide" }) })
+                    : c.button({ label: t("challenge.show"), icon: "eye", size: "sm", kind: "primary", onClick: () => d({ type: "challengeShow", key, index: ch.index }) })
+                )
+              );
+            })
           )
         : null,
-      ch && ch.shown
+      current && current.shownAt
         ? [
             c.segmented({
               label: t("challenge.outcome"),
               name: "ch-" + key,
-              value: ch.outcome || "",
-              options: BK.data.challenges.OUTCOMES.map((o) => ({ value: o, label: t("challenge.outcome." + o) })),
+              value: current.outcome || "",
+              options: S().CHALLENGE_OUTCOMES.map((o) => ({ value: o, label: t("challenge.outcome." + o) })),
               onChange: (v) => d({ type: "challengeOutcome", key, outcome: v })
             }),
-            ch.outcome === "changed" ? el("p", { class: "muted small", text: t(f.branching ? "challenge.changedHintBranching" : "challenge.changedHint") }) : null
+            current.outcome === "changed" ? el("p", { class: "muted small", text: t(f.branching ? "challenge.changedHintBranching" : "challenge.changedHint") }) : null
           ]
         : null
     );

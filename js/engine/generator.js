@@ -644,6 +644,7 @@
                 pg.choice.options.map((o) => ({
                   key: o.key,
                   text: R.resolveText(o.text, ctx, missing),
+                  pushback: R.resolveDeep(o.pushback || [], ctx, missing),
                   to: o.to,
                   set: (o.set || []).slice(),
                   requires: o.requires == null ? null : o.requires,

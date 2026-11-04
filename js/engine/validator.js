@@ -34,6 +34,16 @@
     return v && typeof v === "object" && !Array.isArray(v) && LANGS.every((l) => typeof v[l] === "string" && v[l].trim() !== "");
   }
 
+  /** Pushback: exactly three challenge cards per option, each with a bilingual title and text. */
+  const PUSHBACK_PER_OPTION = 3;
+  function checkPushback(options, where, list) {
+    (options || []).forEach((op) => {
+      const pbs = op.pushback || [];
+      const ok = Array.isArray(pbs) && pbs.length === PUSHBACK_PER_OPTION && pbs.every((x) => x && isBilingual(x.title) && isBilingual(x.text));
+      if (!ok) issue(list, "pushback", where + " › " + op.key, Array.isArray(pbs) ? pbs.length : "?");
+    });
+  }
+
   /** Every objective needs its clear text (facilitator) and a teaser (briefing slide) that does not give the plot away. */
   function checkObjectives(tpl, where, list) {
     (tpl.learningObjectives || []).forEach((lo) => {
@@ -211,6 +221,7 @@
         if (!isBilingual(d.question)) issue(list, "decision", w, "question");
         checkRole(d.authority, w + " › " + d.id);
         decisions[d.id] = { stageIdx: si, options: (d.options || []).map((op) => op.key) };
+        checkPushback(d.options, w + " › " + d.id, list);
       } else if (!isBilingual(s.noDecision)) {
         issue(list, "decision", w, "decision or noDecision");
       }
@@ -344,6 +355,7 @@
       if (pg.choice) {
         if (!isBilingual(pg.choice.strong)) issue(list, "branching", w, "choice needs a strong-team note");
         pg.choice.options.forEach((op) => isBilingual(op.why) || issue(list, "branching", w + " › " + op.key, "option needs a why note"));
+        checkPushback(pg.choice.options, w, list);
         // Pressure-meter effects: known meters, whole steps of at most two.
         pg.choice.options.forEach((op) =>
           Object.entries(op.effects || {}).forEach(([k, v]) => (["trust", "regulator", "media"].includes(k) && Number.isInteger(v) && Math.abs(v) <= 2) || issue(list, "branching", w + " › " + op.key, "effect " + k + " " + v))

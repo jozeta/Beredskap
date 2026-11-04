@@ -16,7 +16,7 @@
   "use strict";
 
   const BK = window.BK;
-  const { L, q, ch, inj, dec, fac, act, avr } = BK.scenarios.h;
+  const { L, q, ch, inj, dec, fac, act, avr, pb } = BK.scenarios.h;
 
   BK.scenarios.register({
     id: "s06-cloud-storage-leak",
@@ -124,7 +124,24 @@
             legal: ["What you say may later be held against you.", "Det ni säger kan senare användas mot er."],
             reputational: ["Silence or denial becomes the story.", "Tystnad eller förnekande blir själva nyheten."]
           },
-          evaluation: [["Communicates honestly without speculating", "Kommunicerar ärligt utan att spekulera"], ["Starts the breach assessment at once", "Påbörjar bedömningen av incidenten direkt"]]
+          evaluation: [["Communicates honestly without speculating", "Kommunicerar ärligt utan att spekulera"], ["Starts the breach assessment at once", "Påbörjar bedömningen av incidenten direkt"]],
+          pushback: {
+            A: [
+              pb(["A promise with a time", "Ett löfte med klockslag"], ["You told the reporter when you would say more. The cloud team now says confirming the source may take longer than that. Do you keep a promise you may not be able to fill, or soften it and look evasive?", "Ni sa till reportern när ni skulle säga mer. Molnteamet säger nu att det kan ta längre tid än så att bekräfta källan. Håller ni fast vid ett löfte som ni kanske inte kan infria, eller mjukar ni upp det och framstår som undanglidande?"]),
+              pb(["“You made it a story”", "”Ni gjorde det till en nyhet”"], ["The service owner, sure you were never hacked, is furious: by saying you are investigating, you told a reporter there is something to find, over what may be a partner's old list. Did you just turn a non-story into a story?", "Systemägaren, säker på att ni aldrig har hackats, är rasande: genom att säga att ni utreder har ni talat om för en reporter att det finns något att hitta, kanske på grund av en partners gamla lista. Har ni just gjort en icke-nyhet till en nyhet?"]),
+              pb(["The clock you just started", "Fristen ni just startade"], ["Legal points out that saying you take it seriously and are investigating shows you are aware of a possible breach. The notification clock may be running from this call. Are you ready to notify within 72 hours of today?", "Juristen påpekar att ni, genom att säga att ni tar det på allvar och utreder, visar att ni känner till en möjlig incident. Fristen för anmälan kan löpa från det här samtalet. Är ni beredda att anmäla inom 72 timmar från i dag?"])
+            ],
+            B: [
+              pb(["“Declined to comment”", "”Avböjer att kommentera”"], ["The reporter says the article will read “the company declined to comment”, next to quotes from people they phoned. How will the people in that file read your silence?", "Reportern säger att artikeln kommer att skriva ”företaget avböjer att kommentera”, bredvid citat från personer som hen har ringt. Hur kommer människorna i filen att uppfatta er tystnad?"]),
+              pb(["A caller at customer service", "Ett samtal till kundtjänst"], ["One of the people the reporter phoned calls your customer service asking whether their data has leaked. Your staff have been told nothing. What do they say, and is it the same thing you told the reporter?", "En av de personer som reportern ringde hör av sig till er kundtjänst och frågar om deras uppgifter har läckt. Er personal har inte fått veta någonting. Vad säger de, och är det samma sak som ni sa till reportern?"]),
+              pb(["Clear after tomorrow", "Klart först efter i morgon"], ["The cloud team says the facts will not be clear before the article runs. “Until the facts are clear” means saying nothing until after publication. Is silence still the plan when the story is already out?", "Molnteamet säger att fakta inte kommer att vara klarlagda innan artikeln publiceras. ”Tills fakta är klarlagda” betyder att ni inte säger något förrän efter publiceringen. Är tystnad fortfarande planen när nyheten redan är ute?"])
+            ],
+            C: [
+              pb(["How the quote will age", "Hur citatet åldras"], ["The sample rows match your own export format. Whatever the cause, “no sign of a hack” will be read as “not us”. If the file turns out to be yours, how will that quote look next week?", "Exempelraderna stämmer med ert eget exportformat. Oavsett orsak kommer ”inga tecken på intrång” att läsas som ”inte vi”. Om filen visar sig komma från er, hur ser det citatet ut nästa vecka?"]),
+              pb(["Who speaks for them?", "Vem talar för dem?"], ["The DPO objects: a statement about your systems says nothing to the people whose names and addresses a reporter is holding. Who in this room is speaking for them today?", "Dataskyddsombudet invänder: ett uttalande om era system säger ingenting till de människor vars namn och adresser en reporter har i handen. Vem i rummet talar för dem i dag?"]),
+              pb(["Not the question asked", "Inte frågan som ställdes"], ["The reporter writes back: “I didn't only ask whether you were hacked. I asked whether this is your data.” Do you answer that question, or repeat the same line?", "Reportern skriver tillbaka: ”Jag frågade inte bara om ni har blivit hackade. Jag frågade om det här är era uppgifter.” Svarar ni på den frågan, eller upprepar ni samma linje?"])
+            ]
+          }
         }),
         facilitator: fac(
           ["This scenario starts outside the IT department. Let communications and legal lead.", "Det här scenariot börjar utanför IT-avdelningen. Låt kommunikation och juridik leda."],
@@ -193,7 +210,24 @@
             legal: ["Deleting may destroy evidence regulators expect.", "Att radera kan förstöra spår som tillsynsmyndigheter förväntar sig."],
             reputational: ["“Still open after the call” would be the worst headline.", "”Fortfarande öppen efter samtalet” vore den värsta rubriken."]
           },
-          evaluation: [["Closes exposure fast while preserving evidence", "Stänger exponeringen snabbt och säkrar samtidigt spåren"]]
+          evaluation: [["Closes exposure fast while preserving evidence", "Stänger exponeringen snabbt och säkrar samtidigt spåren"]],
+          pushback: {
+            A: [
+              pb(["Another full copy", "Ytterligare en fullständig kopia"], ["Your snapshot is a second complete copy of the exposed personal data. The DPO asks where it is kept, who can reach it and for how long. Have you just created another thing that must be protected?", "Er ögonblicksbild är en andra fullständig kopia av de exponerade personuppgifterna. Dataskyddsombudet frågar var den förvaras, vem som kommer åt den och hur länge. Har ni just skapat ännu något som måste skyddas?"]),
+              pb(["The export job fails", "Exportjobbet fallerar"], ["Removing public access breaks the nightly export job, and the team that owns it says another service reads those files every morning. Do you rebuild the job properly first, or let that service fail?", "Att ta bort den publika åtkomsten slår ut det nattliga exportjobbet, och teamet som äger det säger att en annan tjänst läser filerna varje morgon. Bygger ni först om jobbet ordentligt, eller låter ni den tjänsten fallera?"]),
+              pb(["Two more open containers", "Två öppna lagringsplatser till"], ["The sweep finds two more storage containers with public access, owned by other teams, contents unknown. Nobody knows what depends on them. Do you close them too, right now, without knowing what breaks?", "Genomgången hittar ytterligare två lagringsplatser med publik åtkomst, som ägs av andra team och har okänt innehåll. Ingen vet vad som är beroende av dem. Stänger ni dem också, nu direkt, utan att veta vad som går sönder?"])
+            ],
+            B: [
+              pb(["What exactly was exposed?", "Vad exakt exponerades?"], ["Legal warns that the regulator will ask exactly what was exposed and to how many. With the container gone, your only full record is the reporter's file. Can you live with that?", "Juristen varnar för att tillsynsmyndigheten kommer att fråga exakt vad som exponerades och för hur många. När lagringen är borta är ert enda fullständiga underlag reporterns fil. Kan ni leva med det?"]),
+              pb(["The job runs again tonight", "Jobbet körs igen i natt"], ["The nightly export job still points at that location and will run again tonight. Nobody has yet traced what else writes to it or reads from it. Did deleting it fix anything but today's symptom?", "Det nattliga exportjobbet pekar fortfarande på den platsen och körs igen i natt. Ingen har ännu spårat vad mer som skriver dit eller läser därifrån. Löste raderingen något mer än dagens symptom?"]),
+              pb(["The logs go with it", "Loggarna försvinner med den"], ["The SOC lead objects: the access logs are tied to the container's settings, and deleting it may take the four months of logs with it. Do you pause, and leave the data open a little longer to save them?", "SOC-chefen invänder: åtkomstloggarna är knutna till lagringens inställningar, och en radering kan ta de fyra månadernas loggar med sig. Pausar ni, och låter datan vara öppen en stund till för att rädda dem?"])
+            ],
+            C: [
+              pb(["Reads keep coming", "Läsningarna fortsätter"], ["Since you decided to wait, the logs show more anonymous reads of the files, every one of them on your watch. How will you explain those downloads to the people in the file?", "Sedan ni beslutade att vänta visar loggarna fler anonyma läsningar av filerna, var och en under er bevakning. Hur förklarar ni de nedladdningarna för människorna i filen?"]),
+              pb(["The reporter checks the link", "Reportern testar länken"], ["Comms warns that the reporter may test whether the files are still reachable before publishing. “Still open after we called them” would be tomorrow's headline. Who in this room will defend that choice?", "Kommunikationsavdelningen varnar för att reportern kan testa om filerna fortfarande går att nå innan publiceringen. ”Fortfarande öppet efter vårt samtal” blir morgondagens rubrik. Vem i rummet ska försvara det valet?"]),
+              pb(["A new breach, on your watch", "En ny incident, under er tid"], ["The DPO says that leaving the data open now that you know is no longer an old mistake: it is a new decision to expose it. Are you prepared to sign off on that?", "Dataskyddsombudet säger att det inte längre är ett gammalt misstag att låta datan vara öppen nu när ni vet: det är ett nytt beslut att exponera den. Är ni beredda att skriva under på det?"])
+            ]
+          }
         }),
         facilitator: fac(
           ["A misconfiguration is still a breach. Watch whether relief replaces urgency.", "En felkonfiguration är fortfarande en incident. Se om lättnad ersätter brådska."],
@@ -260,6 +294,23 @@
             reputational: ["Hearing about your own health data from a newspaper is unforgivable.", "Att få höra om sina egna hälsouppgifter i en tidning är oförlåtligt."]
           },
           evaluation: [["Informs affected people before the press does", "Informerar de berörda innan pressen gör det"], ["Recognises special-category data", "Känner igen känsliga personuppgifter"]],
+          pushback: {
+            A: [
+              pb(["Calls from a stale list", "Samtal från en inaktuell lista"], ["There are {{num.sensitive}} people to contact personally, and the contact details you have are the same ones in the exposed file, some years out of date. How many days will this take, and who makes the calls?", "Det är {{num.sensitive}} personer att kontakta personligen, och de kontaktuppgifter ni har är samma som i den exponerade filen, en del flera år gamla. Hur många dagar tar det här, och vem ringer samtalen?"]),
+              pb(["Them, or their carer?", "Personen eller företrädaren?"], ["Some of the people have support needs, and a stranger calling about their health information could cause real distress. Some have guardians or carers. Who gets the call, and how do you know you are speaking to the right person?", "En del av personerna har stödbehov, och ett samtal från en främling om deras hälsouppgifter kan väcka verklig oro. En del har gode män eller anhöriga som företräder dem. Vem får samtalet, och hur vet ni att ni talar med rätt person?"]),
+              pb(["The newspaper gets there first", "Tidningen hinner före"], ["The article runs tomorrow, and you can reach only a fraction of these people before then. The rest will learn from the news anyway. Who do you call first, and what do the others hear in the meantime?", "Artikeln publiceras i morgon, och ni hinner bara nå en bråkdel av de här personerna innan dess. Resten får veta det genom nyheterna ändå. Vem ringer ni först, och vad får de andra höra under tiden?"])
+            ],
+            B: [
+              pb(["“Was mine one of them?”", "”Var mina uppgifter med?”"], ["A person reads your statement that some records included health information and calls to ask whether theirs did. Your staff cannot answer yet. What do they hear from you?", "En person läser i ert uttalande att vissa poster innehöll hälsouppgifter och ringer för att fråga om hens gjorde det. Er personal kan inte svara ännu. Vad får hen höra från er?"]),
+              pb(["You can reach them", "Ni kan nå dem"], ["The DPO says that with health data, people should be told directly unless that is impossible. A public statement is for when you cannot reach them, and you have their addresses. How do you justify not writing to them?", "Dataskyddsombudet säger att människor ska informeras direkt när det gäller hälsouppgifter, om det inte är omöjligt. Ett offentligt uttalande är till för när ni inte kan nå dem, och ni har deras adresser. Hur motiverar ni att ni inte skriver till dem?"]),
+              pb(["An advertisement", "En annons"], ["A public statement about identity numbers and health notes also tells anyone who downloaded the files exactly what is valuable in them. Have you just advertised what to look for?", "Ett offentligt uttalande om personnummer och hälsoanteckningar talar också om för alla som har laddat ner filerna exakt vad som är värdefullt i dem. Har ni just annonserat vad man ska leta efter?"])
+            ],
+            C: [
+              pb(["Seventy-two hours", "Sjuttiotvå timmar"], ["Legal reminds you that the 72 hours started at the latest when the open storage was found today. A full analysis of every file will not be done within that. Do you miss the deadline for the sake of completeness?", "Juristen påminner om att de 72 timmarna började löpa senast när den öppna lagringen hittades i dag. En fullständig analys av varje fil blir inte klar inom den tiden. Missar ni fristen för fullständighetens skull?"]),
+              pb(["Reading it in the paper", "Att läsa det i tidningen"], ["The reporter has learned that health details are involved and will include them tomorrow. People will read about their own health information in the news before you have said a word. Is your analysis worth that?", "Reportern har fått veta att hälsouppgifter ingår och tar med det i morgon. Människor kommer att läsa om sina egna hälsouppgifter i nyheterna innan ni har sagt ett ord. Är er analys värd det?"]),
+              pb(["The answer it cannot give", "Svaret den inte kan ge"], ["Without logs for most of the period, no analysis will tell you who downloaded the files. What will the full analysis tell you that changes whether you notify?", "Utan loggar för större delen av perioden kommer ingen analys att visa vem som laddade ner filerna. Vad kommer den fullständiga analysen att säga som ändrar om ni anmäler?"])
+            ]
+          },
           minutes: 10
         }),
         facilitator: fac(
@@ -320,7 +371,24 @@
             legal: ["Misstating awareness is a serious additional breach.", "Att ange fel tidpunkt för kännedom är en allvarlig överträdelse i sig."],
             reputational: ["The researcher may already have told the journalist.", "Säkerhetsforskaren kan redan ha berättat för journalisten."]
           },
-          evaluation: [["Reports the true awareness date", "Anger den verkliga tidpunkten för kännedom"]]
+          evaluation: [["Reports the true awareness date", "Anger den verkliga tidpunkten för kännedom"]],
+          pushback: {
+            A: [
+              pb(["The person who closed it", "Personen som stängde ärendet"], ["Colleagues already know who closed the ticket, and that person is being blamed in the corridors. Disclosing it publicly puts them in an even brighter spotlight. How do you stay honest without making one support agent the face of this?", "Kollegorna vet redan vem som stängde ärendet, och personen får skulden i korridorerna. Att berätta det offentligt sätter hen i ännu skarpare strålkastarljus. Hur är ni ärliga utan att göra en enskild supportmedarbetare till ansiktet utåt?"]),
+              pb(["The researcher's version", "Forskarens version"], ["When you call to thank the researcher, they say they appreciate it but will tell their own story too, including that nobody answered them. Does your public thanks look different next to their version?", "När ni ringer för att tacka säkerhetsforskaren säger hen att hen uppskattar det men också tänker berätta sin egen historia, inklusive att ingen svarade. Ser ert offentliga tack annorlunda ut bredvid hens version?"]),
+              pb(["Why volunteer it?", "Varför berätta frivilligt?"], ["Legal warns that publicly confirming the warning weeks ago may weigh against you in any sanction. A board member asks why you are volunteering something nobody outside has asked about. What do you answer?", "Juristen varnar för att det kan väga emot er vid en eventuell sanktion att offentligt bekräfta varningen för flera veckor sedan. En styrelseledamot frågar varför ni frivilligt berättar något som ingen utanför har frågat om. Vad svarar ni?"])
+            ],
+            B: [
+              pb(["“Did anyone warn you?”", "”Varnade någon er?”"], ["The reporter asks directly whether anyone warned you before. Your notification to {{reg.dpaShort}} says yes; your public line says nothing. Do you answer the question, or not?", "Reportern frågar rakt ut om någon har varnat er tidigare. Er anmälan till {{reg.dpaShort}} säger ja; er offentliga linje säger ingenting. Svarar ni på frågan, eller inte?"]),
+              pb(["The researcher is free to talk", "Forskaren kan prata fritt"], ["Nobody has contacted the researcher, who can speak to the press whenever they like. If they do, it will look as if you hid the warning from the public. Who calls the researcher, and what do you ask of them?", "Ingen har kontaktat säkerhetsforskaren, som kan prata med pressen när hen vill. Om hen gör det kommer det att se ut som att ni dolde varningen för allmänheten. Vem ringer forskaren, och vad ber ni hen om?"]),
+              pb(["Public on someone else's terms", "Offentligt på någon annans villkor"], ["Comms points out that documents sent to {{reg.dpaShort}} can be requested by journalists. The ignored warning may become public anyway, on someone else's timing. What does keeping it out of your own statement achieve?", "Kommunikationsavdelningen påpekar att handlingar som skickas till {{reg.dpaShort}} kan begäras ut av journalister. Den ignorerade varningen kan bli offentlig ändå, när någon annan väljer. Vad vinner ni på att hålla den utanför ert eget uttalande?"])
+            ],
+            C: [
+              pb(["Against your lawyer's advice", "Mot er jurists råd"], ["Your own lawyer has written that awareness arguably began with the ticket. A notification that says “today” goes against that written advice. Who signs it, by name?", "Er egen jurist har skrivit att kännedom rimligen uppstod när ärendet kom in. En anmälan som säger ”i dag” går emot det skriftliga rådet. Vem skriver under den, med namn?"]),
+              pb(["A team that knows", "Ett team som vet"], ["The ticket is in the support system with a date on it, and several people have now seen it. How long does a secret shared by a whole team last?", "Ärendet finns i supportsystemet med ett datum, och flera personer har nu sett det. Hur länge håller en hemlighet som ett helt team känner till?"]),
+              pb(["One screenshot", "En enda skärmbild"], ["The researcher kept their email and the automatic reply your support system sent back. If they publish it, your stated awareness date is disproved in one screenshot. Are you betting on them staying quiet?", "Säkerhetsforskaren har kvar sitt mejl och det automatiska svaret som ert supportsystem skickade. Om hen publicerar det motbevisas er angivna tidpunkt för kännedom med en enda skärmbild. Satsar ni på att hen förblir tyst?"])
+            ]
+          }
         }),
         facilitator: fac(
           ["An integrity test. Make the temptation real.", "Ett prov på integritet. Gör frestelsen verklig."],
@@ -390,7 +458,24 @@
             legal: ["Support does not remove liability, but it is expected.", "Stöd tar inte bort ansvaret, men det förväntas."],
             reputational: ["How you care for victims defines the story's second act.", "Hur ni tar hand om de drabbade avgör nyhetens andra akt."]
           },
-          evaluation: [["Offers concrete help, not only information", "Erbjuder konkret hjälp, inte bara information"]]
+          evaluation: [["Offers concrete help, not only information", "Erbjuder konkret hjälp, inte bara information"]],
+          pushback: {
+            A: [
+              pb(["Staff by tomorrow", "Personal till i morgon"], ["A support line needs trained people by tomorrow, and since the article calls have already spiked. Who answers the phone, and what are they allowed to say about someone's health information?", "En stödlinje behöver utbildad personal till i morgon, och sedan artikeln har samtalen redan ökat kraftigt. Vem svarar i telefon, och vad får de säga om någons hälsouppgifter?"]),
+              pb(["Is it really you?", "Är det verkligen ni?"], ["Your direct contact asks people to trust a call or email about their identity numbers, the exact pattern scammers use after a leak. How will people know it is really you, and not someone using your name?", "Er direkta kontakt ber människor lita på ett samtal eller mejl om deras personnummer, precis det mönster som bedragare använder efter en läcka. Hur ska de veta att det verkligen är ni och inte någon som använder ert namn?"]),
+              pb(["Help for some, not all", "Hjälp till några, inte alla"], ["Finance asks who pays, and whether help with blocking credit applications goes to all {{num.records}} people or only those with identity numbers in the file. Where do you draw the line, and how do you explain it to the rest?", "Ekonomi frågar vem som betalar, och om hjälpen att spärra kreditansökningar ska gå till alla {{num.records}} personer eller bara till dem med personnummer i filen. Var drar ni gränsen, och hur förklarar ni den för de andra?"])
+            ],
+            B: [
+              pb(["No internet at home", "Inget internet hemma"], ["An elderly person whose health notes were exposed has no internet and calls your switchboard, which has no script. Who is your web page actually for?", "En äldre person vars hälsoanteckningar exponerades har inget internet och ringer er växel, som saknar instruktioner. Vem är er webbsida egentligen till för?"]),
+              pb(["A week to reply", "En vecka för att svara"], ["The question mailbox receives thousands of emails on the first day, and replies will take a week. People asking whether their identity number is public will wait days. Is that acceptable?", "Brevlådan för frågor får tusentals mejl första dagen, och svaren kommer att dröja en vecka. Människor som undrar om deras personnummer är publikt får vänta i flera dagar. Är det acceptabelt?"]),
+              pb(["Guidance does not block", "Vägledning spärrar ingenting"], ["Forum comments are already pointing out the identity numbers. Advice on a web page does not stop a credit application in someone's name. What concrete harm does your page actually prevent?", "Kommentarer på forumet pekar redan ut personnumren. Råd på en webbsida stoppar inte en kreditansökan i någons namn. Vilken konkret skada förhindrar er sida egentligen?"])
+            ],
+            C: [
+              pb(["Sent back to you", "Tillbaka till er"], ["The authorities you referred people to say they cannot tell anyone what was in your files; only you can. People come back to you, angrier than before. What do you tell them now?", "Myndigheterna som ni hänvisade till säger att de inte kan berätta för någon vad som fanns i era filer; det kan bara ni. Människor kommer tillbaka till er, argare än tidigare. Vad säger ni till dem nu?"]),
+              pb(["The follow-up question", "Följdfrågan"], ["The reporter's follow-up asks what you are doing for the people affected. Your answer is that you refer them to the authorities. How does that read under the headline that is already out?", "Reporterns följdfråga gäller vad ni gör för de berörda. Ert svar är att ni hänvisar dem till myndigheterna. Hur läses det under rubriken som redan är ute?"]),
+              pb(["Why should they do the work?", "Varför ska de göra jobbet?"], ["The DPO points out that you held the data and you left it open; the people affected did nothing wrong. Why should they be the ones chasing help?", "Dataskyddsombudet påpekar att det var ni som hade uppgifterna och lämnade dem öppna; de berörda gjorde inget fel. Varför ska det vara de som jagar hjälp?"])
+            ]
+          }
         }),
         facilitator: fac(
           ["Containment is over; harm reduction is what remains.", "Begränsningen är över; det som återstår är att minska skadan."],
@@ -443,7 +528,24 @@
             legal: ["Cooperation is usually taken into account.", "Samarbete brukar beaktas."],
             reputational: ["The regulator's decision will be public.", "Tillsynsmyndighetens beslut blir offentligt."]
           },
-          evaluation: [["Turns the case into lasting governance", "Omsätter ärendet i bestående styrning"]]
+          evaluation: [["Turns the case into lasting governance", "Omsätter ärendet i bestående styrning"]],
+          pushback: {
+            A: [
+              pb(["Findings you have not seen", "Fynd ni inte har sett"], ["An independent review will find weaknesses beyond this container, and a candid answer means sending those to the regulator too. Are you ready to commit to sharing findings you have not read yet?", "En oberoende granskning kommer att hitta brister utöver den här lagringen, och ett öppet svar innebär att även de skickas till tillsynsmyndigheten. Är ni beredda att lova att dela fynd som ni ännu inte har läst?"]),
+              pb(["Which budget pays?", "Vilken budget betalar?"], ["Finance asks where the money for a funded improvement plan comes from. It competes with the budget for supporting the people affected. Which one do you cut?", "Ekonomi frågar varifrån pengarna till en finansierad förbättringsplan ska komma. Den konkurrerar med budgeten för stödet till de berörda. Vilken skär ni i?"]),
+              pb(["Evidence for others", "Underlag för andra"], ["External counsel warns that an independent report written for the regulator can also be used by affected people who claim damages. Do you still commission it on those terms?", "Externa jurister varnar för att en oberoende rapport som skrivs för tillsynsmyndigheten också kan användas av berörda som kräver skadestånd. Beställer ni den ändå på de villkoren?"])
+            ],
+            B: [
+              pb(["“Classified as spam”", "”Klassades som skräppost”"], ["One question is why the warning was not acted on. The narrow, accurate answer is “it was classified as spam”. Is that the whole truth the regulator is asking for?", "En av frågorna är varför varningen inte åtgärdades. Det snäva, korrekta svaret är ”den klassades som skräppost”. Är det hela sanningen som tillsynsmyndigheten frågar efter?"]),
+              pb(["Round after round", "Omgång efter omgång"], ["Narrow answers invite follow-up questions, and each round adds weeks and keeps the case open and in the news. Is narrow really the faster way out?", "Snäva svar bjuder in till följdfrågor, och varje omgång lägger till veckor och håller ärendet öppet och i nyheterna. Är snävt verkligen den snabbaste vägen ut?"]),
+              pb(["The DPO will not sign", "Dataskyddsombudet skriver inte under"], ["Your DPO, who must stand behind the reply, says a narrowly correct answer that leaves out weaknesses you know about is not something they can put their name to. Do you overrule your own DPO?", "Ert dataskyddsombud, som ska stå bakom svaret, säger att ett snävt korrekt svar som utelämnar brister ni känner till inte är något hen kan sätta sitt namn på. Kör ni över ert eget dataskyddsombud?"])
+            ],
+            C: [
+              pb(["The sidelined DPO", "Ett åsidosatt dataskyddsombud"], ["Your DPO is meant to be the regulator's point of contact. Routing everything through outside lawyers sidelines them, and they ask whether their role still means anything. What do you tell them?", "Ert dataskyddsombud ska vara tillsynsmyndighetens kontaktpunkt. Att låta allt gå via externa jurister ställer hen åt sidan, och hen frågar om rollen fortfarande betyder något. Vad svarar ni?"]),
+              pb(["Lawyers asking engineers", "Jurister som frågar tekniker"], ["The regulator's questions are about access reviews and export jobs. The lawyers must ask your cloud team for every answer, adding days to each round. Who answers when a follow-up comes up in a meeting?", "Tillsynsmyndighetens frågor gäller åtkomstgranskningar och exportjobb. Juristerna måste fråga ert molnteam om varje svar, vilket lägger till dagar i varje omgång. Vem svarar när en följdfråga kommer upp under ett möte?"]),
+              pb(["“Send the people who run it”", "”Skicka dem som driver det”"], ["The case officer asks for a meeting with the people who run the storage, not your lawyers. Your counsel advises against it. Do you send them, or say no to the regulator?", "Handläggaren ber om ett möte med dem som driver lagringen, inte era jurister. Era advokater avråder. Skickar ni dem, eller säger ni nej till tillsynsmyndigheten?"])
+            ]
+          }
         }),
         facilitator: fac(
           ["Close on governance and honesty.", "Avsluta med styrning och ärlighet."],

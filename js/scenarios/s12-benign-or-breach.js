@@ -12,7 +12,7 @@
   "use strict";
 
   const BK = window.BK;
-  const { L, q, ch, inj, dec, fac, act, avr, kpi, line } = BK.scenarios.h;
+  const { L, q, ch, inj, dec, fac, act, avr, kpi, line, pb } = BK.scenarios.h;
 
   BK.scenarios.register({
     id: "s12-benign-or-breach",
@@ -124,7 +124,24 @@
             legal: ["The server holds personal data.", "Servern innehåller personuppgifter."],
             reputational: ["A false alarm costs trust in the SOC.", "Ett falsklarm kostar förtroende för SOC."]
           },
-          evaluation: [["Checks the benign explanation rather than accepting it", "Kontrollerar den harmlösa förklaringen i stället för att godta den"]]
+          evaluation: [["Checks the benign explanation rather than accepting it", "Kontrollerar den harmlösa förklaringen i stället för att godta den"]],
+          pushback: {
+            A: [
+              pb(["Not now, we're busy", "Inte nu, vi är upptagna"], ["The application team lead doesn't answer, and the engineer who does is mid-upgrade and promises the host list “after the window”. The detections keep coming. Do you wait for them, or escalate and interrupt their maintenance?", "Applikationsteamets ansvarige svarar inte, och teknikern som svarar är mitt i uppgraderingen och lovar listan över datorer ”efter fönstret”. Detektionerna fortsätter komma. Väntar ni på dem, eller eskalerar ni och avbryter deras underhåll?"]),
+              pb(["Spending goodwill", "Att förbruka förtroende"], ["Your SOC colleague says you are about to wake half the application team over something the SOC sees every month. If it is just maintenance, the SOC looks jumpy, again. How much goodwill are you willing to spend on a hunch?", "Er kollega i SOC säger att ni är på väg att väcka halva applikationsteamet för något som SOC ser varje månad. Om det bara är underhåll ser SOC nervöst ut, igen. Hur mycket förtroende är ni beredda att förbruka på en magkänsla?"]),
+              pb(["Nothing to check against", "Inget att jämföra med"], ["The change ticket names the server and the time window, but not which hosts or accounts will be used. There is nothing on paper to check host by host against. What exactly will you compare the detections with?", "Ändringsärendet anger servern och tidsfönstret, men inte vilka datorer eller konton som ska användas. Det finns inget på papper att stämma av dator för dator mot. Vad ska ni egentligen jämföra detektionerna med?"])
+            ],
+            B: [
+              pb(["Two things look the same", "Två saker ser likadana ut"], ["Remote service creation and credential use from several hosts is exactly what maintenance looks like, and exactly what an intruder looks like. Once the alert is closed, nobody will look at it again. Who checks the rest of tonight's activity, and when?", "Fjärrskapade tjänster och användning av inloggningsuppgifter från flera datorer är precis hur underhåll ser ut, och precis hur en inkräktare ser ut. När larmet är stängt tittar ingen på det igen. Vem kontrollerar resten av nattens aktivitet, och när?"]),
+              pb(["Your name on the ticket", "Ert namn på ärendet"], ["The closing note carries the analyst's name and a timestamp. If anything is ever found, that line will be the first entry in the timeline. Are you comfortable signing it on the strength of a change ticket alone?", "Avslutsnoteringen bär analytikerns namn och en tidsstämpel. Om något någonsin hittas blir den raden den första i tidslinjen. Känner ni er trygga med att skriva under på grundval av enbart ett ändringsärende?"]),
+              pb(["Still climbing", "Det fortsätter öka"], ["Twenty minutes after the alert was closed, new detections from the same server keep arriving, and the count is still climbing. Do you reopen your own ticket and admit it was closed too fast, or let the new ones close the same way?", "Tjugo minuter efter att larmet stängdes fortsätter nya detektioner från samma server att komma, och antalet ökar fortfarande. Öppnar ni ert eget ärende igen och medger att det stängdes för snabbt, eller låter ni de nya stängas på samma sätt?"])
+            ],
+            C: [
+              pb(["Nobody asked the owner", "Ingen frågade ägaren"], ["The service owner calls: the server behind {{org.service.primary|lcfirst}} is unreachable and nobody asked them first. They want to know who isolated a business-critical system on an alert nobody had checked. Who answers, and with what?", "Tjänsteägaren ringer: servern bakom {{org.service.primary|lcfirst}} går inte att nå och ingen frågade hen först. Hen vill veta vem som isolerade ett verksamhetskritiskt system på ett larm som ingen hade kontrollerat. Vem svarar, och med vad?"]),
+              pb(["Less to see", "Mindre att se"], ["With the server isolated, its logs no longer reach the SOC, and the scripts that were running stopped half-way. If this was an intruder, you now see less of what they were doing. Did isolation help you find out, or stop you looking?", "Med servern isolerad når dess loggar inte längre SOC, och skripten som körde stannade halvvägs. Om det var en inkräktare ser ni nu mindre av vad de gjorde. Hjälpte isoleringen er att ta reda på det, eller hindrade den er från att titta?"]),
+              pb(["The next time you say isolate", "Nästa gång ni säger isolera"], ["Your SOC colleague notes that this server alerts during every maintenance and none of it has ever turned out to be an attack. If this one isn't either, will anyone listen the next time the SOC says “isolate”?", "Er kollega i SOC påpekar att den här servern larmar vid varje underhåll och att inget av det någonsin har visat sig vara ett angrepp. Om inte det här heller är det, kommer någon att lyssna nästa gång SOC säger ”isolera”?"])
+            ]
+          }
         }),
         facilitator: fac(
           ["Most groups close this. Let them; the next stages will bring them back.", "De flesta grupper stänger larmet. Låt dem; nästa steg tar dem tillbaka."],
@@ -191,7 +208,24 @@
             legal: ["No change.", "Ingen förändring."],
             reputational: ["Questioning a colleague's work needs tact.", "Att ifrågasätta en kollegas arbete kräver fingertoppskänsla."]
           },
-          evaluation: [["Keeps the anomaly open while accepting the maintenance", "Håller avvikelsen öppen samtidigt som underhållet godtas"]]
+          evaluation: [["Keeps the anomaly open while accepting the maintenance", "Håller avvikelsen öppen samtidigt som underhållet godtas"]],
+          pushback: {
+            A: [
+              pb(["The rest of the queue", "Resten av kön"], ["The odd host has limited sensor coverage, and pulling network flows at night takes an hour. Your only night analyst is now spending the shift on six per cent of one alert. Who covers everything else in the queue while they do?", "Den udda datorn har begränsad sensortäckning, och att hämta nätverksflöden på natten tar en timme. Er enda nattanalytiker ägnar nu passet åt sex procent av ett enda larm. Vem tar hand om allt annat i kön under tiden?"]),
+              pb(["Behind their backs", "Bakom ryggen på dem"], ["The application team lead hears that the SOC is checking “behind their backs” and calls it a question of trust. They will raise it with their manager in the morning. Do you explain what you're doing, or keep the investigation quiet?", "Applikationsteamets ansvarige får höra att SOC kontrollerar ”bakom ryggen på dem” och kallar det en förtroendefråga. Hen tänker ta upp det med sin chef i morgon bitti. Förklarar ni vad ni gör, eller håller ni utredningen tyst?"]),
+              pb(["Maybe it's a colleague", "Kanske är det en kollega"], ["Someone on the application team mentions that people sometimes run scripts from their own desks when the admin hosts are slow. If that's it, you are investigating a co-worker. Do you keep going, and how will you tell the difference?", "Någon i applikationsteamet nämner att folk ibland kör skript från sina egna datorer när administrationsdatorerna är långsamma. Om det är förklaringen utreder ni en kollega. Fortsätter ni, och hur ska ni se skillnaden?"])
+            ],
+            B: [
+              pb(["“Probably ours”", "”Förmodligen vår”"], ["The team lead, mid-upgrade, glances at the name and says “probably one of ours” without checking. That is the answer you said you would accept. Is “probably” an answer?", "Teamets ansvarige, mitt i uppgraderingen, kastar en blick på namnet och säger ”förmodligen en av våra” utan att kontrollera. Det är svaret ni sa att ni skulle godta. Är ”förmodligen” ett svar?"]),
+              pb(["Whose judgement?", "Vems bedömning?"], ["If the SOC closes this on the application team's word, their name goes in the ticket. The team lead pushes back: why isn't the SOC checking for itself? Who actually owns this judgement, them or you?", "Om SOC stänger det här på applikationsteamets ord hamnar deras namn i ärendet. Teamets ansvarige protesterar: varför kontrollerar inte SOC själv? Vem äger egentligen bedömningen, de eller ni?"]),
+              pb(["Not in their own log", "Inte i deras egen logg"], ["The host isn't in the run log the team just sent you. Even if someone says it's theirs, their own evidence doesn't show it. When the person and the log disagree, which do you believe?", "Datorn finns inte i körloggen som teamet just skickade. Även om någon säger att den är deras visar deras eget underlag inte det. När personen och loggen säger olika saker, vilken tror ni på?"])
+            ],
+            C: [
+              pb(["Rewriting the ticket", "Att skriva om ärendet"], ["Six per cent of the detections come from a host the change does not mention. Treating it all as maintenance means deciding the change ticket is wrong, without asking anyone. Who in the room decided that?", "Sex procent av detektionerna kommer från en dator som ändringen inte nämner. Att behandla allt som underhåll innebär att besluta att ändringsärendet är fel, utan att fråga någon. Vem i rummet beslutade det?"]),
+              pb(["Overruled, on record", "Överkörd, till protokollet"], ["The analyst who spotted the odd host asks you to note in the ticket that they flagged it and were overruled. Do you write that down, and does seeing it written change your mind?", "Analytikern som upptäckte den udda datorn ber er notera i ärendet att hen flaggade den och blev överkörd. Skriver ni ner det, och ändrar det er uppfattning att se det i skrift?"]),
+              pb(["Explaining away the evidence", "Att bortförklara underlaget"], ["The application team's own run log lists exactly which hosts their scripts ran from, and {{asset.workstationIt}} is not one of them. You are now explaining away the evidence of the people you are trusting. Why?", "Applikationsteamets egen körlogg listar exakt vilka datorer deras skript kördes från, och {{asset.workstationIt}} är inte en av dem. Ni bortförklarar nu underlaget från dem ni litar på. Varför?"])
+            ]
+          }
         }),
         facilitator: fac(
           ["The benign explanation is real. The skill is not letting it swallow the anomaly.", "Den harmlösa förklaringen är verklig. Konsten är att inte låta den sluka avvikelsen."],
@@ -250,7 +284,24 @@
             reputational: ["A delayed close is visible to the board.", "Ett försenat bokslut syns för styrelsen."]
           },
           evaluation: [["Contains the actor precisely, not the whole business", "Begränsar aktören träffsäkert, inte hela verksamheten"]],
-          minutes: 10
+          minutes: 10,
+          pushback: {
+            A: [
+              pb(["The account's real owner", "Kontots verkliga ägare"], ["Disabling the service-desk account also locks out the employee it belongs to, who starts work in a few hours and, as far as anyone knows, has done nothing wrong. Do you tell them why, and what if they turn out to be involved?", "När kontot från servicedesken spärras låses också den anställda ute som kontot tillhör, som börjar jobba om några timmar och, så vitt någon vet, inte har gjort något fel. Berättar ni varför, och vad gör ni om hen visar sig vara inblandad?"]),
+              pb(["They know you've seen them", "De vet att ni har sett dem"], ["Blocking the address and disabling the account tells the actor they've been spotted. If they have another way in, this is when they will use it, and you will know less about where. Was a fast, visible response worth that?", "Att blockera adressen och spärra kontot talar om för aktören att de har upptäckts. Om de har en annan väg in är det nu de använder den, och ni vet mindre om var. Var ett snabbt och synligt svar värt det?"]),
+              pb(["Trusting the server", "Att lita på servern"], ["The maintenance is still running on the same server the actor queried, with broad admin rights. Letting it finish means trusting that nothing the actor did there gets carried into the upgraded system. How sure are you?", "Underhållet pågår fortfarande på samma server som aktören frågade mot, med breda administratörsrättigheter. Att låta det slutföras innebär att lita på att inget som aktören gjorde där följer med in i det uppgraderade systemet. Hur säkra är ni?"])
+            ],
+            B: [
+              pb(["The wrong target", "Fel mål"], ["The actor is on one workstation with one account, and isolating the business system cuts off neither. Month-end stops, but the account and {{asset.workstationIt}} are still live. What does the big move actually stop?", "Aktören finns på en arbetsstation med ett konto, och att isolera affärssystemet stänger inte ute något av dem. Månadsbokslutet stannar, men kontot och {{asset.workstationIt}} är fortfarande aktiva. Vad stoppar det stora greppet egentligen?"]),
+              pb(["The CFO is woken", "Ekonomichefen väcks"], ["The application team wakes {{person.cfo.name}}: month-end close cannot start on an isolated system, and payments are due today. The CFO wants to know who decided, and why it could not be more targeted. Who takes that call?", "Applikationsteamet väcker {{person.cfo.name}}: månadsbokslutet kan inte starta på ett isolerat system, och betalningar ska gå i dag. Ekonomichefen vill veta vem som beslutade, och varför det inte kunde vara mer riktat. Vem tar det samtalet?"]),
+              pb(["No clean way back", "Ingen ren väg tillbaka"], ["The application team warns that stopping mid-upgrade may leave no clean rollback: the old version is partly replaced and the new one unfinished. Do you let them finish under watch, or take ownership of whatever state the system ends up in?", "Applikationsteamet varnar för att ett stopp mitt i uppgraderingen kanske inte lämnar någon ren väg tillbaka: den gamla versionen är delvis ersatt och den nya inte klar. Låter ni dem slutföra under bevakning, eller tar ni ansvar för det skick systemet hamnar i?"])
+            ],
+            C: [
+              pb(["What is leaving?", "Vad lämnar huset?"], ["While you watch, the connection to {{asset.attackerIp}} stays open and you cannot see what is flowing through it. Every minute of learning may be a minute of loss. How long do you watch, and what makes you stop?", "Medan ni bevakar är anslutningen till {{asset.attackerIp}} fortfarande öppen och ni kan inte se vad som går genom den. Varje minut av lärande kan vara en minut av förlust. Hur länge bevakar ni, och vad får er att sluta?"]),
+              pb(["Who said yes?", "Vem sa ja?"], ["Watching an intruder on a system that holds personal data is a decision someone must own. The CISO has not been told yet. Who approved this, and would they say so tomorrow in front of the board?", "Att bevaka en inkräktare i ett system med personuppgifter är ett beslut som någon måste äga. Säkerhetschefen har inte fått veta än. Vem godkände det här, och skulle hen säga det i morgon inför styrelsen?"]),
+              pb(["One analyst, two jobs", "En analytiker, två jobb"], ["Watching quietly means one night analyst following the actor live while the maintenance alerts keep coming. If the actor moves to a host nobody is watching, nobody will see it. Is this monitoring, or hoping?", "Att bevaka i tysthet innebär att en nattanalytiker följer aktören i realtid medan underhållslarmen fortsätter komma. Om aktören flyttar till en dator som ingen bevakar ser ingen det. Är det här bevakning, eller förhoppning?"])
+            ]
+          }
         }),
         facilitator: fac(
           ["The heart of the scenario: both stories are true at once.", "Kärnan i scenariot: båda berättelserna är sanna samtidigt."],
@@ -320,7 +371,24 @@
             legal: ["No change.", "Ingen förändring."],
             reputational: ["The board will ask why monitoring was switched off.", "Styrelsen kommer att fråga varför bevakningen var avstängd."]
           },
-          evaluation: [["Makes suppression precise rather than broad", "Gör undertryckningen precis i stället för bred"]]
+          evaluation: [["Makes suppression precise rather than broad", "Gör undertryckningen precis i stället för bred"]],
+          pushback: {
+            A: [
+              pb(["Vague tickets", "Vaga ärenden"], ["Most change tickets don't list hosts or accounts; the application team writes “the ERP environment”. Precise suppression needs precise tickets. Who makes every team write them, starting with the next window?", "De flesta ändringsärenden listar inte datorer eller konton; applikationsteamet skriver ”ERP-miljön”. Precis undertryckning kräver precisa ärenden. Vem får varje team att skriva dem så, med början i nästa fönster?"]),
+              pb(["A rule for every change", "En regel för varje ändring"], ["Every change now needs its own suppression rule, written before and removed after by the SOC. The night analysts say it will be done in a hurry, or not at all. Who writes them, and who checks they are removed?", "Varje ändring kräver nu en egen undertryckningsregel, som SOC skriver före och tar bort efter. Nattanalytikerna säger att det kommer att göras i all hast, eller inte alls. Vem skriver dem, och vem kontrollerar att de tas bort?"]),
+              pb(["Named accounts can be stolen", "Namngivna konton kan stjälas"], ["Tonight's actor used a real account. Had they used one of the named maintenance accounts instead, a precise rule would have muted them as well. Does this close the blind spot, or just make it smaller?", "Nattens aktör använde ett riktigt konto. Om de i stället hade använt ett av de namngivna underhållskontona skulle även en precis regel ha tystat dem. Stänger det här den blinda fläcken, eller gör det den bara mindre?"])
+            ],
+            B: [
+              pb(["The flood", "Floden"], ["Next maintenance night, the SOC gets every alert the rule used to hide, nearly all of them maintenance. By the end of the shift, analysts are closing them in batches. Have you removed the blind spot, or moved it?", "Nästa underhållsnatt får SOC alla larm som regeln brukade dölja, nästan alla underhåll. Mot slutet av passet stänger analytikerna dem i klump. Har ni tagit bort den blinda fläcken, eller flyttat den?"]),
+              pb(["Why the rule existed", "Varför regeln fanns"], ["The SOC lead reminds you the rule was created because the team was drowning, and removing it without more people recreates the problem. Do you give them more people, or ask them to cope?", "SOC-ansvarig påminner om att regeln skapades för att teamet drunknade, och att ta bort den utan mer personal återskapar problemet. Ger ni dem mer folk, eller ber ni dem klara sig?"]),
+              pb(["All at once", "Allt på en gång"], ["Other teams ask whether their suppression rules go too. Switching everything back on at once means nobody knows which of the new alerts matter. Where do you start, and in what order?", "Andra team frågar om deras undertryckningsregler också försvinner. Att slå på allt på en gång innebär att ingen vet vilka av de nya larmen som spelar roll. Var börjar ni, och i vilken ordning?"])
+            ],
+            C: [
+              pb(["The morning after", "Morgonen efter"], ["Tonight's actor did their work inside the window. Reviewing suppressed alerts after it closes means finding out after they have finished. Is a morning-after review detection, or just a report?", "Nattens aktör gjorde sitt arbete inne i fönstret. Att granska undertryckta larm när det har stängt innebär att få veta det efter att de är klara. Är en granskning morgonen efter upptäckt, eller bara en rapport?"]),
+              pb(["The review that slips", "Granskningen som uteblir"], ["The reviews land on the day shift, which already has a backlog. The first one is skipped because of a busy morning, and nobody notices. Who checks that the reviews actually happen?", "Granskningarna hamnar hos dagskiftet, som redan har en kö. Den första hoppas över på grund av en stressig morgon, och ingen märker det. Vem kontrollerar att granskningarna faktiskt blir av?"]),
+              pb(["The same blind spot", "Samma blinda fläck"], ["The windows are still published and the alerts are still muted while they run. Anyone who learned the schedule once can use it again. What have you actually changed before the next window?", "Fönstren publiceras fortfarande och larmen är fortfarande tystade medan de pågår. Den som har lärt sig schemat en gång kan använda det igen. Vad har ni faktiskt ändrat före nästa fönster?"])
+            ]
+          }
         }),
         facilitator: fac(
           ["Alert fatigue is a design problem, not a people problem.", "Larmtrötthet är ett designproblem, inte ett personproblem."],
@@ -372,7 +440,24 @@
             legal: ["Paying staff late has legal consequences.", "Att betala ut löner för sent får rättsliga följder."],
             reputational: ["Fraudulent payments would be far worse than a delay.", "Bedrägliga betalningar vore mycket värre än en försening."]
           },
-          evaluation: [["Makes risk acceptance explicit and owned", "Gör riskacceptansen uttalad och ägd"]]
+          evaluation: [["Makes risk acceptance explicit and owned", "Gör riskacceptansen uttalad och ägd"]],
+          pushback: {
+            A: [
+              pb(["Nobody will sign", "Ingen vill skriva under"], ["Neither {{person.cfo.name}} nor the CISO wants to be the named risk owner; each says it is the other's call. The close starts within the hour. Who signs, and what happens if nobody does?", "Varken {{person.cfo.name}} eller säkerhetschefen vill vara utsedd riskägare; båda säger att det är den andras beslut. Bokslutet börjar inom en timme. Vem skriver under, och vad händer om ingen gör det?"]),
+              pb(["Manual, in batches", "Manuellt, i klump"], ["Approving payments manually means finance checking thousands of transactions in a few hours, against a fixed bank deadline. Finance says it will approve them batch by batch. Is that still manual approval?", "Att godkänna betalningar manuellt innebär att ekonomi ska kontrollera tusentals transaktioner på några timmar, mot en fast tidsgräns hos banken. Ekonomi säger att de kommer att godkänna dem bunt för bunt. Är det fortfarande manuellt godkännande?"]),
+              pb(["Monitoring for what?", "Bevaka vad?"], ["The SOC is asked to watch the close, but nobody can say what a malicious change during month-end would look like. What exactly are they watching for, and who has the authority to stop the close if something looks wrong?", "SOC ska bevaka bokslutet, men ingen kan säga hur en skadlig ändring under månadsskiftet skulle se ut. Vad är det exakt de ska hålla utkik efter, och vem har mandat att stoppa bokslutet om något ser fel ut?"])
+            ],
+            B: [
+              pb(["Payday missed", "Lönedagen missas"], ["Postponing means {{num.employeesPayroll}} employees are not paid on time, and HR expects the unions on the phone by lunch. Do you tell staff the real reason, and if so, what exactly do you say?", "Ett uppskjutande innebär att {{num.employeesPayroll}} anställda inte får lön i tid, och HR räknar med att facket ringer före lunch. Berättar ni den verkliga anledningen för personalen, och i så fall vad säger ni exakt?"]),
+              pb(["Over your head", "Över ert huvud"], ["{{person.cfo.name}} calls postponing a business decision and goes straight to the CEO. Within the hour you are asked to justify it. What evidence do you have that the system is not safe enough to run?", "{{person.cfo.name}} kallar uppskjutandet ett affärsbeslut och går direkt till vd. Inom en timme måste ni motivera det. Vilket underlag har ni för att systemet inte är tillräckligt säkert att köra?"]),
+              pb(["Verified when?", "Kontrollerat när?"], ["The SOC cannot say when the system will count as verified: proving that nothing was left behind may never be fully possible. Postponed until when, exactly, and who decides it is enough?", "SOC kan inte säga när systemet räknas som kontrollerat: att bevisa att inget har lämnats kvar kanske aldrig går helt. Uppskjutet till när, exakt, och vem avgör att det räcker?"])
+            ],
+            C: [
+              pb(["Seen only where you looked", "Sedd bara där ni tittade"], ["The actor was seen inside maintenance windows, but you only looked there because that's where alerts were muted. Do you know they never worked outside the windows, or just that nobody saw it?", "Aktören syntes inne i underhållsfönster, men ni tittade bara där eftersom det var där larmen var tystade. Vet ni att de aldrig arbetade utanför fönstren, eller bara att ingen såg det?"]),
+              pb(["Nobody decided", "Ingen beslutade"], ["Running as normal means nobody has accepted the risk in writing. If a payment goes wrong, the first question will be who decided, and the answer will be “nobody did”. Are you comfortable with that answer?", "Att köra som vanligt innebär att ingen har accepterat risken skriftligt. Om en betalning går fel blir första frågan vem som beslutade, och svaret blir ”ingen gjorde det”. Känner ni er bekväma med det svaret?"]),
+              pb(["The SOC wants it noted", "SOC vill ha det noterat"], ["The SOC lead asks for an objection to be recorded: nobody has yet checked what the stolen account did before tonight. Running the close as normal ignores that. Do you overrule them and run it anyway?", "SOC-ansvarig vill att en invändning noteras: ingen har ännu kontrollerat vad det stulna kontot gjorde före i natt. Att köra bokslutet som vanligt bortser från det. Kör ni över dem och kör ändå?"])
+            ]
+          }
         }),
         facilitator: fac(
           ["A real governance tension. There is no clean answer.", "En verklig styrningskonflikt. Det finns inget rent svar."],
@@ -442,7 +527,24 @@
             legal: ["The 72-hour clock runs from awareness.", "72-timmarsfristen löper från det att ni fick kännedom."],
             reputational: ["Staff will judge you on how they hear about it.", "Personalen kommer att döma er efter hur de får veta det."]
           },
-          evaluation: [["Reports in time and informs employees promptly", "Anmäler i tid och informerar de anställda snabbt"]]
+          evaluation: [["Reports in time and informs employees promptly", "Anmäler i tid och informerar de anställda snabbt"]],
+          pushback: {
+            A: [
+              pb(["Questions you can't answer", "Frågor ni inte kan besvara"], ["Telling employees today brings hundreds of questions you can't answer yet: was my account changed, will I be paid, should I call my bank? HR has two people free. Who answers, and with what?", "Att informera de anställda i dag ger hundratals frågor som ni inte kan besvara än: har mitt konto ändrats, får jag lön, ska jag ringa min bank? HR har två personer lediga. Vem svarar, och med vad?"]),
+              pb(["Payroll grinds to a halt", "Lönearbetet står still"], ["Checking every salary-account change means payroll staff drop everything for days, right after month-end. Other payments and corrections start to slip. Do you bring in help, or accept the knock-on delays?", "Att kontrollera varje ändring av lönekonton innebär att lönepersonalen släpper allt annat i flera dagar, direkt efter månadsskiftet. Andra betalningar och rättelser börjar halka efter. Tar ni in hjälp, eller accepterar ni följdförseningarna?"]),
+              pb(["A script for scammers", "Ett manus för bedragare"], ["Within hours of your notice, staff receive emails “from payroll” asking them to confirm their bank details. Your announcement gave fraudsters a script. How do you warn people without causing more panic?", "Inom några timmar efter ert meddelande får personalen mejl ”från lönekontoret” som ber dem bekräfta sina bankuppgifter. Ert besked gav bedragarna ett manus. Hur varnar ni utan att skapa mer panik?"])
+            ],
+            B: [
+              pb(["They hear it anyway", "De får höra det ändå"], ["Talk of a “payroll hack” is already going round the staff chat. The investigation will take days. How long before employees learn from colleagues what you have chosen not to tell them yet?", "Prat om ett ”lönehack” sprids redan i personalens chatt. Utredningen tar flera dagar. Hur länge dröjer det innan de anställda får veta av kollegor det som ni har valt att inte berätta än?"]),
+              pb(["The DPO disagrees", "Dataskyddsombudet håller inte med"], ["The DPO points out that when the risk to people is high, they must be told without undue delay, not at the end of an investigation. How do you justify the wait if {{reg.dpaShort}} asks?", "Dataskyddsombudet påpekar att när risken för de enskilda är hög ska de informeras utan onödigt dröjsmål, inte när en utredning är klar. Hur motiverar ni väntan om {{reg.dpaShort}} frågar?"]),
+              pb(["They can't protect themselves", "De kan inte skydda sig"], ["Employees whose bank details were exported cannot watch for fraud if they don't know. If one of them loses a salary payment next week, what do you say about why you waited?", "Anställda vars bankuppgifter exporterades kan inte vara uppmärksamma på bedrägerier om de inte vet om det. Om någon av dem går miste om en löneutbetalning nästa vecka, vad säger ni om varför ni väntade?"])
+            ],
+            C: [
+              pb(["The clock already started", "Klockan har redan börjat gå"], ["The 72-hour clock runs from when you became aware, not from when misuse is proven. Waiting may already take you past it. Who is prepared to argue that you weren't “aware” yet?", "72-timmarsfristen löper från när ni fick kännedom, inte från när missbruk är bevisat. Att vänta kan redan ta er förbi den. Vem är beredd att hävda att ni inte hade ”kännedom” än?"]),
+              pb(["Clarity may never come", "Klarhet kanske aldrig kommer"], ["Misuse of bank details can surface months later, one employee at a time. Waiting for clarity may mean waiting indefinitely. What, exactly, would count as clear?", "Missbruk av bankuppgifter kan dyka upp månader senare, en anställd i taget. Att vänta på klarhet kan betyda att vänta hur länge som helst. Vad, exakt, skulle räknas som klart?"]),
+              pb(["HR won't sit on it", "HR tänker inte tiga"], ["HR says they will not sit on this: staff data was taken and staff have a right to know. They are ready to tell people themselves. Do you overrule HR, and on what grounds?", "HR säger att de inte tänker tiga om det här: personalens uppgifter har tagits och personalen har rätt att få veta. De är beredda att berätta själva. Kör ni över HR, och på vilka grunder?"])
+            ]
+          }
         }),
         facilitator: fac(
           ["The incident becomes about people. Bring HR in.", "Incidenten handlar nu om människor. Ta in HR."],
@@ -495,7 +597,24 @@
             legal: ["No change.", "Ingen förändring."],
             reputational: ["Showing investment rebuilds staff trust.", "Att visa på investeringar bygger upp personalens förtroende igen."]
           },
-          evaluation: [["Addresses capacity, not only configuration", "Tar itu med kapacitet, inte bara konfiguration"]]
+          evaluation: [["Addresses capacity, not only configuration", "Tar itu med kapacitet, inte bara konfiguration"]],
+          pushback: {
+            A: [
+              pb(["Months to hire", "Månader att rekrytera"], ["Recruiting experienced analysts takes months, and the next maintenance window is next week. The capacity you are paying for will not exist when you need it. What covers the gap?", "Att rekrytera erfarna analytiker tar månader, och nästa underhållsfönster är nästa vecka. Kapaciteten ni betalar för finns inte när ni behöver den. Vad täcker glappet?"]),
+              pb(["The service desk wants out", "Servicedesken vill slippa"], ["The service desk says phishing-resistant sign-in will slow them down and break the remote-support tool they use all day. Their manager asks for an exception. Do you grant it, for the team whose account was stolen?", "Servicedesken säger att nätfiskeresistent inloggning kommer att göra dem långsammare och slå ut verktyget för fjärrsupport som de använder hela dagarna. Deras chef ber om ett undantag. Beviljar ni det, för teamet vars konto stals?"]),
+              pb(["The cheapest fix left out", "Den billigaste åtgärden utelämnad"], ["The budget is spent, and the maintenance calendar is still readable by every account. The cheapest fix on the list was left out. Why, and who explains that after the next incident?", "Budgeten är förbrukad, och underhållskalendern kan fortfarande läsas av alla konton. Den billigaste åtgärden på listan blev utelämnad. Varför, och vem förklarar det efter nästa incident?"])
+            ],
+            B: [
+              pb(["Still three analysts", "Fortfarande tre analytiker"], ["The three night analysts are still three. With the rules fixed, they face more alerts with the same people. How long before someone quietly writes a new suppression rule to cope?", "De tre nattanalytikerna är fortfarande tre. Med reglerna rättade möter de fler larm med samma personal. Hur länge dröjer det innan någon i tysthet skriver en ny undertryckningsregel för att orka?"]),
+              pb(["The next stolen account", "Nästa stulna konto"], ["The credential was bought from a broker. Restricting the calendar does not stop the next one being bought, and nothing here changes how accounts sign in. What stops a stolen account working at odd hours next time?", "Kontot köptes från en mäklare. Att begränsa kalendern hindrar inte att nästa konto köps, och inget här ändrar hur konton loggar in. Vad hindrar ett stulet konto från att arbeta på udda tider nästa gång?"]),
+              pb(["Everyone needs the calendar", "Alla behöver kalendern"], ["Teams across the business plan their work around that calendar. Restricting it means a stream of “is there maintenance tonight?” calls to the service desk. Who gets access, and how long will the restriction last?", "Team i hela verksamheten planerar sitt arbete efter den kalendern. Att begränsa den innebär en ström av samtal till servicedesken: ”är det underhåll i natt?” Vem får tillgång, och hur länge kommer begränsningen att hålla?"])
+            ],
+            C: [
+              pb(["Strangers to your systems", "Främlingar i era system"], ["An outsourced SOC would see the same maintenance alerts without knowing your systems, and would probably ask for the same suppression. What would they have done differently on that first night?", "Ett utkontrakterat SOC skulle se samma underhållslarm utan att känna era system, och skulle troligen be om samma undertryckning. Vad hade de gjort annorlunda den första natten?"]),
+              pb(["Your own analysts", "Era egna analytiker"], ["The three night analysts hear about the plan before anyone tells them. Two start looking for other jobs. Who runs monitoring during the months of handover?", "De tre nattanalytikerna hör talas om planen innan någon har berättat det för dem. Två börjar söka andra jobb. Vem sköter bevakningen under de månader överlämningen tar?"]),
+              pb(["Alerting is not investigating", "Att larma är inte att utreda"], ["The provider's standard contract covers alerting, not investigation. This case was caught by an analyst who looked closer at six per cent of one alert. Who does that from now on?", "Leverantörens standardavtal omfattar larmhantering, inte utredning. Det här fallet upptäcktes av en analytiker som tittade närmare på sex procent av ett enda larm. Vem gör det från och med nu?"])
+            ]
+          }
         }),
         facilitator: fac(
           ["Close on capacity and design. Alert fatigue is a resourcing decision.", "Avsluta med kapacitet och design. Larmtrötthet är ett resursbeslut."],

@@ -209,51 +209,26 @@
     return { key, branching: isBranching(sess), question: L(dp.question, lang), owner: dp.owner || "", option: opt ? { key: opt.key, text: L(opt.text, lang) } : null };
   }
 
-  /** Draw a challenge card for an answered decision point (never the same card twice in a row). */
-  function drawChallenge(sess, key) {
-    const dp = decisionPoint(sess, key);
-    if (!dp || !dp.log || (!dp.chosen && !dp.log.text)) return null;
-    const prev = (sess.challenges || {})[key] || null;
-    const draws = prev ? prev.draws + 1 : 1;
-    const rng = BK.rng.create(sess.instance.seed + "/challenge/" + key + "/" + draws);
-    const others = dp.options.filter((o) => !dp.chosen || o.key !== dp.chosen.key);
-    const people = Object.values(sess.instance.entities.people || {}).filter((p) => p.present !== false && p.role !== dp.ownerRole);
-    const have = { owner: !!dp.owner, other: others.length > 0, person: people.length > 0 };
-    const pool = BK.data.challenges.cards.filter((c) => c.needs.every((n) => have[n]) && (!prev || c.id !== prev.id));
-    if (!pool.length) return null;
-    const card = pool[rng.int(0, pool.length - 1)];
-    const entry = {
-      id: card.id,
-      draws,
-      other: card.needs.includes("other") ? others[rng.int(0, others.length - 1)].key : null,
-      person: card.needs.includes("person") ? people[rng.int(0, people.length - 1)].role : null,
-      shownAt: null,
-      outcome: null
-    };
-    sess.challenges = Object.assign({}, sess.challenges || {}, { [key]: entry });
-    return entry;
-  }
+  const CHALLENGE_OUTCOMES = ["held", "changed", "unsure"];
 
-  /** A challenge card's text, filled from the decision point. Public: options, names and roles only. */
+  /**
+   * A challenge card's content: one of the three pushback cards written for the option the room chose
+   * (entry.option, entry.index). Public: authored for the room, like the options themselves.
+   */
   function challengeContent(sess, key, lang) {
     const entry = (sess.challenges || {})[key];
-    const card = entry && BK.data.challenges.get(entry.id);
-    const dp = card && decisionPoint(sess, key);
-    if (!dp) return null;
-    const clean = (v) => String(v || "").trim().replace(/[.!]+$/, "");
-    const others = dp.options.filter((o) => !dp.chosen || o.key !== dp.chosen.key);
-    const other = others.find((o) => o.key === entry.other) || others[0];
-    const person = entry.person ? (sess.instance.entities.people || {})[entry.person] : null;
-    const role = person ? L(person.roleLabel, lang) : "";
-    const vars = {
-      option: clean(dp.chosen ? L(dp.chosen.text, lang) : dp.log ? dp.log.text : ""),
-      other: clean(other ? L(other.text, lang) : ""),
-      owner: dp.owner || "",
-      person: person ? person.name : "",
-      role: lang === "sv" && /^\p{Lu}\p{Ll}/u.test(role) ? role.charAt(0).toLowerCase() + role.slice(1) : role
-    };
-    const fill = (text) => text.replace(/\{(option|other|owner|person|role)\}/g, (_, k) => vars[k]);
-    return { key, id: card.id, title: fill(L(card.title, lang)), text: fill(L(card.text, lang)), question: L(dp.question, lang), outcome: entry.outcome, shown: !!entry.shownAt, draws: entry.draws };
+    const dp = entry && decisionPoint(sess, key);
+    const opt = dp && dp.options.find((o) => o.key === entry.option);
+    const card = opt && (opt.pushback || [])[entry.index];
+    if (!card) return null;
+    return { key, option: { key: opt.key, text: L(opt.text, lang) }, index: entry.index, title: L(card.title, lang), text: L(card.text, lang), question: L(dp.question, lang), outcome: entry.outcome, shown: !!entry.shownAt };
+  }
+
+  /** The three challenges written for the option the room has chosen at a decision point (may be empty). */
+  function challengeChoices(sess, key, lang) {
+    const dp = decisionPoint(sess, key);
+    if (!dp || !dp.chosen) return [];
+    return (dp.chosen.pushback || []).map((c, index) => ({ index, title: L(c.title, lang), text: L(c.text, lang) }));
   }
 
   const ACTION_STATUS = ["open", "progress", "done", "dropped"];
@@ -678,17 +653,18 @@
       case "deadlineHide":
         sess.activeDeadline = null;
         break;
-      case "challengeDraw": {
-        if (ended || !drawChallenge(sess, cmd.key)) return prev;
-        if (sess.activeChallenge === cmd.key) sess.activeChallenge = null;
-        break;
-      }
       case "challengeShow": {
-        const ch = (sess.challenges || {})[cmd.key];
-        if (!ch) return prev;
-        ch.shownAt = ch.shownAt || new Date(at).toISOString();
+        // Put one of the chosen option's three challenges on the stage (cmd.index 0–2).
+        const dp = decisionPoint(sess, cmd.key);
+        const card = dp && dp.chosen && (dp.chosen.pushback || [])[cmd.index];
+        if (ended || !card) return prev;
+        const before = (sess.challenges || {})[cmd.key];
+        const same = before && before.option === dp.chosen.key && before.index === cmd.index;
+        sess.challenges = Object.assign({}, sess.challenges || {}, {
+          [cmd.key]: { option: dp.chosen.key, index: cmd.index, shownAt: same && before.shownAt ? before.shownAt : new Date(at).toISOString(), outcome: same ? before.outcome : null }
+        });
         sess.activeChallenge = cmd.key;
-        sess.log.push({ at: new Date(at).toISOString(), type: "challenge", decisionId: cmd.key, card: ch.id });
+        sess.log.push({ at: new Date(at).toISOString(), type: "challenge", decisionId: cmd.key, option: dp.chosen.key, index: cmd.index });
         break;
       }
       case "challengeHide":
@@ -696,7 +672,7 @@
         break;
       case "challengeOutcome": {
         const ch = (sess.challenges || {})[cmd.key];
-        if (!ch || !BK.data.challenges.OUTCOMES.includes(cmd.outcome)) return prev;
+        if (!ch || !CHALLENGE_OUTCOMES.includes(cmd.outcome)) return prev;
         ch.outcome = cmd.outcome;
         break;
       }
@@ -827,7 +803,7 @@
   /** The challenge card on stage: title and text only (the outcome is the facilitator's note). */
   function publicChallenge(sess, lang) {
     const c = challengeContent(sess, sess.activeChallenge, lang);
-    return c ? { key: c.key, id: c.id, title: c.title, text: c.text } : null;
+    return c ? { key: c.key, index: c.index, title: c.title, text: c.text } : null;
   }
 
   /** A person source as { name, title } so artefacts can lay the two out separately; null otherwise. */
@@ -1270,6 +1246,8 @@
     decisionPoint,
     deadlineContent,
     challengeContent,
+    challengeChoices,
+    CHALLENGE_OUTCOMES,
     CHOICE_DEADLINE_MINUTES,
     ACTION_STATUS,
     normaliseAction,

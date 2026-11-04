@@ -6,6 +6,11 @@ Changes are grouped by app version (shown in Settings, set in `js/core/namespace
 
 ## Unreleased
 
+## 0.3.0 (2026-11-04)
+
+- Challenge cards are now written for each option: every option of every decision point in all 61 scenarios has three challenges that make that choice harder to keep (5,220 in English and Swedish). After the room chooses, the presenter lists the three for that choice and the facilitator picks one. Replaces the generic, randomly drawn deck
+- The validator requires three bilingual challenges (`pushback`) per option
+
 ## 0.2.1 (2026-11-04)
 
 - Fix: moving into another stage (or, in branching runs, another page) always starts that stage's countdown fresh and stopped; before, a countdown that was still running or already past zero carried over

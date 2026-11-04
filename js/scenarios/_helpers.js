@@ -60,7 +60,8 @@
       id,
       question: L(question),
       authority,
-      options: options.map((o, i) => ({ key: keys[i], text: L(o) })),
+      // e.pushback: { A: [pb(...) ×3], B: [...], ... } keyed by the authored option letter.
+      options: options.map((o, i) => (e.pushback && e.pushback[keys[i]] ? { key: keys[i], text: L(o), pushback: e.pushback[keys[i]] } : { key: keys[i], text: L(o) })),
       knowns: (e.knowns || []).map(L),
       uncertainties: (e.uncertainties || []).map(L),
       tradeoffs,
@@ -116,6 +117,16 @@
     return Object.assign({ text: L(text), to, why: L(why) }, e);
   }
 
+  /**
+   * Pushback: a challenge card for one option, played after the room has chosen it. It makes that
+   * choice harder or more confusing (a side effect, a stakeholder who objects, a fact that undermines
+   * it). Three per option: on discussion decisions via dec(..., { pushback: { A: [...], ... } }),
+   * on branching options via opt(..., { pushback: [...] }).
+   */
+  function pb(title, text) {
+    return { title: L(title), text: L(text) };
+  }
+
   function end(grade, label, summary) {
     return { grade, label: L(label), summary: L(summary) };
   }
@@ -128,5 +139,5 @@
     return rules.map(([cond, to]) => ({ if: cond, to }));
   }
 
-  BK.scenarios.h = { L, q, ch, inj, dec, fac, act, avr, kpi, line, pg, ask, opt, end, vr, rt };
+  BK.scenarios.h = { L, q, ch, inj, dec, fac, act, avr, kpi, line, pg, ask, opt, pb, end, vr, rt };
 })();

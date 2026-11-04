@@ -12,7 +12,7 @@
   "use strict";
 
   const BK = window.BK;
-  const { L, q, ch, inj, dec, fac, act, avr, line } = BK.scenarios.h;
+  const { L, q, ch, inj, dec, fac, act, avr, line, pb } = BK.scenarios.h;
 
   BK.scenarios.register({
     id: "s19-zero-day-edge",
@@ -122,7 +122,24 @@
             legal: ["NIS-type rules may expect prompt action.", "Regler av NIS-typ kan förvänta sig snabba åtgärder."],
             reputational: ["Being hit by a known flaw is hard to explain.", "Att drabbas av en känd brist är svårt att förklara."]
           },
-          evaluation: [["Reduces exposure before the fix arrives", "Minskar exponeringen innan rättningen kommer"], ["Starts hunting, not only patching", "Börjar leta, inte bara rätta"]]
+          evaluation: [["Reduces exposure before the fix arrives", "Minskar exponeringen innan rättningen kommer"], ["Starts hunting, not only patching", "Börjar leta, inte bara rätta"]],
+          pushback: {
+            A: [
+              pb(["Field staff locked out", "Fältpersonalen utelåst"], ["Restricting access to known addresses has cut off everyone connecting from hotels, customer sites and mobile networks. The service desk has forty calls in twenty minutes. Do you open exceptions one by one, knowing each one widens the hole you just narrowed?", "Begränsningen till kända adresser har stängt ute alla som ansluter från hotell, kundplatser och mobilnät. Servicedesken har fått fyrtio samtal på tjugo minuter. Öppnar ni undantag ett i taget, trots att varje undantag vidgar hålet ni just har krympt?"]),
+              pb(["A “known” address", "En ”känd” adress"], ["One partner's known address turns out to be a shared cloud range used by thousands of other customers. Your allow list lets all of them reach the appliance. Do you drop that partner from the list, or accept that “known” no longer means safe?", "En partners kända adress visar sig vara ett delat molnintervall som används av tusentals andra kunder. Er tillåtna lista släpper fram alla till enheten. Stryker ni den partnern från listan, eller accepterar ni att ”känd” inte längre betyder säker?"]),
+              pb(["Hunt or allow list", "Leta eller sköta listan"], ["The SOC lead says the same three analysts cannot both hunt for compromise and handle the stream of address exceptions tonight. One of the two will be done badly. Which do you let slip?", "SOC-chefen säger att samma tre analytiker inte både kan leta efter intrång och hantera strömmen av adressundantag i kväll. Det ena kommer att göras dåligt. Vilket låter ni glida?"])
+            ],
+            B: [
+              pb(["The curve keeps climbing", "Kurvan fortsätter uppåt"], ["Exploit attempts against your appliance have doubled in the last hour, and the vendor still says the mitigation will come “within hours”. Your device sits fully open to all of it. How many more hours are you prepared to wait?", "Angreppsförsöken mot er enhet har fördubblats den senaste timmen, och leverantören säger fortfarande att åtgärden kommer ”inom några timmar”. Er enhet står helt öppen för allt det. Hur många fler timmar är ni beredda att vänta?"]),
+              pb(["Half the advice", "Halva rådet"], ["The CSIRT said to assume compromise if the device was exposed. Waiting for the mitigation answers only the future; nobody is checking whether you are already in trouble. Who starts looking, and why not now?", "CSIRT sa att man ska utgå från intrång om enheten har varit exponerad. Att vänta på åtgärden handlar bara om framtiden; ingen kontrollerar om ni redan är drabbade. Vem börjar leta, och varför inte nu?"]),
+              pb(["What did you do meanwhile?", "Vad gjorde ni under tiden?"], ["Legal points out that NIS-type rules ask what appropriate measures you took once you knew. “We waited for the vendor” is the only answer you will have for these hours. Is that an answer you are willing to sign?", "Juristen påpekar att regler av NIS-typ frågar vilka lämpliga åtgärder ni vidtog när ni väl visste. ”Vi väntade på leverantören” blir det enda svaret för de här timmarna. Är det ett svar ni är beredda att skriva under på?"])
+            ],
+            C: [
+              pb(["Nobody can work", "Ingen kan arbeta"], ["{{num.remoteUsers}} staff and every partner have lost access in one stroke. Field visits are being cancelled and the service owner wants to know who decided. Can you justify a full stop when nobody has yet seen a sign of compromise on your device?", "{{num.remoteUsers}} anställda och alla partner har förlorat åtkomsten i ett slag. Fältbesök ställs in och tjänsteägaren vill veta vem som beslutade. Kan ni försvara ett totalstopp när ingen ännu har sett något tecken på intrång i er enhet?"]),
+              pb(["When does it come back?", "När kommer den tillbaka?"], ["The mitigation is due within hours, but nobody agreed what must be true before the appliance goes back online. The service owner is already asking for a time. Is the mitigation enough to reconnect, and who decides that?", "Den tillfälliga åtgärden väntas inom några timmar, men ingen har kommit överens om vad som måste gälla innan enheten kopplas upp igen. Tjänsteägaren frågar redan efter en tid. Räcker åtgärden för att ansluta igen, och vem avgör det?"]),
+              pb(["The admins' route too", "Även administratörernas väg"], ["IT operations reports that the appliance was also how they reach the systems at your remote sites. With it offline, a failing server at one site cannot be fixed tonight. Do you open a hole just for the admins, or live with it?", "Driften rapporterar att enheten också var deras väg in till systemen på era fjärrplatser. När den är bortkopplad går en server som krånglar på en av platserna inte att åtgärda i kväll. Öppnar ni ett hål bara för administratörerna, eller lever ni med det?"])
+            ]
+          }
         }),
         facilitator: fac(
           ["The question isn't only 'patch?' but 'are we already in?'", "Frågan är inte bara ”rätta?” utan ”är vi redan drabbade?”."],
@@ -181,7 +198,24 @@
             legal: ["Partner contracts may promise access.", "Partneravtalen kan utlova åtkomst."],
             reputational: ["Delay to avoid inconvenience looks bad later.", "Att vänta för att slippa olägenheter ser illa ut i efterhand."]
           },
-          evaluation: [["Accepts operational pain to close exposure", "Accepterar störningar i verksamheten för att stänga exponeringen"]]
+          evaluation: [["Accepts operational pain to close exposure", "Accepterar störningar i verksamheten för att stänga exponeringen"]],
+          pushback: {
+            A: [
+              pb(["Not your laptops", "Inte era datorer"], ["Partners cannot install your full client on their own managed laptops. Their IT departments say approval takes a week. Moving “critical users” to the client works for staff, not for the partners who threatened to escalate. What do you tell them today?", "Partnerna kan inte installera er fullständiga klient på sina egna hanterade datorer. Deras IT-avdelningar säger att ett godkännande tar en vecka. Att flytta ”kritiska användare” till klienten fungerar för personalen, inte för partnerna som hotade att eskalera. Vad säger ni till dem i dag?"]),
+              pb(["Everyone is critical", "Alla är kritiska"], ["You asked managers for their critical users. The lists add up to almost everyone who used the portal, and each manager says theirs cannot wait. Who decides which names are left out, and on what grounds?", "Ni bad cheferna om deras kritiska användare. Listorna omfattar nästan alla som använde portalen, och varje chef säger att just deras inte kan vänta. Vem avgör vilka namn som lämnas utanför, och på vilka grunder?"]),
+              pb(["Not enough licences", "För få licenser"], ["IT operations finds you only have full-client licences for a fraction of the users who now need them. Getting more takes days. Do you keep the portal broken for the rest, or reconsider applying the mitigation until the client is ready?", "Driften upptäcker att ni bara har licenser för den fullständiga klienten för en bråkdel av dem som nu behöver den. Fler tar dagar att få fram. Låter ni portalen vara utslagen för resten, eller omprövar ni att införa åtgärden innan klienten är klar?"])
+            ],
+            B: [
+              pb(["Exploited all afternoon", "Utnyttjad hela eftermiddagen"], ["The CSIRT repeats its advice: apply mitigations immediately. Attempts against your portal continue every minute while you wait for the evening. If this goes wrong, the record will show you chose convenience for eight hours. Can you defend that?", "CSIRT upprepar sitt råd: inför tillfälliga åtgärder omedelbart. Försöken mot er portal fortsätter varje minut medan ni väntar på kvällen. Om det här går fel kommer det att framgå att ni valde bekvämlighet i åtta timmar. Kan ni försvara det?"]),
+              pb(["Whose working hours?", "Vems arbetstid?"], ["The field service team works evenings and nights. “After working hours” is the middle of their shift, and they rely on the portal. Do you take it from them instead, or move the change again?", "Fältserviceteamet arbetar kvällar och nätter. ”Efter arbetstid” är mitt i deras skift, och de är beroende av portalen. Tar ni den från dem i stället, eller flyttar ni ändringen igen?"]),
+              pb(["Partners find out tomorrow", "Partnerna upptäcker det i morgon"], ["Unless you warn them, partners will discover tomorrow morning that the portal is gone. Warning them today tells them your device is exposed right now. Do you tell them, and what exactly do you say?", "Om ni inte varnar dem upptäcker partnerna i morgon bitti att portalen är borta. Att varna dem i dag talar om att er enhet är exponerad just nu. Säger ni något, och vad säger ni i så fall?"])
+            ],
+            C: [
+              pb(["Attacks from an allowed address", "Angrepp från en tillåten adress"], ["The SOC sees exploit attempts coming from an address on your allow list: a partner's network. The restriction you are relying on lets those requests straight through. Is the restriction still a reason not to apply the mitigation?", "SOC ser angreppsförsök från en adress på er tillåtna lista: en partners nätverk. Begränsningen ni förlitar er på släpper rakt igenom de anropen. Är begränsningen fortfarande ett skäl att inte införa åtgärden?"]),
+              pb(["You declined the fix", "Ni tackade nej till åtgärden"], ["Legal notes that you now hold the vendor's mitigation and have chosen not to apply it. If the device is exploited, that choice will be in every report and insurance claim. Who puts their name on that decision?", "Juristen påpekar att ni nu har leverantörens åtgärd och har valt att inte införa den. Om enheten utnyttjas kommer det valet att finnas med i varje rapport och försäkringsärende. Vem sätter sitt namn på det beslutet?"]),
+              pb(["Exceptions pile up", "Undantagen hopar sig"], ["Since the morning, sixty requests to add new addresses have come in from staff and partners who cannot connect. Each one you approve weakens the only protection you kept. Do you keep saying yes, or stop and accept the complaints?", "Sedan i morse har det kommit sextio önskemål om nya adresser från personal och partner som inte kommer in. Varje undantag ni godkänner försvagar det enda skydd ni behöll. Fortsätter ni att säga ja, eller stoppar ni och tar klagomålen?"])
+            ]
+          }
         }),
         facilitator: fac(
           ["Security costs something visible. Who decides to pay it?", "Säkerhet kostar något synligt. Vem beslutar att betala det?"],
@@ -246,7 +280,24 @@
             reputational: ["An under-response discovered later is worse.", "En otillräcklig hantering som upptäcks senare är värre."]
           },
           evaluation: [["Shifts from patching to incident response", "Går från rättning till incidenthantering"]],
-          minutes: 10
+          minutes: 10,
+          pushback: {
+            A: [
+              pb(["Down all night", "Nere hela natten"], ["To image the device properly, the responders need it offline for most of the night. Remote access stops again, the day after the portal was already taken away. Do you accept another outage for evidence, or image it while it stays in service?", "För att avbilda enheten ordentligt behöver incidenthanterarna ha den bortkopplad större delen av natten. Fjärråtkomsten stoppas igen, dagen efter att portalen redan togs bort. Accepterar ni ännu ett avbrott för bevisningens skull, eller avbildar ni den medan den är i drift?"]),
+              pb(["Is this overkill?", "Är det här överdrivet?"], ["The CIO looks at the responders' first estimate: several days of work, scope “the whole network”. “It is one file on one box,” the CIO says. How do you justify the size of this response with what you actually know?", "IT-chefen tittar på incidenthanterarnas första uppskattning: flera dagars arbete, omfattning ”hela nätverket”. ”Det är en fil på en enhet”, säger IT-chefen. Hur motiverar ni hanteringens storlek med det ni faktiskt vet?"]),
+              pb(["The clock starts now", "Klockan börjar ticka nu"], ["Legal points out that once you formally call this a breach, reporting deadlines start running today, and you know very little yet. Calling it something softer buys time. Do you name it a breach now?", "Juristen påpekar att när ni formellt kallar det här ett intrång börjar rapporteringsfristerna löpa i dag, och ni vet fortfarande väldigt lite. Att kalla det något mildare köper tid. Kallar ni det ett intrång nu?"])
+            ],
+            B: [
+              pb(["Seven days of sight", "Sju dagars insyn"], ["The device only keeps seven days of logs, but the web shell is far older. Watching from now on covers none of the weeks before. What did the shell do in that time, and how will watching ever tell you?", "Enheten sparar bara sju dagars loggar, men webbskalet är betydligt äldre. Att bevaka från och med nu täcker inget av veckorna innan. Vad gjorde skalet under den tiden, och hur ska bevakning någonsin kunna visa det?"]),
+              pb(["Evidence in the bin", "Bevisning i papperskorgen"], ["Your response partner asks for the web shell file and its timestamps before anyone touches it. The network team deleted it twenty minutes ago. Do you stop the clean-up until evidence is secured, or carry on?", "Er incidentpartner vill ha webbskalets fil och dess tidsstämplar innan någon rör den. Nätverksteamet raderade den för tjugo minuter sedan. Stoppar ni städningen tills bevisningen är säkrad, eller fortsätter ni?"]),
+              pb(["“So it's not an incident?”", "”Så det är inte en incident?”"], ["The CSIRT asks whether you consider yourselves compromised. Removing a file and watching sounds like you do not. Is a device that held an attacker's tool for weeks an incident or not, and what do you say?", "CSIRT frågar om ni anser er komprometterade. Att ta bort en fil och bevaka låter som att ni inte gör det. Är en enhet som har haft angriparens verktyg i flera veckor en incident eller inte, och vad svarar ni?"])
+            ],
+            C: [
+              pb(["The box is clean, the rest?", "Enheten är ren, men resten?"], ["A reinstall wipes the appliance. But for weeks, it sat between the internet and your internal network, and nobody has looked at what it could reach. What gives you confidence there is nothing to move on from?", "En ominstallation rensar enheten. Men i flera veckor stod den mellan internet och ert interna nätverk, och ingen har tittat på vad den kunde nå. Vad ger er trygghet att det inte finns något kvar att hantera?"]),
+              pb(["Evidence wiped", "Bevisningen raderad"], ["The insurer's terms require evidence to be preserved before remediation. A clean reinstall erases the only record of weeks of access. Do you reinstall anyway, and risk the cover, or image it first?", "Försäkringsvillkoren kräver att bevisning bevaras innan åtgärder vidtas. En ren ominstallation raderar det enda spåret av flera veckors åtkomst. Installerar ni om ändå och riskerar skyddet, eller avbildar ni först?"]),
+              pb(["Another day without access", "Ännu en dag utan åtkomst"], ["The network lead says a reinstall and reconfiguration takes the rest of today and part of tomorrow. Remote staff lose access again, for a step that answers none of your questions. Is that the right use of the outage?", "Nätverksansvarig säger att en ominstallation och ny konfiguration tar resten av dagen och en del av morgondagen. Distansarbetande personal förlorar åtkomsten igen, för ett steg som inte besvarar någon av era frågor. Är det rätt sätt att använda avbrottet?"])
+            ]
+          }
         }),
         facilitator: fac(
           ["The ambiguity resolves: you were never ahead.", "Ovissheten skingras: ni låg aldrig före."],
@@ -306,7 +357,24 @@
             legal: ["Authorities are urging disconnection.", "Myndigheterna uppmanar till bortkoppling."],
             reputational: ["Staying online and being hit again is indefensible.", "Att vara uppkopplad och drabbas igen går inte att försvara."]
           },
-          evaluation: [["Recommends disconnection and plans for the impact", "Rekommenderar bortkoppling och planerar för följderna"]]
+          evaluation: [["Recommends disconnection and plans for the impact", "Rekommenderar bortkoppling och planerar för följderna"]],
+          pushback: {
+            A: [
+              pb(["Two days to build", "Två dagar att bygga"], ["The network lead says a temporary alternative for even fifty critical users is two days of work, if nothing goes wrong. Until then, nobody has remote access at all. What do your critical users do in the meantime?", "Nätverksansvarig säger att ett tillfälligt alternativ för ens femtio kritiska användare tar två dagars arbete, om inget går fel. Fram till dess har ingen fjärråtkomst alls. Vad gör era kritiska användare under tiden?"]),
+              pb(["Staff find their own way", "Personalen hittar egna vägar"], ["Within hours, staff start forwarding work mail to private accounts and installing remote-desktop tools to reach their office PCs. Disconnecting the appliance is creating new holes you cannot see. How do you stop it without blocking the work?", "Inom några timmar börjar personal vidarebefordra jobbmejl till privata konton och installera verktyg för fjärrskrivbord för att nå sina kontorsdatorer. Bortkopplingen skapar nya hål som ni inte ser. Hur stoppar ni det utan att stoppa arbetet?"]),
+              pb(["“Until a patch exists”", "”Tills det finns en rättning”"], ["The vendor still promises a patch in {{num.patchDays}} days, but it has already published one mitigation that did not hold. Your decision has no end date. Do you set a limit on how long you stay offline, and what happens when it is reached?", "Leverantören utlovar fortfarande en rättning om {{num.patchDays}} dagar, men har redan publicerat en åtgärd som inte höll. Ert beslut saknar slutdatum. Sätter ni en gräns för hur länge enheten är bortkopplad, och vad händer när den nås?"])
+            ],
+            B: [
+              pb(["An hour behind", "En timme efter"], ["Heavy monitoring did catch the new file, about an hour after it appeared. The attacker gets that hour every time. What can someone with code running on your edge device do in an hour, and is watching enough?", "Den kraftiga bevakningen upptäckte den nya filen, ungefär en timme efter att den dök upp. Angriparen får den timmen varje gång. Vad kan någon som kör kod på er perimeterenhet göra på en timme, och räcker det att titta?"]),
+              pb(["Who watches all night?", "Vem bevakar hela natten?"], ["Heavy monitoring means eyes on one box around the clock. The SOC lead says the analysts are fifteen hours into their shift and there is nobody to relieve them. Who watches at three in the morning?", "Kraftig bevakning innebär ögon på en enda enhet dygnet runt. SOC-chefen säger att analytikerna har arbetat i femton timmar och att ingen kan avlösa dem. Vem bevakar klockan tre i natt?"]),
+              pb(["Against the authorities' advice", "Mot myndigheternas råd"], ["The authorities are urging organisations to disconnect affected devices. You have chosen to stay online with a known bypass. Legal asks how you will explain that choice if you are asked tomorrow. What is the explanation?", "Myndigheterna uppmanar organisationer att koppla bort drabbade enheter. Ni har valt att vara uppkopplade trots en känd förbigång. Juristen frågar hur ni ska förklara det valet om ni får frågan i morgon. Vad är förklaringen?"])
+            ],
+            C: [
+              pb(["No date", "Inget datum"], ["The vendor's update says only that a second mitigation is in development. Researchers report the variant is already spreading. Each night you wait, the device stays open to a known attack. How many nights are acceptable?", "Leverantörens uppdatering säger bara att en andra tillfällig åtgärd tas fram. Forskare rapporterar att varianten redan sprids. Varje natt ni väntar står enheten öppen för ett känt angrepp. Hur många nätter är acceptabelt?"]),
+              pb(["Why trust the second one?", "Varför lita på den andra?"], ["The first mitigation cost you the portal and was bypassed the same day. The second comes from the same vendor, under the same pressure. What makes you willing to bet on it?", "Den första åtgärden kostade er portalen och förbigicks samma dag. Den andra kommer från samma leverantör, under samma press. Vad gör att ni är beredda att satsa på den?"]),
+              pb(["The team won't sign", "Teamet skriver inte under"], ["The network lead refuses to put their name to keeping a bypassed device online while waiting. “We'd just be watching the break-in.” Do you overrule your own expert, or rethink the wait?", "Nätverksansvarig vägrar sätta sitt namn på att hålla en förbigången enhet uppkopplad i väntan. ”Vi skulle bara titta på inbrottet.” Kör ni över er egen expert, eller tänker ni om kring väntandet?"])
+            ]
+          }
         }),
         facilitator: fac(
           ["Now the business must accept real pain. Who owns that?", "Nu måste verksamheten acceptera verklig smärta. Vem äger det?"],
@@ -363,7 +431,24 @@
             reputational: ["A missed delivery is recoverable; a deeper breach may not be.", "En missad leverans går att reparera; ett djupare intrång kanske inte."]
           },
           evaluation: [["Makes an explicit, owned risk decision", "Fattar ett uttalat och ägt riskbeslut"]],
-          minutes: 10
+          minutes: 10,
+          pushback: {
+            A: [
+              pb(["Ready by Thursday night", "Klar torsdag kväll"], ["The network lead says the narrow path can be ready late Thursday at best, with no time to test it before Friday. The whole delivery now rests on something nobody has tried. Are you comfortable with that?", "Nätverksansvarig säger att den smala vägen i bästa fall kan vara klar sent på torsdag, utan tid att testa den före fredag. Hela leveransen vilar nu på något som ingen har provat. Känner ni er trygga med det?"]),
+              pb(["Not so narrow", "Inte så smal"], ["Within hours, three departments ask to be added to the delivery path because their work is “part of the delivery too”. Each addition makes the path wider and harder to watch. Where do you draw the line, and who enforces it?", "Inom några timmar ber tre avdelningar att få komma med på leveransvägen eftersom deras arbete ”också är en del av leveransen”. Varje tillägg gör vägen bredare och svårare att bevaka. Var drar ni gränsen, och vem upprätthåller den?"]),
+              pb(["The partner says no", "Partnern säger nej"], ["The largest partner's IT team refuses to set up a new, unfamiliar connection two days before the delivery. “Use the system you've always used.” Do you push them, or give in to the CEO's original demand?", "Den största partnerns IT-team vägrar att sätta upp en ny, obekant anslutning två dagar före leveransen. ”Använd det system ni alltid har använt.” Pressar ni dem, eller ger ni efter för vd:ns ursprungliga krav?"])
+            ],
+            B: [
+              pb(["Who signs?", "Vem skriver under?"], ["The CEO wants the CISO to co-sign the risk acceptance. The CISO refuses: they recommended disconnection. Without both names, the paper says the security function was overruled. Do you sign alone, or change the decision?", "Vd vill att säkerhetschefen skriver under riskacceptansen tillsammans med vd. Säkerhetschefen vägrar: hen rekommenderade bortkoppling. Utan båda namnen visar papperet att säkerhetsfunktionen kördes över. Skriver ni under ensam, eller ändrar ni beslutet?"]),
+              pb(["Proof you knew", "Bevis på att ni visste"], ["Legal notes that a signed risk acceptance is also written proof that you knew the device was vulnerable and kept it online. Given what the insurer and authorities have already said, does the signature protect you or expose you?", "Juristen påpekar att en undertecknad riskacceptans också är ett skriftligt bevis på att ni visste att enheten var sårbar och ändå höll den uppkopplad. Med tanke på vad försäkringsbolaget och myndigheterna redan har sagt, skyddar underskriften er eller blottar den er?"]),
+              pb(["Three more nights", "Tre nätter till"], ["The SOC sees new requests against the device again tonight. Friday is three nights away, and the acceptance names no point at which you would pull the plug early. What would make you disconnect before Friday?", "SOC ser nya anrop mot enheten igen i kväll. Det är tre nätter kvar till fredag, och riskacceptansen anger ingen punkt där ni skulle koppla ner i förtid. Vad skulle få er att koppla bort före fredag?"])
+            ],
+            C: [
+              pb(["“First” keeps stretching", "”Först” blir längre och längre"], ["Partners say their part of the delivery will run into the weekend after all. The point at which you disconnect keeps moving. Is this a plan with an end, or a way of never deciding?", "Partnerna säger att deras del av leveransen ändå kommer att dra ut på helgen. Tidpunkten då ni kopplar ner flyttas hela tiden. Är det här en plan med ett slut, eller ett sätt att aldrig behöva besluta?"]),
+              pb(["Through the attacker's box", "Genom angriparens enhet"], ["Every partner who signs in now passes their credentials through a device you know is being exploited. If anything is captured, it is their accounts too. Do you tell the partners that before they connect?", "Varje partner som loggar in nu skickar sina inloggningsuppgifter genom en enhet som ni vet utnyttjas. Om något fångas upp gäller det även deras konton. Berättar ni det för partnerna innan de ansluter?"]),
+              pb(["Nothing written down", "Inget nedskrivet"], ["Legal points out that this option keeps the device online with no signed risk acceptance at all. If something goes wrong, nobody formally owned the decision. Who owns it, by name?", "Juristen påpekar att det här alternativet håller enheten uppkopplad helt utan undertecknad riskacceptans. Om något går fel har ingen formellt ägt beslutet. Vem äger det, med namn?"])
+            ]
+          }
         }),
         facilitator: fac(
           ["Security proposes, the business disposes. Make the ownership visible.", "Säkerhet föreslår, verksamheten beslutar. Gör ägarskapet synligt."],
@@ -420,7 +505,24 @@
             legal: ["The scope may now trigger wider reporting.", "Omfattningen kan nu utlösa bredare rapportering."],
             reputational: ["Under-scoping is the classic mistake.", "Att avgränsa för snävt är det klassiska misstaget."]
           },
-          evaluation: [["Scopes the response to the identity layer", "Avgränsar hanteringen till identitetslagret"]]
+          evaluation: [["Scopes the response to the identity layer", "Avgränsar hanteringen till identitetslagret"]],
+          pushback: {
+            A: [
+              pb(["Everything stops at night", "Allt stannar i natt"], ["Resetting privileged credentials breaks the service accounts behind backups and scheduled jobs. IT operations warns that tonight's backups and batch runs will fail. Do you reset now and accept the gaps, or stagger it and leave the attacker more time?", "Att byta privilegierade inloggningsuppgifter slår ut tjänstekontona bakom säkerhetskopiering och schemalagda jobb. Driften varnar för att nattens säkerhetskopior och körningar kommer att misslyckas. Byter ni nu och accepterar luckorna, eller sprider ni ut det och ger angriparen mer tid?"]),
+              pb(["“After the delivery”", "”Efter leveransen”"], ["The CEO asks you to hold the identity recovery until after this week's delivery: another disruption now could sink it. The responders say waiting is exactly what an attacker hopes for. Whose deadline wins?", "Vd ber er vänta med återställningen av identiteterna till efter veckans leverans: ytterligare en störning nu kan sänka den. Incidenthanterarna säger att det är precis väntan som en angripare hoppas på. Vems tidsgräns vinner?"]),
+              pb(["When is it over?", "När är det klart?"], ["The responders estimate weeks to hunt across the whole network, and they cannot promise to find everything. Staff and management want to know when this ends. What will you accept as “clean enough”?", "Incidenthanterarna uppskattar att det tar veckor att leta i hela nätverket, och de kan inte lova att hitta allt. Personal och ledning vill veta när det här tar slut. Vad accepterar ni som ”tillräckligt rent”?"])
+            ],
+            B: [
+              pb(["They have the full list", "De har hela listan"], ["The account listed every user and group in the directory. The attacker now knows exactly which accounts hold the most power. Resetting one account changes none of that. Is a narrow reset enough against someone holding your map?", "Kontot listade varje användare och grupp i katalogtjänsten. Angriparen vet nu exakt vilka konton som har mest makt. Att byta ett konto ändrar inget av det. Räcker ett snävt byte mot någon som har er karta?"]),
+              pb(["A busy server", "En välbesökt server"], ["The internal server turns out to be one that several administrators sign in to every week. Their sessions passed through it during those three weeks. Do you still believe only two things need resetting?", "Den interna servern visar sig vara en som flera administratörer loggar in på varje vecka. Deras sessioner passerade den under de tre veckorna. Tror ni fortfarande att bara två saker behöver återställas?"]),
+              pb(["The responders won't sign", "Incidenthanterarna skriver inte under"], ["Your response partner says they cannot sign off on a scope limited to one account and one server. Their report will say so. Do you widen the scope, or accept a report that records your choice as too narrow?", "Er incidentpartner säger att de inte kan godkänna en avgränsning till ett konto och en server. Det kommer att stå i deras rapport. Vidgar ni omfattningen, eller accepterar ni en rapport som beskriver ert val som för snävt?"])
+            ],
+            C: [
+              pb(["Three weeks quiet", "Tre veckor av tystnad"], ["The account was used three weeks ago, and nobody noticed anything since. Monitoring for “more activity” assumes the next step will be loud. What exactly are you waiting to see?", "Kontot användes för tre veckor sedan, och ingen har märkt något sedan dess. Att bevaka efter ”mer aktivitet” förutsätter att nästa steg blir högljutt. Vad är det exakt ni väntar på att få se?"]),
+              pb(["The password still works", "Lösenordet fungerar fortfarande"], ["Under this option, the appliance's directory account keeps the same password it had when someone used it from inside your network. Anyone holding it can still sign in. Why leave a key you know is out there in the lock?", "Med det här alternativet behåller enhetens konto för katalogtjänsten samma lösenord som när någon använde det inifrån ert nätverk. Den som har det kan fortfarande logga in. Varför låta en nyckel som ni vet är i omlopp sitta kvar i låset?"]),
+              pb(["Not a reportable measure", "Ingen åtgärd att rapportera"], ["Legal says the directory finding may widen your reporting duties, and the report must describe what you did. “We are monitoring” is all it would say. Is that what you want an authority to read?", "Juristen säger att fyndet i katalogtjänsten kan vidga er rapporteringsskyldighet, och rapporten måste beskriva vad ni gjorde. ”Vi bevakar” är allt den skulle säga. Är det vad ni vill att en myndighet ska läsa?"])
+            ]
+          }
         }),
         facilitator: fac(
           ["Edge devices are often a door to identity. Make the link explicit.", "Perimeterenheter är ofta en dörr till identiteterna. Gör kopplingen uttalad."],
@@ -472,7 +574,24 @@
             legal: ["Authorities expect devices to be rebuilt.", "Myndigheterna förväntar sig att enheterna byggs om."],
             reputational: ["A second breach through the same box would be damning.", "Ett andra intrång genom samma enhet vore förödande."]
           },
-          evaluation: [["Rebuilds rather than only patching", "Bygger om i stället för att bara rätta"]]
+          evaluation: [["Rebuilds rather than only patching", "Bygger om i stället för att bara rätta"]],
+          pushback: {
+            A: [
+              pb(["Which configuration?", "Vilken konfiguration?"], ["The only configuration backup was taken from the compromised device. Restoring it is fast but may bring old settings back; rebuilding by hand takes days. Which do you choose?", "Den enda säkerhetskopian av konfigurationen togs från den komprometterade enheten. Att återställa den går snabbt men kan ta tillbaka gamla inställningar; att bygga upp den för hand tar dagar. Vad väljer ni?"]),
+              pb(["Staff have had enough", "Personalen har fått nog"], ["Remote staff have managed without the appliance for days. The service owner says another day is the point where customers notice and people stop trusting IT. Can you hold the rebuild against that pressure?", "Distansarbetande personal har klarat sig utan enheten i flera dagar. Tjänsteägaren säger att ytterligare en dag är gränsen där kunderna märker det och folk slutar lita på IT. Kan ni hålla fast vid ombyggnaden mot det trycket?"]),
+              pb(["Every partner must reconnect", "Varje partner måste ansluta på nytt"], ["Rotating every stored secret includes the device's certificates. Every partner and remote user will need updated settings before they can connect again. Who handles hundreds of reconfiguration requests on the first morning?", "Att byta varje lagrad hemlighet omfattar enhetens certifikat. Varje partner och distansanvändare behöver nya inställningar innan de kan ansluta igen. Vem hanterar hundratals ärenden om ny konfiguration den första morgonen?"])
+            ],
+            B: [
+              pb(["“Later” never comes", "”Senare” kommer aldrig"], ["Once remote access is back, there will be no good day to take it down again for a rebuild. Every week someone will have a reason to wait. When exactly is “later”, and who will hold you to it?", "När fjärråtkomsten väl är tillbaka kommer det inte att finnas någon bra dag att ta ner den igen för en ombyggnad. Varje vecka kommer någon att ha ett skäl att vänta. När exakt är ”senare”, och vem håller er till det?"]),
+              pb(["Unable to verify", "Kan inte verifieras"], ["After patching, the integrity checker returns “unable to verify” on two system files. It may be harmless, or it may not. Do you still reconnect a device you cannot vouch for?", "Efter rättningen svarar integritetskontrollen ”kan inte verifieras” för två systemfiler. Det kan vara ofarligt, eller inte. Ansluter ni ändå en enhet som ni inte kan gå i god för?"]),
+              pb(["Against the vendor's word", "Mot leverantörens ord"], ["The vendor and the authorities both say compromised devices should be rebuilt before use. Legal asks how you would explain reconnecting first if the device is used against you again. What would you say?", "Både leverantören och myndigheterna säger att komprometterade enheter ska byggas om innan de används. Juristen frågar hur ni skulle förklara att ni anslöt först om enheten används mot er igen. Vad skulle ni säga?"])
+            ],
+            C: [
+              pb(["The one you found", "Det ni hittade"], ["The web shell you removed was the one the integrity check found. The vendor writes about implants, plural, and your logs only reach back seven days. What makes you sure there was only one?", "Webbskalet ni tog bort var det som integritetskontrollen hittade. Leverantören skriver om implantat i plural, och era loggar sträcker sig bara sju dagar bakåt. Vad gör er säkra på att det bara fanns ett?"]),
+              pb(["The secrets stay the same", "Hemligheterna är desamma"], ["Patching changes nothing stored on the device: its certificates and saved credentials are the same ones it held while compromised. Anyone who copied them can still use them. Do you reconnect with secrets you cannot trust?", "Rättningen ändrar inget som är lagrat på enheten: dess certifikat och sparade inloggningsuppgifter är samma som när den var komprometterad. Den som kopierade dem kan fortfarande använda dem. Ansluter ni med hemligheter ni inte kan lita på?"]),
+              pb(["“Not on my name”", "”Inte i mitt namn”"], ["The network lead refuses to state in writing that the device is clean, because the vendor says patching is not enough. Without that statement, nobody has vouched for it. Do you reconnect anyway?", "Nätverksansvarig vägrar intyga skriftligt att enheten är ren, eftersom leverantören säger att en rättning inte räcker. Utan det intyget har ingen gått i god för den. Ansluter ni ändå?"])
+            ]
+          }
         }),
         facilitator: fac(
           ["Patched does not mean clean. That's the lesson.", "Rättad betyder inte ren. Det är lärdomen."],
@@ -525,7 +644,24 @@
             legal: ["Supply-chain rules expect informed vendor choices.", "Regler för leverantörskedjan förväntar sig välgrundade leverantörsval."],
             reputational: ["Showing a structural fix reassures customers.", "Att visa en strukturell åtgärd lugnar kunderna."]
           },
-          evaluation: [["Designs for failure rather than only patching faster", "Utformar för fel i stället för att bara rätta snabbare"]]
+          evaluation: [["Designs for failure rather than only patching faster", "Utformar för fel i stället för att bara rätta snabbare"]],
+          pushback: {
+            A: [
+              pb(["Things stop working", "Saker slutar fungera"], ["Limiting what the appliance can reach breaks several internal apps that remote staff opened directly through it. Owners of those apps want an exception each. How many exceptions before the limit means nothing?", "När ni begränsar vad enheten kan nå slutar flera interna appar fungera som distansarbetande personal öppnade direkt genom den. Ägarna till apparna vill ha ett undantag var. Hur många undantag innan begränsningen inte betyder något?"]),
+              pb(["A year on the same box", "Ett år med samma enhet"], ["A replacement plan means at least a year on the current product. At its recent pace, another critical flaw is likely before you switch. Is “plan a replacement” urgent enough?", "En plan för byte innebär minst ett år till med den nuvarande produkten. I den takt det har gått kommer ytterligare en kritisk brist sannolikt innan ni har bytt. Är ”planera ett byte” tillräckligt brådskande?"]),
+              pb(["The renewal is due", "Förnyelsen närmar sig"], ["The supplier manager reports the vendor contract renews next quarter, and the vendor offers better terms for a longer commitment. Planning a replacement while renewing for years sends a mixed message. Which do you sign?", "Leverantörsansvarig meddelar att avtalet med tillverkaren förnyas nästa kvartal, och tillverkaren erbjuder bättre villkor för ett längre åtagande. Att planera ett byte och samtidigt förnya för flera år skickar dubbla signaler. Vad skriver ni under?"])
+            ],
+            B: [
+              pb(["Unknown track record", "Okänd historik"], ["The leading alternative has had fewer published flaws, but it is also used by far fewer organisations, so fewer people have looked. You may be swapping a known risk for an unknown one. How do you know the replacement is better?", "Det främsta alternativet har haft färre publicerade brister, men används också av betydligt färre organisationer, så färre har granskat det. Ni kanske byter en känd risk mot en okänd. Hur vet ni att ersättaren är bättre?"]),
+              pb(["A rushed migration", "En forcerad migrering"], ["Moving every remote user and partner to a new product “as soon as possible” is a project the network team normally plans over a year. Rushed, it brings outages and misconfigurations of its own. Is speed worth those?", "Att flytta varje distansanvändare och partner till en ny produkt ”så snart som möjligt” är ett projekt som nätverksteamet normalt planerar under ett år. Forcerat medför det egna avbrott och felkonfigurationer. Är snabbheten värd det?"]),
+              pb(["Nobody knows the new one", "Ingen kan den nya"], ["The network lead points out that nobody on the team has run the new product. The first months will be operated by people learning as they go, on your most exposed device. Who carries that risk?", "Nätverksansvarig påpekar att ingen i teamet har drivit den nya produkten. De första månaderna sköts av personer som lär sig under tiden, på er mest exponerade enhet. Vem bär den risken?"])
+            ],
+            C: [
+              pb(["Faster wouldn't have helped", "Snabbare hade inte hjälpt"], ["Your device was exploited weeks before the advisory existed. No patching speed would have stopped that. What does “patch faster” actually change about this incident?", "Er enhet utnyttjades flera veckor innan säkerhetsmeddelandet fanns. Ingen rättningstakt hade stoppat det. Vad ändrar ”rätta snabbare” egentligen i den här incidenten?"]),
+              pb(["Third time in a year", "Tredje gången på ett år"], ["Procurement reminds the room that “patch faster” was also the conclusion after the second flaw. The board will see the same answer for the third time. How do you present it as a change?", "Inköp påminner rummet om att ”rätta snabbare” var slutsatsen även efter den andra bristen. Styrelsen kommer att få samma svar för tredje gången. Hur presenterar ni det som en förändring?"]),
+              pb(["Still blind next time", "Fortfarande blinda nästa gång"], ["This option keeps seven days of logs on the device and the same broad directory rights. The next time it fails, you will be just as blind. Is that acceptable?", "Det här alternativet behåller sju dagars loggar på enheten och samma breda rättigheter i katalogtjänsten. Nästa gång den fallerar är ni lika blinda. Är det acceptabelt?"])
+            ]
+          }
         }),
         facilitator: fac(
           ["End on architecture: assume the edge will fail.", "Avsluta med arkitektur: utgå från att perimetern kommer att fallera."],

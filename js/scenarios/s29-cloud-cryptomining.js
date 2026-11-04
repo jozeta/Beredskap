@@ -12,7 +12,7 @@
   "use strict";
 
   const BK = window.BK;
-  const { L, q, ch, inj, dec, fac, act, avr, kpi, line } = BK.scenarios.h;
+  const { L, q, ch, inj, dec, fac, act, avr, kpi, line, pb } = BK.scenarios.h;
 
   BK.scenarios.register({
     id: "s29-cloud-cryptomining",
@@ -119,7 +119,24 @@
             legal: ["The provider will want evidence before discussing credit.", "Leverantören vill ha belägg innan den diskuterar kreditering."],
             reputational: ["Nobody outside knows yet.", "Ingen utanför vet ännu."]
           },
-          evaluation: [["Cuts off the access first and keeps one sample of evidence", "Kapar åtkomsten först och behåller ett exempel som bevis"]]
+          evaluation: [["Cuts off the access first and keeps one sample of evidence", "Kapar åtkomsten först och behåller ett exempel som bevis"]],
+          pushback: {
+            A: [
+              pb(["The snapshot is slow", "Ögonblicksbilden tar tid"], ["The GPU machine has large disks, and the snapshot will take most of an hour. Until you stop the rest, the meter keeps running at a month's budget per hour. Do you skip the evidence and stop everything now?", "GPU-maskinen har stora diskar, och ögonblicksbilden kommer att ta nästan en timme. Tills ni stoppar resten fortsätter mätaren att ticka med en månadsbudget i timmen. Hoppar ni över bevisen och stoppar allt nu?"]),
+              pb(["Disabling tips them off", "Spärren varnar dem"], ["{{person.socLead.name}} points out that the moment the identity is disabled, whoever is behind it knows you have noticed. An hour of watching might show what else it touches. Do you trade a running bill for that visibility, or cut it off blind?", "{{person.socLead.name}} påpekar att i samma stund som identiteten spärras vet den som ligger bakom att ni har märkt det. En timmes bevakning kan visa vad mer den rör. Byter ni en tickande räkning mot den insynen, eller kapar ni i blindo?"]),
+              pb(["Whose identity is it?", "Vems identitet är det?"], ["The identity is not a person's login; it looks like something a system uses. Nobody on the call can say what else depends on it, and it is Saturday morning. Do you disable something you cannot name the owner of?", "Identiteten är ingen persons inloggning; den ser ut att användas av ett system. Ingen i samtalet kan säga vad mer som är beroende av den, och det är lördagsmorgon. Spärrar ni något vars ägare ni inte kan namnge?"])
+            ],
+            B: [
+              pb(["They come back", "De kommer tillbaka"], ["Twenty minutes after the deletion, new GPU machines start in the same region. Whatever started them was never touched. Do you delete again and keep chasing, or stop and find out who is starting them?", "Tjugo minuter efter raderingen startar nya GPU-maskiner i samma region. Det som startade dem har ingen rört. Raderar ni igen och fortsätter jaga, eller stannar ni och tar reda på vem som startar dem?"]),
+              pb(["Nothing to show", "Inget att visa"], ["{{person.cloudLead.name}} notes that the machines took their disks with them. When the provider asks how they were used, you will have a bill and no evidence. Are you ready to argue about the money with nothing to show?", "{{person.cloudLead.name}} konstaterar att maskinerna tog sina diskar med sig. När leverantören frågar hur de användes har ni en räkning och inga bevis. Är ni beredda att diskutera pengarna utan något att visa upp?"]),
+              pb(["No reply yet", "Inget svar ännu"], ["{{person.devLead.name}} is still waiting for the data science team to call back. If any of those machines was theirs, it is gone now. Who answers for it if you were wrong, and do you tell them before they find out?", "{{person.devLead.name}} väntar fortfarande på att analysteamet ska ringa tillbaka. Om någon av maskinerna var deras är den borta nu. Vem står för det om ni hade fel, och säger ni det till dem innan de upptäcker det själva?"])
+            ],
+            C: [
+              pb(["Nobody answers", "Ingen svarar"], ["It is Saturday: the contractors do not pick up, and the data science lead is travelling. Meanwhile the bill grows by roughly a month's budget every hour. How long do you wait for an answer before you act without one?", "Det är lördag: konsulterna svarar inte, och analysteamets chef är på resande fot. Under tiden växer räkningen med ungefär en månadsbudget i timmen. Hur länge väntar ni på ett svar innan ni agerar utan?"]),
+              pb(["The CFO wants it off", "Ekonomichefen vill stänga"], ["{{person.cfo.name}} says every minute of asking is money the company will never see again, and asks who authorised spending it. Do you defend the wait, or switch everything off without answers?", "{{person.cfo.name}} säger att varje minut av frågande är pengar som företaget aldrig får tillbaka, och frågar vem som godkände att de spenderas. Försvarar ni väntan, eller stänger ni av allt utan svar?"]),
+              pb(["Nobody claims them", "Ingen vill kännas vid dem"], ["Everyone you have reached says the machines are not theirs, and policy says nobody uses that region. You are waiting for a yes that may never come. Is “nobody has said no yet” still a reason to wait?", "Alla ni har nått säger att maskinerna inte är deras, och enligt riktlinjerna använder ingen den regionen. Ni väntar på ett ja som kanske aldrig kommer. Är ”ingen har sagt nej ännu” fortfarande ett skäl att vänta?"])
+            ]
+          }
         }),
         facilitator: fac(
           ["The meter is loud and urgent; the access behind it matters more.", "Mätaren är högljudd och brådskande; åtkomsten bakom den betyder mer."],
@@ -179,7 +196,24 @@
             legal: ["Contract terms decide who pays for the bill.", "Avtalsvillkoren avgör vem som betalar räkningen."],
             reputational: ["Nobody outside knows yet.", "Ingen utanför vet ännu."]
           },
-          evaluation: [["Asks what else the key could do before closing", "Frågar vad mer nyckeln kunde göra innan ärendet avslutas"]]
+          evaluation: [["Asks what else the key could do before closing", "Frågar vad mer nyckeln kunde göra innan ärendet avslutas"]],
+          pushback: {
+            A: [
+              pb(["Four months of logs", "Fyra månaders loggar"], ["{{person.socLead.name}} estimates days to review four months of activity, and the oldest weeks of logs may already be gone. Management wants an answer today. Do you narrow the review to the last few days to get one?", "{{person.socLead.name}} räknar med flera dagar för att gå igenom fyra månaders aktivitet, och de äldsta veckornas loggar kan redan vara borta. Ledningen vill ha ett svar i dag. Smalnar ni av genomgången till de senaste dagarna för att få ett?"]),
+              pb(["The report tool stops", "Rapportverktyget stannar"], ["Deleting the key stops the contractor's reporting tool, which feeds Monday's management report. The contractor asks for a replacement key today. Do you give them one before the review is finished?", "När nyckeln raderas stannar konsultens rapportverktyg, som matar måndagens ledningsrapport. Konsulten ber om en ny nyckel i dag. Ger ni dem en innan genomgången är klar?"]),
+              pb(["Not your repositories", "Inte era kodförråd"], ["The contractor says their other repositories are their own property and declines to let you scan them. Your contract is silent on it. Do you push them on a Saturday, or scan only what you own and accept the gap?", "Konsulten säger att deras andra kodförråd är deras egendom och vill inte låta er söka igenom dem. Avtalet säger ingenting om saken. Pressar ni dem en lördag, eller söker ni bara i det ni äger och accepterar luckan?"])
+            ],
+            B: [
+              pb(["Same key, new name", "Samma nyckel, nytt namn"], ["The new key has exactly the same broad permissions as the old one, including the right to list cluster secrets. Nobody has asked why a reporting tool needs them. Are you handing out the same risk under a new name?", "Den nya nyckeln har exakt samma breda behörigheter som den gamla, inklusive rätten att lista klustrets hemligheter. Ingen har frågat varför ett rapportverktyg behöver dem. Delar ni ut samma risk under ett nytt namn?"]),
+              pb(["Where will it live?", "Var ska den ligga?"], ["The contractor asks where to put the new key, because their tool reads it from a configuration file in the repository. That is how the first one leaked. Do you trust the same process with the second?", "Konsulten frågar var den nya nyckeln ska ligga, eftersom deras verktyg läser den från en konfigurationsfil i kodförrådet. Det var så den första läckte. Litar ni på samma process med den andra?"]),
+              pb(["Legal says wait", "Juristen säger vänta"], ["{{person.legal.name}} asks you to hold: handing the contractor fresh credentials before anyone has settled what went wrong could weaken your position on who pays the bill. Do you keep the contractor working, or cut them off until it is settled?", "{{person.legal.name}} ber er avvakta: att ge konsulten nya inloggningsuppgifter innan någon har rett ut vad som gick fel kan försvaga er position om vem som betalar räkningen. Låter ni konsulten fortsätta arbeta, eller stänger ni ute dem tills det är utrett?"])
+            ],
+            C: [
+              pb(["One line in the log", "En rad i loggen"], ["{{person.cloudLead.name}} points at one line in the audit log: the key called ListSecrets in the test cluster. Mining does not need secrets. Can you close an incident with a line in the log that nobody has explained?", "{{person.cloudLead.name}} pekar på en rad i granskningsloggen: nyckeln anropade ListSecrets i testklustret. Kryptobrytning behöver inga hemligheter. Kan ni avsluta en incident med en rad i loggen som ingen har förklarat?"]),
+              pb(["The CISO won't sign", "CISO skriver inte under"], ["{{person.ciso.name}} refuses to sign the closure: a broad key that was public for hours and never rotated could have done far more than start machines. Who overrules the CISO, and on what evidence?", "{{person.ciso.name}} vägrar skriva under avslutet: en bred nyckel som var offentlig i timmar och aldrig byttes kan ha gjort mycket mer än att starta maskiner. Vem kör över CISO, och med vilka belägg?"]),
+              pb(["Still in the history", "Finns kvar i historiken"], ["The key is deleted, but the commit is still public in the repository's history and has already been copied by others. Whatever else sits in that repository is exposed too. Who checks that, if the incident is closed?", "Nyckeln är raderad, men incheckningen finns kvar öppet i kodförrådets historik och har redan kopierats av andra. Allt annat som ligger i det kodförrådet är också exponerat. Vem kontrollerar det, om incidenten är avslutad?"])
+            ]
+          }
         }),
         facilitator: fac(
           ["Cause found; now the trap is to stop at the obvious use of the key.", "Orsaken hittad; nu är fällan att stanna vid den uppenbara användningen av nyckeln."],
@@ -232,7 +266,24 @@
             legal: ["The provider's terms bind you either way.", "Leverantörens villkor binder er oavsett."],
             reputational: ["A suspension would be visible to every customer.", "En avstängning skulle synas för varje kund."]
           },
-          evaluation: [["Gives the provider honest evidence and keeps the investigation open", "Ger leverantören ärliga belägg och håller utredningen öppen"]]
+          evaluation: [["Gives the provider honest evidence and keeps the investigation open", "Ger leverantören ärliga belägg och håller utredningen öppen"]],
+          pushback: {
+            A: [
+              pb(["Open questions invite scrutiny", "Öppna frågor lockar granskning"], ["{{person.legal.name}} warns that every open question you list is something the provider can hold you to, and a reason to look wider at your account. Do you still write down what you are still checking, or keep to what you know?", "{{person.legal.name}} varnar för att varje öppen fråga ni listar är något leverantören kan hålla er till, och ett skäl att granska kontot bredare. Skriver ni ändå ner det ni fortfarande kontrollerar, eller håller ni er till det ni vet?"]),
+              pb(["The one who knows the logs", "Den som kan loggarna"], ["Only {{person.cloudLead.name}} understands the audit logs well enough to write the report, and it will take most of the afternoon. That is the afternoon the investigation needs. Who writes it instead, and how good will it be?", "Bara {{person.cloudLead.name}} förstår granskningsloggarna tillräckligt väl för att skriva rapporten, och det tar större delen av eftermiddagen. Det är samma eftermiddag som utredningen behöver. Vem skriver den i stället, och hur bra blir den?"]),
+              pb(["A named contact, all weekend", "En namngiven kontakt, hela helgen"], ["The named contact must answer the provider through the night and the weekend. Nobody volunteers. Do you name a manager who cannot answer technical questions, or an engineer the investigation cannot spare?", "Den namngivna kontakten måste svara leverantören under natten och helgen. Ingen anmäler sig frivilligt. Anger ni en chef som inte kan svara på tekniska frågor, eller en tekniker som utredningen inte klarar sig utan?"])
+            ],
+            B: [
+              pb(["They asked for root cause", "De bad om grundorsak"], ["The provider's notice asks for containment and root cause. A one-line reply covers neither, and the automated system answers with a reminder of the deadline. Do you send it anyway, and what happens when the clock runs out?", "Leverantörens meddelande ber om bekräftelse på stopp och grundorsak. Ett svar på en rad täcker ingetdera, och det automatiska systemet svarar med en påminnelse om tidsfristen. Skickar ni det ändå, och vad händer när tiden tar slut?"]),
+              pb(["Gone is not contained", "Borta är inte stoppat"], ["{{person.socLead.name}} points out that “the machines are gone” is not the same as “the attacker is gone”: nobody has finished checking what else the key did. If more turns up, your confirmation is on record. Do you put your name to it?", "{{person.socLead.name}} påpekar att ”maskinerna är borta” inte är samma sak som ”angriparen är borta”: ingen har gått igenom klart vad mer nyckeln gjorde. Om mer dyker upp finns er bekräftelse på papper. Sätter ni ert namn under den?"]),
+              pb(["Betting production", "Satsar produktionen"], ["{{person.cfo.name}} asks what happens to revenue if the provider finds a short email insufficient and suspends the whole account, production included. Is saving a few hours worth that bet?", "{{person.cfo.name}} frågar vad som händer med intäkterna om leverantören tycker att ett kort mejl är otillräckligt och stänger av hela kontot, produktionen inräknad. Är några sparade timmar värda den insatsen?"])
+            ],
+            C: [
+              pb(["Back on Monday", "Tillbaka på måndag"], ["Your account manager's automatic reply says they are back on Monday. The 24 hours run out before then. Do you keep waiting for a person, or write to trust and safety now with what you have?", "Er kundansvariges autosvar säger att hen är tillbaka på måndag. Dygnet går ut före dess. Fortsätter ni vänta på en människa, eller skriver ni till förtroende och säkerhet nu med det ni har?"]),
+              pb(["Sales can't stop it", "Säljarna kan inte stoppa det"], ["The account manager calls back but says trust and safety is independent: sales cannot stop an abuse process, only ask them to read your reply. You have spent an hour and still owe them evidence. What do you send?", "Kundansvarige ringer tillbaka men säger att förtroende och säkerhet är fristående: säljsidan kan inte stoppa ett missbruksärende, bara be dem läsa ert svar. Ni har lagt en timme och är fortfarande skyldiga dem belägg. Vad skickar ni?"]),
+              pb(["Looks like dodging", "Ser ut som undanflykt"], ["{{person.supplierManager.name}} warns that going around trust and safety to stop their deadline can look like avoiding scrutiny, and such things get noted. Do you want your first contact with them to be a request for an exception?", "{{person.supplierManager.name}} varnar för att gå runt förtroende och säkerhet för att stoppa deras tidsfrist kan se ut som att undvika granskning, och sådant noteras. Vill ni att er första kontakt med dem ska vara en begäran om undantag?"])
+            ]
+          }
         }),
         facilitator: fac(
           ["Cloud providers have their own authority. Shared accounts make one mistake everyone's problem.", "Molnleverantörer har sin egen befogenhet. Delade konton gör ett misstag till allas problem."],
@@ -302,7 +353,24 @@
             legal: ["Reading is enough for a breach; the clock is running.", "Läsning räcker för en incident; klockan går."],
             reputational: ["Customers will hear of it; better from you.", "Kunderna kommer att få höra om det; bättre från er."]
           },
-          evaluation: [["Treats the data access as the real incident and the mining as a symptom", "Behandlar dataåtkomsten som den verkliga incidenten och brytningen som ett symtom"]]
+          evaluation: [["Treats the data access as the real incident and the mining as a symptom", "Behandlar dataåtkomsten som den verkliga incidenten och brytningen som ett symtom"]],
+          pushback: {
+            A: [
+              pb(["Everything breaks at once", "Allt går sönder samtidigt"], ["Rotating all 14 secrets at once will take down the test environment and integrations other teams rely on. {{person.devLead.name}} asks to stagger it over the week instead. Do you accept a slower rotation while the attacker still holds the old ones?", "Att byta alla 14 hemligheter på en gång slår ut testmiljön och integrationer som andra team är beroende av. {{person.devLead.name}} ber att få sprida ut det över veckan i stället. Accepterar ni ett långsammare byte medan angriparen fortfarande har de gamla?"]),
+              pb(["Correcting the provider", "Rätta leverantören"], ["Updating the provider means admitting that what you told them earlier was incomplete, while their suspension deadline is still running. Do you tell them now, knowing it may restart their review of the whole account?", "Att uppdatera leverantören innebär att erkänna att det ni sa tidigare var ofullständigt, medan deras tidsfrist för avstängning fortfarande löper. Berättar ni nu, trots att det kan starta om deras granskning av hela kontot?"]),
+              pb(["A form with gaps", "Ett formulär med luckor"], ["The regulator's form asks how many people are affected and what data. You know the bucket was read, but not which records or whether anything left the account. Do you file with gaps, and how do you word them?", "Tillsynsmyndighetens formulär frågar hur många som berörs och vilka uppgifter. Ni vet att bucketen lästes, men inte vilka poster eller om något lämnade kontot. Anmäler ni med luckor, och hur formulerar ni dem?"])
+            ],
+            B: [
+              pb(["Test according to whom?", "Test enligt vem?"], ["{{person.devLead.name}} cannot say for certain which of the other 13 secrets are used only in test; several have no owner listed. The attacker holds all of them. Do you leave them active on a guess?", "{{person.devLead.name}} kan inte säga säkert vilka av de andra 13 hemligheterna som bara används i test; flera saknar angiven ägare. Angriparen har dem alla. Låter ni dem vara aktiva på en gissning?"]),
+              pb(["“All rotated”?", "”Allt bytt”?"], ["The provider asks you to confirm that all compromised credentials have been rotated before it lifts the abuse flag. Thirteen of them have not. What do you write back?", "Leverantören ber er bekräfta att alla komprometterade inloggningsuppgifter har bytts innan den tar bort missbruksflaggan. Tretton av dem har inte det. Vad svarar ni?"]),
+              pb(["Even one is costly", "Redan en kostar"], ["The database credential is shared by four internal services, and rotating it alone takes them all down until each is reconfigured. If one secret costs that much, was “too costly” ever the real reason to skip the other 13?", "Databasinloggningen delas av fyra interna tjänster, och bara att byta den slår ut alla tills var och en har konfigurerats om. Om en hemlighet kostar så mycket, var ”för dyrt” någonsin det verkliga skälet att hoppa över de andra 13?"])
+            ],
+            C: [
+              pb(["The clock already started", "Klockan har redan börjat"], ["{{person.dpo.name}} says reading the data is already a breach and the 72 hours started this morning; proof of copying is not the test. Who signs off on missing the deadline if the answer takes days?", "{{person.dpo.name}} säger att läsningen redan är en personuppgiftsincident och att 72 timmar började gå i morse; bevis på kopiering är inte kriteriet. Vem tar ansvar för en missad tidsfrist om svaret tar flera dagar?"]),
+              pb(["The logs cannot tell", "Loggarna kan inte svara"], ["{{person.socLead.name}} explains that the storage logs show the reads, but not where the data went afterwards. You may never know whether it was copied out. If certainty never comes, when do you notify?", "{{person.socLead.name}} förklarar att lagringsloggarna visar läsningarna, men inte vart datan tog vägen sedan. Ni kanske aldrig får veta om den kopierades ut. Om visshet aldrig kommer, när anmäler ni då?"]),
+              pb(["A customer asks", "En kund frågar"], ["A customer emails to ask why they received a phishing message quoting their order details. It may have nothing to do with this. Can you keep waiting while customers start asking, and what do you tell this one?", "En kund mejlar och frågar varför de fått ett nätfiskemejl som citerar deras orderuppgifter. Det kanske inte har med det här att göra. Kan ni fortsätta vänta medan kunder börjar fråga, och vad svarar ni den här?"])
+            ]
+          }
         }),
         facilitator: fac(
           ["The classic twist: loud abuse hides quiet theft. See who wanted to close on day one.", "Den klassiska vändningen: högljutt missbruk döljer tyst stöld. Se vem som ville avsluta första dagen."],
@@ -397,7 +465,24 @@
             legal: ["Contractors will still need access somehow.", "Konsulter kommer fortfarande att behöva åtkomst på något sätt."],
             reputational: ["A second incident from the same cause would be hard to explain.", "En andra incident med samma orsak vore svår att förklara."]
           },
-          evaluation: [["Makes secrets in code detectable and keys short-lived by default", "Gör hemligheter i kod upptäckbara och nycklar kortlivade som standard"]]
+          evaluation: [["Makes secrets in code detectable and keys short-lived by default", "Gör hemligheter i kod upptäckbara och nycklar kortlivade som standard"]],
+          pushback: {
+            A: [
+              pb(["No room on the roadmap", "Inget utrymme i planen"], ["{{person.devLead.name}} estimates that short-lived credentials and separate accounts will take a large share of every team's time for months. The approved roadmap has no room for it. What do you drop to pay for it?", "{{person.devLead.name}} uppskattar att kortlivade inloggningar och separata konton tar en stor del av varje teams tid i månader. Den godkända planen har inget utrymme för det. Vad stryker ni för att betala för det?"]),
+              pb(["Worth it for a test cluster?", "Värt det för ett testkluster?"], ["Moving production to its own account means migrating services that have run together for years, with downtime. {{person.cfo.name}} asks whether that is proportionate after an incident in a test cluster. How do you justify it?", "Att flytta produktionen till ett eget konto innebär att migrera tjänster som körts tillsammans i åratal, med driftstopp. {{person.cfo.name}} frågar om det är rimligt efter en incident i ett testkluster. Hur motiverar ni det?"]),
+              pb(["The bypass request", "Begäran om undantag"], ["A pilot of commit scanning in two teams flagged dozens of test strings as secrets, and developers have already asked for a way to skip it. Does a control people learn to bypass make you safer, or only feel safer?", "Ett försök med kontroll vid incheckning i två team flaggade dussintals teststrängar som hemligheter, och utvecklarna har redan bett om ett sätt att hoppa över den. Gör en kontroll som folk lär sig att kringgå er säkrare, eller känns det bara så?"])
+            ],
+            B: [
+              pb(["Fourteen months public", "Fjorton månader offentlig"], ["The key in the public repository is 14 months old. Under a yearly rule it would have been rotated once and still sat public for months. What exactly does the rule fix?", "Nyckeln i det öppna kodförrådet är 14 månader gammal. Med en årlig regel hade den bytts en gång och ändå legat offentligt i månader. Vad är det egentligen regeln löser?"]),
+              pb(["A rule without an owner", "En regel utan ägare"], ["62 percent of keys are already older than 90 days, and nobody owns rotating them. A rule without an owner or a check is a document. Who enforces it, and how will you know it is followed?", "62 procent av nycklarna är redan äldre än 90 dagar, och ingen äger bytet av dem. En regel utan ägare eller kontroll är ett dokument. Vem ser till att den följs, och hur får ni veta att den gör det?"]),
+              pb(["Rotation day", "Bytesdagen"], ["{{person.cloudLead.name}} warns that rotating every key by hand once a year means one day a year when integrations break across the company. Teams are already asking for exceptions. Do you grant them?", "{{person.cloudLead.name}} varnar för att byta varje nyckel för hand en gång om året innebär en dag om året då integrationer går sönder i hela företaget. Teamen ber redan om undantag. Beviljar ni dem?"])
+            ],
+            C: [
+              pb(["Your own team did it too", "Ert eget team gjorde det också"], ["The public key from last year was committed by your own team, not a contractor. A ban on contractors would not have stopped it. Who is this rule really protecting you from?", "Den öppna nyckeln från förra året checkades in av ert eget team, inte av en konsult. Ett förbud mot konsulter hade inte stoppat den. Vem skyddar regeln er egentligen mot?"]),
+              pb(["The work stops", "Arbetet stannar"], ["{{person.supplierManager.name}} says much of this year's cloud work is delivered by contractors; the reporting tool and two migrations stop the day the ban takes effect. Who does that work instead, and by when?", "{{person.supplierManager.name}} säger att mycket av årets molnarbete levereras av konsulter; rapportverktyget och två migreringar stannar samma dag som förbudet börjar gälla. Vem gör det arbetet i stället, och när?"]),
+              pb(["Borrowed logins", "Lånade inloggningar"], ["Contractors who still have to deliver will be lent colleagues' credentials “just for today”. That access is invisible and owned by nobody. Would you detect it, and is it better than what you had?", "Konsulter som fortfarande måste leverera kommer att få låna kollegors inloggningar ”bara för i dag”. Den åtkomsten är osynlig och ägs av ingen. Skulle ni upptäcka det, och är det bättre än det ni hade?"])
+            ]
+          }
         }),
         facilitator: fac(
           ["End on prevention: scanning, short-lived credentials, account separation.", "Avsluta med förebyggande: genomsökning, kortlivade inloggningar, separerade konton."],

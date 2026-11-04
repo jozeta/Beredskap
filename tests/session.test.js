@@ -484,59 +484,54 @@
       assert.ok(back.session.deadlines[page]);
     });
 
-    test("challenge cards need a recorded decision, are seeded, never repeat back to back, and report the response", () => {
+    test("challenges are the three written for the chosen option; the facilitator picks one and records the response", () => {
       const ex = exercise({ stageCount: 8 });
       let s = S().create(ex, T0);
-      assert.equal(S().apply(s, { type: "challengeDraw", key: "d1" }, T0), s, "nothing to challenge yet");
+      assert.equal(S().apply(s, { type: "challengeShow", key: "d1", index: 0 }, T0), s, "nothing to challenge before a choice");
       const chosen = ex.stages[0].decision.options[0];
+      assert.equal(chosen.pushback.length, 3, "three challenges per option");
       s = S().apply(s, { type: "decision", decisionId: "d1", entry: { option: chosen.key, text: "" } }, T0);
-      const a = S().apply(s, { type: "challengeDraw", key: "d1" }, T0);
-      assert.equal(S().apply(s, { type: "challengeDraw", key: "d1" }, T0).challenges.d1.id, a.challenges.d1.id, "seeded");
-      const b = S().apply(a, { type: "challengeDraw", key: "d1" }, T0);
-      assert.notEqual(b.challenges.d1.id, a.challenges.d1.id, "a new card on each draw");
-      let c = S().apply(b, { type: "challengeShow", key: "d1" }, T0);
+      const choices = S().challengeChoices(s, "d1", "en");
+      assert.deepEqual(choices.map((c) => c.title), chosen.pushback.map((c) => c.title.en), "the chosen option's own challenges");
+      const other = ex.stages[0].decision.options[1];
+      assert.ok(other.pushback.every((c) => !choices.some((x) => x.title === c.title.en)), "not another option's");
+      assert.equal(S().apply(s, { type: "challengeShow", key: "d1", index: 3 }, T0), s, "only three");
+      let c = S().apply(s, { type: "challengeShow", key: "d1", index: 1 }, T0);
       const p = S().project(c, T0);
-      assert.ok(p.challenge && p.challenge.title && !/[{}]/.test(p.challenge.title + p.challenge.text), "placeholders filled");
+      assert.equal(p.challenge.title, chosen.pushback[1].title.en);
       assert.ok(BK.ui.stageRenderer.renderCanvas(p, { preview: true }).textContent.includes(p.challenge.text));
       assert.equal(S().apply(c, { type: "challengeOutcome", key: "d1", outcome: "maybe" }, T0), c, "unknown response ignored");
       c = S().apply(c, { type: "challengeOutcome", key: "d1", outcome: "held" }, T0);
       c = S().apply(c, { type: "challengeHide" }, T0);
       assert.equal(S().project(c, T0).challenge, null);
-      // Moving on takes the card off the stage, and the "next" preview never shows it.
-      const shown = S().apply(c, { type: "challengeShow", key: "d1" }, T0);
-      const nx = S().nextPosition(shown);
-      assert.equal(S().projectSlide(shown, nx.slideId, nx.step, T0).challenge, null, "next preview shows no challenge");
-      assert.equal(S().apply(shown, { type: "next" }, T0).activeChallenge, null, "next clears it");
-      assert.equal(S().apply(shown, { type: "gotoStage", index: 2 }, T0).activeChallenge, null, "jumping clears it");
       const row = BK.io.export.report(c, "en").challenges[0];
-      assert.ok(row && row.outcome === "held" && row.card === S().challengeContent(c, "d1", "en").title);
+      assert.ok(row && row.outcome === "held" && row.card === chosen.pushback[1].title.en);
       assert.ok(BK.io.export.markdown(c, "en").includes("Challenged decisions"));
       const back = BK.io.import.validate(BK.io.export.toJSON(ex, c));
       assert.equal(back.session.challenges.d1.outcome, "held");
       const bad = JSON.parse(BK.io.export.toJSON(ex, c));
-      bad.session.challenges.d1.id = "<script>";
-      assert.throws(() => BK.io.import.validate(JSON.stringify(bad)), "unknown card accepted");
+      bad.session.challenges.d1.index = 7;
+      assert.throws(() => BK.io.import.validate(JSON.stringify(bad)), "out-of-range challenge accepted");
+      // Moving on takes the card off the stage, and the "next" preview never shows it.
+      const shown = S().apply(c, { type: "challengeShow", key: "d1", index: 0 }, T0);
+      const nx = S().nextPosition(shown);
+      assert.equal(S().projectSlide(shown, nx.slideId, nx.step, T0).challenge, null, "next preview shows no challenge");
+      assert.equal(S().apply(shown, { type: "next" }, T0).activeChallenge, null, "next clears it");
+      assert.equal(S().apply(shown, { type: "gotoStage", index: 2 }, T0).activeChallenge, null, "jumping clears it");
     });
 
-    test("every challenge card, in both languages, is built from public text only", () => {
-      const ex = exercise({ stageCount: 8, lang: "sv" });
-      const secret = facilitatorStrings(ex);
-      let s = S().create(ex, T0);
-      ex.stages.filter((st) => st.decision).forEach((st) => (s = S().apply(s, { type: "decision", decisionId: st.decision.id, entry: { option: st.decision.options[1].key, text: "" } }, T0)));
-      const seen = new Set();
-      ex.stages.filter((st) => st.decision).forEach((st) => {
-        for (let i = 0; i < 14; i++) {
-          s = S().apply(s, { type: "challengeDraw", key: st.decision.id }, T0);
-          seen.add(s.challenges[st.decision.id].id);
-          ["en", "sv"].forEach((lang) => {
-            const ch = S().challengeContent(s, st.decision.id, lang);
-            const text = ch.title + " " + ch.text;
-            assert.ok(!/[{}]/.test(text), "unfilled placeholder: " + text);
-            secret.forEach((x) => assert.ok(!text.includes(x), "facilitator text in a challenge card"));
-          });
-        }
+    test("every scenario has three bilingual challenges for every option of every decision point", () => {
+      const missing = [];
+      BK.scenarios.list().forEach((tpl) => {
+        const points = tpl.format === "branching" ? tpl.pages.filter((pg) => pg.choice).map((pg) => [pg.id, pg.choice.options]) : tpl.stages.filter((st) => st.decision).map((st) => [st.decision.id, st.decision.options]);
+        points.forEach(([id, options]) =>
+          options.forEach((o) => {
+            const ok = (o.pushback || []).length === 3 && o.pushback.every((x) => ["en", "sv"].every((l) => x.title && x.title[l] && x.text && x.text[l] && !/\{\{[^}]*$/.test(x.text[l])));
+            if (!ok) missing.push(tpl.id + " › " + id + " › " + o.key);
+          })
+        );
       });
-      assert.equal(seen.size, BK.data.challenges.cards.length, "every card can be drawn");
+      assert.deepEqual(missing.slice(0, 10), [], missing.length + " options without three challenges");
     });
   });
 

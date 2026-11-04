@@ -24,9 +24,10 @@ debrief, an after-action report and an improvement plan with owners and due date
   always first. Later stages put earlier decisions back in front of the room under new
   pressure ("do you stand by it, or reverse it?"), and earlier choices change what happens
   next. The debrief lists every decision the room kept or reversed.
-- **Pushback on every decision.** After the room chooses, the facilitator can play a
-  challenge card built from that choice: the decision owner has doubts, someone argues
-  for the option you rejected, assume it went wrong, tomorrow's headline. An optional
+- **Pushback on every decision.** Every option of every decision point has three
+  challenges written for it: a cost of that choice landing, someone who objects to it,
+  a fact that undermines it. After the room chooses, the facilitator picks one of the
+  three and puts it on the stage, to make the choice harder to keep. An optional
   decision deadline makes indecision a decision: when the countdown runs out, the
   decision owner (or, in a branching exercise, the story) chooses for the room.
 - **Build your own.** A slide editor with 53 templates (questions, decisions, email and
@@ -333,12 +334,12 @@ troubleshooting.
   legal, logistics, wildcard). Draw a card, read its private note, then show it
   on the stage or put it back. In automatic mode one card is readied per stage.
 - **Challenge cards.** At every decision point, once the room has chosen, the
-  presenter offers *Challenge the decision*: a card built from the chosen option
-  (and, for some cards, an option the room rejected or a role nobody asked). Show
-  it on the stage, draw another, and record whether the room stood firm or changed
-  its mind; if it changed, record the new decision (branching: *Undo* and choose
-  again). The debrief and reports list every challenge and the response. The text
-  uses only what the room has already seen.
+  presenter's *Challenge the decision* lists the three challenges written for that
+  option (5,220 across all scenarios). Pick one to show on the stage, then record
+  whether the room stood firm or changed its mind; if it changed, record the new
+  decision (branching: *Undo* and choose again). The card leaves the stage when you
+  move on. The debrief and reports list every challenge and the response.
+  Challenges never give away a later twist.
 - **Decision deadline** (setup, *Extra pressure*, off by default). In a discussion
   exercise, the stage's countdown is the deadline: if it runs out with no decision
   recorded, the decision owner picks an option alone (seeded, so a re-run picks the
@@ -497,7 +498,10 @@ A **stage** has these fields:
   questions that look back at an earlier decision);
 - `challenges[]`;
 - `decision{ id, question, authority, options[], knowns[], uncertainties[],
-  tradeoffs{}, evaluation[], discussionMinutes }`;
+  tradeoffs{}, evaluation[], discussionMinutes }`; every option carries
+  `pushback[]`: exactly three `{ title, text }` challenge cards (with the helpers:
+  `dec(..., { pushback: { A: [pb(...), pb(...), pb(...)], B: [...] } })`, and on
+  branching options `opt(..., { pushback: [...] })`);
 - `facilitator{ notes, expected, hints[] }`.
 
 An **inject** has these fields:
@@ -706,6 +710,9 @@ The validator enforces these rules for every stage count from `minStages` to
   Never name real threat groups or imitate real vendors' interfaces.
 - Each stage needs 2–4 questions per audience and 1–2 challenges. At least
   one question asks "given what you know now, would you still…?".
+- Every option needs three pushback cards that make *that* choice harder to keep
+  (a consequence, a stakeholder who objects, a fact that undermines it), each ending
+  in a hard question, and none revealing a later twist or hidden fact.
 - Decisions are open-ended first. Options are optional aids.
 - Misleading injects must be intentional, and the facilitator note must say
   so. On stage, reliability is shown only if the source would realistically
@@ -759,7 +766,7 @@ the result is 216 passed and 4 skipped; the skipped four read source files
 |---|---|
 | core | RNG determinism and forks, i18n key parity EN/SV, store envelope/corruption/newer-schema, safe DOM (hostile strings stay text), router, themes |
 | engine | resolver (both languages, unknown placeholders reported), every stage count and a parameter grid produce valid instances, same seed ⇒ deep-equal, different seeds differ, one person per role, reserved domains/IPs, monotonic timeline and dependencies, hidden facts never public before reveal, every wizard option changes the result, pacing |
-| session | navigation bounds, step reveal, timers pause/resume, branches, skip/postpone/release, live language switch, s01 confidentiality sweep (projection + DOM), recovery after reload with timers paused, sync regression, clicker and control keys, shortcuts disabled while typing, decision deadlines (discussion and branching), challenge cards (seeded draws, public text only, report and import) |
+| session | navigation bounds, step reveal, timers pause/resume, branches, skip/postpone/release, live language switch, s01 confidentiality sweep (projection + DOM), recovery after reload with timers paused, sync regression, clicker and control keys, shortcuts disabled while typing, decision deadlines (discussion and branching), challenge cards (the chosen option's own three, report and import; every option of every scenario has three) |
 | graphics | every icon and emblem exists, charts have titles, descriptions, data tables and legends, every artefact type renders and stays inert with hostile content, deterministic artwork |
 | facilitation | decision/observation/objective/scorecard logs, report contents, Markdown and CSV (BOM, separators, formula guard), JSON round-trip, malformed and hostile imports rejected or inert, prototype pollution dropped, editor operations, print outputs |
 | scenario library | all templates validate; unique ids/emblems/categories; determinism; no unresolved placeholder in any generated text; hidden facts at every stage count; **confidentiality**: a full playthrough per branch option for every scenario, in both languages, checking the projection JSON and the rendered text and attributes for facilitator text, hidden facts and unreleased injects; every chart renders in both languages |

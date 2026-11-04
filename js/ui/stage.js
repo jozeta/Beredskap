@@ -655,7 +655,7 @@
 
   function draw(sess) {
     const p = BK.engine.session.project(sess, Date.now());
-    const key = [p.slide.id, p.slide.step, p.lang, p.theme, p.paused, p.screen, p.ended, p.rev, p.complication && p.complication.id, p.deadline && p.deadline.key, p.challenge && p.challenge.key + ":" + p.challenge.id].join("|");
+    const key = [p.slide.id, p.slide.step, p.lang, p.theme, p.paused, p.screen, p.ended, p.rev, p.complication && p.complication.id, p.deadline && p.deadline.key, p.challenge && p.challenge.key + ":" + p.challenge.index].join("|");
     if (key === view.lastKey) {
       tick(view.canvas, p);
       return;

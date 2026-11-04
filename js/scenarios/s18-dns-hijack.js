@@ -12,7 +12,7 @@
   "use strict";
 
   const BK = window.BK;
-  const { L, q, ch, inj, dec, fac, act, avr, kpi, line } = BK.scenarios.h;
+  const { L, q, ch, inj, dec, fac, act, avr, kpi, line, pb } = BK.scenarios.h;
 
   BK.scenarios.register({
     id: "s18-dns-hijack",
@@ -118,7 +118,24 @@
             legal: ["No change yet.", "Ingen förändring ännu."],
             reputational: ["Customers are already worried.", "Kunderna är redan oroliga."]
           },
-          evaluation: [["Checks resolution from outside before assuming a fault", "Kontrollerar namnuppslagningen utifrån innan ett fel antas"]]
+          evaluation: [["Checks resolution from outside before assuming a fault", "Kontrollerar namnuppslagningen utifrån innan ett fel antas"]],
+          pushback: {
+            A: [
+              pb(["Where is the registrar login?", "Var finns inloggningen till registraren?"], ["To check the registrar records, someone needs the registrar login. Nobody on call knows where it is kept or whose name the account is under. Do you start phoning people at home on a weekend for a check that may show nothing?", "För att kontrollera registrarens uppgifter behövs inloggningen till registraren. Ingen i beredskapen vet var den förvaras eller i vems namn kontot står. Börjar ni ringa folk hemma en helg för en kontroll som kanske inte visar något?"]),
+              pb(["“You're overreacting”", "”Ni överreagerar”"], ["The on-call IT engineer says this is obviously the provider's maintenance and that checking DNS on a weekend is overkill. The network lead is at a family event. Do you pull someone in on a hunch, against your own on-call's judgement?", "IT-beredskapen säger att det här uppenbart beror på leverantörens underhåll och att kontrollera DNS en helg är överdrivet. Nätverksansvarig är på en familjetillställning. Kallar ni in någon på en känsla, mot er egen beredskaps bedömning?"]),
+              pb(["The first check looks fine", "Den första kontrollen ser bra ut"], ["The first lookup from a phone on mobile data returns your normal address; that phone's network may still be serving an old cached answer. One outside check now says nothing is wrong. Do you stop there, or keep checking from more places?", "Den första uppslagningen från en telefon på mobildata ger er vanliga adress; telefonens nät kan fortfarande ge ett gammalt cachat svar. En kontroll utifrån säger nu att inget är fel. Stannar ni där, eller fortsätter ni kontrollera från fler ställen?"])
+            ],
+            B: [
+              pb(["Monday, says the robot", "Måndag, säger roboten"], ["The provider's automatic reply says weekend tickets are handled on Monday. Customer complaints have doubled since you opened the ticket. How many complaints is enough to stop waiting?", "Leverantörens automatiska svar säger att ärenden som kommer in under helgen hanteras på måndag. Klagomålen från kunderna har fördubblats sedan ni öppnade ärendet. Hur många klagomål krävs för att ni ska sluta vänta?"]),
+              pb(["What do we tell callers?", "Vad säger vi till dem som ringer?"], ["Customer service asks what to tell people who can't log in or see security warnings. “The provider is looking at it” is all you have, and the provider isn't looking. What do they say to a customer asking if it is safe?", "Kundtjänst frågar vad de ska säga till dem som inte kan logga in eller får säkerhetsvarningar. ”Leverantören tittar på det” är allt ni har, och leverantören tittar inte. Vad ska de svara en kund som frågar om det är säkert?"]),
+              pb(["The provider says it's not them", "Leverantören säger att det inte är de"], ["A contact at the provider answers informally: their maintenance finished midweek and their monitoring shows your servers healthy. If it isn't them, nobody is looking at all. Do you still wait for the ticket?", "En kontakt hos leverantören svarar informellt: underhållet blev klart i mitten av veckan och deras övervakning visar att era servrar mår bra. Om det inte är de tittar ingen alls. Väntar ni fortfarande på ärendet?"])
+            ],
+            C: [
+              pb(["Nothing changes", "Ingenting ändras"], ["The restart is done and the servers come back clean, but customers report exactly the same warnings. You have spent an hour fixing a node that may have been fine. What does that tell you, and what do you try next?", "Omstarten är klar och servrarna kommer upp utan fel, men kunderna rapporterar exakt samma varningar. Ni har lagt en timme på att laga en nod som kanske var hel. Vad säger det er, och vad provar ni härnäst?"]),
+              pb(["Everyone logged out", "Alla utloggade"], ["The restart logged out every customer who could still reach you, so now they are complaining too. Service owners ask for a warning next time. Do you keep restarting nodes one by one, or stop and look somewhere else?", "Omstarten loggade ut alla kunder som fortfarande nådde er, så nu klagar även de. Tjänsteägaren vill ha en förvarning nästa gång. Fortsätter ni starta om noder en i taget, eller slutar ni och letar någon annanstans?"]),
+              pb(["Why only from home?", "Varför bara hemifrån?"], ["From the office, the site worked before the restart and works after it. The warnings seem to depend on where people are, not on your servers. Why would a stuck certificate on one node do that?", "Från kontoret fungerade sajten före omstarten och fungerar efter den. Varningarna verkar bero på var folk befinner sig, inte på era servrar. Varför skulle ett fastnat certifikat på en nod ge det mönstret?"])
+            ]
+          }
         }),
         facilitator: fac(
           ["The office uses internal DNS and sees nothing. That's the clue.", "Kontoret använder intern DNS och ser ingenting. Det är ledtråden."],
@@ -177,7 +194,24 @@
             legal: ["Customers' data may be harvested.", "Kundernas uppgifter kan samlas in."],
             reputational: ["Customers will remember how quickly they were warned.", "Kunderna kommer att minnas hur snabbt de blev varnade."]
           },
-          evaluation: [["Warns customers through channels the attacker doesn't control", "Varnar kunderna via kanaler som angriparen inte kontrollerar"]]
+          evaluation: [["Warns customers through channels the attacker doesn't control", "Varnar kunderna via kanaler som angriparen inte kontrollerar"]],
+          pushback: {
+            A: [
+              pb(["The emergency line rings out", "Nödlinjen svarar inte"], ["The registrar's emergency number goes to voicemail, and its website says weekend support is “limited”. The team you called in is sitting around waiting. Who keeps calling, and what does everyone else do in the meantime?", "Registrarens nödnummer går till röstbrevlådan, och webbplatsen säger att helgsupporten är ”begränsad”. Teamet ni kallade in sitter och väntar. Vem fortsätter ringa, och vad gör alla andra under tiden?"]),
+              pb(["“Don't use our website”", "”Använd inte vår webbplats”"], ["Comms drafts the warning. Sales says it will cause panic and drive away customers whose caches still send them to the real site. Do you send it as written, or soften it and risk people missing the point?", "Kommunikation skriver varningen. Försäljning säger att den kommer att skapa panik och skrämma bort kunder vars cache fortfarande skickar dem till den riktiga sajten. Skickar ni den som den är, eller mildrar ni den och riskerar att folk missar poängen?"]),
+              pb(["Which channels are really yours?", "Vilka kanaler är verkligen era?"], ["Your social media and SMS accounts log in with addresses on {{org.domain}}. If any of them asks to confirm a login by email mid-warning, you may not get in. Do you know which of your channels you actually still control?", "Era konton i sociala medier och för sms loggar in med adresser på {{org.domain}}. Om något av dem ber om en bekräftelse via e-post mitt i varningen kanske ni inte kommer in. Vet ni vilka av era kanaler ni faktiskt fortfarande kontrollerar?"])
+            ],
+            B: [
+              pb(["Two business days", "Två arbetsdagar"], ["The registrar's auto-reply promises an answer within two business days. It is the weekend, and the redirected share of traffic keeps rising as caches expire. Is an email queue really how you want to fight for your own domain?", "Registrarens automatiska svar utlovar besked inom två arbetsdagar. Det är helg, och andelen omdirigerad trafik fortsätter att öka i takt med att cachen löper ut. Är en e-postkö verkligen sättet ni vill slåss för er egen domän på?"]),
+              pb(["Passwords typed into their page", "Lösenord på deras sida"], ["While you wait, every customer who logs in may be typing their password into a server you don't control. Customer service has already had a caller who “logged in fine”. How many hours of that is waiting worth?", "Medan ni väntar kan varje kund som loggar in skriva sitt lösenord på en server ni inte kontrollerar. Kundtjänst har redan haft en kund som ringde och sa att inloggningen ”gick bra”. Hur många timmar av det är väntan värd?"]),
+              pb(["Nobody is watching", "Ingen håller koll"], ["You chose not to call the team in for an email. The network lead asks who will notice if the attacker changes something else tonight. Is anyone watching, and who decided that was acceptable?", "Ni valde att inte kalla in teamet för ett mejl. Nätverksansvarig frågar vem som märker om angriparen ändrar något mer i natt. Håller någon koll, och vem bestämde att det var acceptabelt?"])
+            ],
+            C: [
+              pb(["The domain still points there", "Domänen pekar fortfarande dit"], ["Taking your servers offline doesn't change where the domain points. Customers who reach the attacker see no difference; those still reaching your real site now see nothing. Who exactly did you protect?", "Att ta ned era servrar ändrar inte vart domänen pekar. Kunder som hamnar hos angriparen märker ingen skillnad; de som fortfarande når er riktiga sajt ser nu ingenting. Vem var det egentligen ni skyddade?"]),
+              pb(["Customers keep retrying", "Kunderna försöker igen och igen"], ["With the real site gone, customers assume an outage and keep retrying until they land on the attacker's page. Nobody has told them why. Do you need a warning more than you needed the shutdown?", "När den riktiga sajten är borta tror kunderna att det är ett avbrott och försöker igen tills de hamnar på angriparens sida. Ingen har berättat varför. Behöver ni en varning mer än ni behövde nedstängningen?"]),
+              pb(["The service owner objects", "Tjänsteägaren invänder"], ["The service owner says the real site was the only genuine page some customers could still reach, and switching it off hands the attacker all your traffic. Do you bring it back up, and what does that say about the decision?", "Tjänsteägaren säger att den riktiga sajten var den enda äkta sidan som en del kunder fortfarande nådde, och att stänga den ger angriparen all er trafik. Startar ni den igen, och vad säger det om beslutet?"])
+            ]
+          }
         }),
         facilitator: fac(
           ["Your own domain is now hostile. Which channels can you trust?", "Er egen domän är nu fientlig. Vilka kanaler kan ni lita på?"],
@@ -244,7 +278,24 @@
             reputational: ["Account takeovers spread the damage.", "Kapade konton sprider skadan."]
           },
           evaluation: [["Recognises that email itself is compromised", "Inser att e-posten i sig är komprometterad"]],
-          minutes: 10
+          minutes: 10,
+          pushback: {
+            A: [
+              pb(["Customers locked out", "Kunder utelåsta"], ["With email resets suspended, any customer who forgets a password simply can't get back in. Customer service is already taking angry calls. How long can you keep resets off when there is no date for getting the domain back?", "När återställning via e-post är avstängd kommer en kund som glömt sitt lösenord helt enkelt inte in. Kundtjänst tar redan emot arga samtal. Hur länge kan ni hålla återställningarna stängda när det inte finns något datum för att få tillbaka domänen?"]),
+              pb(["Critical, but what else?", "Kritiska, men vad mer?"], ["You lock payroll, cloud and the code platform. The SOC now sees reset attempts for services nobody in the room recognises, signed up with staff addresses on your domain. What about the accounts you didn't know you had?", "Ni låser lön, moln och kodplattformen. SOC ser nu försök till återställning för tjänster som ingen i rummet känner igen, registrerade med personalens adresser på er domän. Vad gör ni med kontona ni inte visste att ni hade?"]),
+              pb(["Prove who you are", "Bevisa vem ni är"], ["The cloud provider's support line asks you to verify the request by replying to an email sent to your admin address. That address is on your domain. How do you prove you are you, when the proof goes to the attacker?", "Molnleverantörens support ber er verifiera begäran genom att svara på ett mejl till er administratörsadress. Den adressen ligger på er domän. Hur bevisar ni att ni är ni, när beviset går till angriparen?"])
+            ],
+            B: [
+              pb(["Resets keep completing", "Återställningarna fortsätter"], ["While everyone works on the registrar, the SOC watches reset after reset go through for staff accounts. Each one may be an account the attacker keeps after the domain is back. How many are you willing to lose?", "Medan alla arbetar mot registraren ser SOC den ena återställningen efter den andra gå igenom för personalkonton. Varje sådan kan vara ett konto som angriparen behåller även när domänen är tillbaka. Hur många är ni beredda att förlora?"]),
+              pb(["Payroll is calling", "Lönetjänsten ringer"], ["The payroll service phones to say bank details on a staff account were just changed after a password reset. They ask whether to block further changes. Is the domain still the only priority?", "Lönetjänsten ringer och säger att bankuppgifterna på ett personalkonto just ändrades efter en lösenordsåterställning. De frågar om de ska spärra fler ändringar. Är domänen fortfarande det enda som gäller?"]),
+              pb(["Nothing protected meanwhile", "Inget skyddas under tiden"], ["The registrar still hasn't given a timeline. “Get the domain back” has no end date, and nothing else is being protected while you wait. What happens to the accounts if it takes days?", "Registraren har fortfarande inte gett någon tidsplan. ”Få tillbaka domänen” har inget slutdatum, och inget annat skyddas medan ni väntar. Vad händer med kontona om det tar flera dagar?"])
+            ],
+            C: [
+              pb(["Confirmations go to them", "Bekräftelserna går till dem"], ["Several services confirm a password change by email, and some send a link to finish it. Those emails go to your domain, which the attacker now receives. Did changing passwords just hand them fresh links?", "Flera tjänster bekräftar ett lösenordsbyte via e-post, och en del skickar en länk för att slutföra det. De mejlen går till er domän, som angriparen nu tar emot. Gav lösenordsbytet dem just nya länkar?"]),
+              pb(["Customers forgotten", "Kunderna glömda"], ["Changing staff passwords does nothing for customer accounts, whose resets are being intercepted too. Customer service asks what customers should do right now. What is your answer?", "Att byta personalens lösenord gör ingenting för kundkontona, vars återställningar också fångas upp. Kundtjänst frågar vad kunderna ska göra just nu. Vad är ert svar?"]),
+              pb(["A weekend of lockouts", "En helg av utelåsningar"], ["Staff at home are locked out after the forced change, and the service desk is two people. The SOC can't reach colleagues it needs. Was the disruption worth what it actually protected?", "Personal hemma är utelåst efter det tvingade bytet, och servicedesk består av två personer. SOC når inte de kollegor de behöver. Var störningen värd det den faktiskt skyddade?"])
+            ]
+          }
         }),
         facilitator: fac(
           ["DNS control is identity control. This is the key insight.", "Kontroll över DNS är kontroll över identitet. Det här är den viktigaste insikten."],
@@ -299,7 +350,24 @@
             legal: ["Proof of ownership must be solid.", "Beviset på ägarskap måste vara stabilt."],
             reputational: ["A new domain confuses customers and helps phishers.", "En ny domän förvirrar kunderna och hjälper nätfiskare."]
           },
-          evaluation: [["Pursues every route to recovery at once", "Driver alla vägar till återtagande samtidigt"]]
+          evaluation: [["Pursues every route to recovery at once", "Driver alla vägar till återtagande samtidigt"]],
+          pushback: {
+            A: [
+              pb(["“Why should I help?”", "”Varför ska jag hjälpa er?”"], ["You reach the former employee by phone. They left on bad terms, ask why they should give up their weekend, and whether they are being accused of something. Do you push, offer something, or carry on without them?", "Ni når den tidigare anställda per telefon. Hen slutade i osämja, frågar varför hen ska offra sin helg och om hen anklagas för något. Pressar ni på, erbjuder ni något, eller fortsätter ni utan hen?"]),
+              pb(["No signatory in reach", "Ingen firmatecknare inom räckhåll"], ["The only people authorised to sign for the company are abroad until after the weekend. A scanned signature may not satisfy the registrar. Who signs, and will it hold up?", "De enda som får teckna firman är utomlands tills helgen är över. En inskannad underskrift kanske inte räcker för registraren. Vem skriver under, och kommer det att hålla?"]),
+              pb(["The registry sends you back", "Registret skickar tillbaka er"], ["The registry replies that it only acts through the registrar, and points you back to the {{num.registrarHours}}-hour process. Your team is now spread over three routes. Do you keep pushing all of them, or focus where it can make a difference?", "Registret svarar att det bara agerar via registraren och hänvisar er tillbaka till processen på {{num.registrarHours}} timmar. Ert team är nu utspritt på tre spår. Fortsätter ni driva alla, eller fokuserar ni där det kan göra skillnad?"])
+            ],
+            B: [
+              pb(["Hours of their mail", "Timmar av deras e-post"], ["{{num.registrarHours}} more hours means the attacker keeps receiving every email sent to your domain. The SOC expects reset attempts all weekend. Is the standard process fast enough for what is at stake?", "{{num.registrarHours}} timmar till innebär att angriparen fortsätter ta emot varje mejl till er domän. SOC räknar med försök till återställning hela helgen. Är den vanliga processen snabb nog för det som står på spel?"]),
+              pb(["Customer service can't keep saying it", "Kundtjänst orkar inte säga det"], ["Customer service says they cannot keep telling callers for {{num.registrarHours}} hours that nothing can be done. Some customers say they are leaving. What do you want them to say instead of “we are waiting”?", "Kundtjänst säger att de inte kan fortsätta säga till dem som ringer i {{num.registrarHours}} timmar att inget går att göra. En del kunder säger att de tänker lämna. Vad vill ni att de ska säga i stället för ”vi väntar”?"]),
+              pb(["Could they move it?", "Kan de flytta den?"], ["The network lead asks what stops the attacker, who controls the account, from transferring the domain to another registrar while you wait. Nobody in the room knows. Are you sure waiting keeps the domain where it is?", "Nätverksansvarig frågar vad som hindrar angriparen, som styr kontot, från att flytta domänen till en annan registrar medan ni väntar. Ingen i rummet vet. Är ni säkra på att väntan håller kvar domänen där den är?"])
+            ],
+            C: [
+              pb(["It looks like phishing", "Det ser ut som nätfiske"], ["Customers receive a message from an unfamiliar domain telling them to log in there instead. To them it looks exactly like the phishing you warned them about. How do you prove the new domain is yours?", "Kunderna får ett meddelande från en okänd domän som säger att de ska logga in där i stället. För dem ser det ut precis som nätfisket ni varnade dem för. Hur bevisar ni att den nya domänen är er?"]),
+              pb(["Everything uses the old name", "Allt använder det gamla namnet"], ["Every integration, partner contract, app and invoice uses {{org.domain}}. The service owner estimates weeks to move them all. Is the new domain a rescue, or a second project in the middle of the first?", "Varje integration, partneravtal, app och faktura använder {{org.domain}}. Tjänsteägaren bedömer att det tar veckor att flytta allt. Är den nya domänen en räddning, eller ett andra projekt mitt i det första?"]),
+              pb(["The old one stays theirs", "Den gamla förblir deras"], ["Moving customers does nothing to recover {{org.domain}}. The attacker keeps receiving its mail and resets for as long as they hold it. Have you given up on the thing you most need back?", "Att flytta kunderna gör ingenting för att återta {{org.domain}}. Angriparen fortsätter ta emot dess e-post och återställningar så länge hen har den. Har ni gett upp det ni mest behöver få tillbaka?"])
+            ]
+          }
         }),
         facilitator: fac(
           ["A governance gap revealed: who owns the domain on paper?", "En brist i styrningen blottläggs: vem äger domänen på pappret?"],
@@ -353,7 +421,24 @@
             legal: ["Customer credentials are personal data.", "Kundernas inloggningsuppgifter är personuppgifter."],
             reputational: ["Silence now would be hard to forgive.", "Tystnad nu vore svår att förlåta."]
           },
-          evaluation: [["Protects customers through every trusted channel", "Skyddar kunderna via varje betrodd kanal"]]
+          evaluation: [["Protects customers through every trusted channel", "Skyddar kunderna via varje betrodd kanal"]],
+          pushback: {
+            A: [
+              pb(["Your warning looks like a scam", "Er varning ser ut som bedrägeri"], ["Your warning tells customers to be careful and expect a password reset. Phishers send exactly that message, and some customers report yours as a scam. How do you make a real warning believable?", "Er varning säger åt kunderna att vara försiktiga och räkna med ett lösenordsbyte. Nätfiskare skickar exakt det meddelandet, och en del kunder anmäler ert som bedrägeri. Hur gör ni en äkta varning trovärdig?"]),
+              pb(["Force everyone?", "Tvinga alla?"], ["Forced resets for up to {{num.customersAffected}} customers mean a wave of support calls on the very day you recover, to a team already exhausted. Do you force everyone, or only those you can show were exposed?", "Tvingade lösenordsbyten för upp till {{num.customersAffected}} kunder innebär en våg av supportsamtal samma dag som ni återtar domänen, till ett team som redan är slut. Tvingar ni alla, eller bara dem ni kan visa var exponerade?"]),
+              pb(["Those who already logged in", "De som redan loggat in"], ["Revocation and warnings protect the next customer, not those who already typed their password into the fake page. The DPO asks what they will be told, and when. Is planning resets for later enough for them?", "Återkallelse och varningar skyddar nästa kund, inte dem som redan har skrivit sitt lösenord på den falska sidan. Dataskyddsombudet frågar vad de ska få veta, och när. Räcker det för dem att planera lösenordsbyten till senare?"])
+            ],
+            B: [
+              pb(["The padlock stays", "Hänglåset sitter kvar"], ["Even once the certificate is revoked, many browsers won't notice for some time. Customers keep seeing a valid padlock on the fake page. What protects them while you wait?", "Även när certifikatet har återkallats märker många webbläsare det inte på ett tag. Kunderna fortsätter att se ett giltigt hänglås på den falska sidan. Vad skyddar dem medan ni väntar?"]),
+              pb(["Comms wants to speak", "Kommunikation vill gå ut"], ["Comms says customers are logging in to a perfect fake page right now, and asks why you are silent when you know. Every hour of waiting is another batch of passwords. Who answers for the customers who log in today?", "Kommunikation säger att kunder loggar in på en perfekt falsk sida just nu och frågar varför ni tiger när ni vet. Varje timmes väntan är ännu en omgång lösenord. Vem står till svars för de kunder som loggar in i dag?"]),
+              pb(["Prove the domain is yours", "Bevisa att domänen är er"], ["The certificate authority asks you to prove you control the domain before it acts on the revocation. Right now, you can't. Waiting may mean waiting for the domain itself. What else are you doing in the meantime?", "Certifikatutfärdaren ber er visa att ni kontrollerar domänen innan den agerar på återkallelsen. Just nu kan ni inte det. Att vänta kan betyda att vänta på själva domänen. Vad mer gör ni under tiden?"])
+            ],
+            C: [
+              pb(["“Is it safe now?”", "”Är det säkert nu?”"], ["Customers who saw the warnings this morning call to ask whether it is safe now, since the padlock looks fine. Customer service has been told to say nothing. What exactly do they say to that caller?", "Kunder som såg varningarna i morse ringer och frågar om det är säkert nu, eftersom hänglåset ser bra ut. Kundtjänst har fått order att inte säga något. Vad ska de egentligen svara den som ringer?"]),
+              pb(["The DPO objects", "Dataskyddsombudet invänder"], ["The DPO says knowingly letting customers enter credentials on a fake page while staying silent may itself breach your duties to them. They want their objection recorded. Do you overrule them?", "Dataskyddsombudet säger att det i sig kan strida mot era skyldigheter att medvetet låta kunder ange inloggningsuppgifter på en falsk sida och tiga. Hen vill att invändningen dokumenteras. Kör ni över hen?"]),
+              pb(["Silence with no end", "Tystnad utan slut"], ["The registrar's process may still take most of {{num.registrarHours}} hours. Silence until the domain is back could mean days of a perfect fake page. Is a warning without any links really more dangerous than that?", "Registrarens process kan fortfarande ta större delen av {{num.registrarHours}} timmar. Tystnad tills domänen är tillbaka kan betyda flera dagar med en perfekt falsk sida. Är en varning utan länkar verkligen farligare än det?"])
+            ]
+          }
         }),
         facilitator: fac(
           ["The padlock lies. Customers can't defend themselves without you.", "Hänglåset ljuger. Kunderna kan inte försvara sig utan er."],
@@ -409,7 +494,24 @@
             legal: ["Domain ownership must be formally documented.", "Ägarskapet av domänen måste dokumenteras formellt."],
             reputational: ["Customers need to see it won't happen again.", "Kunderna behöver se att det inte kommer att hända igen."]
           },
-          evaluation: [["Treats the domain as critical infrastructure", "Behandlar domänen som kritisk infrastruktur"]]
+          evaluation: [["Treats the domain as critical infrastructure", "Behandlar domänen som kritisk infrastruktur"]],
+          pushback: {
+            A: [
+              pb(["Every change takes a day", "Varje ändring tar en dag"], ["The web team says registry lock means every DNS change now needs a call and a day's wait. They have a launch next week that needs new records. Do you accept slower changes, or make your first exception before the lock has even settled in?", "Webbteamet säger att registerlås innebär att varje DNS-ändring nu kräver ett samtal och en dags väntan. De har en lansering nästa vecka som kräver nya poster. Accepterar ni långsammare ändringar, eller gör ni ert första undantag innan låset ens har satt sig?"]),
+              pb(["An inventory without end", "En förteckning utan slut"], ["The first pass of the inventory finds over a hundred services tied to staff addresses on your domain, many bought on company cards without IT knowing. Who owns keeping that list alive next year?", "Den första genomgången hittar över hundra tjänster kopplade till personalens adresser på er domän, många köpta med företagskort utan att IT vet om det. Vem ansvarar för att hålla listan levande nästa år?"]),
+              pb(["Named owners leave too", "Även utsedda ägare slutar"], ["The named owners are two people, and one is already looking for a new job. A hardware key in a drawer doesn't help if nobody knows which drawer. What stops this becoming the former-employee problem again in two years?", "De utsedda ägarna är två personer, och den ena söker redan nytt jobb. En hårdvarunyckel i en låda hjälper inte om ingen vet vilken låda. Vad hindrar det här från att bli samma problem som med den tidigare anställda om två år?"])
+            ],
+            B: [
+              pb(["Still in their name", "Fortfarande i hens namn"], ["The registrar account is still registered to the former employee. MFA on it is MFA for someone who no longer works here. Have you fixed the cause, or only the way the attacker got in this time?", "Registrarkontot står fortfarande på den tidigare anställda. MFA på kontot är MFA för någon som inte längre arbetar här. Har ni åtgärdat orsaken, eller bara den väg angriparen tog den här gången?"]),
+              pb(["The accounts still aren't yours", "Kontona är fortfarande inte era"], ["Some accounts still carry attacker-registered MFA devices and recovery addresses on other domains. A stronger registrar password doesn't touch them. Where does the cleanup sit in your plan?", "En del konton har fortfarande MFA-enheter som angriparen registrerat och återställningsadresser på andra domäner. Ett starkare lösenord hos registraren påverkar inte dem. Var i er plan finns uppstädningen?"]),
+              pb(["“We added MFA”", "”Vi lade till MFA”"], ["The board asks whether this can happen again. “We added MFA” is the honest answer. Is that enough for customers who spent two days on a perfect fake of your site?", "Styrelsen frågar om det här kan hända igen. ”Vi lade till MFA” är det ärliga svaret. Räcker det för kunder som i två dagar hamnade på en perfekt kopia av er sajt?"])
+            ],
+            C: [
+              pb(["A transfer mid-cleanup", "En flytt mitt i städningen"], ["A registrar transfer takes days and blocks some changes while it runs, just as you need to fix records left behind by the attack. Is now the moment to move the domain?", "En flytt till en annan registrar tar flera dagar och spärrar vissa ändringar medan den pågår, precis när ni behöver rätta poster som angreppet lämnat efter sig. Är det nu ni ska flytta domänen?"]),
+              pb(["Same problem, new address", "Samma problem, ny adress"], ["The new registrar account will still need an owner, MFA and a recovery contact. Moving decides none of that. What actually changes, apart from the name on the invoice?", "Det nya registrarkontot kommer fortfarande att behöva en ägare, MFA och en kontakt för återställning. Flytten avgör inget av det. Vad förändras egentligen, förutom namnet på fakturan?"]),
+              pb(["Blaming the registrar?", "Skyller ni på registraren?"], ["Legal points out that the registrar followed its own rules: the account was in a former employee's name without MFA. Moving looks like blaming them for your gap. What will you say when customers ask why you switched?", "Juristen påpekar att registraren följde sina egna regler: kontot stod på en tidigare anställd och saknade MFA. Flytten ser ut som att ni skyller er egen brist på dem. Vad säger ni när kunderna frågar varför ni bytte?"])
+            ]
+          }
         }),
         facilitator: fac(
           ["End on ownership. Most organisations don't know who holds their domain.", "Avsluta med ägarskap. De flesta organisationer vet inte vem som innehar deras domän."],

@@ -269,7 +269,7 @@
       Object.keys(ses.challenges).forEach((k) => {
         const v = ses.challenges[k];
         need(
-          pointIds.has(k) && isObj(v) && !!BK.data.challenges.get(v.id) && typeof v.draws === "number" && optStr(v.other) && optStr(v.person) && optStr(v.shownAt) && (v.outcome == null || BK.data.challenges.OUTCOMES.includes(v.outcome)),
+          pointIds.has(k) && isObj(v) && typeof v.option === "string" && [0, 1, 2].includes(v.index) && optStr(v.shownAt) && (v.outcome == null || BK.engine.session.CHALLENGE_OUTCOMES.includes(v.outcome)),
           "reference",
           "challenge " + k
         );
