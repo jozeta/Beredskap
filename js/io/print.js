@@ -317,6 +317,15 @@
               r.decisions.map((d) => [d.stage, d.question, d.recorded ? d.option : t("report.notRecorded", null, l), d.text, d.rationale, d.dissent])
             )
           ],
+      r.reconsidered && r.reconsidered.length
+        ? [
+            el("h2", { text: t("report.reconsidered", null, l) }),
+            table(
+              [t("csv.stage", null, l), t("csv.question", null, l), t("report.reconsideredThen", null, l), t("report.reconsideredVerdict", null, l), t("obs.note", null, l)],
+              r.reconsidered.map((x) => [String(x.stage), x.question, x.original || "—", x.verdict ? t("reconsider.verdict." + x.verdict, null, l) : t("report.notRecorded", null, l), x.note])
+            )
+          ]
+        : null,
       full ? [el("h2", { text: t("report.assumptions", null, l) }), table([t("stage.assumed", null, l), t("stage.reality", null, l)], r.assumptions.map((a) => [a.assumption, a.reality]))] : null,
       el("h2", { text: t("report.observations", null, l) }),
       r.observations.length

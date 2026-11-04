@@ -19,7 +19,7 @@
 
   const LIMITS = { bytes: 5 * 1024 * 1024, string: 20000, array: 2000, depth: 40, nodes: 250000 };
   const ID = /^[A-Za-z0-9][A-Za-z0-9_.:-]{0,79}$/;
-  const SLIDE_TYPES = new Set(["title", "briefing", "context", "situation", "timeline", "inject", "data", "twist", "discussion", "decision", "recap", "debrief"]);
+  const SLIDE_TYPES = new Set(["title", "briefing", "context", "situation", "timeline", "inject", "data", "twist", "discussion", "decision", "recap", "reconsider", "debrief"]);
   const FORBIDDEN_KEYS = new Set(["__proto__", "constructor", "prototype"]);
 
   class ImportError extends Error {
@@ -121,6 +121,10 @@
       if (s.decision) {
         checkId(s.decision.id, "decision");
         need(Array.isArray(s.decision.options), "shape", "decision " + s.decision.id);
+      }
+      if (s.reconsider != null) {
+        // Must point at the decision of an earlier stage in this exercise.
+        need(isObj(s.reconsider) && ex.stages.slice(0, i).some((x) => x.decision && x.decision.id === s.reconsider.decision), "reference", "reconsider " + s.id);
       }
       need(isObj(s.facilitator), "shape", "facilitator " + s.id);
     });
@@ -240,6 +244,15 @@
       need(decisionIds.has(id), "reference", "decision " + id);
       Object.values(ses.decisions[id]).forEach((v) => need(v === null || typeof v === "string" || typeof v === "number", "shape", "decision field " + id));
     });
+
+    if (ses.reconsider != null) {
+      need(isObj(ses.reconsider), "shape", "reconsider");
+      Object.keys(ses.reconsider).forEach((sid) => {
+        const st = ex.stages.find((x) => x.id === sid);
+        const v = ses.reconsider[sid];
+        need(st && st.reconsider && isObj(v) && ["keep", "reverse", "unsure"].includes(v.verdict) && typeof v.note === "string", "reference", "reconsider " + sid);
+      });
+    }
 
     const objectiveIds = new Set(ex.objectives.map((o) => o.id));
     Object.keys(ses.objectives).forEach((id) => need(objectiveIds.has(id), "reference", "objective " + id));

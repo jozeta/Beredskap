@@ -325,6 +325,14 @@
 .s-recap__entry { display: grid; gap: 24px; }
 .s-recap__option { display: flex; gap: 28px; align-items: center; margin: 0; font-size: calc(44px * var(--fit, 1)); }
 .s-recap__text { margin: 0; padding: 24px 40px; border-left: 8px solid var(--accent); background: var(--surface); font-size: calc(40px * var(--fit, 1)); border-radius: 8px; }
+.s-reconsider { display: flex; flex-direction: column; gap: 28px; }
+.s-reconsider__pressure { display: flex; gap: 24px; align-items: flex-start; margin: 0; padding: 28px 36px; border-radius: 12px; background: color-mix(in srgb, var(--warn) 14%, var(--surface)); border-left: 8px solid var(--warn); font-size: calc(38px * var(--fit, 1)); line-height: 1.35; }
+.s-reconsider__pressure .icon { flex: none; color: var(--warn); margin-top: 4px; }
+.s-reconsider__ask { margin: 0; font-size: calc(46px * var(--fit, 1)); font-weight: 700; color: var(--accent); }
+.s-reconsider__verdict { align-self: flex-start; margin: 0; padding: 10px 28px; border-radius: 999px; font-size: calc(36px * var(--fit, 1)); font-weight: 700; background: var(--surface-2); }
+.s-reconsider__verdict.is-keep { color: var(--ok); }
+.s-reconsider__verdict.is-reverse { color: var(--danger); }
+.s-reconsider__verdict.is-unsure { color: var(--warn); }
 
 /* ---- Debrief ------------------------------------------------------------------------------------------------ */
 .s-avr { list-style: none; margin: 0 0 32px; padding: 0; display: grid; gap: 16px; font-size: calc(28px * var(--fit, 1)); }

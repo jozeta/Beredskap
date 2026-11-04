@@ -157,6 +157,16 @@
         )
       ),
 
+      r.reconsidered && r.reconsidered.length
+        ? section(
+            t("report.reconsidered", null, l),
+            el("p", { class: "muted small", text: t("report.reconsideredIntro", null, l) }),
+            table(
+              [t("csv.stage", null, l), t("csv.question", null, l), t("report.reconsideredThen", null, l), t("report.reconsideredPressure", null, l), t("report.reconsideredVerdict", null, l), t("obs.note", null, l)],
+              r.reconsidered.map((x) => [String(x.stage) + (x.fromStage ? " (← " + x.fromStage + ")" : ""), x.question, x.original || "—", x.pressure, x.verdict ? t("reconsider.verdict." + x.verdict, null, l) : c.badge(t("report.notRecorded", null, l), "warn", "warning"), x.note])
+            )
+          )
+        : null,
       custom ? null : section(t("report.assumptions", null, l), table([t("stage.assumed", null, l), t("stage.reality", null, l)], r.assumptions.map((a) => [el("span", { class: "strike", text: a.assumption }), a.reality]))),
 
       el(

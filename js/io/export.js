@@ -153,6 +153,27 @@
 
     const elapsedMin = Math.round(S.elapsedMs(session, Date.now()) / 60000);
 
+    // Decisions the room faced again under new pressure: what they chose then, and whether they kept it.
+    const reconsidered = branching
+      ? []
+      : inst.stages
+          .filter((st) => st.reconsider)
+          .map((st) => {
+            const src = inst.stages.find((x) => x.decision && x.decision.id === st.reconsider.decision);
+            const log = src && session.decisions[src.decision.id];
+            const opt = log && log.option ? src.decision.options.find((o) => o.key === log.option) : null;
+            const v = (session.reconsider || {})[st.id] || null;
+            return {
+              stage: stageNo(st.id),
+              fromStage: src ? stageNo(src.id) : null,
+              question: src ? L(src.decision.question, lang) : "",
+              original: opt ? opt.key + " — " + L(opt.text, lang) + (log.text ? " (" + log.text + ")" : "") : log && log.text ? log.text : "",
+              pressure: L(st.reconsider.pressure, lang),
+              verdict: v ? v.verdict : "",
+              note: v ? v.note : ""
+            };
+          });
+
     return {
       lang,
       title: L(inst.title, lang),
@@ -175,6 +196,7 @@
       timeline,
       injects,
       decisions,
+      reconsidered,
       assumptions: (inst.debrief.assumptionsVsReality || []).map((a) => ({ assumption: L(a.assumption, lang), reality: L(a.reality, lang), stage: a.stage ? stageNo(a.stage) || null : null })),
       lessons: (inst.debrief.keyLessons || []).map((x) => L(x, lang)),
       strengths: (inst.debrief.strengthsToLookFor || []).map((x) => L(x, lang)),
@@ -341,6 +363,13 @@
       (d.notTaken || []).forEach((n) => li(t("report.notTaken", null, l) + ": " + n.key + " — " + n.text + (n.leadsTo ? " → " + n.leadsTo : "")));
       return null;
     });
+
+    if (r.reconsidered && r.reconsidered.length) {
+      h(2, t("report.reconsidered", null, l));
+      r.reconsidered.forEach((x) =>
+        li(t("editor.stageN", { n: x.stage }, l) + " · " + x.question + " — " + (x.original || "—") + " → **" + (x.verdict ? t("reconsider.verdict." + x.verdict, null, l) : t("report.notRecorded", null, l)) + "**" + (x.note ? " (" + x.note + ")" : ""))
+      );
+    }
 
     if (full) {
       h(2, t("report.assumptions", null, l));

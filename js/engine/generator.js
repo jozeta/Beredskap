@@ -498,6 +498,23 @@
     });
   }
 
+  /**
+   * Options are shown in a seeded order and re-lettered A–D by position, so the strongest answer is
+   * not always the first one. Returns the reordered options (each keeps its authored key in `authored`)
+   * and a map from authored to shown key.
+   * Each decision or page uses its own named fork, so this never reshuffles anything else.
+   */
+  function shuffleOptions(options, rng) {
+    const order = rng.shuffle(options.map((_, i) => i));
+    const map = {};
+    const out = order.map((from, i) => {
+      const key = "ABCD"[i];
+      map[options[from].key] = key;
+      return Object.assign({}, options[from], { key, authored: options[from].key });
+    });
+    return { options: out, map };
+  }
+
   function buildDecision(decision, p, people, ctx, missing) {
     if (!decision) return null;
     const R = T();
@@ -618,16 +635,20 @@
           ? {
               question: R.resolveText(pg.choice.question, ctx, missing),
               strong: R.resolveDeep(pg.choice.strong || null, ctx, missing),
-              options: pg.choice.options.map((o) => ({
-                key: o.key,
-                text: R.resolveText(o.text, ctx, missing),
-                to: o.to,
-                set: (o.set || []).slice(),
-                requires: o.requires == null ? null : o.requires,
-                hides: o.hides == null ? null : o.hides,
-                effects: o.effects ? Object.assign({}, o.effects) : null,
-                why: R.resolveDeep(o.why || null, ctx, missing)
-              }))
+              options: (function (list) {
+                return template.fixedOptionOrder || list.length < 2 ? list : shuffleOptions(list, root.fork("options:" + pg.id)).options;
+              })(
+                pg.choice.options.map((o) => ({
+                  key: o.key,
+                  text: R.resolveText(o.text, ctx, missing),
+                  to: o.to,
+                  set: (o.set || []).slice(),
+                  requires: o.requires == null ? null : o.requires,
+                  hides: o.hides == null ? null : o.hides,
+                  effects: o.effects ? Object.assign({}, o.effects) : null,
+                  why: R.resolveDeep(o.why || null, ctx, missing)
+                }))
+              )
             }
           : null,
         route: pg.route ? pg.route.map((r) => ({ if: r.if == null ? null : r.if, to: r.to })) : null,
@@ -714,8 +735,18 @@
     const revealAt = remapReveals(template, selected);
     const available = new Set(); // inject ids included so far (for `requires`)
 
+    const keyMaps = {}; // decision id -> { authored key: shown key }, for branches in later stages
+    const decided = new Set(); // decisions of the stages built so far
     const stages = selected.map((stage, index) => {
+      const earlier = new Set(decided);
+      if (stage.decision) decided.add(stage.decision.id);
       const injects = [];
+      const decision = buildDecision(stage.decision, p, people, ctx, missing);
+      if (decision && decision.options.length > 1 && !template.fixedOptionOrder) {
+        const sh = shuffleOptions(decision.options, root.fork("options:" + decision.id));
+        decision.options = sh.options;
+        keyMaps[decision.id] = sh.map; // trade-offs are keyed by dimension (operational, legal…), not by option
+      }
       candidateInjects(stage, p, root).forEach((raw) => {
         const inj = applyVariant(raw, root);
         if ((inj.requires || []).some((r) => !available.has(r))) return; // dependency was dropped
@@ -741,7 +772,7 @@
         injects,
         branchInjects,
         branches: (stage.branches || []).map((b) => ({
-          when: Object.assign({}, b.when),
+          when: Object.assign({}, b.when, b.when && b.when.option && keyMaps[b.when.decision] ? { option: keyMaps[b.when.decision][b.when.option] || b.when.option } : {}),
           addInjects: (b.addInjects || []).slice(),
           narrativeAppend: R.resolveDeep(b.narrativeAppend || null, ctx, missing),
           facilitatorNote: R.resolveDeep(b.facilitatorNote || null, ctx, missing)
@@ -749,7 +780,12 @@
         charts: buildCharts(stage, ctx, entities, vars, root, injects, missing),
         questions: pickQuestions(stage, p, people, ctx, index, missing),
         challenges: R.resolveDeep(stage.challenges || [], ctx, missing),
-        decision: buildDecision(stage.decision, p, people, ctx, missing),
+        decision,
+        // Only when the decision it revisits belongs to an earlier stage of this run (stages can be dropped).
+        reconsider:
+          stage.reconsider && earlier.has(stage.reconsider.decision)
+            ? { decision: stage.reconsider.decision, pressure: R.resolveText(stage.reconsider.pressure, ctx, missing) }
+            : null,
         noDecision: R.resolveDeep(stage.noDecision || null, ctx, missing),
         facilitator: Object.assign(R.resolveDeep(stage.facilitator || {}, ctx, missing), { hintPolicy: HINT_POLICY[p.difficulty] }),
         complexity: stage.complexity || 0,

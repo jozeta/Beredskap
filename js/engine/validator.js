@@ -229,6 +229,14 @@
         else if (h.revealStage !== s.id) issue(list, "reference", w, hf + " reveals at " + h.revealStage);
       });
 
+      // Reconsider: the room faces an earlier stage's decision again, with bilingual pressure text.
+      if (s.reconsider) {
+        const rd = decisions[s.reconsider.decision];
+        if (!rd || rd.stageIdx >= si) issue(list, "reconsider", w, "decision " + s.reconsider.decision);
+        if (!isBilingual(s.reconsider.pressure)) issue(list, "reconsider", w, "pressure");
+        Object.keys(s.reconsider).forEach((k) => k !== "decision" && k !== "pressure" && issue(list, "reconsider", w, k));
+      }
+
       // Branches: earlier decision, existing option, branch-only injects of this stage, no structural keys.
       (s.branches || []).forEach((b, bi) => {
         const bw = w + " › branch " + (bi + 1);

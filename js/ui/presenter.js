@@ -346,6 +346,38 @@
     );
   }
 
+  /** Reconsider: the earlier decision and the pressure on it; the room's verdict (keep / reverse / unsure) and why. */
+  function reconsiderCard(sess, f) {
+    const r = f.reconsider;
+    if (!r) return null;
+    const d = view.ctrl.dispatch;
+    let note = r.note || "";
+    const send = (verdict) => d({ type: "reconsider", stageId: r.stageId, verdict, note });
+    const noteId = "rc-note-" + r.stageId;
+    return c.card(
+      { class: ["card", "pres-card", "pres-reconsider", f.slideType === "reconsider" && "is-current"] },
+      el("h2", { text: t("presenter.reconsider", { n: r.fromStageNumber || "?" }) }),
+      el("p", { class: "small" }, el("strong", { text: r.question })),
+      r.recorded
+        ? el("p", { class: "small" }, r.option ? r.option.key + " — " + r.option.text : "", r.text ? (r.option ? " · " : "") + "“" + r.text + "”" : "")
+        : el("p", { class: "muted small", text: t("stage.reconsiderNone") }),
+      el("p", { class: "notice notice--warn small", text: r.pressure }),
+      c.segmented({
+        label: t("presenter.reconsiderVerdict"),
+        name: "rc-" + r.stageId,
+        value: r.verdict || "",
+        options: ["keep", "reverse", "unsure"].map((v) => ({ value: v, label: t("presenter.reconsiderChoice." + v) })),
+        onChange: send
+      }),
+      c.field({
+        id: noteId,
+        label: t("presenter.reconsiderNote"),
+        control: el("textarea", { id: noteId, class: "input textarea", rows: 2, maxlength: 2000, value: note, on: { input: (e) => (note = e.target.value), change: () => r.verdict && send(r.verdict) } })
+      }),
+      el("p", { class: "muted small", text: t("presenter.reconsiderHint") })
+    );
+  }
+
   function decisionCard(sess, f) {
     if (!f.decision || !f.stage) return null;
     const stage = sess.instance.stages[f.stage.index];
@@ -570,7 +602,7 @@
                 roleCard(f),
                 facilitationCards(sess)
               )
-            : el("div", { class: "pres-side" }, timerCard(sess), notesCard(f), decisionCard(sess, f), injectsCard(f), roleCard(f), facilitationCards(sess), factsCard(f))
+            : el("div", { class: "pres-side" }, timerCard(sess), notesCard(f), reconsiderCard(sess, f), decisionCard(sess, f), injectsCard(f), roleCard(f), facilitationCards(sess), factsCard(f))
         )
       )
     );

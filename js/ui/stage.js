@@ -347,6 +347,27 @@
         : el("p", { class: "s-lead", text: t("stage.recapNone", null, lang) })
     );
 
+  /** Reconsider: the room's own earlier decision, the new pressure, and the question to keep or reverse it. */
+  R.reconsider = (s, p, lang) =>
+    el(
+      "div",
+      { class: "s-reconsider" },
+      kicker(t("stage.reconsider", null, lang) + (s.fromStageNumber ? " · " + t("stage.reconsiderFrom", { n: s.fromStageNumber }, lang) : "")),
+      el("h1", { class: "s-h2", text: s.question }),
+      s.recorded
+        ? el(
+            "div",
+            { class: "s-recap__entry" },
+            s.option ? el("p", { class: "s-recap__option" }, el("span", { class: "s-options__key", text: s.option.key }), el("span", { text: s.option.text })) : null,
+            s.text ? el("blockquote", { class: "s-recap__text", text: s.text }) : null
+          )
+        : el("p", { class: "s-lead", text: t("stage.reconsiderNone", null, lang) }),
+      el("p", { class: "s-reconsider__pressure" }, svgIcon("warning", { size: 40 }), el("span", { text: s.pressure })),
+      s.verdict
+        ? el("p", { class: ["s-reconsider__verdict", "is-" + s.verdict] }, t("reconsider.verdict." + s.verdict, null, lang))
+        : el("p", { class: "s-reconsider__ask", text: t("stage.reconsiderAsk", null, lang) })
+    );
+
   R.debrief = (s, p, lang) =>
     s.format === "branching" ? branchingDebrief(s, p, lang) : el(
       "div",

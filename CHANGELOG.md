@@ -6,6 +6,8 @@ The project has no tagged releases yet, so changes are grouped by date. Entries 
 
 ## Unreleased
 
+- Reconsider: a stage can put an earlier decision back in front of the room under new pressure ("Do you stand by it, or reverse it?"); the presenter records keep / reverse / undecided with a reason, and the debrief, report and Markdown list every reconsidered decision. s01 has four such moments
+- Decision and choice options are shown in a seeded order, re-lettered A–D, so the strongest answer is no longer always the first and longest one
 - Add ESLint (`eslint.config.js`) with rules blocking unsafe DOM sinks, dynamic code and string timers; CI runs it
 - Add `tests/test.sh`: one command for the source scan and the headless test suite, used by CI
 - Remove unused variables found by the linter

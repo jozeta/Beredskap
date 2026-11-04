@@ -6,7 +6,7 @@
  * the stage renderer looks content up through the audience projection at run
  * time, so facilitator-only material never travels inside a slide.
  *
- * Typical stage: [recap] → situation → timeline → injects → [data] → [twist] → discussion → [decision]
+ * Typical stage: [recap] → situation → timeline → injects → [data] → [twist] → [reconsider] → discussion → [decision]
  * Audience sets density: executive audiences see fewer full-screen artefacts and charts.
  */
 (function () {
@@ -67,6 +67,8 @@
       chartsFor(stage, audience).forEach((c) => add("data", { idParts: [sid, c.id], ref: { stageId: sid, chartId: c.id } }));
 
       if (i > 0 && stage.twist) add("twist", { idParts: [sid], ref: { stageId: sid } });
+      // The room faces its own earlier decision again, under the new pressure: keep it or reverse it?
+      if (stage.reconsider) add("reconsider", { idParts: [sid], ref: { stageId: sid, decisionId: stage.reconsider.decision } });
       add("discussion", { idParts: [sid], ref: { stageId: sid } });
       if (stage.decision) add("decision", { idParts: [sid], ref: { stageId: sid, decisionId: stage.decision.id } });
     });

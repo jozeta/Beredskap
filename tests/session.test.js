@@ -180,7 +180,9 @@
     test("a recorded decision activates its branch inject slide", () => {
       let s = session();
       assert.ok(!S().slides(s).some((x) => x.injectId === "i2-spread"));
-      s = S().apply(s, { type: "decision", decisionId: "d1", entry: { option: "C", text: "Wait for the SOC" } }, T0);
+      // Options are shown in a seeded order; the branch follows the authored option C ("wait").
+      const wait = s.instance.stages[0].decision.options.find((o) => o.authored === "C").key;
+      s = S().apply(s, { type: "decision", decisionId: "d1", entry: { option: wait, text: "Wait for the SOC" } }, T0);
       assert.ok(S().slides(s).some((x) => x.injectId === "i2-spread"));
       assert.ok(S().stageInjects(s, "p2").some((i) => i.id === "i2-spread"));
     });
@@ -304,6 +306,89 @@
       t2.pages[0].choice.options[0].effects = { morale: 1, trust: 5 };
       const issues = BK.engine.validator.validateTemplate(t2).map((x) => x.detail).join(" ");
       assert.ok(issues.includes("effect morale") && issues.includes("effect trust 5"), issues);
+    });
+  });
+
+  suite("option order and reconsider", () => {
+    test("options are shown in a seeded order: deterministic, not always authored order, re-lettered A–D", () => {
+      const a = exercise({ stageCount: 8 });
+      const b = exercise({ stageCount: 8 });
+      assert.deepEqual(a.stages.map((st) => st.decision.options.map((o) => o.authored)), b.stages.map((st) => st.decision.options.map((o) => o.authored)), "same seed, same order");
+      a.stages.forEach((st) => assert.deepEqual(st.decision.options.map((o) => o.key), "ABCD".slice(0, st.decision.options.length).split(""), "re-lettered by position"));
+      // Across every discussion scenario and two seeds, the authored first option is often not shown first.
+      let firstKept = 0, total = 0;
+      BK.scenarios.list().filter((t) => t.format !== "branching").forEach((tpl) =>
+        ["FJORD-4821", "LYNX-1002"].forEach((seed) =>
+          BK.engine.generator.generate(tpl, { seed, stageCount: tpl.maxStages }).stages.forEach((st) => {
+            if (!st.decision || st.decision.options.length < 2) return;
+            total++;
+            if (st.decision.options[0].authored === "A") firstKept++;
+          })
+        )
+      );
+      assert.ok(firstKept / total < 0.6, "authored A still first in " + firstKept + " of " + total);
+    });
+
+    test("a consequence rule follows its authored option after the shuffle", () => {
+      const ex = exercise({ stageCount: 8 });
+      const shown = ex.stages[0].decision.options.find((o) => o.authored === "C").key;
+      const br = ex.stages[1].branches.find((x) => x.when.decision === "d1");
+      assert.equal(br.when.option, shown);
+    });
+
+    test("reconsider slides appear only where the earlier decision is in the run, and show the room's own decision", () => {
+      const full = exercise({ stageCount: 8 });
+      const types = (ex) => BK.engine.slides.compile(ex).filter((x) => x.type === "reconsider").map((x) => x.stageId + ">" + x.decisionId);
+      assert.deepEqual(types(full), ["p3>d1", "p5>d4", "p6>d3", "p8>d2"]);
+      const short = exercise({ stageCount: BK.scenarios.get("s01-ransomware-vpn").minStages });
+      types(short).forEach((x) => {
+        const [sid, did] = x.split(">");
+        const idx = short.stages.findIndex((st) => st.id === sid);
+        assert.ok(short.stages.slice(0, idx).some((st) => st.decision && st.decision.id === did), x + " revisits a decision outside the run");
+      });
+      let s = S().create(full, T0);
+      const opt = full.stages[0].decision.options[1];
+      s = S().apply(s, { type: "decision", decisionId: "d1", entry: { option: opt.key, text: "Our own words" } }, T0);
+      const slide = S().slides(s).find((x) => x.type === "reconsider" && x.stageId === "p3");
+      s = S().apply(s, { type: "gotoSlide", slideId: slide.id }, T0);
+      const p = S().project(s, T0);
+      assert.equal(p.slide.type, "reconsider");
+      assert.equal(p.slide.option.text, opt.text.en);
+      assert.equal(p.slide.text, "Our own words");
+      assert.ok(p.slide.pressure.length > 20 && p.slide.fromStageNumber === 1);
+      const canvas = BK.ui.stageRenderer.renderCanvas(p, { preview: true });
+      assert.ok(canvas.textContent.includes("Our own words") && canvas.textContent.includes(p.slide.pressure));
+    });
+
+    test("the verdict is recorded, validated, reported and survives export and import", () => {
+      const ex = exercise({ stageCount: 8 });
+      let s = S().create(ex, T0);
+      s = S().apply(s, { type: "decision", decisionId: "d1", entry: { option: "A", text: "" } }, T0);
+      assert.equal(S().apply(s, { type: "reconsider", stageId: "p3", verdict: "maybe" }, T0).reconsider.p3, undefined, "unknown verdict ignored");
+      assert.equal(S().apply(s, { type: "reconsider", stageId: "p2", verdict: "keep" }, T0).reconsider.p2, undefined, "stage without reconsider ignored");
+      s = S().apply(s, { type: "reconsider", stageId: "p3", verdict: "reverse", note: "The VPN is the way in" }, T0);
+      assert.equal(s.reconsider.p3.verdict, "reverse");
+      assert.equal(S().facilitatorView(Object.assign({}, s, { position: { slideId: S().slides(s).find((x) => x.stageId === "p3").id, step: 0 } }), T0).reconsider.verdict, "reverse");
+      const r = BK.io.export.report(s, "en");
+      const row = r.reconsidered.find((x) => x.stage === 3);
+      assert.ok(row && row.verdict === "reverse" && row.note === "The VPN is the way in" && row.original.startsWith("A — "));
+      assert.ok(BK.io.export.markdown(s, "en").includes("Decisions reconsidered"));
+      const back = BK.io.import.validate(BK.io.export.toJSON(ex, s));
+      assert.equal(back.session.reconsider.p3.verdict, "reverse");
+      const bad = JSON.parse(BK.io.export.toJSON(ex, s));
+      bad.session.reconsider.p3.verdict = "<script>";
+      assert.throws(() => BK.io.import.validate(JSON.stringify(bad)), "tampered verdict accepted");
+    });
+
+    test("the validator rejects a reconsider that points forward or lacks bilingual pressure", () => {
+      const tpl = JSON.parse(JSON.stringify(BK.scenarios.get("s01-ransomware-vpn"), (k, v) => (typeof v === "function" ? undefined : v)));
+      const codes = (t) => BK.engine.validator.validateTemplate(t).filter((x) => x.code === "reconsider").length;
+      const t1 = JSON.parse(JSON.stringify(tpl));
+      t1.stages[1].reconsider = { decision: "d5", pressure: { en: "x", sv: "y" } };
+      assert.ok(codes(t1) >= 1, "forward reference accepted");
+      const t2 = JSON.parse(JSON.stringify(tpl));
+      t2.stages[2].reconsider = { decision: "d1", pressure: "English only" };
+      assert.ok(codes(t2) >= 1, "monolingual pressure accepted");
     });
   });
 

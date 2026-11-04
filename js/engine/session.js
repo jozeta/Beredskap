@@ -60,6 +60,7 @@
       position: { slideId: first.id, step: 0, index: 0 },
       injects,
       decisions: {},
+      reconsider: {},
       observations: [],
       actions: [],
       meters: {},
@@ -135,6 +136,33 @@
       if (stage && stage.index >= 1) key = stage.id;
     }
     if (key && !(sess.complications || []).some((c) => c.key === key)) drawComplication(sess, at, key);
+  }
+
+  const RECONSIDER_VERDICTS = ["keep", "reverse", "unsure"];
+
+  /**
+   * What a reconsider slide shows: the earlier decision as the room recorded it (option and own words),
+   * the new pressure, and the verdict once given. Public: it is the room's own record.
+   */
+  function reconsiderContent(sess, stage, lang) {
+    const inst = sess.instance;
+    const src = inst.stages.find((x) => x.decision && x.decision.id === stage.reconsider.decision);
+    const d = src && src.decision;
+    const log = d && sess.decisions[d.id];
+    const opt = log && log.option && d ? d.options.find((o) => o.key === log.option) : null;
+    const v = (sess.reconsider || {})[stage.id] || null;
+    return {
+      stageNumber: stageNumber(sess, stage.id),
+      fromStageNumber: src ? stageNumber(sess, src.id) : null,
+      fromStageTitle: src ? L(src.title, lang) : "",
+      question: d ? L(d.question, lang) : "",
+      recorded: !!log,
+      option: opt ? { key: opt.key, text: L(opt.text, lang) } : null,
+      text: log ? log.text || "" : "",
+      pressure: L(stage.reconsider.pressure, lang),
+      verdict: v ? v.verdict : null,
+      note: v ? v.note : ""
+    };
   }
 
   const ACTION_STATUS = ["open", "progress", "done", "dropped"];
@@ -496,6 +524,15 @@
         if (st && st.state === "skipped") st.state = "pending";
         break;
       }
+      case "reconsider": {
+        // The room's verdict on an earlier decision, faced again under new pressure (one per stage).
+        const st = stageById(sess, cmd.stageId);
+        if (!st || !st.reconsider || !RECONSIDER_VERDICTS.includes(cmd.verdict)) break;
+        sess.reconsider = Object.assign({}, sess.reconsider || {});
+        sess.reconsider[st.id] = { decisionId: st.reconsider.decision, verdict: cmd.verdict, note: String(cmd.note == null ? "" : cmd.note).slice(0, 2000), at: new Date(at).toISOString() };
+        sess.log.push({ at: new Date(at).toISOString(), type: "reconsider", stageId: st.id, decisionId: st.reconsider.decision, verdict: cmd.verdict });
+        break;
+      }
       case "decision":
         sess.decisions[cmd.decisionId] = Object.assign({}, sess.decisions[cmd.decisionId] || {}, cmd.entry, { at: new Date(at).toISOString() });
         sess.log.push({ at: new Date(at).toISOString(), type: "decision", decisionId: cmd.decisionId });
@@ -782,6 +819,8 @@
           authorityNotPresent: d.authorityNotPresent
         });
       }
+      case "reconsider":
+        return Object.assign(base, reconsiderContent(sess, stage, lang));
       case "recap": {
         const prevStage = inst.stages[stage.index - 1];
         const d = prevStage && prevStage.decision;
@@ -966,6 +1005,7 @@
       slideNotes,
       decision: stage && stage.decision ? localiseDeep(stage.decision, lang) : null,
       decisionLog: stage && stage.decision ? sess.decisions[stage.decision.id] || null : null,
+      reconsider: stage && stage.reconsider ? Object.assign({ stageId: stage.id }, reconsiderContent(sess, stage, lang)) : null,
       hiddenFacts: inst.hiddenFacts.map((hf) => {
         const n = hf.revealStage === "debrief" ? null : stageNumber(sess, hf.revealStage);
         return { id: hf.id, text: L(hf.text, lang), stageNumber: n, revealed: n !== null && stageIdx + 1 >= n };

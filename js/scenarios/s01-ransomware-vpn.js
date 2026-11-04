@@ -499,6 +499,7 @@
         title: { en: "The door was left open", sv: "Dörren stod öppen" },
         twist: { en: "Nobody clicked anything. The attacker logged in through your VPN — five days ago.", sv: "Ingen klickade på något. Angriparen loggade in via er VPN – för fem dagar sedan." },
         twistKind: "cause",
+        reconsider: { decision: "d1", pressure: { en: "The way in was the VPN the night shift depends on. Every hour it stays open, the attacker can come back. Every hour it is shut, nothing leaves the warehouse.", sv: "Vägen in var just den VPN som nattskiftet är beroende av. Varje timme den står öppen kan angriparen komma tillbaka. Varje timme den är stängd lämnar ingenting lagret." } },
         assumptionChallenged: { en: "This started with a phishing email opened this afternoon.", sv: "Det här började med ett nätfiskemejl som öppnades i eftermiddags." },
         reveals: ["hf-access", "hf-dwell"],
         narrative: {
@@ -781,6 +782,7 @@
         title: { en: "The countdown", sv: "Nedräkningen" },
         twist: { en: "Paying is unlikely to stop the leak: this actor has published data from victims who paid.", sv: "Att betala stoppar troligen inte läckan: den här aktören har publicerat data från offer som betalade." },
         twistKind: "impact",
+        reconsider: { decision: "d4", pressure: { en: "{{reg.dpaShort}} calls: a journalist has asked them about your breach. They want to know why they are hearing it from the press, and what you knew when.", sv: "{{reg.dpaShort}} ringer: en journalist har frågat dem om ert intrång. De vill veta varför de hör det från pressen, och vad ni visste när." } },
         assumptionChallenged: { en: "Paying the ransom would at least keep the data private.", sv: "Att betala lösensumman skulle åtminstone hålla datan hemlig." },
         narrative: {
           en: "Saturday afternoon, {{time.T+1290|clock}}. The leak site now shows a countdown: {{num.leakDays}} days until full publication. The price on the site has risen to {{num.ransomRaised|currency}}.\n\nThe pressure inside the company is rising just as fast. Management wants every option on the table, the insurer has conditions, and the police have advice. Someone has to decide what {{org.name}} will and will not do.",
@@ -901,6 +903,7 @@
         title: { en: "Monday morning, no matter what", sv: "Måndag morgon, oavsett vad" },
         twist: { en: "The attacker still has a way in.", sv: "Angriparen har fortfarande en väg in." },
         twistKind: "scope",
+        reconsider: { decision: "d3", pressure: { en: "The attacker is still inside. If you reset broadly, you broke payroll and the warehouse scanners without stopping them. If you held back, they are using the accounts you left alone.", sv: "Angriparen är fortfarande kvar. Om ni bytte brett slog ni ut lönekopplingen och lagrets skannrar utan att stoppa dem. Om ni avvaktade använder de nu kontona ni lät vara." } },
         assumptionChallenged: { en: "Once the VPN is closed and passwords are reset, the attacker is out.", sv: "När VPN:en är stängd och lösenorden bytta är angriparen ute." },
         reveals: ["hf-persistence"],
         narrative: {
@@ -1153,6 +1156,7 @@
         title: { en: "Recovery order and residual risk", sv: "Återställningsordning och kvarstående risk" },
         twist: { en: "The newest trustworthy backup is {{num.backupDaysOld}} days old.", sv: "Den senaste säkerhetskopian ni kan lita på är {{num.backupDaysOld}} dagar gammal." },
         twistKind: "impact",
+        reconsider: { decision: "d2", pressure: { en: "The newest clean copy is {{num.backupDaysOld}} days old. Restoring it means weeks of orders and invoices re-entered by hand, while the attacker's offer of a working decryption key still stands.", sv: "Den senaste rena kopian är {{num.backupDaysOld}} dagar gammal. Att återställa den betyder veckor av order och fakturor som måste matas in för hand, medan angriparens erbjudande om en fungerande dekrypteringsnyckel fortfarande står." } },
         assumptionChallenged: { en: "Once systems are restored, you are back where you were on Friday.", sv: "När systemen är återställda är ni tillbaka där ni var i fredags." },
         reveals: ["hf-cleancopy"],
         narrative: {
