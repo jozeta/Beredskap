@@ -17,6 +17,6 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Lint (ESLint, incl. the unsafe-DOM-sink rules)
-        run: npx --yes eslint@9.39.5 .
+        run: npx --yes eslint@10.14.0 .
       - name: Source scan and in-browser test suite (tests.html, headless Chrome over HTTP)
         run: bash tests/test.sh

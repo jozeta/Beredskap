@@ -1,5 +1,5 @@
 // ESLint flat config for Beredskap: classic browser scripts on window.BK, no build, no packages.
-// Run with: npx --yes eslint@9.39.5 .
+// Run with: npx --yes eslint@10.14.0 .
 // Besides common mistakes, it blocks the unsafe DOM sinks and dynamic code the app never uses
 // (README §5 "Safe rendering"); the static icon sprite in js/graphics/icons.js is the one exception.
 

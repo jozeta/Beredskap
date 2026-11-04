@@ -14,7 +14,7 @@ https://jozeta.github.io/Beredskap/ (GitHub Pages from `main`, root folder).
 ```sh
 python3 -m http.server 8000      # then open http://localhost:8000/ (app) and /tests.html (tests)
 bash tests/test.sh               # forbidden-API scan + headless tests.html over HTTP (what CI runs)
-npx --yes eslint@9.39.5 .        # lint, incl. rules blocking innerHTML/outerHTML/insertAdjacentHTML/document.write
+npx --yes eslint@10.14.0 .        # lint, incl. rules blocking innerHTML/outerHTML/insertAdjacentHTML/document.write
 ```
 
 - `index.html` also works from `file://`, but run tests **over HTTP**: from `file://` three
