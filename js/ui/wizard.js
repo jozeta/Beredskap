@@ -265,7 +265,7 @@
           options: BK.i18n.LANGS.map((l) => ({ value: l, label: t("lang." + l) })),
           onChange: (v) => {
             draft.lang = v;
-            // Until the operator picks one, jurisdiction (and so currency and regulator) follows the language.
+            // Until the operator picks one, jurisdiction (and so the regulator) follows the language. Money always follows the language.
             if (!ui.jurisdictionTouched) draft.jurisdiction = v === "sv" ? "se" : "eu";
             rerender(); // title placeholder follows the exercise language
           }

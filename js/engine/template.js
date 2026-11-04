@@ -169,7 +169,7 @@
     if (typeof value === "number") {
       switch (formatter || "number") {
         case "number": return fmt.number(value, lang);
-        case "currency": return fmt.currency(value, ctx.currency, lang);
+        case "currency": return fmt.money(value, ctx.currency, lang); // kronor in Swedish, euros in English
         case "percent": return new Intl.NumberFormat(BK.i18n.locale(lang), { style: "percent", maximumFractionDigits: 0 }).format(value / 100);
         case "hours": return fmt.number(value, lang) + " h";
         case "raw": return String(value);

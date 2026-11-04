@@ -311,13 +311,23 @@
       assert.ok(head("generic").startsWith("EDR alert"));
     });
 
-    test("jurisdiction sets currency and regulator", () => {
+    test("jurisdiction sets the regulator; language sets the currency (kronor in Swedish, euros in English)", () => {
       const se = make({ jurisdiction: "se", stageCount: 8 });
       const eu = make({ jurisdiction: "eu", stageCount: 8 });
-      assert.equal(se.currency, "SEK");
-      assert.equal(eu.currency, "EUR");
       assert.ok(se.stages[3].decision.question.en.includes("IMY"));
       assert.ok(!eu.stages[3].decision.question.en.includes("IMY"));
+      [se, eu].forEach((inst) => {
+        const ctx = { entities: inst.entities, vars: inst.vars, clock: inst.entities.clock, currency: inst.currency, environment: inst.params.environment, jurisdiction: inst.params.jurisdiction };
+        const sv = BK.engine.template.resolveString("{{num.ransom|currency}}", "sv", ctx, new Set());
+        const en = BK.engine.template.resolveString("{{num.ransom|currency}}", "en", ctx, new Set());
+        assert.ok(/kr/.test(sv) && !/€/.test(sv), "Swedish shows kronor: " + sv);
+        assert.ok(/€/.test(en) && !/kr|SEK/.test(en), "English shows euros: " + en);
+        const kronor = Number(sv.replace(/[^0-9]/g, ""));
+        const euros = Number(en.replace(/[^0-9]/g, ""));
+        assert.ok(Math.abs(euros - kronor / 11) / (kronor / 11) < 0.06, "same amount at the exercise rate: " + sv + " / " + en);
+      });
+      // An exercise saved before this change stored euros; it still shows kronor in Swedish.
+      assert.ok(/kr/.test(BK.i18n.fmt.money(10000, "EUR", "sv")) && /€/.test(BK.i18n.fmt.money(10000, "EUR", "en")));
     });
 
     test("organisation size scales numbers", () => {

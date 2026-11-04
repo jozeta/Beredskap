@@ -275,7 +275,7 @@
 
   function kpi(c, p) {
     const lang = p.lang;
-    const fmt = (v, kind) => (kind === "currency" ? BK.i18n.fmt.currency(v, p.slide && p.slide.currency, lang) : fmtNum(v, lang));
+    const fmt = (v, kind) => (kind === "currency" ? BK.i18n.fmt.money(v, p.slide && p.slide.currency, lang) : fmtNum(v, lang));
     const tiles = (c.data && c.data.tiles) || [];
     return figure("kpi", [
       el(

@@ -52,7 +52,7 @@ are used.
   cast, threat actor, numbers and timeline from a seed. The same seed and settings always
   give the same exercise.
 - **Tailoring.** Sector, size, technology vocabulary (for example Microsoft 365 or Google
-  Workspace), jurisdiction (regulator, reporting rules, currency), audience (technical,
+  Workspace), jurisdiction (regulator, reporting rules), audience (technical,
   executive or mixed), difficulty, inject density, participating roles, real participant
   names and learning objectives.
 - **Facilitation tools.** Inject release, skip and postpone; a discussion timer; pacing
@@ -618,7 +618,7 @@ unknown path fails validation.
 | `actor.` | `name`, `type`, `motivation`, `leakSite`, `contact` |
 | `supplier.<kind>` | `msp`, `cloud`, `vendor`, `isp`, `irRetainer`, `insurer`, `bank`, `registrar`, `payments`, `facilities` (+ `.domain`) |
 | `asset.` | fictional host names, IPs (RFC 5737), domains (`.example`), accounts |
-| `num.` | rolled `variables` — `{{num.ransom\|currency}}` |
+| `num.` | rolled `variables` — `{{num.ransom\|currency}}`. Amounts are rolled in kronor and shown in the language's currency: kronor in Swedish, euros in English (fixed exercise rate, 11 kr = €1) |
 | `time.T±N` | in-scenario clock — `{{time.T+45\|clock}}`, `{{time.T-2880\|datetime}}` |
 | `env.` | technology-environment vocabulary — `{{env.edrAlert\|cap}}` becomes "Defender for Endpoint alert" for Microsoft 365 |
 | `reg.` | jurisdiction terms — regulator, CSIRT, police, notification law |

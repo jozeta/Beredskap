@@ -6,6 +6,7 @@ The project has no tagged releases yet, so changes are grouped by date. Entries 
 
 ## Unreleased
 
+- Money follows the language in every scenario: kronor in Swedish, euros in English (fixed exercise rate, 11 kr = €1), whatever the jurisdiction, in text and in figure tiles. Amounts are rolled in kronor and converted when shown, so switching language live shows the same amount. Fixes s34's payroll, which showed as a few kronor
 - Reconsider: a stage can put an earlier decision back in front of the room under new pressure ("Do you stand by it, or reverse it?"); the presenter records keep / reverse / undecided with a reason, and the debrief, report and Markdown list every reconsidered decision. s01 has four such moments
 - Decision and choice options are shown in a seeded order, re-lettered A–D, so the strongest answer is no longer always the first and longest one
 - Add ESLint (`eslint.config.js`) with rules blocking unsafe DOM sinks, dynamic code and string timers; CI runs it

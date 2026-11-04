@@ -1133,6 +1133,18 @@
       "presenter.reconsiderChoice.keep": "Keep it",
       "presenter.reconsiderChoice.reverse": "Reverse it",
       "presenter.reconsiderChoice.unsure": "Undecided",
+      "sector.insurance": "Insurance",
+      "sector.media": "News media",
+      "sector.government": "Government agency",
+      "category.claims-fraud": "Claims fraud",
+      "category.underwriting-ai": "AI underwriting",
+      "category.insurer-ransomware": "Insurer under attack",
+      "category.source-protection": "Source protection",
+      "category.election-night": "Election night",
+      "category.newsroom-hijack": "Newsroom hijack",
+      "category.benefits-outage": "Benefits outage",
+      "category.public-warning-spoof": "Spoofed public warning",
+      "category.protected-identity": "Protected identities",
       "error.validation": "The exercise cannot start until these problems are fixed:"
     },
 
@@ -2254,6 +2266,18 @@
       "presenter.reconsiderChoice.keep": "Stå fast",
       "presenter.reconsiderChoice.reverse": "Ändra",
       "presenter.reconsiderChoice.unsure": "Oenigt",
+      "sector.insurance": "Försäkring",
+      "sector.media": "Nyhetsmedia",
+      "sector.government": "Statlig myndighet",
+      "category.claims-fraud": "Skadebedrägeri",
+      "category.underwriting-ai": "AI i riskbedömning",
+      "category.insurer-ransomware": "Försäkringsbolag under angrepp",
+      "category.source-protection": "Källskydd",
+      "category.election-night": "Valnatt",
+      "category.newsroom-hijack": "Kapad redaktion",
+      "category.benefits-outage": "Avbrott i utbetalningar",
+      "category.public-warning-spoof": "Falskt varningsmeddelande",
+      "category.protected-identity": "Skyddade personuppgifter",
       "error.validation": "Övningen kan inte startas förrän de här problemen är åtgärdade:"
     }
   };
@@ -2306,6 +2330,14 @@
 
   // ---- Formatters -------------------------------------------------------------
 
+  const SEK_PER_EUR = 11; // fixed exercise rate; the generator rolls every amount in kronor
+
+  function niceRound(v, sig) {
+    if (v === 0) return 0;
+    const mag = Math.pow(10, Math.floor(Math.log10(Math.abs(v))) - (sig - 1));
+    return Math.round(v / mag) * mag;
+  }
+
   const fmt = {
     number(n, lang) {
       return new Intl.NumberFormat(locale(lang)).format(n);
@@ -2315,6 +2347,19 @@
       const l = lang || current;
       const cur = currency || (l === "sv" ? "SEK" : "EUR");
       return new Intl.NumberFormat(locale(l), { style: "currency", currency: cur, maximumFractionDigits: 0 }).format(n);
+    },
+    /**
+     * An amount stored in `base` currency, shown in the language's own currency: kronor in Swedish,
+     * euros in English, at a fixed rate (SEK_PER_EUR) and rounded to two significant figures when
+     * converted, so live language switching shows the same amount, never two different ones.
+     */
+    money(n, base, lang) {
+      const l = lang || current;
+      const want = l === "sv" ? "SEK" : "EUR";
+      const from = base === "EUR" ? "EUR" : "SEK";
+      let v = Number(n) || 0;
+      if (from !== want) v = niceRound(from === "SEK" ? v / SEK_PER_EUR : v * SEK_PER_EUR, 2);
+      return fmt.currency(v, want, l);
     },
     date(d, lang) {
       return new Intl.DateTimeFormat(locale(lang), { year: "numeric", month: "long", day: "numeric" }).format(d);

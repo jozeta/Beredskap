@@ -89,11 +89,12 @@
     return p.lang;
   }
 
-  /** Fixed at generation so switching language never changes an amount. */
-  function currencyFor(p) {
-    if (p.jurisdiction === "se") return "SEK";
-    if (p.jurisdiction === "eu") return "EUR";
-    return p.lang === "sv" ? "SEK" : "EUR";
+  /**
+   * The base currency amounts are rolled in. Always kronor: display converts per language (kronor in
+   * Swedish, euros in English; BK.i18n.fmt.money), so one exercise shows the same amount in both.
+   */
+  function currencyFor() {
+    return "SEK";
   }
 
   // ---- 2. Entity graph ------------------------------------------------------------------
@@ -269,7 +270,7 @@
       : spec.min + u * (spec.max - spec.min);
     v = roundTo(v, spec.step || 1);
     v = Math.max(spec.min, Math.min(spec.max, v));
-    if (spec.currency && currency === "EUR") v = niceRound(v / SEK_PER_EUR, 2);
+    if (spec.currency && currency === "EUR") v = niceRound(v / SEK_PER_EUR, 2); // older exercises only; new ones roll kronor
     return v;
   }
 

@@ -43,7 +43,7 @@
     actor: { types: ["unknown"], motivation: L(["None identified: regional signal interference and a receiver fault", "Ingen identifierad: regional signalstörning och ett fel i en mottagare"]), capability: "low" },
     variables: {
       servers: { min: 40, max: 1200, scaleBy: "size", step: 10 },
-      payroll: { min: 1, max: 60, scaleBy: "size", currency: true },
+      payroll: { min: 1000000, max: 60000000, scaleBy: "size", step: 100000, currency: true },
       invoices: { min: 200, max: 15000, scaleBy: "size", step: 10 }
     },
     roles: ["incidentCommander", "itOps", "networkLead", "ciso", "socLead", "cio", "cfo", "serviceOwner", "facilities", "comms", "legal"],

@@ -40,7 +40,7 @@
     actor: { types: ["insider"], motivation: L(["Revenge for being laid off", "Hämnd för att ha blivit uppsagd"]), capability: "medium" },
     variables: {
       staff: { min: 120, max: 2400, scaleBy: "size", step: 10 },
-      payroll: { min: 2, max: 80, scaleBy: "size", currency: true },
+      payroll: { min: 2000000, max: 80000000, scaleBy: "size", step: 100000, currency: true },
       serviceAccounts: { min: 6, max: 60, scaleBy: "size" }
     },
     roles: ["incidentCommander", "ciso", "itOps", "socLead", "hr", "legal", "cfo", "ceo", "comms"],
