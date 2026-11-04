@@ -24,6 +24,11 @@ debrief, an after-action report and an improvement plan with owners and due date
   always first. Later stages put earlier decisions back in front of the room under new
   pressure ("do you stand by it, or reverse it?"), and earlier choices change what happens
   next. The debrief lists every decision the room kept or reversed.
+- **Pushback on every decision.** After the room chooses, the facilitator can play a
+  challenge card built from that choice: the decision owner has doubts, someone argues
+  for the option you rejected, assume it went wrong, tomorrow's headline. An optional
+  decision deadline makes indecision a decision: when the countdown runs out, the
+  decision owner (or, in a branching exercise, the story) chooses for the room.
 - **Build your own.** A slide editor with 53 templates (questions, decisions, email and
   chat threads, phone calls, social posts, alerts, logs, reports) lets you create custom
   exercises.
@@ -49,6 +54,8 @@ are used.
 | **Stage.** The audience screen, with injects drawn as realistic mock-ups. | **Exercise builder.** Build your own exercise slide by slide. |
 | ![Debrief route map](docs/screenshots/debrief-route-map.png) | ![Help](docs/screenshots/help.png) |
 | **Debrief.** The route through a branching exercise; hover over a decision to see the options. | **Help.** A built-in guide in English and Swedish. |
+| ![Challenge card on stage](docs/screenshots/stage-challenge.png) | ![Decision deadline on stage](docs/screenshots/stage-deadline.png) |
+| **Challenge card.** Pushback built from the option the room just chose. | **Decision deadline.** When time runs out undecided, the decision owner decides alone. |
 
 ## Features
 
@@ -178,8 +185,10 @@ troubleshooting.
 ### 3.1 From zero to running (about one minute)
 
 1. **Library** (`#/library`). Browse the 61 scenarios. You can filter by
-   category, structure (archetype A–F) and format (discussion or branching), or
-   search. A card's preview shows
+   category, sector, structure (archetype A–F) and format (discussion or
+   branching), or search. Under a sector, the scenarios written for it come first,
+   followed by those that fit any sector; *Use scenario* then starts setup with that
+   sector chosen. A card's preview shows
    the summary, learning objectives, key lessons, stage titles and framework
    references. It never shows hidden facts.
 2. **Setup** (`#/new`). Choose *Use scenario* on a card (or *New exercise* /
@@ -191,7 +200,7 @@ troubleshooting.
    - participating roles, with optional real participant names;
    - learning objectives;
    - discussion time, inject release and decision mode;
-   - extra pressure: pressure meters and the complication deck;
+   - extra pressure: pressure meters, the complication deck and the decision deadline;
    - the seed.
 
    Every control changes the generated exercise. For a branching scenario,
@@ -305,7 +314,7 @@ troubleshooting.
   and default duration. You can also export all raw data, or clear it with a
   double confirmation.
 
-### 3.5 Custom exercises, pressure meters and complications
+### 3.5 Custom exercises, pressure meters, complications and challenges
 
 - **Exercise builder** (`#/builder/:id`). Start it with *New custom exercise* in
   the library. Slides are listed on the left (drag, or Alt+↑/↓, to reorder),
@@ -323,6 +332,21 @@ troubleshooting.
 - **Complication deck.** 32 short twists (people, technical, communication,
   legal, logistics, wildcard). Draw a card, read its private note, then show it
   on the stage or put it back. In automatic mode one card is readied per stage.
+- **Challenge cards.** At every decision point, once the room has chosen, the
+  presenter offers *Challenge the decision*: a card built from the chosen option
+  (and, for some cards, an option the room rejected or a role nobody asked). Show
+  it on the stage, draw another, and record whether the room stood firm or changed
+  its mind; if it changed, record the new decision (branching: *Undo* and choose
+  again). The debrief and reports list every challenge and the response. The text
+  uses only what the room has already seen.
+- **Decision deadline** (setup, *Extra pressure*, off by default). In a discussion
+  exercise, the stage's countdown is the deadline: if it runs out with no decision
+  recorded, the decision owner picks an option alone (seeded, so a re-run picks the
+  same). The stage shows what was chosen; it counts as the room's decision, so later
+  consequences and Reconsider moments react to it, and the room can still overrule
+  it. In a branching exercise every choice gets a three-minute countdown, and when
+  it runs out the story chooses and moves on (*Undo* takes it back). The debrief
+  lists every decision the clock made and whether the room overruled it.
 
 ### 3.6 Language and theme
 
@@ -727,15 +751,15 @@ page text.
 
 Open `tests.html`. The runner has no dependencies. It reports *passed*,
 *failed* and *skipped* separately and never counts a skipped test as passed.
-Current result: **209 passed, 0 failed** when served over HTTP. From `file://`
-the result is 206 passed and 3 skipped; the skipped three are the source-reading
-tests.
+Current result: **220 passed, 0 failed** when served over HTTP. From `file://`
+the result is 216 passed and 4 skipped; the skipped four read source files
+(including the check that the app version matches `CHANGELOG.md`).
 
 | Suite | Covers |
 |---|---|
 | core | RNG determinism and forks, i18n key parity EN/SV, store envelope/corruption/newer-schema, safe DOM (hostile strings stay text), router, themes |
 | engine | resolver (both languages, unknown placeholders reported), every stage count and a parameter grid produce valid instances, same seed ⇒ deep-equal, different seeds differ, one person per role, reserved domains/IPs, monotonic timeline and dependencies, hidden facts never public before reveal, every wizard option changes the result, pacing |
-| session | navigation bounds, step reveal, timers pause/resume, branches, skip/postpone/release, live language switch, s01 confidentiality sweep (projection + DOM), recovery after reload with timers paused, sync regression, clicker and control keys, shortcuts disabled while typing |
+| session | navigation bounds, step reveal, timers pause/resume, branches, skip/postpone/release, live language switch, s01 confidentiality sweep (projection + DOM), recovery after reload with timers paused, sync regression, clicker and control keys, shortcuts disabled while typing, decision deadlines (discussion and branching), challenge cards (seeded draws, public text only, report and import) |
 | graphics | every icon and emblem exists, charts have titles, descriptions, data tables and legends, every artefact type renders and stays inert with hostile content, deterministic artwork |
 | facilitation | decision/observation/objective/scorecard logs, report contents, Markdown and CSV (BOM, separators, formula guard), JSON round-trip, malformed and hostile imports rejected or inert, prototype pollution dropped, editor operations, print outputs |
 | scenario library | all templates validate; unique ids/emblems/categories; determinism; no unresolved placeholder in any generated text; hidden facts at every stage count; **confidentiality**: a full playthrough per branch option for every scenario, in both languages, checking the projection JSON and the rendered text and attributes for facilitator text, hidden facts and unreleased injects; every chart renders in both languages |

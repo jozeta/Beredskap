@@ -63,6 +63,17 @@
     return out;
   }
 
+  suite("version", () => {
+    test("the app version is semantic and matches the newest version heading in CHANGELOG.md", async () => {
+      if (location.protocol === "file:") skip("needs a static server to read CHANGELOG.md");
+      assert.ok(/^\d+\.\d+\.\d+$/.test(window.BK.version), "window.BK.version " + window.BK.version);
+      const log = await readText("CHANGELOG.md");
+      const m = /^## (\d+\.\d+\.\d+)\b/m.exec(log);
+      assert.ok(m, "CHANGELOG.md has a version heading");
+      assert.equal(m[1], window.BK.version, "bump window.BK.version (js/core/namespace.js) and CHANGELOG.md together");
+    });
+  });
+
   suite("hardening", () => {
     test("self-check: no eval, new Function, string timers, HTML sinks outside icons.js, network APIs or external URLs", async () => {
       const { files } = await loadSources();

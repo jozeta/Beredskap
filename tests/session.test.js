@@ -392,6 +392,119 @@
     });
   });
 
+  suite("decision deadline and challenge cards", () => {
+    /** A session on stage 1's first discussion slide with its countdown running from `at`. */
+    function onDiscussion(params, at) {
+      const ex = exercise(Object.assign({ stageCount: 8 }, params));
+      let s = S().create(ex, T0);
+      const slide = S().slides(s).find((x) => x.type === "discussion" && x.stageId === "p1");
+      s = S().apply(s, { type: "gotoSlide", slideId: slide.id }, at);
+      s = S().apply(s, { type: "timerToggle" }, at);
+      return { ex, s };
+    }
+
+    test("with the setting off, a countdown that runs out changes nothing", () => {
+      const { s } = onDiscussion({}, T0);
+      const late = T0 + s.timer.durationMs + 1000;
+      assert.equal(S().apply(s, { type: "deadline" }, late), s, "deadline ignored when the setting is off");
+    });
+
+    test("when time runs out undecided, the decision owner picks a seeded option the room can overrule", () => {
+      const { ex, s } = onDiscussion({ decisionDeadline: true }, T0);
+      assert.equal(S().apply(s, { type: "deadline" }, T0 + 1000), s, "not before the countdown ends");
+      const late = T0 + s.timer.durationMs + 1000;
+      const a = S().apply(s, { type: "deadline" }, late);
+      const pick = a.deadlines.d1.option;
+      assert.ok(ex.stages[0].decision.options.some((o) => o.key === pick), "picked one of the options");
+      assert.equal(a.decisions.d1.option, pick, "recorded as the room's decision, so consequences follow it");
+      assert.equal(onDiscussion({ decisionDeadline: true }, T0).s.instance.seed, s.instance.seed);
+      assert.equal(S().apply(onDiscussion({ decisionDeadline: true }, T0).s, { type: "deadline" }, late).deadlines.d1.option, pick, "same seed, same pick");
+      assert.equal(S().apply(a, { type: "deadline" }, late + 1000), a, "fires once");
+      const p = S().project(a, late);
+      assert.equal(p.deadline.option.key, pick);
+      const canvas = BK.ui.stageRenderer.renderCanvas(p, { preview: true });
+      assert.ok(canvas.textContent.includes(p.deadline.option.text), "the stage shows what was chosen");
+      // A decision the room already made is never overwritten.
+      const decided = S().apply(s, { type: "decision", decisionId: "d1", entry: { option: "A", text: "" } }, T0 + 500);
+      assert.equal(S().apply(decided, { type: "deadline" }, late), decided);
+      // The room overrules it; the report says so. Moving on clears the card.
+      const other = ex.stages[0].decision.options.find((o) => o.key !== pick).key;
+      const b = S().apply(a, { type: "decision", decisionId: "d1", entry: { option: other, text: "" } }, late + 2000);
+      const row = BK.io.export.report(b, "en").deadlines[0];
+      assert.ok(row.overruled && row.picked.startsWith(pick + " — ") && row.final.startsWith(other + " — "));
+      assert.equal(S().apply(b, { type: "next" }, late + 3000).activeDeadline, null);
+      const back = BK.io.import.validate(BK.io.export.toJSON(ex, b));
+      assert.equal(back.session.deadlines.d1.option, pick);
+    });
+
+    test("in a branching run, a choice gets its own countdown and the story chooses when it runs out", () => {
+      const tpl = BK.scenarios.get("b01-lost-laptop");
+      const inst = Object.assign({ id: "ex-d" }, BK.engine.generator.generate(tpl, { seed: "FJORD-4821", decisionDeadline: true }));
+      let s = S().create(inst, T0);
+      let i = 0;
+      for (; i < 50 && S().locate(s).slide.type !== "choice"; i++) s = S().apply(s, { type: "next" }, T0 + i);
+      const page = S().locate(s).slide.pageId;
+      assert.ok(s.timer.runningSince && s.timer.durationMs === S().CHOICE_DEADLINE_MINUTES * 60000, "countdown starts on the choice");
+      assert.ok(S().project(s, T0 + i).timer.active, "the stage shows it");
+      const late = T0 + i + s.timer.durationMs + 1000;
+      const a = S().apply(s, { type: "deadline" }, late);
+      assert.ok(a.deadlines[page] && a.decisions[page].option === a.deadlines[page].option, "the story chose");
+      assert.notEqual(a.route[a.route.length - 1].pageId, page, "and moved on");
+      assert.ok(S().project(a, late).deadline.branching);
+      const back = BK.io.import.validate(BK.io.export.toJSON(inst, a));
+      assert.ok(back.session.deadlines[page]);
+    });
+
+    test("challenge cards need a recorded decision, are seeded, never repeat back to back, and report the response", () => {
+      const ex = exercise({ stageCount: 8 });
+      let s = S().create(ex, T0);
+      assert.equal(S().apply(s, { type: "challengeDraw", key: "d1" }, T0), s, "nothing to challenge yet");
+      const chosen = ex.stages[0].decision.options[0];
+      s = S().apply(s, { type: "decision", decisionId: "d1", entry: { option: chosen.key, text: "" } }, T0);
+      const a = S().apply(s, { type: "challengeDraw", key: "d1" }, T0);
+      assert.equal(S().apply(s, { type: "challengeDraw", key: "d1" }, T0).challenges.d1.id, a.challenges.d1.id, "seeded");
+      const b = S().apply(a, { type: "challengeDraw", key: "d1" }, T0);
+      assert.notEqual(b.challenges.d1.id, a.challenges.d1.id, "a new card on each draw");
+      let c = S().apply(b, { type: "challengeShow", key: "d1" }, T0);
+      const p = S().project(c, T0);
+      assert.ok(p.challenge && p.challenge.title && !/[{}]/.test(p.challenge.title + p.challenge.text), "placeholders filled");
+      assert.ok(BK.ui.stageRenderer.renderCanvas(p, { preview: true }).textContent.includes(p.challenge.text));
+      assert.equal(S().apply(c, { type: "challengeOutcome", key: "d1", outcome: "maybe" }, T0), c, "unknown response ignored");
+      c = S().apply(c, { type: "challengeOutcome", key: "d1", outcome: "held" }, T0);
+      c = S().apply(c, { type: "challengeHide" }, T0);
+      assert.equal(S().project(c, T0).challenge, null);
+      const row = BK.io.export.report(c, "en").challenges[0];
+      assert.ok(row && row.outcome === "held" && row.card === S().challengeContent(c, "d1", "en").title);
+      assert.ok(BK.io.export.markdown(c, "en").includes("Challenged decisions"));
+      const back = BK.io.import.validate(BK.io.export.toJSON(ex, c));
+      assert.equal(back.session.challenges.d1.outcome, "held");
+      const bad = JSON.parse(BK.io.export.toJSON(ex, c));
+      bad.session.challenges.d1.id = "<script>";
+      assert.throws(() => BK.io.import.validate(JSON.stringify(bad)), "unknown card accepted");
+    });
+
+    test("every challenge card, in both languages, is built from public text only", () => {
+      const ex = exercise({ stageCount: 8, lang: "sv" });
+      const secret = facilitatorStrings(ex);
+      let s = S().create(ex, T0);
+      ex.stages.filter((st) => st.decision).forEach((st) => (s = S().apply(s, { type: "decision", decisionId: st.decision.id, entry: { option: st.decision.options[1].key, text: "" } }, T0)));
+      const seen = new Set();
+      ex.stages.filter((st) => st.decision).forEach((st) => {
+        for (let i = 0; i < 14; i++) {
+          s = S().apply(s, { type: "challengeDraw", key: st.decision.id }, T0);
+          seen.add(s.challenges[st.decision.id].id);
+          ["en", "sv"].forEach((lang) => {
+            const ch = S().challengeContent(s, st.decision.id, lang);
+            const text = ch.title + " " + ch.text;
+            assert.ok(!/[{}]/.test(text), "unfilled placeholder: " + text);
+            secret.forEach((x) => assert.ok(!text.includes(x), "facilitator text in a challenge card"));
+          });
+        }
+      });
+      assert.equal(seen.size, BK.data.challenges.cards.length, "every card can be drawn");
+    });
+  });
+
   suite("confidentiality boundary", () => {
     const configs = [
       { stageCount: 4, audience: "technical", injectDensity: "high", difficulty: "advanced" },

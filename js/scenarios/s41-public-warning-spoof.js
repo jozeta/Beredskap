@@ -24,8 +24,8 @@
     emblem: "public-warning-spoof",
     title: L(["The Fake Evacuation", "Den falska evakueringen"]),
     summary: L([
-      "Your agency's own text sender has just told {{num.recipients|number}} people that their water is poisoned and that they must leave their homes. Your website is down. The only fast way to tell them it is false is the channel that lied to them.",
-      "Er myndighets egen sms-avsändare har just sagt till {{num.recipients|number}} personer att deras vatten är förgiftat och att de måste lämna sina hem. Er webbplats ligger nere. Det enda snabba sättet att säga att det är falskt är kanalen som ljög för dem."
+      "Your agency's own text sender has just told tens of thousands of people that their water is poisoned and that they must leave their homes. Your website is down. The only fast way to tell them it is false is the channel that lied to them.",
+      "Er myndighets egen sms-avsändare har just sagt till tiotusentals personer att deras vatten är förgiftat och att de måste lämna sina hem. Er webbplats ligger nere. Det enda snabba sättet att säga att det är falskt är kanalen som ljög för dem."
     ]),
     learningObjectives: [
       { id: "lo1", text: L(["Correct a false public warning fast, through channels people still trust", "Snabbt rätta en falsk varning till allmänheten, via kanaler som folk fortfarande litar på"]), teaser: L(["The text from your own sender", "Sms:et från er egen avsändare"]) },

@@ -22,8 +22,12 @@
   const B = () => BK.engine.branching;
   const isBranching = (sess) => sess.instance.format === "branching";
   const isCustom = (sess) => sess.instance.format === "custom";
-  /** A slide whose discussion countdown the click/arrow "advance" rule respects. */
-  const timedSlide = (slide) => !!slide && (slide.type === "discussion" || (slide.type === "custom" && slide.timer > 0));
+  /** Decision deadline setting: when the countdown runs out, the decision is made for the room. */
+  const deadlineOn = (sess) => !!(sess && sess.instance.settings && sess.instance.settings.decisionDeadline);
+  /** A slide whose discussion countdown the click/arrow "advance" rule respects (with deadlines, choices too). */
+  const timedSlide = (slide, sess) => !!slide && (slide.type === "discussion" || (slide.type === "custom" && slide.timer > 0) || (slide.type === "choice" && deadlineOn(sess)));
+  /** Minutes a branching choice gets when the decision deadline is on. */
+  const CHOICE_DEADLINE_MINUTES = 3;
 
   // Inject types that carry a system-assigned severity (shown on stage); human messages do not.
   const SYSTEM_TYPES = new Set(["siemAlert", "edrAlert", "authLog", "networkEvidence", "logExcerpt", "backupReport", "ticket", "forensicFinding", "threatIntel", "advisory", "statusPage"]);
@@ -66,6 +70,10 @@
       meters: {},
       complications: [],
       activeComplication: null,
+      deadlines: {},
+      activeDeadline: null,
+      challenges: {},
+      activeChallenge: null,
       objectives: {},
       scorecard: {},
       notes: "",
@@ -163,6 +171,89 @@
       verdict: v ? v.verdict : null,
       note: v ? v.note : ""
     };
+  }
+
+  // ---- Decision points: deadlines and challenge cards -----------------------------------------------
+  // A decision point is a discussion stage's decision (keyed by decision id) or a branching page's
+  // choice (keyed by page id). Both features read only public data: question, options, owner, names.
+
+  /** The decision point for a key, with the option the room chose (live, so a changed decision counts). */
+  function decisionPoint(sess, key) {
+    const inst = sess.instance;
+    const log = sess.decisions[key] || null;
+    if (isBranching(sess)) {
+      const pg = B().page(inst, key);
+      if (!pg || !pg.choice) return null;
+      const ceo = (inst.entities.people || {}).ceo;
+      return { key, question: pg.choice.question, options: pg.choice.options, log, chosen: log ? pg.choice.options.find((o) => o.key === log.option) || null : null, owner: ceo ? ceo.name : null, ownerRole: ceo ? "ceo" : null, num: B().seenNum(sess, key) };
+    }
+    if (isCustom(sess)) return null;
+    const st = inst.stages.find((x) => x.decision && x.decision.id === key);
+    if (!st) return null;
+    const d = st.decision;
+    return { key, question: d.question, options: d.options, log, chosen: log && log.option ? d.options.find((o) => o.key === log.option) || null : null, owner: d.authorityName || null, ownerRole: d.authority || null, stageId: st.id };
+  }
+
+  /** The option the clock picks when the room runs out of time: seeded, so a re-run picks the same one. */
+  function deadlinePick(sess, key, options) {
+    if (!options.length) return null;
+    return options[BK.rng.create(sess.instance.seed + "/deadline/" + key).int(0, options.length - 1)];
+  }
+
+  /** What the room sees when time ran out: the question and the option chosen for them. */
+  function deadlineContent(sess, key, lang) {
+    const dl = (sess.deadlines || {})[key];
+    const dp = dl && decisionPoint(sess, key);
+    if (!dp) return null;
+    const opt = dp.options.find((o) => o.key === dl.option);
+    return { key, branching: isBranching(sess), question: L(dp.question, lang), owner: dp.owner || "", option: opt ? { key: opt.key, text: L(opt.text, lang) } : null };
+  }
+
+  /** Draw a challenge card for an answered decision point (never the same card twice in a row). */
+  function drawChallenge(sess, key) {
+    const dp = decisionPoint(sess, key);
+    if (!dp || !dp.log || (!dp.chosen && !dp.log.text)) return null;
+    const prev = (sess.challenges || {})[key] || null;
+    const draws = prev ? prev.draws + 1 : 1;
+    const rng = BK.rng.create(sess.instance.seed + "/challenge/" + key + "/" + draws);
+    const others = dp.options.filter((o) => !dp.chosen || o.key !== dp.chosen.key);
+    const people = Object.values(sess.instance.entities.people || {}).filter((p) => p.present !== false && p.role !== dp.ownerRole);
+    const have = { owner: !!dp.owner, other: others.length > 0, person: people.length > 0 };
+    const pool = BK.data.challenges.cards.filter((c) => c.needs.every((n) => have[n]) && (!prev || c.id !== prev.id));
+    if (!pool.length) return null;
+    const card = pool[rng.int(0, pool.length - 1)];
+    const entry = {
+      id: card.id,
+      draws,
+      other: card.needs.includes("other") ? others[rng.int(0, others.length - 1)].key : null,
+      person: card.needs.includes("person") ? people[rng.int(0, people.length - 1)].role : null,
+      shownAt: null,
+      outcome: null
+    };
+    sess.challenges = Object.assign({}, sess.challenges || {}, { [key]: entry });
+    return entry;
+  }
+
+  /** A challenge card's text, filled from the decision point. Public: options, names and roles only. */
+  function challengeContent(sess, key, lang) {
+    const entry = (sess.challenges || {})[key];
+    const card = entry && BK.data.challenges.get(entry.id);
+    const dp = card && decisionPoint(sess, key);
+    if (!dp) return null;
+    const clean = (v) => String(v || "").trim().replace(/[.!]+$/, "");
+    const others = dp.options.filter((o) => !dp.chosen || o.key !== dp.chosen.key);
+    const other = others.find((o) => o.key === entry.other) || others[0];
+    const person = entry.person ? (sess.instance.entities.people || {})[entry.person] : null;
+    const role = person ? L(person.roleLabel, lang) : "";
+    const vars = {
+      option: clean(dp.chosen ? L(dp.chosen.text, lang) : dp.log ? dp.log.text : ""),
+      other: clean(other ? L(other.text, lang) : ""),
+      owner: dp.owner || "",
+      person: person ? person.name : "",
+      role: lang === "sv" && /^\p{Lu}\p{Ll}/u.test(role) ? role.charAt(0).toLowerCase() + role.slice(1) : role
+    };
+    const fill = (text) => text.replace(/\{(option|other|owner|person|role)\}/g, (_, k) => vars[k]);
+    return { key, id: card.id, title: fill(L(card.title, lang)), text: fill(L(card.text, lang)), question: L(dp.question, lang), outcome: entry.outcome, shown: !!entry.shownAt, draws: entry.draws };
   }
 
   const ACTION_STATUS = ["open", "progress", "done", "dropped"];
@@ -338,6 +429,13 @@
       const stage = stageById(sess, slide.stageId);
       const ms = (stage.discussionMinutes || 5) * 60000;
       sess.timer = { stageId: slide.stageId, durationMs: ms, remainingMs: ms, runningSince: null };
+    } else if (slide.type === "choice" && deadlineOn(sess) && sess.timer.stageId !== slide.id && sess.status !== "ended") {
+      // Decision deadline: the current choice gets its own countdown, running from the moment it shows.
+      const cur = sess.route[sess.route.length - 1];
+      if (cur.pageId === slide.pageId && !cur.option) {
+        const ms = CHOICE_DEADLINE_MINUTES * 60000;
+        sess.timer = { stageId: slide.id, durationMs: ms, remainingMs: ms, runningSince: sess.paused ? null : now };
+      }
     } else if (!isBranching(sess) && slide.stageId && sess.timer.stageId !== slide.stageId && !sess.timer.runningSince) {
       // Earlier slides of a stage already show (and can start) that stage's discussion time, instead of 00:00.
       const stage = stageById(sess, slide.stageId);
@@ -378,18 +476,20 @@
       case "advance":
         // A click on the stage: once every question on a discussion slide is showing, the first
         // click starts the countdown instead of leaving the slide; a click while it runs moves on.
-        if (timedSlide(slide) && !sess.paused && !ended && !sess.timer.runningSince && sess.position.step >= stepCount(sess, slide) && timerRemaining(sess, at) > 0) {
+        if (timedSlide(slide, sess) && !sess.paused && !ended && !sess.timer.runningSince && sess.position.step >= stepCount(sess, slide) && timerRemaining(sess, at) > 0) {
           sess.timer.runningSince = at;
           break;
         }
       // falls through
       case "next": {
+        sess.activeDeadline = null;
         const n = stepCount(sess, slide);
         if (sess.position.step < n) sess.position.step++;
         else if (idx < list.length - 1) moveTo(sess, list, idx + 1, true);
         break;
       }
       case "prev": {
+        sess.activeDeadline = null;
         const min = slide && slide.type === "timeline" ? 1 : slide && stepCount(sess, slide) ? 1 : 0;
         if (sess.position.step > min) sess.position.step--;
         else if (idx > 0) moveTo(sess, list, idx - 1, false);
@@ -533,6 +633,59 @@
         sess.log.push({ at: new Date(at).toISOString(), type: "reconsider", stageId: st.id, decisionId: st.reconsider.decision, verdict: cmd.verdict });
         break;
       }
+      case "deadline": {
+        // The countdown ran out with nothing decided: the decision owner (or, in a branching run, the
+        // story) chooses for the room. Sent by the presenter; it checks the clock itself.
+        if (ended || sess.paused || !deadlineOn(sess) || !sess.timer.durationMs || timerRemaining(sess, at) > 0) return prev;
+        if (isBranching(sess)) {
+          const cur = sess.route[sess.route.length - 1];
+          if (!slide || slide.type !== "choice" || sess.timer.stageId !== slide.id || slide.pageId !== cur.pageId || cur.option) return prev;
+          const pick = deadlinePick(sess, cur.pageId, B().offered(B().page(sess.instance, cur.pageId).choice, sess.flags));
+          if (!pick) return prev;
+          sess.deadlines = Object.assign({}, sess.deadlines || {}, { [cur.pageId]: { option: pick.key, at: new Date(at).toISOString() } });
+          sess.activeDeadline = cur.pageId;
+          sess.log.push({ at: new Date(at).toISOString(), type: "deadline", decisionId: cur.pageId, option: pick.key });
+          const target = B().choose(sess, pick.key, at);
+          const fresh = slides(sess);
+          const i = fresh.findIndex((x) => x.id === target);
+          if (i >= 0) moveTo(sess, fresh, i, true);
+          break;
+        }
+        const st = stageById(sess, sess.timer.stageId);
+        const d = st && st.decision;
+        if (!d || sess.decisions[d.id] || (sess.deadlines || {})[d.id]) return prev;
+        const pick = deadlinePick(sess, d.id, d.options);
+        sess.deadlines = Object.assign({}, sess.deadlines || {}, { [d.id]: { option: pick ? pick.key : null, at: new Date(at).toISOString() } });
+        sess.decisions[d.id] = { option: pick ? pick.key : null, text: "", rationale: "", dissent: "", openQuestions: "", owner: d.authority || null, at: new Date(at).toISOString() };
+        sess.activeDeadline = d.id;
+        sess.log.push({ at: new Date(at).toISOString(), type: "deadline", decisionId: d.id, option: pick ? pick.key : null });
+        break;
+      }
+      case "deadlineHide":
+        sess.activeDeadline = null;
+        break;
+      case "challengeDraw": {
+        if (ended || !drawChallenge(sess, cmd.key)) return prev;
+        if (sess.activeChallenge === cmd.key) sess.activeChallenge = null;
+        break;
+      }
+      case "challengeShow": {
+        const ch = (sess.challenges || {})[cmd.key];
+        if (!ch) return prev;
+        ch.shownAt = ch.shownAt || new Date(at).toISOString();
+        sess.activeChallenge = cmd.key;
+        sess.log.push({ at: new Date(at).toISOString(), type: "challenge", decisionId: cmd.key, card: ch.id });
+        break;
+      }
+      case "challengeHide":
+        sess.activeChallenge = null;
+        break;
+      case "challengeOutcome": {
+        const ch = (sess.challenges || {})[cmd.key];
+        if (!ch || !BK.data.challenges.OUTCOMES.includes(cmd.outcome)) return prev;
+        ch.outcome = cmd.outcome;
+        break;
+      }
       case "decision":
         sess.decisions[cmd.decisionId] = Object.assign({}, sess.decisions[cmd.decisionId] || {}, cmd.entry, { at: new Date(at).toISOString() });
         sess.log.push({ at: new Date(at).toISOString(), type: "decision", decisionId: cmd.decisionId });
@@ -655,6 +808,12 @@
   function publicComplication(sess, lang) {
     const card = sess.activeComplication && BK.data.complications.get(sess.activeComplication);
     return card ? { id: card.id, category: t("complication.cat." + card.cat, null, lang), title: L(card.title, lang), text: L(card.text, lang) } : null;
+  }
+
+  /** The challenge card on stage: title and text only (the outcome is the facilitator's note). */
+  function publicChallenge(sess, lang) {
+    const c = challengeContent(sess, sess.activeChallenge, lang);
+    return c ? { key: c.key, id: c.id, title: c.title, text: c.text } : null;
   }
 
   /** A person source as { name, title } so artefacts can lay the two out separately; null otherwise. */
@@ -877,9 +1036,11 @@
       ended: sess.status === "ended",
       screen: sess.screen,
       progress: progress(sess, list, idx, lang),
-      timer: { remainingMs: Math.max(0, timerRemaining(sess, now)), durationMs: sess.timer.durationMs, running: !!sess.timer.runningSince, active: timedSlide(slide) },
+      timer: { remainingMs: Math.max(0, timerRemaining(sess, now)), durationMs: sess.timer.durationMs, running: !!sess.timer.runningSince, active: timedSlide(slide, sess) },
       meters: sess.instance.settings.meters ? meterValues(sess).map((m) => ({ id: m.id, value: m.value, max: METER_MAX, label: t("meter." + m.id, null, lang) })) : null,
       complication: publicComplication(sess, lang),
+      deadline: sess.activeDeadline ? deadlineContent(sess, sess.activeDeadline, lang) : null,
+      challenge: sess.activeChallenge ? publicChallenge(sess, lang) : null,
       slide: slideContent(sess, slide, sess.position.step, lang)
     };
   }
@@ -1089,6 +1250,10 @@
 
   BK.engine.session = {
     criteria,
+    decisionPoint,
+    deadlineContent,
+    challengeContent,
+    CHOICE_DEADLINE_MINUTES,
     ACTION_STATUS,
     normaliseAction,
     METERS,

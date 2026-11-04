@@ -18,7 +18,12 @@
   const opts = BK.data.options;
 
   // Filter state survives re-renders (e.g. language switch) during the session.
-  const state = { query: "", category: "", archetype: "", format: "" };
+  const state = { query: "", category: "", archetype: "", format: "", sector: "" };
+
+  /** Sectors a scenario was written for; an empty list means it fits any sector. */
+  const sectorsOf = (tpl) => (tpl.constraints && tpl.constraints.sectors) || [];
+  /** Under a sector filter: 2 = written for it, 1 = fits any sector, 0 = not for this sector. */
+  const sectorFit = (tpl) => (!state.sector ? 1 : sectorsOf(tpl).includes(state.sector) ? 2 : sectorsOf(tpl).length ? 0 : 1);
 
   const formatOf = (tpl) => (tpl.format === "branching" ? "branching" : "discussion");
 
@@ -37,6 +42,7 @@
     if (state.category && tpl.category !== state.category) return false;
     if (state.archetype && opts.archetypeLetter(tpl.archetype) !== state.archetype) return false;
     if (state.format && formatOf(tpl) !== state.format) return false;
+    if (!sectorFit(tpl)) return false;
     const q = state.query.trim().toLowerCase();
     return !q || searchText(tpl).includes(q);
   }
@@ -72,6 +78,11 @@
     ];
   }
 
+  /** Start link; under a sector filter the wizard opens with that sector chosen. */
+  function useHref(tpl) {
+    return "#/new?scenario=" + encodeURIComponent(tpl.id) + (state.sector ? "&sector=" + encodeURIComponent(state.sector) : "");
+  }
+
   function scenarioCard(tpl) {
     const problems = BK.scenarios.problems(tpl.id);
     return el(
@@ -85,12 +96,15 @@
       ),
       el("p", { class: "scenario-card__summary", text: tx(tpl.summary) }),
       metaLine(tpl),
+      state.sector
+        ? el("div", { class: "badges" }, sectorFit(tpl) === 2 ? c.badge(t("library.sectorWritten", { sector: t("sector." + state.sector) }), "accent", "check") : c.badge(t("library.sectorAny"), "neutral"))
+        : null,
       problems.length ? c.badge(t("library.invalid", { n: problems.length }), "danger", "warning") : null,
       el(
         "div",
         { class: "actions" },
         c.button({ label: t("library.preview"), icon: "notes", kind: "ghost", onClick: () => preview(tpl) }),
-        c.button({ label: t("library.use"), icon: "play", kind: "primary", href: "#/new?scenario=" + encodeURIComponent(tpl.id) })
+        c.button({ label: t("library.use"), icon: "play", kind: "primary", href: useHref(tpl) })
       )
     );
   }
@@ -169,13 +183,14 @@
       wide: true,
       actions: [
         { label: t("common.close"), value: null, kind: "secondary" },
-        { label: t("library.use"), value: "use", kind: "primary", onClick: () => BK.router.navigate("#/new?scenario=" + encodeURIComponent(tpl.id)) }
+        { label: t("library.use"), value: "use", kind: "primary", onClick: () => BK.router.navigate(useHref(tpl)) }
       ]
     });
   }
 
   function renderResults(container, all) {
-    const shown = all.filter(matches);
+    // Under a sector filter, scenarios written for that sector come first (the sort is stable).
+    const shown = all.filter(matches).sort((a, b) => sectorFit(b) - sectorFit(a));
     BK.dom.mount(
       container,
       el("p", { class: "muted small", role: "status", text: t("library.count", { n: shown.length, total: all.length }) }),
@@ -199,6 +214,14 @@
     const categoryOptions = [{ value: "", label: t("library.allCategories") }].concat(
       opts.categories.map((id) => ({ value: id, label: t("category." + id) }))
     );
+    // Each sector with how many scenarios were written for it; sector-neutral ones fit every sector.
+    const all = BK.scenarios.list();
+    const sectorOptions = [{ value: "", label: t("library.allSectors") }].concat(
+      opts.sectors
+        .map((id) => ({ id, n: all.filter((x) => sectorsOf(x).includes(id)).length }))
+        .sort((a, b) => t("sector." + a.id).localeCompare(t("sector." + b.id), BK.i18n.locale(BK.i18n.getLang())))
+        .map((x) => ({ value: x.id, label: t("library.sectorOption", { sector: t("sector." + x.id), n: x.n }) }))
+    );
     const archetypeOptions = [{ value: "", label: t("library.allArchetypes") }].concat(
       Object.keys(opts.archetypes).map((k) => ({ value: k, label: k + " · " + t("archetype." + k) }))
     );
@@ -208,6 +231,7 @@
       { class: "toolbar" },
       c.field({ label: t("library.search"), control: search, className: "field--grow" }),
       c.field({ label: t("library.category"), control: c.select(categoryOptions, state.category, (v) => { state.category = v; onChange(); }) }),
+      c.field({ label: t("library.sector"), control: c.select(sectorOptions, state.sector, (v) => { state.sector = v; onChange(); }) }),
       c.field({ label: t("library.archetype"), control: c.select(archetypeOptions, state.archetype, (v) => { state.archetype = v; onChange(); }) }),
       c.field({
         label: t("library.format"),

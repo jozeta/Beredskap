@@ -48,6 +48,7 @@
     decisionMode: "options",
     meters: false, // pressure meters on the stage (customer trust, regulator attention, media pressure)
     complications: "manual", // complication deck: "off" | "manual" (facilitator draws) | "auto" (one ready per stage)
+    decisionDeadline: false, // when the countdown runs out undecided, the decision owner (or the story) decides
     mode: "pure", // branching: "pure" (choice after choice) | "hybrid" (discussion stops)
     length: "short", // branching: "short" | "long"
     seed: "FJORD-1000"
@@ -61,6 +62,7 @@
     p.seed = BK.rng.normalizeSeed(p.seed) || DEFAULT_PARAMS.seed;
     p.meters = p.meters === true;
     p.complications = ["off", "manual", "auto"].includes(p.complications) ? p.complications : "manual";
+    p.decisionDeadline = p.decisionDeadline === true;
     p.scenarioId = template.id;
     if (template.format === "branching") {
       p.stageCount = null;
@@ -701,7 +703,8 @@
         length: p.length,
         discussMinutes,
         meters: p.meters,
-        complications: p.complications
+        complications: p.complications,
+        decisionDeadline: p.decisionDeadline
       },
       pacing: { totalMinutes: total, stages: [], choiceRange: [range.min, range.max] },
       slides: [],
@@ -841,7 +844,8 @@
         stageTheme: p.stageTheme,
         lang: p.lang,
         meters: p.meters,
-        complications: p.complications
+        complications: p.complications,
+        decisionDeadline: p.decisionDeadline
       },
       unresolved: []
     };

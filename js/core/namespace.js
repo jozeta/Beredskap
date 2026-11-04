@@ -10,7 +10,10 @@
 
   const BK = (window.BK = window.BK || {});
 
-  BK.version = "0.1.0";
+  // The app version, shown in Settings and written into every export. Bump it with every change
+  // (patch: fixes and content; minor: new features) and add a matching CHANGELOG.md heading;
+  // a test checks that the two agree.
+  BK.version = "0.2.0";
 
   // Technical identifiers fixed by the spec (section 1, "Name and identity").
   // A page may pre-seed BK.config before this script (tests.html uses its own storage prefix).

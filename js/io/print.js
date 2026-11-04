@@ -326,6 +326,24 @@
             )
           ]
         : null,
+      r.deadlines && r.deadlines.length
+        ? [
+            el("h2", { text: t("report.deadlines", null, l) }),
+            table(
+              [t("csv.stage", null, l), t("csv.question", null, l), t("report.deadlinePicked", null, l), t("report.deadlineFinal", null, l)],
+              r.deadlines.map((x) => [x.stage, x.question, x.picked || "—", (x.overruled ? t("deadline.overruled", null, l) + ": " : "") + (x.final || "—")])
+            )
+          ]
+        : null,
+      r.challenges && r.challenges.length
+        ? [
+            el("h2", { text: t("report.challenges", null, l) }),
+            table(
+              [t("csv.stage", null, l), t("csv.question", null, l), t("report.challengeCard", null, l), t("report.challengeOutcome", null, l)],
+              r.challenges.map((x) => [x.stage, x.question, x.card + ": " + x.text, x.outcome ? t("challenge.outcome." + x.outcome, null, l) : t("report.notRecorded", null, l)])
+            )
+          ]
+        : null,
       full ? [el("h2", { text: t("report.assumptions", null, l) }), table([t("stage.assumed", null, l), t("stage.reality", null, l)], r.assumptions.map((a) => [a.assumption, a.reality]))] : null,
       el("h2", { text: t("report.observations", null, l) }),
       r.observations.length

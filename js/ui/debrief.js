@@ -167,6 +167,26 @@
             )
           )
         : null,
+      r.deadlines && r.deadlines.length
+        ? section(
+            t("report.deadlines", null, l),
+            el("p", { class: "muted small", text: t("report.deadlinesIntro", null, l) }),
+            table(
+              [t("csv.stage", null, l), t("csv.question", null, l), t("report.deadlinePicked", null, l), t("report.deadlineFinal", null, l)],
+              r.deadlines.map((x) => [x.stage, x.question, x.picked || "—", x.overruled ? el("span", null, c.badge(t("deadline.overruled", null, l), "ok"), " ", x.final || "—") : x.final || "—"])
+            )
+          )
+        : null,
+      r.challenges && r.challenges.length
+        ? section(
+            t("report.challenges", null, l),
+            el("p", { class: "muted small", text: t("report.challengesIntro", null, l) }),
+            table(
+              [t("csv.stage", null, l), t("csv.question", null, l), t("report.challengeCard", null, l), t("report.challengeOutcome", null, l)],
+              r.challenges.map((x) => [x.stage, x.question, el("span", null, el("strong", { text: x.card }), el("br"), x.text), x.outcome ? t("challenge.outcome." + x.outcome, null, l) : c.badge(t("report.notRecorded", null, l), "warn", "warning")])
+            )
+          )
+        : null,
       custom ? null : section(t("report.assumptions", null, l), table([t("stage.assumed", null, l), t("stage.reality", null, l)], r.assumptions.map((a) => [el("span", { class: "strike", text: a.assumption }), a.reality]))),
 
       el(

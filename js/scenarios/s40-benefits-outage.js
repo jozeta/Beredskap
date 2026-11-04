@@ -1,5 +1,5 @@
 /*
- * s40-benefits-outage.js — "Payday" (archetype F, government agency).
+ * s40-benefits-outage.js — "Benefits Day" (archetype F, government agency).
  *
  * The day before payday, the bank rejects the benefit payment file: thousands of
  * recipients' account numbers have changed → the changes were made through two
@@ -21,10 +21,10 @@
     category: "benefits-outage",
     archetype: "human-legal-reputational",
     emblem: "benefits-outage",
-    title: L(["Payday", "Utbetalningsdagen"]),
+    title: L(["Benefits Day", "Utbetalningsdagen"]),
     summary: L([
-      "Tomorrow, {{num.recipients|number}} people expect their benefits. Today, the bank has rejected the payment file, the police want the system left exactly as it is, and the minister has just promised on television that everyone will be paid on time.",
-      "I morgon väntar {{num.recipients|number}} personer på sina ersättningar. I dag har banken avvisat utbetalningsfilen, polisen vill att systemet lämnas precis som det är, och ministern har just lovat i tv att alla får sina pengar i tid."
+      "Tomorrow, hundreds of thousands of people expect their benefits. Today, the bank has rejected the payment file, the police want the system left exactly as it is, and the minister has just promised on television that everyone will be paid on time.",
+      "I morgon väntar hundratusentals personer på sina ersättningar. I dag har banken avvisat utbetalningsfilen, polisen vill att systemet lämnas precis som det är, och ministern har just lovat i tv att alla får sina pengar i tid."
     ]),
     learningObjectives: [
       { id: "lo1", text: L(["Decide under a hard deadline when paying and stopping fraud pull in opposite directions", "Besluta under en hård tidsgräns när utbetalning och stopp av bedrägeri drar åt olika håll"]), teaser: L(["The file the bank rejected", "Filen som banken avvisade"]) },

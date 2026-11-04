@@ -254,6 +254,30 @@
       });
     }
 
+    // Decision deadlines and challenge cards (optional; older exports have neither).
+    const pointIds = branching ? new Set(ex.pages.filter((p) => p.choice).map((p) => p.id)) : decisionIds;
+    const optStr = (v) => v === null || v === undefined || typeof v === "string";
+    if (ses.deadlines != null) {
+      need(isObj(ses.deadlines), "shape", "deadlines");
+      Object.keys(ses.deadlines).forEach((k) => {
+        const v = ses.deadlines[k];
+        need(pointIds.has(k) && isObj(v) && optStr(v.option) && typeof v.at === "string", "reference", "deadline " + k);
+      });
+    }
+    if (ses.challenges != null) {
+      need(isObj(ses.challenges), "shape", "challenges");
+      Object.keys(ses.challenges).forEach((k) => {
+        const v = ses.challenges[k];
+        need(
+          pointIds.has(k) && isObj(v) && !!BK.data.challenges.get(v.id) && typeof v.draws === "number" && optStr(v.other) && optStr(v.person) && optStr(v.shownAt) && (v.outcome == null || BK.data.challenges.OUTCOMES.includes(v.outcome)),
+          "reference",
+          "challenge " + k
+        );
+      });
+    }
+    need(ses.activeDeadline == null || !!(ses.deadlines && ses.deadlines[ses.activeDeadline]), "reference", "activeDeadline");
+    need(ses.activeChallenge == null || !!(ses.challenges && ses.challenges[ses.activeChallenge]), "reference", "activeChallenge");
+
     const objectiveIds = new Set(ex.objectives.map((o) => o.id));
     Object.keys(ses.objectives).forEach((id) => need(objectiveIds.has(id), "reference", "objective " + id));
 

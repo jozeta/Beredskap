@@ -381,7 +381,94 @@
   function decisionCard(sess, f) {
     if (!f.decision || !f.stage) return null;
     const stage = sess.instance.stages[f.stage.index];
-    return c.card({ class: "card pres-card" }, el("h2", { text: t("presenter.decision") }), BK.ui.facilitation.decisionForm(sess, view.ctrl.dispatch, stage.decision));
+    const dl = (sess.deadlines || {})[stage.decision.id];
+    const log = sess.decisions[stage.decision.id];
+    return c.card(
+      { class: "card pres-card" },
+      el("h2", { text: t("presenter.decision") }),
+      dl
+        ? el(
+            "div",
+            { class: "badges" },
+            c.badge(t("deadline.badge") + (dl.option ? " · " + dl.option : ""), "danger", "hourglass"),
+            log && log.option !== dl.option ? c.badge(t("deadline.overruled"), "ok", "check") : null
+          )
+        : null,
+      BK.ui.facilitation.decisionForm(sess, view.ctrl.dispatch, stage.decision)
+    );
+  }
+
+  /** Time ran out: what was chosen for the room, with a button to clear it from the stage. */
+  function deadlineCard(sess) {
+    if (!sess.activeDeadline) return null;
+    const dl = S().deadlineContent(sess, sess.activeDeadline, BK.i18n.getLang());
+    if (!dl) return null;
+    return c.card(
+      { class: "card pres-card pres-deadline is-current" },
+      el("h2", { text: t("deadline.presenterTitle") }),
+      el("p", { class: "small" }, el("strong", { text: dl.question })),
+      el("p", { class: "notice notice--warn small", text: dl.option ? (dl.branching ? "" : dl.option.key + " — ") + dl.option.text : t("deadline.noOption") }),
+      el("p", { class: "muted small", text: t(dl.branching ? "deadline.presenterBodyBranching" : "deadline.presenterBody") }),
+      el("div", { class: "actions" }, c.button({ label: t("deadline.hide"), icon: "eye-off", size: "sm", onClick: () => view.ctrl.dispatch({ type: "deadlineHide" }) }))
+    );
+  }
+
+  /** The decision point a challenge card is about: this stage's decision, or the last choice made. */
+  function challengeKey(sess, f) {
+    // A card on stage keeps its panel wherever the facilitator is, so it can always be hidden.
+    if (sess.activeChallenge) return sess.activeChallenge;
+    if (f.branching) {
+      const last = sess.route.slice().reverse().find((r) => r.option);
+      return last ? last.pageId : null;
+    }
+    return f.decision ? f.decision.id : null;
+  }
+
+  /** Challenge cards: pushback built from the option the room chose; show it, then record how they responded. */
+  function challengeCard(sess, f) {
+    const key = challengeKey(sess, f);
+    if (!key || sess.status === "ended") return null;
+    const d = view.ctrl.dispatch;
+    const dp = S().decisionPoint(sess, key);
+    const answered = !!(dp && dp.log && (dp.chosen || dp.log.text));
+    const ch = answered ? S().challengeContent(sess, key, BK.i18n.getLang()) : null;
+    const active = sess.activeChallenge === key;
+    return c.card(
+      { class: ["card", "pres-card", "pres-challenge", active && "is-current"] },
+      el("h2", { text: t("challenge.presenterTitle") + (f.branching && dp ? " · § " + dp.num : "") }),
+      el("p", { class: "muted small", text: answered ? t("challenge.hint") : t("challenge.none") }),
+      ch
+        ? [
+            el("div", { class: "badges" }, active ? c.badge(t("challenge.onStage"), "warn") : null),
+            el("p", null, el("strong", { text: ch.title })),
+            el("p", { class: "small", text: ch.text })
+          ]
+        : null,
+      answered
+        ? el(
+            "div",
+            { class: "actions" },
+            ch
+              ? active
+                ? c.button({ label: t("challenge.hide"), icon: "eye-off", size: "sm", onClick: () => d({ type: "challengeHide" }) })
+                : c.button({ label: t("challenge.show"), icon: "eye", size: "sm", kind: "primary", onClick: () => d({ type: "challengeShow", key }) })
+              : null,
+            c.button({ label: ch ? t("challenge.drawAnother") : t("challenge.draw"), icon: "dice", size: "sm", kind: ch ? "ghost" : "primary", onClick: () => d({ type: "challengeDraw", key }) })
+          )
+        : null,
+      ch && ch.shown
+        ? [
+            c.segmented({
+              label: t("challenge.outcome"),
+              name: "ch-" + key,
+              value: ch.outcome || "",
+              options: BK.data.challenges.OUTCOMES.map((o) => ({ value: o, label: t("challenge.outcome." + o) })),
+              onChange: (v) => d({ type: "challengeOutcome", key, outcome: v })
+            }),
+            ch.outcome === "changed" ? el("p", { class: "muted small", text: t(f.branching ? "challenge.changedHintBranching" : "challenge.changedHint") }) : null
+          ]
+        : null
+    );
   }
 
   /** Foldable facilitation panels; open/closed state survives re-renders. */
@@ -594,15 +681,17 @@
             ? el(
                 "div",
                 { class: "pres-side" },
+                deadlineCard(sess),
                 choiceCard(sess, f.branching),
+                challengeCard(sess, f),
                 branchCard(sess, f.branching),
                 notesCard(f),
-                sess.instance.settings.mode === "hybrid" ? timerCard(sess) : null,
+                sess.instance.settings.mode === "hybrid" || sess.instance.settings.decisionDeadline ? timerCard(sess) : null,
                 f.injects.length ? injectsCard(f) : null,
                 roleCard(f),
                 facilitationCards(sess)
               )
-            : el("div", { class: "pres-side" }, timerCard(sess), notesCard(f), reconsiderCard(sess, f), decisionCard(sess, f), injectsCard(f), roleCard(f), facilitationCards(sess), factsCard(f))
+            : el("div", { class: "pres-side" }, deadlineCard(sess), timerCard(sess), notesCard(f), reconsiderCard(sess, f), decisionCard(sess, f), challengeCard(sess, f), injectsCard(f), roleCard(f), facilitationCards(sess), factsCard(f))
         )
       )
     );
@@ -620,6 +709,15 @@
     const elapsed = view.root.querySelector('[data-tick="elapsed"]');
     if (elapsed) elapsed.textContent = t("presenter.elapsed", { elapsed: Math.floor(S().elapsedMs(sess, now) / 60000), total: sess.instance.pacing.totalMinutes });
     view.root.querySelectorAll(".stage-frame--current .stage").forEach((canvas) => BK.ui.stageRenderer.tick(canvas, S().project(sess, now)));
+    // Decision deadline: when the countdown ends, ask the engine once per countdown; it checks the rest.
+    const tm = sess.timer;
+    if (sess.instance.settings.decisionDeadline && tm.durationMs && tm.runningSince && !sess.paused && S().timerRemaining(sess, now) <= 0) {
+      const mark = tm.stageId + "@" + tm.runningSince;
+      if (view.deadlineMark !== mark) {
+        view.deadlineMark = mark;
+        view.ctrl.dispatch({ type: "deadline" });
+      }
+    }
   }
 
   BK.ui.presenter = {

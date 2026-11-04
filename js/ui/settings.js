@@ -90,10 +90,21 @@
     );
   }
 
+  /** Which build this is: the version (also written into every export) and the data format. */
+  function aboutCard() {
+    return c.card(
+      { class: "card form-section" },
+      el("h2", { text: t("settings.about") }),
+      el("p", null, el("strong", { text: t("settings.version", { version: BK.version }) })),
+      el("p", { class: "muted small", text: t("settings.schema", { n: BK.config.schemaVersion }) }),
+      el("p", { class: "muted small", text: t("settings.versionHint") })
+    );
+  }
+
   BK.ui.settings = {
     title: () => t("settings.title"),
     render(root) {
-      root.append(c.pageHeader(t("settings.title")), el("div", { class: "grid grid--two" }, generalCard(), dataCard()));
+      root.append(c.pageHeader(t("settings.title")), el("div", { class: "grid grid--two" }, generalCard(), dataCard(), aboutCard()));
     },
     exportRaw
   };

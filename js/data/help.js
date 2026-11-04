@@ -68,7 +68,7 @@
           [P("Participating roles", "Deltagande roller"), P("Untick roles that are not in the room. Injects aimed at them are re-targeted or flagged “Role not present — who covers this?”. You can enter real participant names.", "Bocka ur roller som inte är med. Inspel till dem riktas om eller markeras ”Rollen saknas — vem täcker upp?”. Du kan ange deltagarnas riktiga namn.")],
           [P("Learning objectives", "Lärandemål"), P("Deselect objectives you do not need and add your own. The audience sees only vague teasers; the full objectives are for you and the debrief.", "Välj bort mål ni inte behöver och lägg till egna. Publiken ser bara antydningar; de fullständiga målen är för dig och utvärderingen.")],
           [P("Seed", "Frö"), P("The same scenario, settings and seed always produce the same exercise. Reroll for a different organisation and cast.", "Samma scenario, inställningar och frö ger alltid samma övning. Slumpa om för en annan organisation och andra personer.")],
-          [P("Extra pressure", "Extra tryck"), P("Optional pressure meters and a complication deck; see their own section below.", "Valfria tryckmätare och en komplikationslek; se avsnittet längre ned.")]
+          [P("Extra pressure", "Extra tryck"), P("Optional pressure meters, a complication deck and a decision deadline; see their own section below.", "Valfria tryckmätare, en komplikationslek och en tidsgräns för beslut; se avsnittet längre ned.")]
         ] }
       ]
     },
@@ -143,12 +143,17 @@
     {
       id: "pressure",
       icon: "gauge",
-      title: P("Pressure meters and complications", "Tryckmätare och komplikationer"),
+      title: P("Pressure, challenges and deadlines", "Tryck, utmaningar och tidsgränser"),
       blocks: [
         { p: P("Two optional tools add tension. Switch them on under “Extra pressure” in the setup.", "Två valfria verktyg ökar trycket. Slå på dem under ”Extra tryck” i inställningarna.") },
         { terms: [
           [P("Pressure meters", "Tryckmätare"), P("Customer trust, regulator attention and media pressure, shown on the stage from 0 to 5. Move them from the presenter view. In branching exercises some choices move them automatically.", "Kundförtroende, myndighetens uppmärksamhet och medietryck, visade på presentationen från 0 till 5. Flytta dem från presentatörsvyn. I förgreningsövningar flyttar vissa val dem automatiskt.")],
           [P("Complication deck", "Komplikationslek"), P("Short, unforeseen twists such as an unreachable incident lead or a full mailbox. Draw a card, read its private note, then show it on the stage or put it back. In automatic mode one card is readied per stage.", "Korta, oväntade vändningar, till exempel att incidentledaren inte går att nå eller att en brevlåda är full. Dra ett kort, läs den privata anteckningen och visa det sedan på presentationen eller lägg tillbaka det. I automatiskt läge förbereds ett kort per skede.")]
+        ] },
+        { p: P("Two more tools push back on the room's decisions.", "Två verktyg till utmanar rummets beslut.") },
+        { terms: [
+          [P("Challenge cards", "Utmaningskort"), P("At every decision point, once the room has chosen, “Challenge the decision” in the presenter draws a card built from that choice: the decision owner has doubts, someone argues for the option you rejected, it went wrong, tomorrow's headline. Show it on the stage, then record whether the room stood firm or changed its mind. Always available.", "Vid varje beslutspunkt, när rummet har valt, drar ”Utmana beslutet” i presentatörsvyn ett kort som bygger på valet: beslutsfattaren tvivlar, någon argumenterar för alternativet ni valde bort, det gick fel, morgondagens rubrik. Visa det på presentationen och notera sedan om rummet stod fast eller ändrade sig. Alltid tillgängligt.")],
+          [P("Decision deadline", "Tidsgräns för beslut"), P("A setting under “Extra pressure”. When a stage's countdown runs out with no decision recorded, the decision owner chooses alone, and later stages react to it; the room can still overrule it. In branching exercises each choice gets three minutes, and then the story chooses (Undo takes it back).", "En inställning under ”Extra tryck”. När ett skedes nedräkning tar slut utan att något beslut registrerats väljer beslutsfattaren ensam, och senare skeden reagerar på det; rummet kan fortfarande underkänna det. I förgreningsövningar får varje val tre minuter, och sedan väljer berättelsen (Ångra tar tillbaka det).")]
         ] },
         { tip: P("Meters are a storytelling device, not a score. They are listed in the debrief for discussion only.", "Mätarna är ett berättargrepp, inte ett betyg. De visas i utvärderingen bara som underlag för diskussion.") }
       ]

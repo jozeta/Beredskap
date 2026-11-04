@@ -17,8 +17,8 @@ bash tests/test.sh               # forbidden-API scan + headless tests.html over
 npx --yes eslint@10.14.0 .        # lint, incl. rules blocking innerHTML/outerHTML/insertAdjacentHTML/document.write
 ```
 
-- `index.html` also works from `file://`, but run tests **over HTTP**: from `file://` three
-  source-reading tests are skipped (209 pass over HTTP, 206 + 3 skipped from file://).
+- `index.html` also works from `file://`, but run tests **over HTTP**: from `file://` four
+  source-reading tests are skipped (220 pass over HTTP, 216 + 4 skipped from file://).
 - Quick source scan for forbidden APIs:
   `grep -rnE "eval\(|new Function|innerHTML\s*=|fetch\(|XMLHttpRequest" js | grep -v "js/graphics/icons.js"`
 
@@ -52,6 +52,14 @@ npx --yes eslint@10.14.0 .        # lint, incl. rules blocking innerHTML/outerHT
 - Storage keys are namespaced `beredskap:` (tests use `beredskap-test:`), values wrapped as
   `{ v, savedAt, data }`.
 - All content is fictional: `*.example` domains, RFC 5737 IPs, invented threat actors.
+
+## Versioning
+
+- `BK.version` in `js/core/namespace.js` is the app version, shown in Settings → About and
+  written into every export. **Bump it with every change you commit** (patch: fixes and content
+  such as scenario edits; minor: new features) and move the CHANGELOG `Unreleased` entries under a
+  matching `## x.y.z (date)` heading. A test fails if the newest CHANGELOG version heading and
+  `BK.version` differ.
 
 ## Adding a scenario
 

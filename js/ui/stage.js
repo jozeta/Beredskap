@@ -456,21 +456,35 @@
       el("div", { class: "s-slide" }, renderer(s, p, lang)),
       s.type === "title" ? null : rail(p, lang)
     );
-    if (p.complication && !p.paused && p.screen === "normal") {
-      // A complication card covers the slide until the facilitator hides it.
-      canvas.appendChild(
+    if (!p.paused && p.screen === "normal") {
+      // A card covers the slide until the facilitator hides it: a deadline that ran out first,
+      // then a challenge to the room's decision, then a complication.
+      const card = (mod, icon, kicker, title, body) =>
         el(
           "div",
-          { class: "s-complication" },
+          { class: ["s-complication", mod && "s-complication--" + mod] },
           el(
             "div",
             { class: "s-complication__card" },
-            el("p", { class: "s-complication__kicker" }, svgIcon("dice", { size: 40 }), el("span", { text: t("complication.title", null, lang) + " · " + p.complication.category })),
-            el("h1", { class: "s-complication__title", text: p.complication.title }),
-            el("p", { class: "s-complication__text", text: p.complication.text })
+            el("p", { class: "s-complication__kicker" }, svgIcon(icon, { size: 40 }), el("span", { text: kicker })),
+            el("h1", { class: "s-complication__title", text: title }),
+            body
           )
-        )
-      );
+        );
+      if (p.deadline) {
+        const dl = p.deadline;
+        const lead = dl.option ? t(dl.branching ? "deadline.story" : dl.owner ? "deadline.owner" : "deadline.ownerless", { owner: dl.owner }, lang) : t("deadline.noOption", null, lang);
+        canvas.appendChild(
+          card("deadline", "hourglass", t("deadline.title", null, lang), t("deadline.heading", null, lang), [
+            el("p", { class: "s-complication__text", text: lead }),
+            dl.option ? el("p", { class: "s-complication__choice", text: (dl.branching ? "" : dl.option.key + " — ") + dl.option.text }) : null
+          ])
+        );
+      } else if (p.challenge) {
+        canvas.appendChild(card("challenge", "scale", t("challenge.title", null, lang), p.challenge.title, el("p", { class: "s-complication__text", text: p.challenge.text })));
+      } else if (p.complication) {
+        canvas.appendChild(card(null, "dice", t("complication.title", null, lang) + " · " + p.complication.category, p.complication.title, el("p", { class: "s-complication__text", text: p.complication.text })));
+      }
     }
     if (p.paused) canvas.appendChild(el("div", { class: "s-paused" }, svgIcon("pause", { size: 96 }), el("h1", { class: "s-h1", text: t("stage.paused", null, lang) }), el("p", { class: "s-lead", text: t("stage.pausedBody", null, lang) })));
     if (p.ended && s.type !== "debrief") canvas.appendChild(el("div", { class: "s-paused" }, el("h1", { class: "s-h1", text: t("stage.ended", null, lang) })));
@@ -641,7 +655,7 @@
 
   function draw(sess) {
     const p = BK.engine.session.project(sess, Date.now());
-    const key = [p.slide.id, p.slide.step, p.lang, p.theme, p.paused, p.screen, p.ended, p.rev, p.complication && p.complication.id].join("|");
+    const key = [p.slide.id, p.slide.step, p.lang, p.theme, p.paused, p.screen, p.ended, p.rev, p.complication && p.complication.id, p.deadline && p.deadline.key, p.challenge && p.challenge.key + ":" + p.challenge.id].join("|");
     if (key === view.lastKey) {
       tick(view.canvas, p);
       return;

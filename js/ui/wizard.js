@@ -55,6 +55,7 @@
       length: "short",
       meters: false,
       complications: "manual",
+      decisionDeadline: false,
       seed: BK.rng.newSeed()
     };
   }
@@ -518,7 +519,9 @@
           options: ["off", "manual", "auto"].map((m) => ({ value: m, label: t("complication.mode." + m) })),
           onChange: (v) => (draft.complications = v)
         }),
-        el("p", { class: "field__hint", text: t("wizard.complicationsHint") })
+        el("p", { class: "field__hint", text: t("wizard.complicationsHint") }),
+        c.checkbox(t("wizard.deadline"), draft.decisionDeadline, (on) => (draft.decisionDeadline = on)),
+        el("p", { class: "field__hint", text: t(template() && template().format === "branching" ? "wizard.deadlineHintBranching" : "wizard.deadlineHint") })
       ),
       rolesField(),
       objectivesField(),
@@ -607,6 +610,11 @@
         draft = defaultDraft(id);
         ui = { advancedOpen: false, stagesTouched: false, customDuration: false, jurisdictionTouched: false };
         applyScenarioDefaults();
+        // From a sector-filtered library: start with that sector, when the scenario fits it.
+        const sector = ctx.query.sector;
+        const tplFor = id && id !== "random" ? BK.scenarios.get(id) : null;
+        const fits = tplFor && (((tplFor.constraints && tplFor.constraints.sectors) || []).length === 0 || tplFor.constraints.sectors.includes(sector));
+        if (sector && opts.sectors.includes(sector) && fits) draft.sector = sector;
       }
       build(root);
     },

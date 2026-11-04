@@ -2,11 +2,18 @@
 
 All notable changes to Beredskap are listed here, newest first.
 
-The project has no tagged releases yet, so changes are grouped by date. Entries before November 2026 were reconstructed from the commit history.
+Changes are grouped by app version (shown in Settings, set in `js/core/namespace.js`) from 0.2.0 on; earlier entries are grouped by date and were reconstructed from the commit history. There are no tagged releases yet.
 
 ## Unreleased
 
-- Nine new scenarios for three new sectors. Insurance: s36 "The Storm and the Broker Portal", s37 "The Model That Said No", b18 "Insured by Us, Hit by Them". News media: s38 "Protect the Source", s39 "Election Night", b19 "Published at 05:58". Government agency: s40 "Payday", s41 "The Fake Evacuation", b20 "Protected Identities"
+## 0.2.0 (2026-11-04)
+
+- Settings shows the app version (also written into every export); a test keeps it in step with this changelog
+- Challenge cards at every decision point: once the room has chosen, the facilitator can play a card built from that choice (the decision owner doubts it, the case for the rejected option, it went wrong, tomorrow's headline, a role nobody asked) and record whether the room stood firm or changed its mind. Shown in the debrief and reports
+- Decision deadline (setting, off by default): when a stage's countdown runs out with no decision, the decision owner chooses alone and later stages react to it; in branching runs each choice gets a three-minute countdown and the story chooses. The room can overrule or undo it; the debrief lists every decision the clock made
+- Library sector filter: scenarios written for the chosen sector come first, then those that fit any sector, and setup starts with that sector chosen
+- s40 is now called "Benefits Day" in English, so it is not confused with "Payday at Risk"; s40 and s41 summaries no longer show "…" in the library where a number was
+- Nine new scenarios for three new sectors. Insurance: s36 "The Storm and the Broker Portal", s37 "The Model That Said No", b18 "Insured by Us, Hit by Them". News media: s38 "Protect the Source", s39 "Election Night", b19 "Published at 05:58". Government agency: s40 "Benefits Day", s41 "The Fake Evacuation", b20 "Protected Identities"
 - Scenario engagement pass: every discussion scenario now has Reconsider moments and consequences, where earlier decisions change later stages; weak "straw-man" options were rewritten so every option is defensible; every branching scenario gained a reversal choice that lets the room undo an earlier decision under pressure
 - Money follows the language in every scenario: kronor in Swedish, euros in English (fixed exercise rate, 11 kr = €1), whatever the jurisdiction, in text and in figure tiles. Amounts are rolled in kronor and converted when shown, so switching language live shows the same amount. Fixes s34's payroll, which showed as a few kronor
 - Reconsider: a stage can put an earlier decision back in front of the room under new pressure ("Do you stand by it, or reverse it?"); the presenter records keep / reverse / undecided with a reason, and the debrief, report and Markdown list every reconsidered decision
