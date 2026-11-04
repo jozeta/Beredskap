@@ -114,7 +114,7 @@
         decision: dec("d1", "ceo", ["What do you tell the reporter today?", "Vad säger ni till reportern i dag?"], [
           ["Confirm you are investigating urgently, that you take it seriously, and when you will say more.", "Bekräfta att ni utreder skyndsamt, att ni tar det på allvar och när ni kommer att säga mer."],
           ["Decline to comment until the facts are clear.", "Avböj att kommentera tills fakta är klarlagda."],
-          ["Deny that you have been hacked.", "Förneka att ni har blivit hackade."]
+          ["Tell the reporter you have seen no sign of a hack, which is true, and say nothing more today.", "Säg till reportern att ni inte har sett några tecken på intrång, vilket stämmer, och säg inget mer i dag."]
         ], {
           knowns: [["Sample rows match your export format.", "Exempelraderna stämmer med ert exportformat."]],
           uncertainties: [["How the data got out.", "Hur datan kom ut."], ["How many people are affected.", "Hur många personer som berörs."]],
@@ -139,6 +139,9 @@
         title: L(["Nobody broke in", "Ingen bröt sig in"]),
         twist: L(["Nobody hacked you. A storage container was open to the internet for {{num.monthsPublic}} months.", "Ingen har hackat er. En lagringsplats var öppen mot internet i {{num.monthsPublic}} månader."]),
         twistKind: "cause",
+        branches: [
+          { when: { decision: "d1", option: "A" }, narrativeAppend: { en: "Because you confirmed an urgent investigation, the reporter published tonight under the headline: company confirms data incident.", sv: "Eftersom ni bekräftade en brådskande utredning publicerade reportern i kväll under rubriken: företaget bekräftar dataincident." } }
+        ],
         assumptionChallenged: L(["We have been hacked.", "Vi har blivit hackade."]),
         reveals: ["hf-public"],
         narrative: L([
@@ -205,6 +208,7 @@
         title: L(["More than contact details", "Mer än kontaktuppgifter"]),
         twist: L(["The files contain far more than names and addresses: identity numbers and health information.", "Filerna innehåller betydligt mer än namn och adresser: personnummer och hälsouppgifter."]),
         twistKind: "scope",
+        reconsider: { decision: "d1", pressure: { en: "The files hold identity numbers and health data. Whatever you told the reporter yesterday is in today's article, right next to what you know now.", sv: "Filerna innehåller personnummer och hälsouppgifter. Det ni sa till reportern i går står i dagens artikel, alldeles bredvid det ni vet nu." } },
         assumptionChallenged: L(["Only contact details were exposed.", "Bara kontaktuppgifter har exponerats."]),
         reveals: ["hf-categories"],
         narrative: L([
@@ -271,6 +275,9 @@
         title: L(["You were told before", "Ni fick veta det tidigare"]),
         twist: L(["Someone reported the open storage to your support team {{num.daysSinceTicket}} days ago. The clock started then.", "Någon rapporterade den öppna lagringen till er support för {{num.daysSinceTicket}} dagar sedan. Fristen började löpa då."]),
         twistKind: "impact",
+        branches: [
+          { when: { decision: "d2", option: "A" }, narrativeAppend: { en: "Because a full snapshot was taken before closing, the container stayed public for another hour, and the access log shows two more downloads in that hour.", sv: "Eftersom en fullständig ögonblicksbild togs innan stängningen var behållaren öppen ytterligare en timme, och åtkomstloggen visar två nedladdningar till under den timmen." } }
+        ],
         assumptionChallenged: L(["We became aware today.", "Vi fick kännedom i dag."]),
         reveals: ["hf-ticket"],
         narrative: L([
@@ -328,6 +335,10 @@
         title: L(["Copies everywhere", "Kopior överallt"]),
         twist: L(["The data is now on a forum and has been downloaded at least {{num.downloads}} times. Closing the container changed nothing for those copies.", "Datan finns nu på ett forum och har laddats ner minst {{num.downloads}} gånger. Att stänga lagringen ändrade ingenting för de kopiorna."]),
         twistKind: "scope",
+        reconsider: { decision: "d2", pressure: { en: "The data is on a forum, downloaded {{num.downloads}} times. If you took a snapshot before closing, you have the evidence and lost an hour. If you deleted it, you can no longer say exactly what was exposed.", sv: "Uppgifterna ligger på ett forum och har laddats ner {{num.downloads}} gånger. Om ni tog en ögonblicksbild innan ni stängde har ni bevisen och förlorade en timme. Om ni raderade den kan ni inte längre säga exakt vad som exponerades." } },
+        branches: [
+          { when: { decision: "d3", option: "A" }, narrativeAppend: { en: "Because you phoned everyone with sensitive data personally, fraudsters are now copying the calls: people are being rung by someone claiming to be you.", sv: "Eftersom ni ringde alla med känsliga uppgifter personligen härmar bedragare nu samtalen: folk blir uppringda av någon som påstår sig vara ni." } }
+        ],
         assumptionChallenged: L(["Closing the storage contained the leak.", "När lagringen stängdes begränsades läckan."]),
         reveals: ["hf-copies"],
         narrative: L([
@@ -394,6 +405,7 @@
         title: L(["The regulator writes", "Tillsynsmyndigheten skriver"]),
         twist: L(["{{reg.dpaShort}} opens a supervisory case and asks how cloud storage is governed across the organisation.", "{{reg.dpaShort}} inleder ett tillsynsärende och frågar hur molnlagring styrs i hela organisationen."]),
         twistKind: "authority",
+        reconsider: { decision: "d3", pressure: { en: "The regulator now asks how cloud storage is governed. Knowing what you know now, was your way of telling people the right one?", sv: "Tillsynsmyndigheten frågar nu hur molnlagringen styrs. Med det ni vet i dag, var ert sätt att informera de berörda det rätta?" } },
         assumptionChallenged: L(["Once notified, the regulator will let us handle it.", "När anmälan är gjord låter tillsynsmyndigheten oss sköta det."]),
         narrative: L([
           "Three days later. A letter arrives from the data protection authority, with a list of detailed questions and a two-week deadline.\n\nThe authority is no longer asking only about one storage container. It wants to understand how the whole organisation manages cloud storage, test data and warnings from outside.",

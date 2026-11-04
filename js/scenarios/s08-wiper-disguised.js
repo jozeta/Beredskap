@@ -118,7 +118,7 @@
         decision: dec("d1", "incidentCommander", ["What do you do in the first hour?", "Vad gör ni den första timmen?"], [
           ["Disconnect all networks now, including from the internet, to save what has not been hit.", "Koppla bort alla nät nu, även från internet, för att rädda det som ännu inte har drabbats."],
           ["Isolate affected segments and keep critical systems connected.", "Isolera drabbade segment och låt kritiska system vara uppkopplade."],
-          ["Power everything off.", "Stäng av all ström."]
+          ["Power off the servers that are still running, so whatever is wiping them cannot reach them.", "Stäng av de servrar som fortfarande är igång, så att det som raderar dem inte kan nå dem."]
         ], {
           knowns: [["Machines across the organisation are failing at once.", "Datorer i hela organisationen slutar fungera samtidigt."]],
           uncertainties: [["What is still untouched.", "Vad som fortfarande är opåverkat."]],
@@ -143,6 +143,9 @@
         title: L(["Nobody to pay", "Ingen att betala"]),
         twist: L(["Nobody is waiting for payment. This is not about money.", "Ingen väntar på betalning. Det här handlar inte om pengar."]),
         twistKind: "cause",
+        branches: [
+          { when: { decision: "d1", option: "A" }, narrativeAppend: { en: "Because every network was disconnected, the control room lost contact with the field sites and is running on radio and telephone.", sv: "Eftersom alla nät kopplades bort förlorade kontrollrummet kontakten med fältanläggningarna och arbetar nu med radio och telefon." } }
+        ],
         assumptionChallenged: L(["Criminals want money, so paying is an option.", "Kriminella vill ha pengar, så att betala är ett alternativ."]),
         reveals: ["hf-fake"],
         narrative: L([
@@ -200,6 +203,7 @@
         title: L(["Nothing to decrypt", "Inget att dekryptera"]),
         twist: L(["It is a wiper. The data is not encrypted — it is gone.", "Det är ett raderingsprogram. Datan är inte krypterad – den är borta."]),
         twistKind: "scope",
+        reconsider: { decision: "d1", pressure: { en: "It is a wiper: nothing will come back. If you disconnected everything, the systems still running are cut off from the people who need them. If you kept critical systems connected, they may be the next to be wiped.", sv: "Det är ett raderingsprogram: ingenting kommer tillbaka. Om ni kopplade bort allt är de system som fortfarande fungerar avskurna från dem som behöver dem. Om ni höll kritiska system uppkopplade kan de bli nästa att raderas." } },
         assumptionChallenged: L(["Data is encrypted and could be recovered with a key.", "Datan är krypterad och skulle kunna återställas med en nyckel."]),
         reveals: ["hf-wiper"],
         narrative: L([
@@ -262,6 +266,9 @@
         title: L(["The authorities arrive", "Myndigheterna kommer"]),
         twist: L(["The authorities link the attack to a state actor — and set rules for what you may share.", "Myndigheterna kopplar angreppet till en statlig aktör – och sätter regler för vad ni får dela."]),
         twistKind: "authority",
+        branches: [
+          { when: { decision: "d2", option: "A" }, narrativeAppend: { en: "Because the authorities were alerted early, investigators have seized three servers you had planned to rebuild first.", sv: "Eftersom myndigheterna larmades tidigt har utredarna beslagtagit tre servrar som ni tänkt bygga om först." } }
+        ],
         assumptionChallenged: L(["This is our incident to manage and talk about as we see fit.", "Det här är vår incident att hantera och tala om som vi själva vill."]),
         reveals: ["hf-actor"],
         narrative: L([
@@ -319,6 +326,7 @@
         title: L(["No identity left", "Ingen identitet kvar"]),
         twist: L(["Domain controllers and backup consoles were wiped too. Nobody can log in to anything.", "Domänkontrollanter och backupkonsoler raderades också. Ingen kan logga in någonstans."]),
         twistKind: "scope",
+        reconsider: { decision: "d2", pressure: { en: "The authorities now set rules for what you may share. If you reported early, you lost control of the timeline. If you waited, they ask why they heard it from someone else first.", sv: "Myndigheterna bestämmer nu vad ni får dela. Om ni rapporterade tidigt förlorade ni kontrollen över tidslinjen. Om ni väntade frågar de varför de hörde det från någon annan först." } },
         assumptionChallenged: L(["Our identity and backup management survived.", "Vår identitetsmiljö och backupförvaltning klarade sig."]),
         reveals: ["hf-identity"],
         narrative: L([
@@ -384,6 +392,9 @@
         title: L(["Weeks on paper", "Veckor på papper"]),
         twist: L(["The rebuild will take {{num.weeks}} weeks. The organisation must run manually far longer than anyone planned.", "Ombyggnaden kommer att ta {{num.weeks}} veckor. Organisationen måste drivas manuellt betydligt längre än någon har planerat för."]),
         twistKind: "impact",
+        branches: [
+          { when: { decision: "d5", option: "A" }, narrativeAppend: { en: "Because identity and backup were rebuilt first, customer-facing services stay down another week, and the supervisory authority for essential services asks why.", sv: "Eftersom identitet och säkerhetskopiering byggdes om först förblir kundnära tjänster nere ytterligare en vecka, och tillsynsmyndigheten för samhällsviktiga tjänster frågar varför." } }
+        ],
         assumptionChallenged: L(["Our continuity plan covers a few days without IT.", "Vår kontinuitetsplan täcker några dagar utan IT."]),
         narrative: L([
           "Two days in. Field staff, customer service and finance are improvising with paper forms, personal phones and spreadsheets on the few laptops that still work.\n\nIt is working for the most urgent jobs, but people are tired and mistakes are creeping in. Everyone is asking the same question: how long?",
@@ -500,6 +511,7 @@
         title: L(["The war exclusion", "Krigsundantaget"]),
         twist: L(["The insurer invokes the war exclusion: a state-linked attack may not be covered.", "Försäkringsbolaget åberopar krigsundantaget: ett statskopplat angrepp kanske inte omfattas."]),
         twistKind: "impact",
+        reconsider: { decision: "d3", pressure: { en: "The insurer invokes the war exclusion. The rebuild you chose will now be paid from your own reserves. Would you still choose it?", sv: "Försäkringsbolaget åberopar krigsundantaget. Den återuppbyggnad ni valde ska nu betalas ur egna reserver. Skulle ni fortfarande välja den?" } },
         assumptionChallenged: L(["Our cyber insurance will cover the rebuild.", "Vår cyberförsäkring täcker ombyggnaden."]),
         narrative: L([
           "A week later. The rebuild is under way and the first budget estimate is on the table: it is large. Finance assumed the cyber insurance would cover most of it.\n\nThen a letter arrives from the insurer, written by its lawyers rather than its claims team.",

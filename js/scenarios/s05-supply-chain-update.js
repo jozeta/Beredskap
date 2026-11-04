@@ -143,6 +143,9 @@
         title: L(["“A false positive”", "”Ett falsklarm”"]),
         twist: L(["It is on every machine that took the update — and the vendor says you are wrong.", "Det finns på varje dator som tog emot uppdateringen – och leverantören säger att ni har fel."]),
         twistKind: "scope",
+        branches: [
+          { when: { decision: "d1", option: "B" }, narrativeAppend: { en: "Because the agent was stopped on every machine, overnight patching and the help desk's remote support stopped with it.", sv: "Eftersom agenten stoppades på varje dator upphörde även nattens uppdateringar och servicedeskens fjärrsupport." } }
+        ],
         assumptionChallenged: L(["A handful of hosts are affected.", "Ett fåtal datorer är drabbade."]),
         narrative: L([
           "{{time.T+120|clock}}. The SOC has spent two hours checking every machine that took the weekend's update, comparing files with the previous version.\n\nThe vendor's support team has also replied to your ticket, quickly and confidently. Their answer and your own findings do not agree, and the room has to decide whom to believe.",
@@ -212,6 +215,7 @@
         title: L(["The advisory", "Varningen"]),
         twist: L(["The vendor's own build system was compromised. The signed update is the malware.", "Leverantörens egen byggmiljö var komprometterad. Den signerade uppdateringen är skadekoden."]),
         twistKind: "cause",
+        reconsider: { decision: "d2", pressure: { en: "The vendor's own build system was compromised: the signed update was the malware. If you accepted their “false positive”, you lost a day. If you acted on your own evidence, you were right, and their lawyers have written to you anyway.", sv: "Leverantörens eget byggsystem var komprometterat: den signerade uppdateringen var den skadliga koden. Om ni godtog deras ”falsklarm” förlorade ni ett dygn. Om ni agerade på egna belägg hade ni rätt, och deras jurister har skrivit till er ändå." } },
         assumptionChallenged: L(["Signed software from a trusted vendor is safe.", "Signerad programvara från en betrodd leverantör är säker."]),
         reveals: ["hf-build"],
         narrative: L([
@@ -338,6 +342,9 @@
         title: L(["Running without the agent", "Att klara sig utan agenten"]),
         twist: L(["Cutting the agent off has stopped patching, inventory and remote support for {{num.hostsWithAgent}} machines.", "Att stänga av agenten har stoppat patchning, inventering och fjärrsupport för {{num.hostsWithAgent}} datorer."]),
         twistKind: "impact",
+        branches: [
+          { when: { decision: "d3", option: "A" }, narrativeAppend: { en: "Because the agent was uninstalled everywhere, you have no inventory of what runs where, and the auditors want one tomorrow.", sv: "Eftersom agenten avinstallerades överallt har ni ingen förteckning över vad som körs var, och revisorerna vill ha en i morgon." } }
+        ],
         assumptionChallenged: L(["We can do without the agent for a while.", "Vi klarar oss utan agenten ett tag."]),
         narrative: L([
           "{{time.T+1560|clock}}. The agent has been blocked on every machine, which stopped the malware but also stopped everything the agent did.\n\nThe service desk is overwhelmed with requests nobody can solve remotely, field staff cannot get laptops fixed, and a critical browser update is due this week. Security and operations are pulling in opposite directions.",
@@ -402,6 +409,7 @@
         title: L(["Other people's decisions", "Andras beslut"]),
         twist: L(["The customer and the regulator now set the terms — not you.", "Kunden och tillsynsmyndigheten sätter nu villkoren – inte ni."]),
         twistKind: "authority",
+        reconsider: { decision: "d4", pressure: { en: "The customer and the regulator now set the terms. What you shared with the customer in the first hours is what they will judge you on.", sv: "Kunden och tillsynsmyndigheten bestämmer nu villkoren. Det ni delade med kunden under de första timmarna är vad de kommer att bedöma er efter." } },
         assumptionChallenged: L(["We decide how fast we recover and reconnect.", "Vi bestämmer hur snabbt vi återställer och kopplar upp igen."]),
         narrative: L([
           "Wednesday. Two letters arrive within an hour of each other: one from the affected customer's lawyers, and one from {{reg.supervisor}}.\n\nBoth ask for things you have not prepared: independent evidence, formal reports and explanations of how you choose and monitor your suppliers. The incident is now being judged by people outside the company.",
@@ -458,6 +466,9 @@
         title: L(["A second stage", "Ett andra steg"]),
         twist: L(["On {{num.secondStage}} machines the loader fetched a credential stealer that keeps running without the agent.", "På {{num.secondStage}} datorer hämtade laddaren ett program som stjäl inloggningsuppgifter och som fortsätter köras utan agenten."]),
         twistKind: "scope",
+        branches: [
+          { when: { decision: "d4", option: "A" }, narrativeAppend: { en: "Because you shared full logs with the customer, their lawyers have used them to put a figure on their claim against you.", sv: "Eftersom ni delade fullständiga loggar med kunden har deras jurister använt dem för att sätta en summa på sitt krav mot er." } }
+        ],
         assumptionChallenged: L(["Cutting off the agent removed the attacker.", "Att stänga av agenten tog bort angriparen."]),
         reveals: ["hf-second"],
         narrative: L([
@@ -519,6 +530,7 @@
         title: L(["The clean release", "Den rena versionen"]),
         twist: L(["Earlier versions back to 7.3.8 were also tainted — and the new “clean” release cannot be verified independently.", "Även tidigare versioner tillbaka till 7.3.8 var smittade – och den nya ”rena” versionen kan inte verifieras oberoende."]),
         twistKind: "impact",
+        reconsider: { decision: "d3", pressure: { en: "Versions back to 7.3.8 were tainted too. For an agent you cannot trust at any version, was your choice for the estate the right one?", sv: "Även versioner tillbaka till 7.3.8 var manipulerade. För en agent ni inte kan lita på i någon version, var ert val för hela miljön det rätta?" } },
         assumptionChallenged: L(["The vendor's clean release ends the problem.", "Leverantörens rena version löser problemet."]),
         reveals: ["hf-earlier"],
         narrative: L([

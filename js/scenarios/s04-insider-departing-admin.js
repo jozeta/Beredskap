@@ -149,6 +149,9 @@
         title: L(["Not so fast", "Inte så fort"]),
         twist: L(["HR and legal stop the investigation as planned: you need a documented, proportionate basis before looking further.", "HR och juridik stoppar utredningen i den planerade formen: ni behöver ett dokumenterat, proportionerligt underlag innan ni går vidare."]),
         twistKind: "authority",
+        branches: [
+          { when: { decision: "d1", option: "B" }, narrativeAppend: { en: "Because the administrator was asked for an explanation on the first day, they went home sick, and the exports stopped, for now.", sv: "Eftersom administratören ombads förklara sig redan första dagen gick hen hem sjuk, och exporterna upphörde, tills vidare." } }
+        ],
         assumptionChallenged: L(["Security can investigate an employee freely when there is a risk.", "Säkerhetsfunktionen kan utreda en anställd fritt när det finns en risk."]),
         narrative: L([
           "{{time.T+240|clock}}. A meeting with HR, legal and the data protection officer turns tense.\n\nThe security team arrived with a plan to review the administrator's mailbox and browsing history. It is stopped at the door. Employees have rights too, even when they have access to everything, and the company has to be able to defend whatever it does next.",
@@ -209,6 +212,7 @@
         title: L(["Someone else at the keyboard", "Någon annan vid tangentbordet"]),
         twist: L(["The account was active while the administrator was on sick leave at home — from another country.", "Kontot var aktivt medan administratören var sjukskriven hemma – från ett annat land."]),
         twistKind: "scope",
+        reconsider: { decision: "d1", pressure: { en: "Someone else was at the keyboard, from another country. If you restricted rights quietly, the account still worked for them. If you talked to the administrator, whoever is behind this may now know you are looking.", sv: "Någon annan satt vid tangentbordet, från ett annat land. Om ni begränsade rättigheterna i tysthet fungerade kontot ändå för dem. Om ni pratade med administratören kan den som ligger bakom nu veta att ni letar." } },
         assumptionChallenged: L(["Everything was done by the employee personally.", "Allt gjordes av den anställda personligen."]),
         reveals: ["hf-leave"],
         narrative: L([
@@ -282,6 +286,9 @@
         title: L(["“They know where my children go to school”", "”De vet vilken skola mina barn går i”"]),
         twist: L(["The administrator was coerced. This is extortion of an employee, not disloyalty.", "Administratören har utsatts för påtryckningar. Det här är utpressning av en anställd, inte illojalitet."]),
         twistKind: "cause",
+        branches: [
+          { when: { decision: "d3", option: "A" }, narrativeAppend: { en: "Because the account and token were revoked, the extortionists sent the administrator a new message: they know you know.", sv: "Eftersom kontot och token återkallades skickade utpressarna ett nytt meddelande till administratören: de vet att ni vet." } }
+        ],
         assumptionChallenged: L(["This is a disloyal employee stealing data on the way out.", "Det här är en illojal anställd som stjäl data på vägen ut."]),
         reveals: ["hf-coerced"],
         narrative: L([
@@ -340,6 +347,7 @@
         title: L(["The accounts nobody owns", "Kontona som ingen äger"]),
         twist: L(["Disabling one account was not enough: there are {{num.backdoors}} backdoor service accounts.", "Det räckte inte att spärra ett konto: det finns {{num.backdoors}} tjänstekonton som bakdörrar."]),
         twistKind: "scope",
+        reconsider: { decision: "d3", pressure: { en: "Whatever you did with that one account and token, there are {{num.backdoors}} more backdoor accounts. Does your call still stand?", sv: "Vad ni än gjorde med det enda kontot och dess token finns det {{num.backdoors}} bakdörrskonton till. Står ert beslut sig?" } },
         assumptionChallenged: L(["Disabling the employee's account removes the attacker's access.", "Att spärra medarbetarens konto tar bort angriparens åtkomst."]),
         reveals: ["hf-backdoors"],
         narrative: L([
@@ -402,6 +410,9 @@
         title: L(["The police have a request", "Polisen har en begäran"]),
         twist: L(["The police ask you to keep one backdoor open so they can trace the group.", "Polisen ber er hålla en bakdörr öppen så att de kan spåra gruppen."]),
         twistKind: "authority",
+        branches: [
+          { when: { decision: "d5", option: "A" }, narrativeAppend: { en: "Because every backdoor was disabled at once, the police say the group went silent, and their trace has gone cold.", sv: "Eftersom alla bakdörrar stängdes på en gång säger polisen att gruppen har tystnat, och deras spår har kallnat." } }
+        ],
         assumptionChallenged: L(["We decide when to close the door on the attacker.", "Vi bestämmer när vi stänger dörren för angriparen."]),
         narrative: L([
           "Three days after the first alert. {{reg.police|cap}} has taken the case seriously: threats against an employee's family are a serious crime, and the same group may be behind other cases.\n\nThe investigators have a request, and it makes the security team uncomfortable. Saying yes could help catch the group. Saying no keeps your network simpler to defend.",
@@ -514,6 +525,7 @@
         title: L(["Not the only one", "Inte den enda"]),
         twist: L(["Two other administrators say the same people approached them.", "Två andra administratörer berättar att samma personer har kontaktat dem."]),
         twistKind: "scope",
+        reconsider: { decision: "d4", pressure: { en: "Two more administrators were approached by the same people. How you treated the first one is now what they expect for themselves.", sv: "Ytterligare två administratörer har kontaktats av samma personer. Hur ni behandlade den första är nu vad de förväntar sig för egen del." } },
         assumptionChallenged: L(["This was an isolated case.", "Det här var ett enstaka fall."]),
         reveals: ["hf-approach"],
         narrative: L([

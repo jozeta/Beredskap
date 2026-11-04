@@ -120,7 +120,7 @@
         decision: dec("d1", "incidentCommander", ["What do you do with the account tonight?", "Vad gör ni med kontot i natt?"], [
           ["Disable it, revoke all sessions, remove the new device and reset the password.", "Spärra det, återkalla alla sessioner, ta bort den nya enheten och byt lösenord."],
           ["Reset the password and remove the new device; keep the account active for payroll.", "Byt lösenord och ta bort den nya enheten; låt kontot vara aktivt för lönekörningen."],
-          ["Leave it until the morning and ask the user to deny further prompts.", "Låt det vara till i morgon och be användaren neka fler förfrågningar."]
+          ["Keep the account running for tonight's payroll run, tell the user to deny every prompt, and reset it at 06:00.", "Låt kontot vara igång för nattens lönekörning, be användaren neka varje förfrågan och återställ det klockan 06.00."]
         ], {
           knowns: [["A prompt was approved and a new device registered.", "En förfrågan godkändes och en ny enhet registrerades."]],
           uncertainties: [["How the attacker got the password in the first place.", "Hur angriparen fick tag på lösenordet från början."]],
@@ -145,6 +145,9 @@
         title: L(["The prompts were a distraction", "Förfrågningarna var en avledning"]),
         twist: L(["The attacker was already in through a stolen session token — the prompts were only to add a device.", "Angriparen var redan inne via en stulen sessionstoken – förfrågningarna var bara till för att lägga till en enhet."]),
         twistKind: "cause",
+        branches: [
+          { when: { decision: "d1", option: "A" }, narrativeAppend: { en: "Because the account was disabled, the payroll run that depended on it failed at 05:00, and finance asks who switched it off.", sv: "Eftersom kontot stängdes av misslyckades lönekörningen som var beroende av det klockan 05.00, och ekonomi frågar vem som stängde av det." } }
+        ],
         assumptionChallenged: L(["The approved prompt was how the attacker got in.", "Den godkända förfrågan var vägen in för angriparen."]),
         reveals: ["hf-aitm"],
         narrative: L([
@@ -202,6 +205,7 @@
         title: L(["What they read", "Vad de läste"]),
         twist: L(["The attacker spent hours in the mailbox and shared folders, not minutes.", "Angriparen tillbringade timmar i e-posten och de delade mapparna, inte minuter."]),
         twistKind: "scope",
+        reconsider: { decision: "d1", pressure: { en: "The prompts were a distraction: the attacker was already in with a stolen session. If you disabled the account, payroll ran late for nothing. If you kept it active, the attacker kept reading.", sv: "Förfrågningarna var en avledning: angriparen var redan inne med en stulen session. Om ni stängde av kontot gick lönen sent i onödan. Om ni lät det vara aktivt fortsatte angriparen att läsa." } },
         assumptionChallenged: L(["The attacker only had a few minutes.", "Angriparen hade bara några minuter på sig."]),
         reveals: ["hf-access"],
         narrative: L([
@@ -267,6 +271,9 @@
         title: L(["From a colleague you trust", "Från en kollega ni litar på"]),
         twist: L(["The attacker sent phishing from the compromised account to {{num.phished}} colleagues — and some clicked.", "Angriparen skickade nätfiske från det kapade kontot till {{num.phished}} kollegor – och några klickade."]),
         twistKind: "scope",
+        branches: [
+          { when: { decision: "d3", option: "A" }, narrativeAppend: { en: "Because employees were told directly what was read, several have asked for copies of everything the attacker saw about them.", sv: "Eftersom medarbetarna fick veta direkt vad som lästes har flera begärt kopior av allt som angriparen såg om dem." } }
+        ],
         assumptionChallenged: L(["The compromise is contained to one user.", "Intrånget är begränsat till en användare."]),
         reveals: ["hf-spread"],
         narrative: L([
@@ -332,6 +339,7 @@
         title: L(["An app that never logs out", "En app som aldrig loggar ut"]),
         twist: L(["An OAuth app the attacker consented to still reads the mailbox — after every reset.", "En OAuth-app som angriparen godkände läser fortfarande e-posten – efter varje byte."]),
         twistKind: "scope",
+        reconsider: { decision: "d2", pressure: { en: "An app the attacker consented to still reads the mailbox after every reset. Was revoking sessions enough, or did it only look enough?", sv: "En app som angriparen gav sitt medgivande till läser fortfarande brevlådan efter varje återställning. Räckte det att återkalla sessionerna, eller såg det bara ut att räcka?" } },
         assumptionChallenged: L(["Resetting passwords and revoking sessions removed all access.", "Nya lösenord och återkallade sessioner tog bort all åtkomst."]),
         reveals: ["hf-oauth"],
         narrative: L([
@@ -385,6 +393,9 @@
         title: L(["Salaries in the wrong hands", "Löner i fel händer"]),
         twist: L(["Employees start receiving fraud attempts that quote their own salary.", "Anställda börjar få bedrägeriförsök som citerar deras egen lön."]),
         twistKind: "impact",
+        branches: [
+          { when: { decision: "d4", option: "A" }, narrativeAppend: { en: "Because sessions were revoked for everyone who clicked, the sales team was signed out in the middle of a customer tender and lost the morning.", sv: "Eftersom sessionerna återkallades för alla som klickade loggades säljteamet ut mitt i ett kundanbud och förlorade förmiddagen." } }
+        ],
         assumptionChallenged: L(["The stolen data has not been used yet.", "De stulna uppgifterna har inte använts ännu."]),
         narrative: L([
           "{{time.T+1500|clock}}. HR forwards several text messages that employees received on their private phones over lunch.\n\nThe messages look like they come from payroll, and they are frighteningly specific. The staff who received them want to know how a stranger could know such details about them.",
@@ -437,6 +448,7 @@
         title: L(["Whose fault?", "Vems fel?"]),
         twist: L(["HR wants to discipline the user who pressed “approve”. Security says the design was the failure.", "HR vill vidta disciplinåtgärder mot användaren som tryckte ”godkänn”. Säkerhet menar att det var utformningen som brast."]),
         twistKind: "authority",
+        reconsider: { decision: "d4", pressure: { en: "HR wants to discipline the user. Some of the colleagues who clicked are senior managers. Does the way you handled the spread treat everyone the same?", sv: "HR vill vidta disciplinåtgärder mot användaren. Några av kollegorna som klickade är högre chefer. Behandlar ert sätt att hantera spridningen alla lika?" } },
         assumptionChallenged: L(["User error caused this incident.", "Ett användarfel orsakade den här incidenten."]),
         narrative: L([
           "Two days later. The immediate incident is under control, and a meeting about consequences is called.\n\nIt quickly turns into an argument about responsibility. One person approved a prompt they did not start, and clicked a link before that. The room has to decide whether that person is the cause, or the last line of a defence that was built to fail.",
@@ -524,7 +536,7 @@
         decision: dec("d8", "ceo", ["What is the remediation plan?", "Vilken är åtgärdsplanen?"], [
           ["Phishing-resistant MFA for privileged, finance and HR staff within a month, everyone within six.", "Nätfiskeresistent MFA för privilegierad personal, ekonomi och HR inom en månad, för alla inom sex."],
           ["Number matching and location rules now; phishing-resistant MFA next year.", "Sifferkontroll och platsregler nu; nätfiskeresistent MFA nästa år."],
-          ["More awareness training.", "Mer utbildning i medvetenhet."]
+          ["Awareness training for everyone now, and phishing-resistant MFA only where the legacy apps allow it.", "Utbildning i medvetenhet för alla nu, och nätfiskeresistent MFA bara där de äldre apparna tillåter det."]
         ], {
           knowns: [["Push MFA was bypassed by session theft.", "Push-MFA kringgicks genom stöld av sessionen."]],
           uncertainties: [["How quickly legacy apps can be replaced.", "Hur snabbt äldre applikationer kan ersättas."]],

@@ -151,6 +151,9 @@
         title: L(["It looks like shoppers", "Det ser ut som kunder"]),
         twist: L(["Scrubbing worked — so the attack changed shape and now looks like real shoppers.", "Rensningen fungerade – så angreppet bytte form och ser nu ut som riktiga kunder."]),
         twistKind: "scope",
+        branches: [
+          { when: { decision: "d1", option: "A" }, narrativeAppend: { en: "Because scrubbing was approved above the contract, tonight's bill already exceeds the whole weekend's expected profit.", sv: "Eftersom rensning godkändes utöver avtalet överstiger nattens faktura redan hela helgens förväntade vinst." } }
+        ],
         assumptionChallenged: L(["Upstream scrubbing will end the attack.", "Rensning uppströms gör slut på attacken."]),
         narrative: L([
           "{{time.T+60|clock}}. The internet links are clear again and the traffic graphs look almost normal. People in the room start to relax.\n\nBut the site is still crawling. The web servers are overloaded by requests that look exactly like customers browsing, searching and logging in. Telling a bot from a real shopper is suddenly the hardest problem of the evening.",
@@ -216,6 +219,7 @@
         title: L(["Pay or it continues", "Betala, annars fortsätter det"]),
         twist: L(["It is extortion — and the price rises every hour you wait.", "Det är utpressning – och priset stiger för varje timme ni väntar."]),
         twistKind: "impact",
+        reconsider: { decision: "d1", pressure: { en: "The flood has turned into an extortion demand. If you paid for scrubbing above the contract, the attackers know what you can afford. If you geo-blocked or waited, half the night's sales are gone.", sv: "Översvämningen har blivit ett utpressningskrav. Om ni betalade för rensning utöver avtalet vet angriparna vad ni har råd med. Om ni geoblockerade eller väntade är halva nattens försäljning borta." } },
         assumptionChallenged: L(["This is random vandalism that will pass.", "Det här är slumpmässig skadegörelse som går över."]),
         narrative: L([
           "{{time.T+150|clock}}. An email arrives at the press address and at the CEO's personal address at the same moment.\n\nWhoever sent it knows who runs the company, and wants to be sure management reads it tonight. The subject line says only: “About your weekend.”",
@@ -276,6 +280,9 @@
         title: L(["The smokescreen", "Rökridån"]),
         twist: L(["The flood was cover. While you watched it, thousands of customer accounts were taken over.", "Attacken var en rökridå. Medan ni tittade på den togs tusentals kundkonton över."]),
         twistKind: "cause",
+        branches: [
+          { when: { decision: "d3", option: "A" }, narrativeAppend: { en: "Because you refused and reported it, the attackers doubled the flood within the hour and posted your refusal on a forum.", sv: "Eftersom ni vägrade och polisanmälde fördubblade angriparna översvämningen inom en timme och lade ut ert nej på ett forum." } }
+        ],
         assumptionChallenged: L(["This is an availability incident.", "Det här är en tillgänglighetsincident."]),
         reveals: ["hf-stuffing"],
         narrative: L([
@@ -350,6 +357,7 @@
         title: L(["Orders nobody placed", "Beställningar som ingen har lagt"]),
         twist: L(["The hijacked accounts are spending saved cards and loyalty points.", "De kapade kontona handlar med sparade kort och bonuspoäng."]),
         twistKind: "scope",
+        reconsider: { decision: "d2", pressure: { en: "While the site fought the load, thousands of accounts were taken over. Did your way of handling the load leave the door open, or keep it shut?", sv: "Medan webbplatsen kämpade mot lasten kapades tusentals konton. Lämnade ert sätt att hantera lasten dörren öppen, eller höll det den stängd?" } },
         assumptionChallenged: L(["Stolen accounts only expose data; no money is lost.", "Stulna konton exponerar bara uppgifter; inga pengar går förlorade."]),
         reveals: ["hf-orders"],
         narrative: L([
@@ -416,6 +424,9 @@
         title: L(["The payment provider calls", "Betalleverantören ringer"]),
         twist: L(["Your payment provider — not you — now decides whether the shop can open on Sunday.", "Er betalleverantör – inte ni – avgör nu om butiken får öppna på söndag."]),
         twistKind: "authority",
+        branches: [
+          { when: { decision: "d4", option: "A" }, narrativeAppend: { en: "Because every account was reset tonight, customer service has four thousand calls in the queue, and the complaint is trending.", sv: "Eftersom varje konto återställdes i natt har kundtjänst fyratusen samtal i kö, och klagomålen trendar." } }
+        ],
         assumptionChallenged: L(["We control when the shop reopens.", "Vi bestämmer när butiken öppnar igen."]),
         reveals: ["hf-same"],
         narrative: L([
@@ -478,6 +489,7 @@
         title: L(["Victims twice over", "Drabbade två gånger"]),
         twist: L(["Your customers' passwords leaked elsewhere first — they are victims twice, and many reuse the same password everywhere.", "Kundernas lösenord läckte först någon annanstans – de är drabbade två gånger, och många använder samma lösenord överallt."]),
         twistKind: "impact",
+        reconsider: { decision: "d4", pressure: { en: "Your customers were victims twice. If you forced a reset for everyone, a third of them could not shop all weekend. If you locked only suspicious accounts, some takeovers were missed. Do you stand by it?", sv: "Era kunder drabbades två gånger. Om ni tvingade fram ett lösenordsbyte för alla kunde en tredjedel av dem inte handla på hela helgen. Om ni bara låste misstänkta konton missades några kapningar. Står ni fast vid det?" } },
         assumptionChallenged: L(["Fixing our own login ends the customers' exposure.", "När vi har rättat vår egen inloggning är kunderna inte längre exponerade."]),
         narrative: L([
           "Sunday, {{time.T+2700|clock}}. The attack has stopped, and the shop is running normally again.\n\nThe communications team is drafting Monday's message to all customers. The forensic team has a clear answer about where the passwords came from, and the question is how much of that answer to share, and how to say it without blaming customers.",
