@@ -142,6 +142,9 @@
         title: L(["Paper is not enough", "Papper räcker inte"]),
         twist: L(["Paper procedures are slowing everything down. Lab results arrive by runner and the ED is backing up. Redirecting ambulances is on the table.", "Reservrutinerna på papper gör allt långsammare. Provsvar kommer med springpojke och akuten korkas igen. Omdirigering av ambulanser är på bordet."]),
         twistKind: "impact",
+        branches: [
+          { when: { decision: "d1", option: "A" }, narrativeAppend: { en: "Because downtime procedures started at once, the wards are on paper, and two medication orders were transcribed wrongly in the first hour.", sv: "Eftersom reservrutinerna startade direkt arbetar avdelningarna på papper, och två läkemedelsordinationer skrevs av fel under den första timmen." } }
+        ],
         assumptionChallenged: L(["Downtime procedures will carry us through.", "Reservrutinerna kommer att bära oss."]),
         narrative: L([
           "{{time.T+60|clock}}. The paper procedures are running, but every step takes longer: results are carried by hand, orders are written twice, and nobody can check a patient's history.\n\nThe emergency physician in charge calls the incident command. The question on the table is whether this hospital can still safely receive the ambulances that are coming.",
@@ -199,6 +202,7 @@
         title: L(["The devices too", "Utrustningen också"]),
         twist: L(["The servers that manage infusion pumps and imaging are encrypted. {{num.devices}} devices can't receive drug libraries or send images.", "Servrarna som hanterar infusionspumpar och bilddiagnostik är krypterade. {{num.devices}} enheter kan inte ta emot läkemedelsbibliotek eller skicka bilder."]),
         twistKind: "scope",
+        reconsider: { decision: "d1", pressure: { en: "The device servers are encrypted too. If you isolated in a controlled order with the clinicians, that took long enough for the spread to reach them. If you shut everything down at once, nobody could say which pumps were mid-infusion.", sv: "Även servrarna för den medicintekniska utrustningen är krypterade. Om ni isolerade i kontrollerad ordning tillsammans med vården tog det tillräckligt lång tid för att spridningen skulle nå dem. Om ni stängde ner allt på en gång kunde ingen säga vilka pumpar som var mitt i en infusion." } },
         assumptionChallenged: L(["Only administrative and record systems are hit.", "Bara administrativa system och journalsystem är drabbade."]),
         reveals: ["hf-devices"],
         narrative: L([
@@ -264,6 +268,9 @@
         title: L(["The vendor's door", "Leverantörens dörr"]),
         twist: L(["The attackers came in through a medical-device vendor's always-on remote-support account.", "Angriparna kom in via ett ständigt öppet fjärrsupportkonto hos en leverantör av medicinteknik."]),
         twistKind: "cause",
+        branches: [
+          { when: { decision: "d3", option: "A" }, narrativeAppend: { en: "Because devices now run standalone with manual double-checks, every infusion takes twice as long, and the nurses on the wards are exhausted.", sv: "Eftersom utrustningen nu körs fristående med manuella dubbelkontroller tar varje infusion dubbelt så lång tid, och sjuksköterskorna på avdelningarna är utmattade." } }
+        ],
         assumptionChallenged: L(["A staff member clicked something.", "Någon i personalen klickade på något."]),
         reveals: ["hf-vendor"],
         narrative: L([
@@ -374,6 +381,9 @@
         title: L(["Patient data taken", "Patientuppgifter tagna"]),
         twist: L(["The group posts samples of patient records. Data was copied out weeks ago.", "Gruppen publicerar prov på patientjournaler. Uppgifterna kopierades ut för flera veckor sedan."]),
         twistKind: "scope",
+        branches: [
+          { when: { decision: "d5", option: "A" }, narrativeAppend: { en: "Because the record was restored on new hardware while the originals were imaged, the police say part of the evidence on the old disks was lost in the rush.", sv: "Eftersom journalen återställdes på ny hårdvara medan originalen avbildades säger polisen att en del av bevisen på de gamla diskarna gick förlorade i brådskan." } }
+        ],
         assumptionChallenged: L(["This was only about availability.", "Det här handlade bara om tillgänglighet."]),
         reveals: ["hf-exfil"],
         narrative: L([
@@ -440,6 +450,7 @@
         title: L(["The region overloads", "Regionen överbelastas"]),
         twist: L(["The neighbouring hospital is at capacity because of your redirection. The region asks you to take patients back — before you're ready.", "Grannsjukhuset är fullt på grund av er omdirigering. Regionen ber er ta tillbaka patienter – innan ni är redo."]),
         twistKind: "impact",
+        reconsider: { decision: "d2", pressure: { en: "The neighbouring hospital is at capacity because of your redirection, and the region asks you to take patients back. Was redirecting the right call?", sv: "Grannsjukhuset är fullt på grund av er omdirigering, och regionen ber er ta tillbaka patienter. Var omdirigeringen rätt beslut?" } },
         assumptionChallenged: L(["Redirection only affects us.", "Omdirigeringen påverkar bara oss."]),
         narrative: L([
           "Day two. The regional coordination meeting brings together the hospitals and the ambulance service.\n\nYour decisions in the first night have had consequences beyond your walls. The region needs the healthcare system as a whole to work, and that may mean asking your hospital to do more than it feels ready for.",
@@ -552,6 +563,7 @@
         title: L(["Pay to save lives?", "Betala för att rädda liv?"]),
         twist: L(["A politician on the board publicly urges payment “to save lives”. The group doubles the demand.", "En politiker i styrelsen uppmanar offentligt till betalning ”för att rädda liv”. Gruppen fördubblar kravet."]),
         twistKind: "authority",
+        reconsider: { decision: "d6", pressure: { en: "A politician on the board urges payment to save lives, and the group has doubled the demand. Does your answer to the leak still hold?", sv: "En politiker i styrelsen kräver betalning för att rädda liv, och gruppen har fördubblat kravet. Håller ert svar på läckan fortfarande?" } },
         assumptionChallenged: L(["Hospital management decides on payment.", "Sjukhusledningen beslutar om betalning."]),
         narrative: L([
           "Day four. The hospital is coping, slowly, but the story has moved from the wards to politics.\n\nElected members of the hospital's board are being asked on television what they will do. One of them has already given an answer, and the attackers were listening.",

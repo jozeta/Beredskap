@@ -128,6 +128,9 @@
         title: L(["Every Thursday", "Varje torsdag"]),
         twist: L(["The audit logs show one account: a senior database administrator's own, running small queries on the contract tables every Thursday evening for eight months. {{num.exports}} exports so far.", "Granskningsloggarna visar ett konto: en senior databasadministratörs eget, som kört små frågor mot avtalstabellerna varje torsdagskväll i åtta månader. {{num.exports}} exporter hittills."]),
         twistKind: "cause",
+        branches: [
+          { when: { decision: "d1", option: "A" }, narrativeAppend: { en: "Because the investigation was kept confidential, two more Thursday exports went out while you prepared.", sv: "Eftersom utredningen hölls konfidentiell gick ytterligare två torsdagsexporter ut medan ni förberedde er." } }
+        ],
         assumptionChallenged: L(["A former salesperson took a list.", "En tidigare säljare tog med sig en lista."]),
         reveals: ["hf-exports"],
         narrative: L([
@@ -191,6 +194,7 @@
         title: L(["The keys they hold", "Nycklarna hen har"]),
         twist: L(["Removing the administrator's access is not one switch: they hold the break-glass account, the backup encryption keys and the only working copy of the database runbooks.", "Att ta bort administratörens åtkomst är inte en enda knapp: hen har nödkontot, krypteringsnycklarna till säkerhetskopiorna och den enda fungerande kopian av databasens driftrutiner."]),
         twistKind: "impact",
+        reconsider: { decision: "d1", pressure: { en: "The leak runs every Thursday from a senior administrator's own account. If you announced a review, they knew to stop. If you investigated quietly, colleagues will ask why they were not told.", sv: "Läckan sker varje torsdag från en senior administratörs eget konto. Om ni tillkännagav en granskning visste hen att sluta. Om ni utredde i tysthet kommer kollegorna att fråga varför de inte fick veta." } },
         assumptionChallenged: L(["We can just disable their account.", "Vi kan bara stänga av hens konto."]),
         narrative: L([
           "{{time.T+2880|weekday|cap}}. {{person.itOps.name}} has been asked, without being told why, to list everything that would stop working if one particular administrator disappeared tomorrow.\n\nThe list takes all afternoon. It covers far more than a single user account, and several items have only ever been known to that one person.",
@@ -243,6 +247,10 @@
         title: L(["Resigned this morning", "Sa upp sig i morse"]),
         twist: L(["Before you act, the administrator resigns with immediate effect. The police have meanwhile traced monthly payments to them from a consultancy retained by the competitor, and the pricing engine's source code was copied too.", "Innan ni hinner agera säger administratören upp sig med omedelbar verkan. Polisen har under tiden spårat månatliga betalningar till hen från en konsultfirma som anlitas av konkurrenten, och källkoden till prissättningsmotorn kopierades också."]),
         twistKind: "scope",
+        reconsider: { decision: "d2", pressure: { en: "The administrator resigned this morning, before you acted. Was your plan the right one, or only the slowest?", sv: "Administratören sa upp sig i morse, innan ni agerade. Var er plan den rätta, eller bara den långsammaste?" } },
+        branches: [
+          { when: { decision: "d2", option: "A" }, narrativeAppend: { en: "Because the police were brought in first, you were asked not to change any access yet, and the administrator's next shift starts tonight.", sv: "Eftersom polisen kopplades in först ombads ni att inte ändra någon åtkomst ännu, och administratörens nästa pass börjar i kväll." } }
+        ],
         assumptionChallenged: L(["It is about a customer list.", "Det handlar om en kundlista."]),
         reveals: ["hf-money"],
         narrative: L([
@@ -288,7 +296,7 @@
         decision: dec("d4", "ceo", ["What now?", "Vad gör ni nu?"], [
           ["Rotate everything immediately, notify the regulator and affected customers, and support the police case.", "Byt allt omedelbart, anmäl till tillsynsmyndigheten och berätta för berörda kunder, och stöd polisens utredning."],
           ["Rotate everything and keep it quiet while the police work.", "Byt allt och håll det tyst medan polisen arbetar."],
-          ["Sue the competitor publicly to show strength.", "Stäm konkurrenten offentligt för att visa styrka."]
+          ["Take the competitor to court now, publicly, before the customers they won settle in.", "Stäm konkurrenten nu, offentligt, innan kunderna de vann hinner rota sig."]
         ], {
           knowns: [["Paid insider, months of exports, source code taken.", "En betald insider, månader av exporter, källkod tagen."]],
           uncertainties: [["Whether anything was changed or planted on the way out.", "Om något ändrades eller placerades ut på vägen ut."]],
@@ -351,6 +359,10 @@
         title: L(["Four more", "Fyra till"]),
         twist: L(["An access review finds four other administrators who can query the same tables at any hour, with no alert and nobody reading the logs.", "En behörighetsgranskning hittar fyra andra administratörer som när som helst kan göra frågor mot samma tabeller, utan larm och utan att någon läser loggarna."]),
         twistKind: "scope",
+        reconsider: { decision: "d3", pressure: { en: "Four more administrators can query the same tables. Was the way you removed one person's access a model, or a warning?", sv: "Ytterligare fyra administratörer kan ställa frågor mot samma tabeller. Var ert sätt att ta bort en persons åtkomst ett föredöme, eller en varning?" } },
+        branches: [
+          { when: { decision: "d4", option: "A" }, narrativeAppend: { en: "Because affected customers were told, one has invoked the confidentiality clause in their contract and is claiming damages.", sv: "Eftersom berörda kunder informerades har en av dem åberopat sekretessklausulen i sitt avtal och kräver skadestånd." } }
+        ],
         assumptionChallenged: L(["We had one bad apple.", "Vi hade ett ruttet äpple."]),
         reveals: ["hf-peers"],
         narrative: L([

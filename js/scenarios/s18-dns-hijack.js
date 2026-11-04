@@ -108,7 +108,7 @@
         decision: dec("d1", "networkLead", ["What do you do?", "Vad gör ni?"], [
           ["Check public DNS and the registrar records now, from outside the office network.", "Kontrollera publik DNS och registrarens uppgifter nu, utanför kontorsnätet."],
           ["Open a ticket with the hosting provider and wait.", "Öppna ett ärende hos driftleverantören och vänta."],
-          ["Restart the web servers.", "Starta om webbservrarna."]
+          ["Restart the web servers: a stuck certificate on one node causes exactly these warnings.", "Starta om webbservrarna: ett fastnat certifikat på en nod ger exakt de här varningarna."]
         ], {
           knowns: [["Customers see certificate warnings.", "Kunderna ser certifikatvarningar."], ["The office sees no problem.", "Kontoret ser inget problem."]],
           uncertainties: [["Whether this is a fault or an attack.", "Om det här är ett fel eller ett angrepp."]],
@@ -192,6 +192,10 @@
         title: L(["Their mail, your resets", "Deras e-post, era återställningar"]),
         twist: L(["Mail to your domain now goes to the attacker. Password-reset emails for staff and customer accounts are being intercepted.", "E-post till er domän går nu till angriparen. E-post för lösenordsåterställning till personal- och kundkonton fångas upp."]),
         twistKind: "scope",
+        reconsider: { decision: "d2", pressure: { en: "Mail to your domain now goes to the attacker. If you warned customers on other channels, the attacker has seen the warning too. If you waited for the registrar, resets have been intercepted for hours.", sv: "E-post till er domän går nu till angriparen. Om ni varnade kunderna i andra kanaler har angriparen också sett varningen. Om ni väntade på registraren har återställningar fångats upp i flera timmar." } },
+        branches: [
+          { when: { decision: "d2", option: "A" }, narrativeAppend: { en: "Because customers were warned on other channels, many now ignore every email from you, including the real one with the recovery steps.", sv: "Eftersom kunderna varnades i andra kanaler ignorerar många nu varje mejl från er, även det äkta med instruktionerna för återställning." } }
+        ],
         assumptionChallenged: L(["This is only about the website.", "Det här handlar bara om webbplatsen."]),
         reveals: ["hf-mx"],
         narrative: L([
@@ -228,7 +232,7 @@
         challenges: [ch("You don't have a list of every external service that uses your domain.", "Ni har ingen lista över alla externa tjänster som använder er domän.")],
         decision: dec("d3", "ciso", ["How do you stop the account takeovers?", "Hur stoppar ni kapningarna av konton?"], [
           ["Lock the most critical external accounts by phone and in-app, revoke sessions and suspend email-based resets.", "Lås de mest kritiska externa kontona via telefon och i tjänsterna, återkalla sessioner och stoppa återställningar via e-post."],
-          ["Wait until the domain is recovered.", "Vänta tills domänen är återtagen."],
+          ["Put everything into getting the domain back: every account you lock now is one more customer locked out.", "Lägg allt på att få tillbaka domänen: varje konto ni låser nu är ytterligare en utelåst kund."],
           ["Change all staff passwords.", "Byt alla lösenord för personalen."]
         ], {
           knowns: [["Reset emails go to the attacker.", "E-post för återställning går till angriparen."]],
@@ -255,6 +259,9 @@
         title: L(["Only the former owner can ask", "Bara den tidigare ägaren kan begära"]),
         twist: L(["The registrar says only the registered contact can request recovery — a former employee who left last year.", "Registraren säger att bara den registrerade kontaktpersonen kan begära återställning – en tidigare anställd som slutade förra året."]),
         twistKind: "authority",
+        branches: [
+          { when: { decision: "d3", option: "A" }, narrativeAppend: { en: "Because email-based resets were suspended, customer service has taken five hundred calls from people locked out of their accounts.", sv: "Eftersom återställning via e-post stängdes av har kundtjänst tagit emot femhundra samtal från personer som är utelåsta från sina konton." } }
+        ],
         assumptionChallenged: L(["We own our domain; recovery is a formality.", "Vi äger vår domän; återtagandet är en formalitet."]),
         narrative: L([
           "{{time.T+300|clock}}. After hours of trying, the registrar's weekend support finally answers the phone.\n\nGetting the domain back should be simple: you have owned it for fifteen years. The registrar's rules say otherwise, and the person those rules point to is no longer anywhere near the company.",
@@ -307,6 +314,7 @@
         title: L(["A valid padlock", "Ett giltigt hänglås"]),
         twist: L(["The attacker obtained a valid certificate for your domain. Their copy of your login page now shows no warning at all.", "Angriparen har skaffat ett giltigt certifikat för er domän. Deras kopia av er inloggningssida visar nu ingen varning alls."]),
         twistKind: "scope",
+        reconsider: { decision: "d3", pressure: { en: "The attacker's copy of your login page now shows a valid padlock. Was the way you protected accounts strong enough?", sv: "Angriparens kopia av er inloggningssida visar nu ett giltigt hänglås. Var ert sätt att skydda kontona tillräckligt starkt?" } },
         assumptionChallenged: L(["Customers will see a warning and stay away.", "Kunderna kommer att se en varning och hålla sig borta."]),
         reveals: ["hf-cert"],
         narrative: L([
@@ -335,7 +343,7 @@
         decision: dec("d5", "ciso", ["How do you protect customers now?", "Hur skyddar ni kunderna nu?"], [
           ["Request revocation, warn customers on every channel you control and plan forced resets with fresh sessions after recovery.", "Begär återkallelse, varna kunderna i varje kanal ni kontrollerar och planera tvingade lösenordsbyten med nya sessioner efter återtagandet."],
           ["Request revocation and wait.", "Begär återkallelse och vänta."],
-          ["Say nothing more until the domain is back.", "Säg inget mer tills domänen är tillbaka."]
+          ["Say nothing more until the domain is back, so you do not send customers to links the attacker controls.", "Säg inget mer tills domänen är tillbaka, så att ni inte skickar kunderna till länkar som angriparen styr."]
         ], {
           knowns: [["The fake page has a valid certificate.", "Den falska sidan har ett giltigt certifikat."]],
           uncertainties: [["How many customers entered credentials.", "Hur många kunder som har angett sina inloggningsuppgifter."]],
@@ -360,6 +368,10 @@
         title: L(["Domain back, trust not", "Domänen tillbaka, förtroendet inte"]),
         twist: L(["The domain is back, but intercepted resets mean some staff and customer accounts may still be controlled by the attacker.", "Domänen är tillbaka, men de uppfångade återställningarna innebär att en del personal- och kundkonton fortfarande kan styras av angriparen."]),
         twistKind: "impact",
+        reconsider: { decision: "d4", pressure: { en: "The domain is back, but some accounts may still be in the attacker's hands. Was the way you sped up recovery worth what it cost?", sv: "Domänen är tillbaka, men vissa konton kan fortfarande vara i angriparens händer. Var ert sätt att skynda på återtagandet värt vad det kostade?" } },
+        branches: [
+          { when: { decision: "d4", option: "C" }, narrativeAppend: { en: "Because you began moving customers to a new domain, the attacker registered a look-alike of the new one within the hour.", sv: "Eftersom ni började flytta kunderna till en ny domän registrerade angriparen en förväxlingsbar kopia av den nya inom en timme." } }
+        ],
         assumptionChallenged: L(["Getting the domain back ends the incident.", "Att få tillbaka domänen avslutar incidenten."]),
         narrative: L([
           "Two and a half days later. The registrar has restored your name servers, and the domain points to your own systems again.\n\nIt feels like the end of the incident. But for two days the attacker received every email sent to your domain, and some of what they did in that time is still in place.",

@@ -106,7 +106,7 @@
         decision: dec("d1", "cio", ["How do you treat it?", "Hur hanterar ni det?"], [
           ["Find who made the change before rolling it back, and alert security.", "Ta reda på vem som gjorde ändringen innan den backas, och larma säkerhet."],
           ["Roll the policy back and close the ticket.", "Backa policyn och stäng ärendet."],
-          ["Wait to see if it resolves itself.", "Vänta och se om det löser sig självt."]
+          ["Leave it for the morning shift: one sign-in policy glitch in the middle of the night is not worth waking anyone.", "Lämna det till morgonskiftet: en enstaka störning i en inloggningsregel mitt i natten är inte värd att väcka någon för."]
         ], {
           knowns: [["A policy change blocks some users.", "En policyändring blockerar en del användare."]],
           uncertainties: [["Who made it and why.", "Vem som gjorde den och varför."]],
@@ -185,6 +185,9 @@
         title: L(["The supplier is down too", "Leverantören ligger också nere"]),
         twist: L(["{{supplier.msp}}, which runs much of your IT, reports its own major outage and cannot help.", "{{supplier.msp}}, som sköter stora delar av er IT, rapporterar ett eget stort avbrott och kan inte hjälpa till."]),
         twistKind: "impact",
+        branches: [
+          { when: { decision: "d1", option: "A" }, narrativeAppend: { en: "Because you looked for who made the change before rolling it back, staff could not sign in for another two hours.", sv: "Eftersom ni letade efter vem som gjorde ändringen innan ni backade den kunde personalen inte logga in på ytterligare två timmar." } }
+        ],
         assumptionChallenged: L(["Our supplier will help us through this.", "Vår leverantör kommer att hjälpa oss igenom det här."]),
         narrative: L([
           "{{time.T+120|clock}}. The situation is serious, and you need help from the people who know your systems best. The supplier manager calls the service manager at {{supplier.msp}}, which runs much of your IT.\n\nThe call is answered by a recorded message, then by a stressed person who has clearly had this conversation many times today.",
@@ -237,6 +240,7 @@
         title: L(["The emergency accounts fail", "Nödkontona fungerar inte"]),
         twist: L(["The break-glass accounts don't work. The attacker disabled them before you noticed anything.", "Nödkontona fungerar inte. Angriparen inaktiverade dem innan ni märkte något."]),
         twistKind: "cause",
+        reconsider: { decision: "d2", pressure: { en: "The emergency accounts were already disabled. If you convened the full crisis team, the attacker had the hour it took. If you removed the trust at once, they simply added it again.", sv: "Nödkontona var redan avstängda. Om ni samlade hela krisledningen fick angriparen den timme det tog. Om ni tog bort förtroendet direkt lade de helt enkelt till det igen." } },
         assumptionChallenged: L(["Our break-glass accounts guarantee we can always get back in.", "Våra nödkonton garanterar att vi alltid kan ta oss in igen."]),
         reveals: ["hf-breakglass"],
         narrative: L([
@@ -300,6 +304,9 @@
         title: L(["Two calls at once", "Två samtal samtidigt"]),
         twist: L(["A journalist and the regulator call within ten minutes. Three executives have already said different things.", "En journalist och tillsynsmyndigheten ringer inom tio minuter. Tre chefer har redan sagt olika saker."]),
         twistKind: "authority",
+        branches: [
+          { when: { decision: "d3", option: "A" }, narrativeAppend: { en: "Because the supplier was suspended, nobody can renew the certificates they manage, and two of them expire tonight.", sv: "Eftersom leverantören stängdes av kan ingen förnya de certifikat de förvaltar, och två av dem går ut i natt." } }
+        ],
         assumptionChallenged: L(["We speak with one voice.", "Vi talar med en röst."]),
         narrative: L([
           "{{time.T+360|clock}}. The crisis room is full and the phones will not stop. Word has spread, inside and outside the company.\n\nSeveral executives have already been asked about the problems by people they know, and each of them gave a different answer. Now two calls arrive within ten minutes that cannot be handled with a different answer each.",
@@ -421,6 +428,7 @@
         title: L(["Through the supplier", "Via leverantören"]),
         twist: L(["The global admin's session token was taken from {{supplier.msp}}'s management tooling. The supplier's outage was the same attacker.", "Den globala administratörens sessionstoken togs från hanteringsverktygen hos {{supplier.msp}}. Leverantörens avbrott var samma angripare."]),
         twistKind: "cause",
+        reconsider: { decision: "d3", pressure: { en: "The supplier's outage was the same attacker. If you suspended their access, you were right. If you waited for their update, you were waiting on the attacker.", sv: "Leverantörens avbrott var samma angripare. Om ni stängde av deras åtkomst hade ni rätt. Om ni väntade på deras besked väntade ni på angriparen." } },
         assumptionChallenged: L(["The supplier's outage was a coincidence.", "Leverantörens avbrott var ett sammanträffande."]),
         reveals: ["hf-supplier"],
         narrative: L([
@@ -474,6 +482,9 @@
         title: L(["Every app that trusted it", "Varje app som litade på den"]),
         twist: L(["The forged trust worked for every one of the {{num.appsFederated}} apps that use your identity platform — including the customer portal.", "Det förfalskade förtroendet fungerade för var och en av de {{num.appsFederated}} appar som använder er identitetsplattform – även kundportalen."]),
         twistKind: "scope",
+        branches: [
+          { when: { decision: "d6", option: "A" }, narrativeAppend: { en: "Because you notified on what you knew, two counterparties have frozen their data exchange with you until you can say what was read.", sv: "Eftersom ni anmälde utifrån det ni visste har två motparter frusit sitt datautbyte med er tills ni kan säga vad som lästes." } }
+        ],
         assumptionChallenged: L(["The exposure was email.", "Exponeringen gällde e-post."]),
         narrative: L([
           "Day two. The response partner widens the review beyond email, to every application that lets people sign in with their company account.\n\nThe identity platform is the front door to far more than mail. Each connected application keeps its own logs, of very different quality, and each may have been opened with a forged key.",
@@ -557,7 +568,7 @@
         decision: dec("d9", "ceo", ["Do you share?", "Delar ni?"], [
           ["Share technical indicators now through the CSIRT; let legal review the narrative, not the indicators.", "Dela tekniska indikatorer nu via CSIRT; låt juristerna granska beskrivningen, inte indikatorerna."],
           ["Share after a full legal review.", "Dela efter en fullständig juridisk granskning."],
-          ["Don't share.", "Dela inte."]
+          ["Don't share yet: the indicators show how far inside the attacker got, and your lawyers say that is evidence.", "Dela inte ännu: indikatorerna visar hur långt in angriparen kom, och juristerna säger att det är bevisning."]
         ], {
           knowns: [["Many organisations are at risk.", "Många organisationer är i riskzonen."]],
           uncertainties: [["How sharing affects your claim.", "Hur delning påverkar ert anspråk."]],
@@ -582,6 +593,7 @@
         title: L(["After the storm", "Efter stormen"]),
         twist: L(["Rebuilding identity will take weeks, and the crisis team is exhausted. The board asks what the operating picture missed.", "Att bygga om identitetsplattformen tar veckor, och krisledningen är utmattad. Styrelsen frågar vad lägesbilden missade."]),
         twistKind: "impact",
+        reconsider: { decision: "d5", pressure: { en: "The board asks what the operating picture missed. Did the way you took control of communication work, or would you change it?", sv: "Styrelsen frågar vad lägesbilden missade. Fungerade ert sätt att ta kontroll över kommunikationen, eller skulle ni ändra det?" } },
         assumptionChallenged: L(["When control is back, the crisis is over.", "När kontrollen är tillbaka är krisen över."]),
         narrative: L([
           "A week later. The board meets to review the incident, with the executive team that ran the crisis.\n\nThe attacker is out, but rebuilding trust in the identity platform will take weeks, and the crisis team is exhausted. The chair has prepared three questions and wants straight answers.",

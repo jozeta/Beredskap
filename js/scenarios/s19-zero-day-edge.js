@@ -137,6 +137,9 @@
         title: L(["A mitigation with a price", "En tillfällig åtgärd med ett pris"]),
         twist: L(["The vendor's mitigation disables the web portal that most remote staff use. Only the full client keeps working.", "Leverantörens tillfälliga åtgärd stänger av webbportalen som de flesta som arbetar på distans använder. Bara den fullständiga klienten fortsätter att fungera."]),
         twistKind: "impact",
+        branches: [
+          { when: { decision: "d1", option: "C" }, narrativeAppend: { en: "Because the appliance was taken offline at once, remote staff and partners have had no access all morning, and the CEO wants to know who decided.", sv: "Eftersom enheten togs ner direkt har distansarbetande personal och partner varit utan åtkomst hela förmiddagen, och vd vill veta vem som beslutade." } }
+        ],
         assumptionChallenged: L(["The mitigation is a quick, painless fix.", "Den tillfälliga åtgärden är en snabb och smärtfri lösning."]),
         narrative: L([
           "{{time.T+240|clock}}. The vendor has published a temporary mitigation while it works on a patch, and the network team has the file ready to apply.\n\nThe release notes are short, and one line in them changes the conversation. The mitigation protects the appliance, but it also takes away something many people rely on every day.",
@@ -193,6 +196,7 @@
         title: L(["Earlier than anyone knew", "Tidigare än någon visste"]),
         twist: L(["Your appliance shows signs of exploitation {{num.daysBefore}} days before the advisory.", "Er enhet visar tecken på utnyttjande {{num.daysBefore}} dagar före säkerhetsmeddelandet."]),
         twistKind: "scope",
+        reconsider: { decision: "d2", pressure: { en: "The appliance was exploited before the advisory. If you applied the mitigation at once, you broke the portal for something that was already too late. If you waited until tonight, you gave them the afternoon.", sv: "Enheten utnyttjades före varningen. Om ni tillämpade åtgärden direkt slog ni ut portalen för något som redan var för sent. Om ni väntade till i kväll gav ni dem eftermiddagen." } },
         assumptionChallenged: L(["We're racing to patch before the attackers get to us.", "Vi tävlar om att rätta innan angriparna når oss."]),
         reveals: ["hf-predate"],
         narrative: L([
@@ -257,6 +261,9 @@
         title: L(["Back through the gap", "Tillbaka genom luckan"]),
         twist: L(["A new variant of the exploit gets past the mitigation. Your device is being exploited again.", "En ny variant av angreppet tar sig förbi den tillfälliga åtgärden. Er enhet utnyttjas igen."]),
         twistKind: "cause",
+        branches: [
+          { when: { decision: "d3", option: "A" }, narrativeAppend: { en: "Because responders imaged the device and hunted inside the network, remote access stayed down overnight, and sales missed a customer demonstration.", sv: "Eftersom incidentteamet avbildade enheten och letade inne i nätet var fjärråtkomsten nere hela natten, och säljavdelningen missade en kunddemonstration." } }
+        ],
         assumptionChallenged: L(["The mitigation closed the hole.", "Den tillfälliga åtgärden stängde hålet."]),
         reveals: ["hf-bypass"],
         narrative: L([
@@ -345,7 +352,7 @@
         decision: dec("d5", "ceo", ["What is the final call?", "Vilket är det slutliga beslutet?"], [
           ["Disconnect the appliance; give partners a narrow, temporary path for the delivery only.", "Koppla bort enheten; ge partnerna en smal, tillfällig väg enbart för leveransen."],
           ["Keep the appliance online until Friday with a signed risk acceptance.", "Behåll enheten uppkopplad till fredag med en undertecknad riskacceptans."],
-          ["Keep it online and say nothing more.", "Behåll den uppkopplad och säg inget mer."]
+          ["Keep it online and move the partners through first, so the delivery is done before you disconnect.", "Behåll den uppkopplad och låt partnerna gå igenom först, så att leveransen är klar innan ni kopplar ner."]
         ], {
           knowns: [["The device is being re-exploited.", "Enheten utnyttjas igen."], ["The delivery is critical.", "Leveransen är kritisk."]],
           uncertainties: [["Whether a narrow path can be ready in time.", "Om en smal väg kan vara klar i tid."]],
@@ -371,6 +378,10 @@
         title: L(["The keys inside the box", "Nycklarna i lådan"]),
         twist: L(["The directory credentials stored on the appliance were used inside the network, from a server, weeks ago.", "Inloggningsuppgifterna till katalogtjänsten som var lagrade i enheten användes inne i nätverket, från en server, för flera veckor sedan."]),
         twistKind: "scope",
+        reconsider: { decision: "d4", pressure: { en: "Credentials stored on the appliance were used inside the network weeks ago. Does your recommendation on the appliance still look strong enough?", sv: "Inloggningsuppgifter som låg i enheten användes inne i nätet för flera veckor sedan. Ser er rekommendation om enheten fortfarande tillräckligt stark ut?" } },
+        branches: [
+          { when: { decision: "d5", option: "A" }, narrativeAppend: { en: "Because the appliance was disconnected, the partners worked through a narrow temporary path, and the delivery slipped by two days.", sv: "Eftersom enheten kopplades ner arbetade partnerna via en smal tillfällig väg, och leveransen försenades två dagar." } }
+        ],
         assumptionChallenged: L(["The compromise was limited to the appliance.", "Intrånget var begränsat till enheten."]),
         reveals: ["hf-ldap"],
         narrative: L([
@@ -476,6 +487,7 @@
         title: L(["Rethinking the edge", "Att tänka om kring perimetern"]),
         twist: L(["It's the third critical flaw in this product line in a year.", "Det är den tredje kritiska bristen i den här produktlinjen på ett år."]),
         twistKind: "impact",
+        reconsider: { decision: "d5", pressure: { en: "It is the third critical flaw in this product line in a year. Was the final call you made with the CEO the right one?", sv: "Det är den tredje kritiska sårbarheten i den här produktlinjen på ett år. Var det slutliga beslut ni fattade med vd det rätta?" } },
         assumptionChallenged: L(["This was a one-off.", "Det här var en engångshändelse."]),
         narrative: L([
           "Two weeks later. The post-incident review meets, with network, security, operations and procurement around the table.\n\nThe appliance is patched and rebuilt. The question now is whether this was bad luck, or a predictable result of how the organisation's edge was designed and bought.",

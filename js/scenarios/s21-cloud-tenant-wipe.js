@@ -139,6 +139,9 @@
         title: L(["Our own keys", "Våra egna nycklar"]),
         twist: L(["The deletions were not a bug. The pipeline's token was used from an address outside the company, and it was first tested two days ago.", "Raderingarna var inget fel. Byggkedjans token användes från en adress utanför företaget, och den provades första gången för två dagar sedan."]),
         twistKind: "cause",
+        branches: [
+          { when: { decision: "d1", option: "A" }, narrativeAppend: { en: "Because the pipeline identity was disabled, the release that fixes a customer's bug can no longer be deployed by any means.", sv: "Eftersom pipelinens identitet stängdes av kan releasen som rättar en kunds fel inte längre driftsättas på något sätt." } }
+        ],
         assumptionChallenged: L(["A broken deployment script deleted the servers.", "Ett trasigt driftsättningsskript raderade servrarna."]),
         reveals: ["hf-token"],
         narrative: L([
@@ -196,6 +199,7 @@
         title: L(["The backups", "Säkerhetskopiorna"]),
         twist: L(["The backup vault is gone too. Every recovery point was deleted twenty minutes before the servers.", "Säkerhetskopieringsvalvet är också borta. Alla återställningspunkter raderades tjugo minuter före servrarna."]),
         twistKind: "impact",
+        reconsider: { decision: "d2", pressure: { en: "The backup vault is gone too. If you rotated every credential, developers lost a day you needed for the rebuild. If you rotated only the pipeline token, can you be sure it was the only key?", sv: "Säkerhetskopieringsvalvet är också borta. Om ni bytte alla inloggningsuppgifter förlorade utvecklarna en dag som ni behövde till återuppbyggnaden. Om ni bara bytte pipelinens token, kan ni vara säkra på att det var den enda nyckeln?" } },
         assumptionChallenged: L(["We can restore from last night's backup.", "Vi kan återställa från nattens säkerhetskopia."]),
         reveals: ["hf-vault"],
         narrative: L([
@@ -253,6 +257,9 @@
         title: L(["They took a copy", "De tog en kopia"]),
         twist: L(["Before deleting anything, the attacker exported the customer database to storage outside your company. This is a data breach as well as an outage.", "Innan något raderades exporterade angriparen kunddatabasen till lagring utanför företaget. Det här är en personuppgiftsincident lika mycket som ett avbrott."]),
         twistKind: "scope",
+        branches: [
+          { when: { decision: "d3", option: "A" }, narrativeAppend: { en: "Because you rebuilt in a new subscription, every customer integration needs new addresses, and partners are being asked to change their firewalls.", sv: "Eftersom ni byggde om i en ny prenumeration behöver varje kundintegration nya adresser, och partnerna ombeds ändra sina brandväggar." } }
+        ],
         assumptionChallenged: L(["It is only destruction: nothing was taken.", "Det är bara förstörelse: ingenting togs."]),
         reveals: ["hf-copy"],
         narrative: L([
@@ -294,7 +301,7 @@
         decision: dec("d4", "dpo", ["How do you handle notification?", "Hur hanterar ni anmälan?"], [
           ["Notify the regulator now and plan customer communication within 72 hours.", "Anmäl till tillsynsmyndigheten nu och planera kundkommunikationen inom 72 timmar."],
           ["Notify once the service is back.", "Anmäl när tjänsten är tillbaka."],
-          ["Treat it as an outage only until the attacker uses the data.", "Behandla det som enbart ett avbrott tills angriparen använder uppgifterna."]
+          ["Treat it as an outage for now: notifying before you know what was exported may alarm customers for nothing.", "Behandla det som ett avbrott tills vidare: att anmäla innan ni vet vad som exporterades kan skrämma kunderna i onödan."]
         ], {
           knowns: [["Customer data was exported to an outside account.", "Kunduppgifter exporterades till ett externt konto."]],
           uncertainties: [["Whether the attacker will publish or sell it.", "Om angriparen kommer att publicera eller sälja dem."]],
@@ -319,6 +326,7 @@
         title: L(["The offer", "Erbjudandet"]),
         twist: L(["An email offers to return the database and keep quiet in exchange for {{num.demand|currency}}. It mentions the backup vault by name.", "Ett mejl erbjuder att lämna tillbaka databasen och hålla tyst mot {{num.demand|currency}}. Det nämner säkerhetskopieringsvalvet vid namn."]),
         twistKind: "authority",
+        reconsider: { decision: "d3", pressure: { en: "The demand names your backup vault. Now that you know the attacker planned this, does your recovery strategy still hold?", sv: "Kravet nämner ert säkerhetskopieringsvalv vid namn. Nu när ni vet att angriparen planerade detta, håller er återställningsstrategi fortfarande?" } },
         assumptionChallenged: L(["This was vandalism with no demand.", "Det här var skadegörelse utan krav."]),
         narrative: L([
           "{{time.T+720|clock}}. The rebuild is about half done, and the first parts of the service are running again in a new environment.\n\nThen {{person.ceo.name}} forwards an email that arrived at the company's general address. Whoever wrote it knows exactly what happened, including details that have never been made public.",
@@ -371,6 +379,10 @@
         title: L(["Back, and different", "Tillbaka, och annorlunda"]),
         twist: L(["The rebuilt service is running in a new subscription. Three customers have cancelled, and the regulator asks how backups were protected.", "Den återuppbyggda tjänsten körs i en ny prenumeration. Tre kunder har sagt upp avtalet, och tillsynsmyndigheten frågar hur säkerhetskopiorna skyddades."]),
         twistKind: "impact",
+        reconsider: { decision: "d4", pressure: { en: "Three customers have cancelled, and the regulator asks how backups were protected. Was your choice on notification the right one?", sv: "Tre kunder har sagt upp sina avtal, och tillsynsmyndigheten frågar hur säkerhetskopiorna skyddades. Var ert val om anmälan det rätta?" } },
+        branches: [
+          { when: { decision: "d5", option: "A" }, narrativeAppend: { en: "Because you refused to pay, samples of the customer database have appeared on a leak site.", sv: "Eftersom ni vägrade betala har utdrag ur kunddatabasen dykt upp på en läcksajt." } }
+        ],
         assumptionChallenged: L(["When the service is back, the incident is over.", "När tjänsten är tillbaka är incidenten över."]),
         narrative: L([
           "{{time.T+2880|weekday|cap}}. {{org.service.customer}} is back online after {{num.rebuildHours}} hours, rebuilt almost from scratch.\n\nThe team is exhausted and proud. But being back online is not the same as being back to normal: customers, the regulator and your own board all have questions about what happened before the outage, not only during it.",
