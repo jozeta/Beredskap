@@ -106,7 +106,7 @@
         decision: dec("d1", "incidentCommander", ["What do you do now?", "Vad gör ni nu?"], [
           ["Freeze deployments and builds, and search every lockfile and build log for tinyfmt now.", "Frys driftsättningar och byggen, och sök i varje låsfil och bygglogg efter tinyfmt nu."],
           ["Ask teams to check whether they use tinyfmt directly and report back by lunch.", "Be teamen kontrollera om de använder tinyfmt direkt och rapportera till lunch."],
-          ["Go ahead with the 10:00 release; you pin versions.", "Genomför releasen 10.00; ni låser versioner."]
+          ["Go ahead with the 10:00 release, which carries a fix promised to a key customer, while a small team checks the lockfiles in parallel.", "Genomför releasen 10.00, som innehåller en rättning ni lovat en viktig kund, medan ett litet team kontrollerar låsfilerna parallellt."]
         ], {
           knowns: [["A widely used package was poisoned overnight.", "Ett allmänt använt paket förgiftades under natten."]],
           uncertainties: [["Whether it is anywhere in your software.", "Om det finns någonstans i er programvara."]],
@@ -131,6 +131,9 @@
         title: L(["The bot merged it", "Roboten slog ihop det"]),
         twist: L(["Your dependency bot updated a lockfile at 02:15 and auto-merged it. tinyfmt 4.2.2 arrived through a logging library. The install script ran on every CI runner and on {{num.laptops}} developer laptops, and the 07:00 portal build carried the browser code.", "Er beroenderobot uppdaterade en låsfil 02.15 och slog ihop den automatiskt. tinyfmt 4.2.2 följde med ett loggbibliotek. Installationsskriptet kördes på varje CI-maskin och på {{num.laptops}} utvecklardatorer, och portalbygget 07.00 innehöll webbläsarkoden."]),
         twistKind: "cause",
+        branches: [
+          { when: { decision: "d1", option: "A" }, narrativeAppend: { en: "Because deployments were frozen, the fix promised to your biggest customer did not ship at 10:00, and their account manager has called twice.", sv: "Eftersom driftsättningarna frystes skickades inte rättningen som utlovats till er största kund ut klockan 10, och deras kundansvarige har ringt två gånger." } }
+        ],
         assumptionChallenged: L(["We pin versions, so we are not affected.", "Vi låser versioner, så vi är inte drabbade."]),
         reveals: ["hf-bot"],
         narrative: L([
@@ -188,6 +191,10 @@
         title: L(["The wrong account", "Fel konto"]),
         twist: L(["For three hours this morning, the portal's payment page showed customers a different bank account. Two customers have already paid {{num.diverted|currency}} to it.", "I tre timmar i morse visade portalens betalsida kunderna ett annat bankkonto. Två kunder har redan betalat {{num.diverted|currency}} till det."]),
         twistKind: "impact",
+        reconsider: { decision: "d2", pressure: { en: "The payment page showed the wrong bank account for three hours. Every minute the portal stays up, you cannot fully trust it. Every minute it is down, no customer can pay you at all.", sv: "Betalsidan visade fel bankkonto i tre timmar. Varje minut portalen är uppe kan ni inte helt lita på den. Varje minut den är nere kan ingen kund betala er alls." } },
+        branches: [
+          { when: { decision: "d2", option: "A" }, narrativeAppend: { en: "Because the portal was rolled back and taken offline, no customer has been able to pay all morning, and finance asks who approved it.", sv: "Eftersom portalen rullades tillbaka och togs ner har ingen kund kunnat betala på hela förmiddagen, och ekonomi frågar vem som godkände det." } }
+        ],
         assumptionChallenged: L(["The browser code was there, but nobody was harmed.", "Webbläsarkoden fanns där, men ingen skadades."]),
         narrative: L([
           "{{time.T+300|clock}}. The portal has been rolled back and the old bank details are showing again. {{person.serviceOwner.name}} asks finance to check this morning's incoming payments, just to be sure.\n\nFinance finds a gap where payments should be. Two customers who paid their invoices this morning confirm that they followed the instructions on the portal, exactly as they always do.",
@@ -218,7 +225,7 @@
         challenges: [ch("The portal's logs record sessions but not what the browser displayed.", "Portalens loggar registrerar sessioner men inte vad webbläsaren visade.")],
         decision: dec("d3", "serviceOwner", ["How do you handle the customers?", "Hur hanterar ni kunderna?"], [
           ["Contact every customer who visited the portal this morning, help the two with bank recalls, and do not ask them to bear the loss.", "Kontakta varje kund som besökte portalen i morse, hjälp de två med återkallelser och be dem inte bära förlusten."],
-          ["Contact the two who paid and wait for others to notice.", "Kontakta de två som betalade och vänta på att andra märker något."],
+          ["Contact the two who paid today, and the other visitors once you can tell them exactly what they saw and when.", "Kontakta de två som betalade i dag, och övriga besökare när ni kan berätta exakt vad de såg och när."],
           ["Post a general notice on the portal.", "Lägg upp ett allmänt meddelande i portalen."]
         ], {
           knowns: [["Customers were shown false bank details for three hours.", "Kunder visades falska bankuppgifter i tre timmar."]],
@@ -244,6 +251,7 @@
         title: L(["Version 3.8.1", "Version 3.8.1"]),
         twist: L(["A security researcher emails: version 3.8.1 of your own customer SDK, published to the registry an hour ago, contains the same malicious code. Your SDK has {{num.sdkDownloads|number}} weekly downloads.", "En säkerhetsforskare mejlar: version 3.8.1 av er egen kund-SDK, publicerad i registret för en timme sedan, innehåller samma skadliga kod. Er SDK har {{num.sdkDownloads|number}} nedladdningar i veckan."]),
         twistKind: "scope",
+        reconsider: { decision: "d1", pressure: { en: "Your own SDK shipped the same code an hour ago. If you froze builds, your freeze now blocks the clean release. If you kept building, you may have published more than one bad version.", sv: "Er egen SDK skickade ut samma kod för en timme sedan. Om ni frös byggena blockerar frysningen nu den rena releasen. Om ni fortsatte bygga kan ni ha publicerat fler än en dålig version." } },
         assumptionChallenged: L(["We are a victim of a supply-chain attack.", "Vi är offer för en leverantörskedjeattack."]),
         reveals: ["hf-sdk"],
         narrative: L([
@@ -281,7 +289,7 @@
         challenges: [ch("Several customers run automated updates and will have installed it already.", "Flera kunder kör automatiska uppdateringar och har redan installerat den.")],
         decision: dec("d4", "ceo", ["What do you do as a supplier?", "Vad gör ni som leverantör?"], [
           ["Unpublish 3.8.1, release a clean 3.8.2, publish an advisory with indicators, and contact known customers directly.", "Avpublicera 3.8.1, släpp en ren 3.8.2, publicera en säkerhetsvarning med indikatorer och kontakta kända kunder direkt."],
-          ["Unpublish it quietly and release 3.8.2 without comment.", "Avpublicera den i tysthet och släpp 3.8.2 utan kommentar."],
+          ["Unpublish 3.8.1 and release 3.8.2 now, and publish the advisory tomorrow once the indicators are verified.", "Avpublicera 3.8.1 och släpp 3.8.2 nu, och publicera säkerhetsvarningen i morgon när indikatorerna är verifierade."],
           ["Wait until you have confirmed the full impact before saying anything.", "Vänta tills ni har bekräftat hela påverkan innan ni säger något."]
         ], {
           knowns: [["Your own package was used to spread the attack.", "Ert eget paket användes för att sprida angreppet."]],
@@ -345,6 +353,10 @@
         title: L(["{{num.deps|number}} packages", "{{num.deps|number}} paket"]),
         twist: L(["An audit of the dependency tree finds {{num.deps|number}} third-party packages in the portal alone, hundreds running install scripts, and a bot that has auto-merged over 2,000 updates this year without review.", "En granskning av beroendeträdet hittar {{num.deps|number}} tredjepartspaket bara i portalen, hundratals som kör installationsskript och en robot som har slagit ihop över 2 000 uppdateringar i år utan granskning."]),
         twistKind: "scope",
+        reconsider: { decision: "d4", pressure: { en: "Customers who heard it from you first are grateful. Two who read it first in a researcher's blog post have paused their contracts, and ask why you waited.", sv: "Kunder som hörde det från er först är tacksamma. Två som läste det först i en forskares blogginlägg har pausat sina avtal och frågar varför ni väntade." } },
+        branches: [
+          { when: { decision: "d4", option: "A" }, narrativeAppend: { en: "Because your advisory named the version and the indicators, a trade journal is running the story as: supplier ships malware to its own customers.", sv: "Eftersom er säkerhetsvarning namngav versionen och indikatorerna kör en branschtidning nyheten som: leverantör skickar skadlig kod till sina egna kunder." } }
+        ],
         assumptionChallenged: L(["This was one bad package.", "Det här var ett dåligt paket."]),
         reveals: ["hf-tree"],
         narrative: L([
@@ -373,7 +385,7 @@
         decision: dec("d5", "devLead", ["What do you change?", "Vad ändrar ni?"], [
           ["A cooling-off period for new versions, install scripts off by default, short-lived publish tokens and a software bill of materials.", "En karenstid för nya versioner, installationsskript avstängda som standard, kortlivade publiceringstoken och en förteckning över programvarukomponenter."],
           ["Turn off the bot and update manually.", "Stäng av roboten och uppdatera manuellt."],
-          ["Keep things as they are; this was rare.", "Låt det vara som det är; det här var ovanligt."]
+          ["Keep the bot, but require a human review for any update that adds install scripts or a new maintainer.", "Behåll roboten, men kräv mänsklig granskning av varje uppdatering som lägger till installationsskript eller en ny ansvarig."]
         ], {
           knowns: [["Unreviewed third-party code enters builds every day.", "Ogranskad tredjepartskod kommer in i byggen varje dag."]],
           uncertainties: [["Which of today's packages is next.", "Vilket av dagens paket som blir nästa."]],

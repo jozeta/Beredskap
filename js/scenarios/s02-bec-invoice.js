@@ -131,7 +131,7 @@
         decision: dec("d1", "cfo", ["What do you do in the next hour?", "Vad gör ni den närmaste timmen?"], [
           ["Report to the bank immediately, freeze all pending payments with changed bank details, and open an incident.", "Anmäl direkt till banken, frys alla väntande betalningar med ändrade bankuppgifter och öppna en incident."],
           ["Verify internally first — it may be a booking error on the supplier's side.", "Kontrollera internt först – det kan vara ett bokföringsfel hos leverantören."],
-          ["Pay the supplier again to protect the relationship, then investigate quietly.", "Betala leverantören igen för att skydda relationen och utred sedan i tysthet."]
+          ["Pay the supplier's real account now so deliveries continue, and chase the lost payment as a separate fraud case.", "Betala leverantörens riktiga konto nu så att leveranserna fortsätter, och driv den förlorade betalningen som ett separat bedrägeriärende."]
         ], {
           knowns: [["Payment went to a new account requested by email.", "Betalningen gick till ett nytt konto som begärdes via mejl."], ["The supplier says their details never changed.", "Leverantören säger att deras uppgifter aldrig ändrats."]],
           uncertainties: [["Whose email system was compromised.", "Vems e-postsystem som har komprometterats."], ["Whether other payments are affected.", "Om andra betalningar berörs."]],
@@ -223,6 +223,10 @@
         title: L(["Months, not days", "Månader, inte dagar"]),
         twist: L(["The attacker has had a copy of every finance email for {{num.months}} months.", "Angriparen har haft en kopia av varje ekonomimejl i {{num.months}} månader."]),
         twistKind: "scope",
+        reconsider: { decision: "d2", pressure: { en: "The attacker has read every finance email for {{num.months}} months. If you cut the account off, you lost the chance to see what else they planned. If you watched, they had another day inside the CFO's mailbox.", sv: "Angriparen har läst varje ekonomimejl i {{num.months}} månader. Om ni stängde kontot förlorade ni chansen att se vad mer de planerade. Om ni övervakade fick de ännu ett dygn i ekonomichefens brevlåda." } },
+        branches: [
+          { when: { decision: "d1", option: "A" }, narrativeAppend: { en: "Because every payment with changed bank details was frozen, three honest suppliers who really did change banks have not been paid, and one has stopped deliveries.", sv: "Eftersom varje betalning med ändrade bankuppgifter frystes har tre hederliga leverantörer som verkligen bytt bank inte fått betalt, och en har stoppat leveranserna." } }
+        ],
         assumptionChallenged: L(["This is one fraudulent payment.", "Det här är en enskild bedräglig betalning."]),
         reveals: ["hf-rules"],
         narrative: L([
@@ -270,7 +274,7 @@
         decision: dec("d3", "legal", ["How do you handle the personal data breach?", "Hur hanterar ni personuppgiftsincidenten?"], [
           ["Notify {{reg.dpaShort}} now and inform affected employees directly.", "Anmäl till {{reg.dpaShort}} nu och informera berörda medarbetare direkt."],
           ["Notify {{reg.dpaShort}} now, inform employees once the scope is clear.", "Anmäl till {{reg.dpaShort}} nu och informera medarbetarna när omfattningen är klar."],
-          ["Treat it as financial fraud only; personal data was incidental.", "Behandla det enbart som ekonomiskt bedrägeri; personuppgifterna var en bisak."]
+          ["Report to the police and the bank now, and decide on {{reg.dpaShort}} within 72 hours, once you know whose data was in the mailbox.", "Anmäl till polisen och banken nu, och besluta om {{reg.dpaShort}} inom 72 timmar, när ni vet vems uppgifter som fanns i brevlådan."]
         ], {
           knowns: [["Forwarded mail contains salary, contract and health data.", "Den vidarebefordrade posten innehåller löne-, avtals- och hälsouppgifter."]],
           uncertainties: [["Exactly which people are affected.", "Exakt vilka personer som berörs."]],
@@ -298,6 +302,9 @@
         title: L(["Your customers are paying the attacker", "Era kunder betalar angriparen"]),
         twist: L(["Fake invoices are now going to your customers — from your real domain.", "Falska fakturor går nu till era kunder – från er riktiga domän."]),
         twistKind: "scope",
+        branches: [
+          { when: { decision: "d2", option: "B" }, narrativeAppend: { en: "Because the CFO's account stayed open while you watched, the attacker used it this morning to answer two customers' questions about the new invoices.", sv: "Eftersom ekonomichefens konto stod öppet medan ni övervakade använde angriparen det i morse för att svara två kunder som frågade om de nya fakturorna." } }
+        ],
         assumptionChallenged: L(["Only our own payments were affected.", "Bara våra egna betalningar har påverkats."]),
         reveals: ["hf-customers"],
         narrative: L([
@@ -348,7 +355,7 @@
         decision: dec("d4", "ceo", ["How do you warn customers?", "Hur varnar ni kunderna?"], [
           ["Warn all customers today, with a verification phone number and your real bank details.", "Varna alla kunder i dag, med ett telefonnummer för verifiering och era riktiga bankuppgifter."],
           ["Warn only the customers in the send log, discreetly.", "Varna bara kunderna i utskicksloggen, diskret."],
-          ["Publish a general fraud warning on the website and wait for questions.", "Publicera en allmän bedrägerivarning på webbplatsen och invänta frågor."]
+          ["Publish a fraud warning on the website and in the customer newsletter today, and call the twenty largest customers personally.", "Publicera en bedrägerivarning på webbplatsen och i kundnyhetsbrevet i dag, och ring de tjugo största kunderna personligen."]
         ], {
           knowns: [["Fake invoices passed filters because your mail relay trusted them.", "De falska fakturorna passerade filter eftersom er e-postserver litade på dem."]],
           uncertainties: [["How many customers have already paid.", "Hur många kunder som redan har betalat."]],
@@ -376,6 +383,10 @@
         title: L(["The recall window", "Fristen för återkallelse"]),
         twist: L(["Most of the money is already gone; only part can still be frozen.", "Merparten av pengarna är redan borta; bara en del kan fortfarande frysas."]),
         twistKind: "impact",
+        reconsider: { decision: "d1", pressure: { en: "The bank says the recall window closed at midnight. Your first hour decided how much can still be frozen, and the supplier now threatens to stop deliveries over the blocked payments.", sv: "Banken säger att fönstret för återkallelse stängde vid midnatt. Er första timme avgjorde hur mycket som fortfarande kan frysas, och leverantören hotar nu att stoppa leveranserna på grund av de spärrade betalningarna." } },
+        branches: [
+          { when: { decision: "d3", option: "A" }, narrativeAppend: { en: "Because employees were told directly, one forwarded the letter to a journalist. The story is now running ahead of your own statement.", sv: "Eftersom medarbetarna informerades direkt skickade en av dem brevet vidare till en journalist. Nyheten ligger nu före ert eget uttalande." } }
+        ],
         assumptionChallenged: L(["The bank will get the money back.", "Banken kommer att få tillbaka pengarna."]),
         reveals: ["hf-funds"],
         narrative: L([
@@ -423,7 +434,7 @@
         decision: dec("d5", "cfo", ["What do you report to the insurer?", "Vad rapporterar ni till försäkringsbolaget?"], [
           ["The full facts, including that verification was done by email, not phone.", "Alla fakta, inklusive att verifieringen gjordes via mejl, inte per telefon."],
           ["Report the loss now and the details later, after legal review.", "Anmäl förlusten nu och detaljerna senare, efter juridisk granskning."],
-          ["Do not claim; absorb the loss to avoid scrutiny.", "Gör ingen anmälan; ta förlusten själva för att slippa granskning."]
+          ["Hold the claim for a week: the policy requires phone verification you did not do, and a rejected claim follows you into next year's premium.", "Vänta en vecka med anmälan: villkoren kräver telefonverifiering som ni inte gjorde, och en avslagen skada följer med in i nästa års premie."]
         ], {
           knowns: [["About {{num.frozenPct}} % is frozen.", "Ungefär {{num.frozenPct}} % är fryst."]],
           uncertainties: [["Whether the insurer will accept the claim.", "Om försäkringsbolaget godtar anspråket."]],
@@ -451,6 +462,7 @@
         title: L(["Who investigates whom?", "Vem utreder vem?"]),
         twist: L(["The CFO asks to lead the internal review of what went wrong.", "Ekonomichefen ber om att få leda den interna utredningen av vad som gick fel."]),
         twistKind: "authority",
+        reconsider: { decision: "d4", pressure: { en: "Two customers have paid the attacker since your warning went out; one says it never reached them. Another is furious that you told the whole market about a fraud that never touched them.", sv: "Två kunder har betalat angriparen sedan er varning gick ut; en säger att den aldrig nådde fram. En annan är rasande över att ni berättade för hela marknaden om ett bedrägeri som aldrig berörde dem." } },
         assumptionChallenged: L(["The senior person closest to the problem should lead the review.", "Den chef som står närmast problemet bör leda utredningen."]),
         narrative: L([
           "Three days later. The board meets tomorrow, and the audit committee wants a written account first.\n\n{{person.cfo.name}} proposes to lead the review of finance controls personally, and suggests that the mailbox findings need not be shared beyond the management team. The CFO knows the processes best. It was also the CFO's mailbox.",
@@ -486,7 +498,7 @@
         decision: dec("d6", "ceo", ["Who leads the review?", "Vem leder granskningen?"], [
           ["An independent reviewer reporting to the audit committee; the CFO contributes as a witness.", "En oberoende granskare som rapporterar till revisionsutskottet; ekonomichefen bidrar som uppgiftslämnare."],
           ["The CISO leads, with the CFO responsible for finance controls.", "Informationssäkerhetschefen leder, med ekonomichefen ansvarig för ekonomikontrollerna."],
-          ["The CFO leads, as proposed.", "Ekonomichefen leder, enligt förslaget."]
+          ["The CFO leads the review of the finance process, with internal audit checking the conclusions.", "Ekonomichefen leder granskningen av ekonomiprocessen, och internrevisionen granskar slutsatserna."]
         ], {
           knowns: [["The CFO's account was the entry point.", "Ekonomichefens konto var ingången."]],
           uncertainties: [["Whether earlier warnings were ignored.", "Om tidigare varningar ignorerades."]],

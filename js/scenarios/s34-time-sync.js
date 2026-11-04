@@ -128,6 +128,9 @@
         title: L(["Almost twenty years", "Nästan tjugo år"]),
         twist: L(["Every server believes it is almost twenty years in the future. Both internal time servers take their time from one GPS receiver on the roof, which lost its signal and came back with a wildly wrong date.", "Varje server tror att det är nästan tjugo år in i framtiden. Båda de interna tidsservrarna hämtar sin tid från en enda GPS-mottagare på taket, som tappade signalen och kom tillbaka med ett helt felaktigt datum."]),
         twistKind: "cause",
+        branches: [
+          { when: { decision: "d1", option: "B" }, narrativeAppend: { en: "Because the domain controllers were isolated as an attack, nobody could sign in to fix the clocks for two hours, and the night shift's badges stopped working.", sv: "Eftersom domänkontrollanterna isolerades som vid ett angrepp kunde ingen logga in och rätta klockorna på två timmar, och nattskiftets passerkort slutade fungera." } }
+        ],
         assumptionChallenged: L(["Someone is tampering with our systems.", "Någon manipulerar våra system."]),
         reveals: ["hf-gps"],
         narrative: L([
@@ -156,7 +159,7 @@
         decision: dec("d2", "cio", ["How do you fix the time?", "Hur rättar ni tiden?"], [
           ["Take the GPS receiver out of service, point the time servers at trusted external sources, then correct critical systems in a planned order.", "Ta GPS-mottagaren ur drift, låt tidsservrarna använda betrodda externa källor och rätta sedan de kritiska systemen i planerad ordning."],
           ["Force the right time onto every server at once.", "Tvinga in rätt tid på varje server på en gång."],
-          ["Wait for the receiver to correct itself.", "Vänta på att mottagaren rättar sig själv."]
+          ["Shut down the time-dependent systems and wait for the receiver to settle; correcting live clocks could do more damage.", "Stäng ner de tidsberoende systemen och vänta på att mottagaren stabiliseras; att rätta klockor i drift kan göra mer skada."]
         ], {
           knowns: [["A single faulty receiver drove every clock wrong.", "En enda felaktig mottagare fick varje klocka att gå fel."]],
           uncertainties: [["What ran on the false date in the meantime.", "Vad som körts på det falska datumet under tiden."]],
@@ -181,6 +184,7 @@
         title: L(["Retention", "Gallring"]),
         twist: L(["Automated retention jobs, believing it was twenty years later, deleted everything “older than seven years”: two years of logs and the oldest backup sets were removed before anyone noticed.", "Automatiska gallringsjobb, som trodde att det var tjugo år senare, raderade allt ”äldre än sju år”: två års loggar och de äldsta säkerhetskopiorna togs bort innan någon märkte något."]),
         twistKind: "impact",
+        reconsider: { decision: "d2", pressure: { en: "Two years of logs are gone. If you corrected the clocks in a planned order, the jobs ran while you were still planning. If you forced every server at once, the jump itself set half of them off.", sv: "Två års loggar är borta. Om ni rättade klockorna i planerad ordning körde jobben medan ni fortfarande planerade. Om ni tvingade in tiden på alla servrar på en gång satte själva hoppet igång hälften av dem." } },
         assumptionChallenged: L(["Fixing the clock fixes the problem.", "Att rätta klockan löser problemet."]),
         narrative: L([
           "{{time.T+120|clock}}. The time is right again on the most important systems. Sign-ins work, the certificate warnings are gone, and the night shift is relieved.\n\nThen the backup system sends its morning report two hours early. It cheerfully says that housekeeping completed successfully, and lists how much storage it freed up during the night.",
@@ -208,7 +212,7 @@
         decision: dec("d3", "cio", ["How do you deal with automation?", "Hur hanterar ni automatiken?"], [
           ["Pause all date-driven jobs, recover what you can, and record exactly what was lost and why.", "Pausa alla datumstyrda jobb, återskapa det som går och dokumentera exakt vad som gick förlorat och varför."],
           ["Restore from the remaining backups and carry on.", "Återställ från de återstående säkerhetskopiorna och fortsätt."],
-          ["Leave automation running; the time is right now.", "Låt automatiken vara igång; tiden stämmer nu."]
+          ["Leave the jobs running, because backups and invoicing depend on them, but have someone watch every run today.", "Låt jobben gå, eftersom säkerhetskopior och fakturering är beroende av dem, men låt någon bevaka varje körning i dag."]
         ], {
           knowns: [["Retention jobs deleted data on the false date.", "Gallringsjobb raderade data på det falska datumet."]],
           uncertainties: [["What other jobs acted on the false date.", "Vilka andra jobb som agerade på det falska datumet."]],
@@ -233,6 +237,10 @@
         title: L(["Month-end, early", "Månadsskiftet, i förtid"]),
         twist: L(["The false date was also a month-end. The payroll batch, {{num.payroll|currency}}, was sent to the bank at 03:40, and {{num.invoices|number}} customer invoices were issued and emailed, all dated twenty years from now.", "Det falska datumet var också ett månadsskifte. Lönekörningen, {{num.payroll|currency}}, skickades till banken 03.40, och {{num.invoices|number}} kundfakturor skapades och mejlades, alla daterade tjugo år framåt."]),
         twistKind: "scope",
+        reconsider: { decision: "d1", pressure: { en: "The payroll file left at 03:40, while you were still deciding what this was. If you declared an attack, the bank saw an outage and asked no questions. If you checked first, nobody stopped the batch.", sv: "Lönefilen gick i väg 03.40, medan ni fortfarande avgjorde vad det här var. Om ni utlyste ett angrepp såg banken ett avbrott och ställde inga frågor. Om ni kontrollerade först var det ingen som stoppade körningen." } },
+        branches: [
+          { when: { decision: "d2", option: "A" }, narrativeAppend: { en: "Because the clocks were corrected in a planned order, payroll and invoicing still ran on the false date while you worked down the list.", sv: "Eftersom klockorna rättades i planerad ordning körde lön och fakturering fortfarande på det falska datumet medan ni betade av listan." } }
+        ],
         assumptionChallenged: L(["This stayed inside IT.", "Det här stannade inom IT."]),
         reveals: ["hf-jobs"],
         narrative: L([
@@ -274,7 +282,7 @@
         decision: dec("d4", "cfo", ["How do you handle the business damage?", "Hur hanterar ni skadan i verksamheten?"], [
           ["Stop the payroll file with the bank, credit all invoices with a clear explanation to customers, and brief staff before rumours start.", "Stoppa lönefilen hos banken, kreditera alla fakturor med en tydlig förklaring till kunderna och informera personalen innan ryktena börjar."],
           ["Let the payroll run early and recover the difference later.", "Låt lönekörningen gå i förtid och reglera skillnaden senare."],
-          ["Leave the invoices; customers will ignore the strange dates.", "Låt fakturorna vara; kunderna kommer att strunta i de konstiga datumen."]
+          ["Leave the invoices and send one short explanation to all customers; crediting {{num.invoices|number}} invoices would tie finance up for weeks.", "Låt fakturorna vara och skicka en kort förklaring till alla kunder; att kreditera {{num.invoices|number}} fakturor skulle binda upp ekonomi i veckor."]
         ], {
           knowns: [["Real money and real documents went out on the false date.", "Riktiga pengar och riktiga dokument gick ut på det falska datumet."]],
           uncertainties: [["What else outside IT acted on it.", "Vad mer utanför IT som agerade på det."]],
@@ -337,6 +345,10 @@
         title: L(["One antenna", "En antenn"]),
         twist: L(["A dependency review finds fourteen systems that take time from that one rooftop antenna, including door access control, production line controllers and the camera system, with no second source.", "En genomgång av beroenden hittar fjorton system som hämtar tid från den enda antennen på taket, bland annat passersystemet, styrsystemen i produktionen och kamerasystemet, utan någon andra källa."]),
         twistKind: "scope",
+        reconsider: { decision: "d3", pressure: { en: "The telecom authority says the interference may return any night. Do your rules for date-driven jobs still hold if it happens on payday?", sv: "Telemyndigheten säger att störningarna kan komma tillbaka vilken natt som helst. Håller era regler för datumstyrda jobb även om det händer på lönedagen?" } },
+        branches: [
+          { when: { decision: "d4", option: "A" }, narrativeAppend: { en: "Because payroll was stopped, staff were paid two days late. The union wants compensation and a written apology.", sv: "Eftersom lönen stoppades fick personalen betalt två dagar för sent. Facket kräver ersättning och en skriftlig ursäkt." } }
+        ],
         assumptionChallenged: L(["Time only matters for IT servers.", "Tid spelar bara roll för IT-servrar."]),
         reveals: ["hf-single"],
         narrative: L([

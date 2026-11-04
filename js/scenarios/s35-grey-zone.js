@@ -105,7 +105,7 @@
         decision: dec("d1", "comms", ["How do you respond to the story?", "Hur bemöter ni berättelsen?"], [
           ["Check for a breach, then publish one calm factual statement on your own channels and brief staff and customer service.", "Kontrollera om det skett ett intrång, publicera sedan ett lugnt sakligt uttalande i era egna kanaler och informera personal och kundtjänst."],
           ["Respond directly under the viral post to correct it.", "Svara direkt under det virala inlägget för att rätta det."],
-          ["Say nothing; it will blow over.", "Säg ingenting; det blåser över."]
+          ["Say nothing publicly until you have checked for a breach; any statement now becomes part of the story.", "Säg ingenting offentligt förrän ni har kontrollerat om det skett ett intrång; varje uttalande nu blir en del av berättelsen."]
         ], {
           knowns: [["A fabricated memo is spreading fast.", "En påhittad promemoria sprids snabbt."]],
           uncertainties: [["Who is behind it and what comes next.", "Vem som ligger bakom och vad som kommer härnäst."]],
@@ -130,6 +130,9 @@
         title: L(["Monday evening: the proof", "Måndag kväll: beviset"]),
         twist: L(["At 16:40 the website and customer app collapse under a {{num.gbps}} Gbit/s flood. Within minutes, new posts call it proof: “They've taken the site down to hide the breach.”", "Klockan 16.40 kollapsar webbplatsen och kundappen under en flod på {{num.gbps}} Gbit/s. Inom några minuter kallar nya inlägg det för ett bevis: ”De har tagit ner sajten för att dölja intrånget.”"]),
         twistKind: "scope",
+        branches: [
+          { when: { decision: "d1", option: "A" }, narrativeAppend: { en: "Because you checked for a breach before saying anything, your first statement came four hours after the story, and many followers read the silence as a confession.", sv: "Eftersom ni kontrollerade intrång innan ni sa något kom ert första uttalande fyra timmar efter berättelsen, och många följare tolkade tystnaden som ett erkännande." } }
+        ],
         assumptionChallenged: L(["This is a communications problem.", "Det här är ett kommunikationsproblem."]),
         reveals: ["hf-timed"],
         narrative: L([
@@ -168,7 +171,7 @@
         decision: dec("d2", "incidentCommander", ["How do you respond?", "Hur svarar ni?"], [
           ["Treat it as one coordinated incident: filter the traffic, post the facts on channels that still work, and report to {{reg.csirt}}.", "Behandla det som en samordnad incident: filtrera trafiken, lägg ut fakta i de kanaler som fortfarande fungerar och rapportera till {{reg.csirt}}."],
           ["Handle the DDoS technically and leave the story to communications.", "Hantera överbelastningsattacken tekniskt och lämna berättelsen till kommunikationsavdelningen."],
-          ["Take the website offline yourselves until the story dies down.", "Ta ner webbplatsen själva tills berättelsen har lagt sig."]
+          ["Take the website offline yourselves and serve a static status page, so the attackers no longer set the pace.", "Ta ner webbplatsen själva och visa en statisk statussida, så att angriparna inte längre bestämmer takten."]
         ], {
           knowns: [["A DDoS followed the false story and is being used to support it.", "En överbelastningsattack följde på den falska berättelsen och används för att stödja den."]],
           uncertainties: [["Whether more is coming, and from whom.", "Om mer är på väg, och från vem."]],
@@ -193,6 +196,7 @@
         title: L(["Tuesday: lost signals", "Tisdag: förlorade signaler"]),
         twist: L(["Satellite navigation is disrupted across the region. {{num.vehicles}} vehicles in your fleet lose positioning, route planning fails, and two time-dependent systems start drifting.", "Satellitnavigeringen störs i hela regionen. {{num.vehicles}} fordon i er fordonsflotta tappar positioneringen, ruttplaneringen fallerar och två tidsberoende system börjar glida."]),
         twistKind: "impact",
+        reconsider: { decision: "d1", pressure: { en: "The viral post now has a million views and has been quoted by a member of parliament. Does your Monday answer still stand?", sv: "Det virala inlägget har nu en miljon visningar och har citerats av en riksdagsledamot. Står ert svar från i måndags sig?" } },
         assumptionChallenged: L(["The website and the story are the whole problem.", "Webbplatsen och berättelsen är hela problemet."]),
         narrative: L([
           "{{time.T+1440|weekday|cap}}. The website is back behind filtering and the story is fading. The crisis team had planned to scale down to a morning meeting.\n\nAt eight, the fleet coordinator calls. Vehicles across the region are showing positions in the sea or at the airport, and the route planning system has given up. {{person.facilities.name}} reports odd behaviour on the building's own clocks.",
@@ -220,7 +224,7 @@
         decision: dec("d3", "incidentCommander", ["How do you organise for the rest of the week?", "Hur organiserar ni er för resten av veckan?"], [
           ["Move to a shift pattern for the crisis team, switch the fleet to manual routines, and keep one common picture.", "Gå över till skiftschema i krisledningen, ställ om fordonsflottan till manuella rutiner och behåll en gemensam lägesbild."],
           ["Keep the same team going until it is over.", "Låt samma team fortsätta tills det är över."],
-          ["Stand the crisis team down and let departments handle their own problems.", "Avveckla krisledningen och låt avdelningarna hantera sina egna problem."]
+          ["Scale the central team down to a daily check-in and let each department run its own disruption.", "Skala ner den centrala krisledningen till en daglig avstämning och låt varje avdelning hantera sin egen störning."]
         ], {
           knowns: [["A third, unrelated-looking disruption has started.", "En tredje störning, som ser orelaterad ut, har börjat."]],
           uncertainties: [["How long the week will last.", "Hur länge veckan kommer att pågå."]],
@@ -245,6 +249,9 @@
         title: L(["Wednesday: the cable", "Onsdag: kabeln"]),
         twist: L(["Both fibre routes to the main site are cut, at two places a kilometre apart, within ten minutes of each other. The police say it was deliberate, and the security service tells you that this week's events are assessed as one coordinated campaign against several organisations in the region.", "Båda fibervägarna till huvudanläggningen kapas, på två platser en kilometer ifrån varandra, inom tio minuter. Polisen säger att det var avsiktligt, och säkerhetstjänsten meddelar att veckans händelser bedöms som en samordnad kampanj mot flera organisationer i regionen."]),
         twistKind: "cause",
+        branches: [
+          { when: { decision: "d3", option: "A" }, narrativeAppend: { en: "Because the crisis team moved to shifts, the night shift did not know what the day shift had promised the authorities, and the first fibre cut was logged as a routine fault.", sv: "Eftersom krisledningen gick över till skift visste nattskiftet inte vad dagskiftet hade lovat myndigheterna, och det första fiberavbrottet loggades som ett vanligt fel." } }
+        ],
         assumptionChallenged: L(["We are having a run of bad luck.", "Vi har en period av otur."]),
         reveals: ["hf-campaign"],
         narrative: L([
@@ -354,6 +361,10 @@
         title: L(["Thursday: the offer", "Torsdag: erbjudandet"]),
         twist: L(["An engineer tells HR she was offered cash on a professional networking site for “a consulting job”: drawings of the main site's power and cooling. The same recruiter profile has messaged three other employees with access to site plans.", "En tekniker berättar för HR att hon via ett yrkesnätverk har erbjudits kontanter för ”ett konsultuppdrag”: ritningar över huvudanläggningens el och kylning. Samma rekryterarprofil har skickat meddelanden till tre andra anställda med åtkomst till ritningar."]),
         twistKind: "scope",
+        reconsider: { decision: "d4", pressure: { en: "The authorities asked you to say nothing. A journalist already knows about the cables, and your staff are frightened. Whatever you told people on Wednesday is being tested now.", sv: "Myndigheterna bad er att inte säga något. En journalist känner redan till kablarna, och personalen är rädd. Det ni sa till folk i onsdags sätts på prov nu." } },
+        branches: [
+          { when: { decision: "d4", option: "A" }, narrativeAppend: { en: "Because staff were told honestly that the attacks may be deliberate, two engineers have asked not to work alone at the main site.", sv: "Eftersom personalen fick veta ärligt att angreppen kan vara avsiktliga har två tekniker bett att slippa arbeta ensamma på huvudanläggningen." } }
+        ],
         assumptionChallenged: L(["The campaign attacks our systems and reputation, not our people.", "Kampanjen angriper våra system och vårt anseende, inte vår personal."]),
         reveals: ["hf-recruit"],
         narrative: L([
@@ -386,7 +397,7 @@
         decision: dec("d5", "securityOfficer", ["How do you respond?", "Hur svarar ni?"], [
           ["Thank and protect the engineer, contact the other three supportively, restrict access to drawings, report to the police, and brief all staff on approaches like this.", "Tacka och skydda teknikern, kontakta de tre andra på ett stödjande sätt, begränsa åtkomsten till ritningar, anmäl till polisen och informera all personal om sådana här kontaktförsök."],
           ["Investigate the other three quietly before talking to them.", "Utred de tre andra i tysthet innan ni pratar med dem."],
-          ["Keep it within HR and security to avoid alarm.", "Håll det inom HR och säkerhet för att undvika oro."]
+          ["Keep it within HR and security for now, so the recruiter does not learn that you know.", "Håll det inom HR och säkerhet tills vidare, så att rekryteraren inte får veta att ni vet."]
         ], {
           knowns: [["Several employees with access to site plans were targeted for recruitment.", "Flera anställda med åtkomst till ritningar har utsatts för värvningsförsök."]],
           uncertainties: [["Whether anyone has already shared something.", "Om någon redan har delat något."]],
@@ -411,6 +422,7 @@
         title: L(["The week after", "Veckan efter"]),
         twist: L(["The regional preparedness authority warns that campaigns like this tend to return in waves, and asks each organisation running essential services to show how it would sustain operations through a month of similar disruption.", "Den regionala beredskapsmyndigheten varnar för att kampanjer som den här brukar återkomma i vågor, och ber varje organisation som driver samhällsviktiga tjänster visa hur den skulle upprätthålla verksamheten under en månad av liknande störningar."]),
         twistKind: "scope",
+        reconsider: { decision: "d2", pressure: { en: "Looking back at Monday evening: the flood and the story were one operation. Would you handle the next wave the same way?", sv: "Med facit i hand från måndagskvällen: överbelastningen och berättelsen var en och samma operation. Skulle ni hantera nästa våg på samma sätt?" } },
         assumptionChallenged: L(["It is over.", "Det är över."]),
         narrative: L([
           "{{time.T+10080|weekday|cap}}. A week later. Services are normal, the false posts are gone, and the police investigation continues out of sight. The crisis team meets one last time, and most of its members look as though they need a holiday.\n\nA letter from the regional preparedness authority turns the review into a different conversation. The question is no longer what happened last week, but what you would do if it happened every week for a month.",

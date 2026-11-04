@@ -105,7 +105,7 @@
         decision: dec("d1", "incidentCommander", ["How do you treat this?", "Hur behandlar ni det här?"], [
           ["Open a data incident: establish what was shared, by whom and where it went.", "Öppna en dataincident: ta reda på vad som delades, av vem och vart det tog vägen."],
           ["Handle it as a one-off conduct issue with the rep's manager.", "Hantera det som en enstaka uppförandefråga med säljarens chef."],
-          ["Thank the customer and move on: nothing was stolen.", "Tacka kunden och gå vidare: inget stals."]
+          ["Thank the customer, let the rep's manager handle it this week, and open an incident only if a second case appears.", "Tacka kunden, låt säljarens chef hantera det i veckan, och öppna en incident först om ett andra fall dyker upp."]
         ], {
           knowns: [["A full contract and named contacts were pasted into an external service.", "Ett helt avtal och namngivna kontakter klistrades in i en extern tjänst."]],
           uncertainties: [["How often it happened, and what the provider keeps.", "Hur ofta det hänt, och vad leverantören sparar."]],
@@ -193,6 +193,10 @@
         title: L(["The small print", "Det finstilta"]),
         twist: L(["The free tier's terms let the provider use inputs to improve its models, and one customer's contract forbids sharing its terms with any third party, with a penalty clause.", "Gratisnivåns villkor låter leverantören använda inmatad text för att förbättra sina modeller, och en kunds avtal förbjuder att villkoren delas med tredje part, med en vitesklausul."]),
         twistKind: "impact",
+        reconsider: { decision: "d2", pressure: { en: "The terms let the provider train on what your staff pasted in. If you blocked it openly, half of sales has moved to their phones. If you blocked it quietly, staff found out from a broken bookmark. If you left it open, it is still flowing out today.", sv: "Villkoren låter leverantören träna på det personalen klistrade in. Om ni blockerade öppet har halva säljavdelningen gått över till mobilerna. Om ni blockerade i tysthet fick personalen veta det via ett trasigt bokmärke. Om ni lät den vara öppen flödar det fortfarande ut i dag." } },
+        branches: [
+          { when: { decision: "d2", option: "A" }, narrativeAppend: { en: "Because you told staff why the service was blocked, the message leaked to a sales forum, and a competitor's rep has posted it with a smile.", sv: "Eftersom ni berättade för personalen varför tjänsten blockerades läckte meddelandet till ett säljforum, och en konkurrents säljare har lagt upp det med ett leende." } }
+        ],
         assumptionChallenged: L(["The AI service just processes text and forgets it.", "AI-tjänsten bearbetar bara text och glömmer den."]),
         reveals: ["hf-terms"],
         narrative: L([
@@ -291,7 +295,7 @@
         decision: dec("d4", "ceo", ["What do you tell the customer?", "Vad säger ni till kunden?"], [
           ["The truth: their contract was pasted into an AI service, you cannot prove or rule out the link, and here is what you have done.", "Sanningen: deras avtal klistrades in i en AI-tjänst, ni kan varken bevisa eller utesluta kopplingen, och här är vad ni har gjort."],
           ["Point to the former employee as the likelier route.", "Peka på den tidigare medarbetaren som den troligare vägen."],
-          ["Deny any sharing until the investigation is complete.", "Förneka all delning tills utredningen är klar."]
+          ["Tell the customer you are investigating and will answer in full by Friday, without confirming anything yet.", "Säg till kunden att ni utreder och svarar fullständigt senast fredag, utan att bekräfta något ännu."]
         ], {
           knowns: [["The customer's contract was among those pasted in.", "Kundens avtal fanns bland dem som klistrades in."]],
           uncertainties: [["How the clause actually reached the competitor.", "Hur klausulen faktiskt nådde konkurrenten."]],
@@ -316,6 +320,10 @@
         title: L(["What happens to the team", "Vad som händer med teamet"]),
         twist: L(["HR proposes formal warnings for all {{num.reps}} people. The union representative replies within the hour: the manager told them to do it, and the policy never mentioned AI.", "HR föreslår formella varningar för alla {{num.reps}} personer. Fackets ombud svarar inom en timme: chefen sa åt dem att göra så, och riktlinjerna nämnde aldrig AI."]),
         twistKind: "authority",
+        reconsider: { decision: "d4", pressure: { en: "The customer has forwarded your answer to their lawyers. If you told them everything, they are now invoking the penalty clause. If you held back, they have found the AI service's terms themselves.", sv: "Kunden har skickat ert svar vidare till sina jurister. Om ni berättade allt åberopar de nu vitesklausulen. Om ni höll inne med något har de själva hittat AI-tjänstens villkor." } },
+        branches: [
+          { when: { decision: "d1", option: "A" }, narrativeAppend: { en: "Because a data incident was opened on the first day, the rep has been suspended pending review, and the sales team has stopped talking to security.", sv: "Eftersom en dataincident öppnades redan första dagen är säljaren avstängd under granskningen, och säljteamet har slutat prata med säkerhetsfunktionen." } }
+        ],
         assumptionChallenged: L(["Breaking a rule is grounds for discipline.", "Att bryta mot en regel är grund för disciplinära åtgärder."]),
         narrative: L([
           "{{time.T+5760|weekday|cap}}. The customer conversations are under way. Inside the company, a different question has been waiting all week: what happens to the people who did it?\n\n{{person.hr.name}} has drafted a proposal. Sales morale is low, two reps have asked whether they will be fired, and the manager who recommended the tool has gone very quiet.",
@@ -368,6 +376,7 @@
         title: L(["Every other tool", "Alla andra verktyg"]),
         twist: L(["A company-wide scan finds 23 other AI and file-sharing services in regular use, in every department, including HR and finance.", "En genomsökning av hela företaget hittar 23 andra AI- och fildelningstjänster i regelbunden användning, på varje avdelning, även HR och ekonomi."]),
         twistKind: "scope",
+        reconsider: { decision: "d1", pressure: { en: "Twenty-three more services, in every department. Was this ever one rep's mistake, and does the way you first treated it still hold?", sv: "Tjugotre tjänster till, på varje avdelning. Var det här någonsin en enskild säljares misstag, och håller det sätt ni först hanterade det på fortfarande?" } },
         assumptionChallenged: L(["This was a sales problem.", "Det här var ett problem på säljavdelningen."]),
         narrative: L([
           "{{time.T+10080|weekday|cap}}. A week later. The sales case is closing. {{person.cio.name}} has run the same proxy search for every external service that accepts uploads, across the whole company.\n\nThe list is longer than the room expected. Some of the services are well known, some are a year old, and almost none of them have ever been through a security review.",

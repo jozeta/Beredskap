@@ -106,8 +106,8 @@
         challenges: [ch("The researcher posts that they have “reported something serious to a big vendor” and will share details later.", "Forskaren skriver offentligt att hen har ”rapporterat något allvarligt till en stor leverantör” och kommer att dela detaljer senare.")],
         decision: dec("d1", "ciso", ["How do you respond to the researcher?", "Hur svarar ni forskaren?"], [
           ["Thank them, confirm receipt, name a contact and agree to work to the 90-day timeline.", "Tacka, bekräfta mottagandet, utse en kontaktperson och kom överens om att arbeta mot tidsfristen på 90 dagar."],
-          ["Send the legal letter.", "Skicka det juridiska brevet."],
-          ["Do not reply until the flaw is verified.", "Svara inte förrän felet är verifierat."]
+          ["Reply formally through legal, asking the researcher not to publish while engineering verifies the claim.", "Svara formellt via juridiken och be forskaren att inte publicera medan utvecklingen verifierar uppgifterna."],
+          ["Acknowledge receipt only, and commit to a timeline once your engineers have reproduced it.", "Bekräfta bara mottagandet, och lova en tidsplan när era utvecklare har kunnat återskapa felet."]
         ], {
           knowns: [["A detailed report with a proof of concept has arrived.", "En detaljerad rapport med konceptbevis har kommit."]],
           uncertainties: [["Whether the flaw is real and how far it reaches.", "Om felet är verkligt och hur långt det sträcker sig."]],
@@ -132,6 +132,9 @@
         title: L(["It works, everywhere", "Det fungerar, överallt"]),
         twist: L(["The bypass is real. The flaw sits in a shared authentication component, and that component also runs inside {{num.oemPartners}} partners' products sold under their own brands.", "Förbigåendet är verkligt. Felet sitter i en gemensam autentiseringskomponent, och den komponenten finns också i {{num.oemPartners}} partners produkter som säljs under deras egna varumärken."]),
         twistKind: "cause",
+        branches: [
+          { when: { decision: "d1", option: "B" }, narrativeAppend: { en: "Because a legal letter went out first, the researcher has cut the deadline to 45 days and posted that you threatened them.", sv: "Eftersom ett juridiskt brev gick ut först har forskaren kortat tidsfristen till 45 dagar och skrivit offentligt att ni hotade dem." } }
+        ],
         assumptionChallenged: L(["It is a bug in one portal.", "Det är ett fel i en portal."]),
         reveals: ["hf-oem"],
         narrative: L([
@@ -189,6 +192,7 @@
         title: L(["The update problem", "Uppdateringsproblemet"]),
         twist: L(["The fix needs new device firmware. {{num.offlinePct}} percent of devices are managed offline or behind customer firewalls and will not update by themselves.", "Rättningen kräver ny firmware i enheterna. {{num.offlinePct}} procent av enheterna hanteras offline eller bakom kundernas brandväggar och kommer inte att uppdateras av sig själva."]),
         twistKind: "impact",
+        reconsider: { decision: "d1", pressure: { en: "The researcher posts that you are slow to respond. If you answered warmly and fast, you are now held to a 90-day timeline you may not meet. If you held back, the 90 days started anyway.", sv: "Forskaren skriver offentligt att ni är långsamma att svara. Om ni svarade varmt och snabbt är ni nu bundna till en tidsfrist på 90 dagar som ni kanske inte klarar. Om ni avvaktade började de 90 dagarna ändå." } },
         assumptionChallenged: L(["Once the fix ships, customers are safe.", "När rättningen är släppt är kunderna säkra."]),
         narrative: L([
           "{{time.T+14400|weekday|cap}}, day 10. The developers have a fix ready for testing, well ahead of the deadline. The mood in the room is good.\n\nThen {{person.serviceOwner.name}} looks at the installed base, the devices actually out there in customers' buildings, and at how many of them will ever receive the fix.",
@@ -224,7 +228,7 @@
         challenges: [ch("Sales asks that large customers be told privately first.", "Försäljning vill att stora kunder informeras privat först.")],
         decision: dec("d3", "serviceOwner", ["How do you protect customers who can't update?", "Hur skyddar ni kunder som inte kan uppdatera?"], [
           ["Close the old API path on the server now as an interim block, contact offline customers directly, and publish guidance on day 90.", "Stäng den äldre API-vägen på servern nu som ett tillfälligt skydd, kontakta offlinekunder direkt och publicera vägledning dag 90."],
-          ["Wait for firmware and let customers update at their own pace.", "Vänta på firmware och låt kunderna uppdatera i sin egen takt."],
+          ["Wait for the firmware instead of closing the old path; closing it breaks devices for customers who still depend on it.", "Vänta på firmwaren i stället för att stänga den äldre vägen; att stänga den slår ut enheter för kunder som fortfarande är beroende av den."],
           ["Tell large customers privately now, everyone else on day 90.", "Berätta privat för stora kunder nu, för alla andra dag 90."]
         ], {
           knowns: [["A server-side block is possible but may break old devices.", "En blockering på serversidan är möjlig men kan slå ut gamla enheter."]],
@@ -250,6 +254,10 @@
         title: L(["Not the first", "Inte först"]),
         twist: L(["Your telemetry shows that the old API path was used in the same way for weeks before the report. {{num.exploitedDevices|number}} customer devices were enrolled into accounts you don't recognise.", "Er telemetri visar att den äldre API-vägen användes på samma sätt i flera veckor före rapporten. {{num.exploitedDevices|number}} kundenheter registrerades i konton ni inte känner igen."]),
         twistKind: "scope",
+        reconsider: { decision: "d2", pressure: { en: "It was exploited before the report. Partners who knew under embargo have had to stay silent while their customers were attacked. Partners who did not know are about to find out from the news.", sv: "Felet utnyttjades före rapporten. Partner som fick veta under embargo har tvingats tiga medan deras kunder angreps. Partner som inte visste är på väg att få veta det via nyheterna." } },
+        branches: [
+          { when: { decision: "d3", option: "A" }, narrativeAppend: { en: "Because the old API path was closed, older devices at many customers have stopped syncing, and support has taken three hundred calls since this morning.", sv: "Eftersom den äldre API-vägen stängdes har äldre enheter hos många kunder slutat synkronisera, och supporten har tagit emot trehundra samtal sedan i morse." } }
+        ],
         assumptionChallenged: L(["Only the researcher knows about the flaw.", "Bara forskaren känner till felet."]),
         reveals: ["hf-exploited"],
         narrative: L([
@@ -288,7 +296,7 @@
         decision: dec("d4", "ciso", ["What changes now that it is exploited?", "Vad ändras nu när felet utnyttjas?"], [
           ["Block the old path everywhere today, tell the researcher, partners and authorities, and warn customers with steps to check their devices.", "Blockera den äldre vägen överallt i dag, informera forskaren, partnerna och myndigheterna, och varna kunderna med instruktioner för att kontrollera sina enheter."],
           ["Keep the plan; ship firmware on schedule.", "Håll fast vid planen; släpp firmwaren enligt tidsplanen."],
-          ["Quietly reset the hijacked devices and say nothing.", "Återställ de kapade enheterna i tysthet och säg ingenting."]
+          ["Reset the hijacked devices now, and tell customers on day 90, when the fix and the advice can come together.", "Återställ de kapade enheterna nu, och berätta för kunderna dag 90, när rättningen och råden kan komma samtidigt."]
         ], {
           knowns: [["The flaw has been exploited for weeks.", "Felet har utnyttjats i flera veckor."]],
           uncertainties: [["Who is behind the unknown accounts.", "Vem som ligger bakom de okända kontona."]],
@@ -366,6 +374,10 @@
         title: L(["Day 90", "Dag 90"]),
         twist: L(["The researcher publishes, with your coordinated advisory linked at the top. Firmware is on 61 percent of devices; journalists ask about the rest, and about the weeks before the report.", "Forskaren publicerar, med er samordnade säkerhetsinformation länkad överst. Den nya firmwaren finns på 61 procent av enheterna; journalister frågar om resten, och om veckorna före rapporten."]),
         twistKind: "impact",
+        reconsider: { decision: "d3", pressure: { en: "Thirty-nine percent of devices still lack the fix. For the customers who cannot update, was your choice on day one the right one?", sv: "Trettionio procent av enheterna saknar fortfarande rättningen. För kunderna som inte kan uppdatera, var ert val den första dagen det rätta?" } },
+        branches: [
+          { when: { decision: "d5", option: "A" }, narrativeAppend: { en: "Because you reported the real awareness date, {{reg.csirt}} has opened a review of how your disclosure process works.", sv: "Eftersom ni rapporterade det verkliga kännedomsdatumet har {{reg.csirt}} inlett en granskning av hur er process för sårbarhetsrapporter fungerar." } }
+        ],
         assumptionChallenged: L(["Publication day is the end of the incident.", "Publiceringsdagen är slutet på incidenten."]),
         narrative: L([
           "{{time.T+129600|weekday|cap}}, day 90. The deadline has arrived, as agreed. The researcher publishes their write-up this morning.\n\nThe fix exists, the advisory is ready, and the partners have been told. But not every device has been updated, and the journalists who read the write-up are asking questions you will have to answer in public.",
@@ -393,7 +405,7 @@
         decision: dec("d6", "ceo", ["What do you commit to publicly?", "Vad åtar ni er offentligt?"], [
           ["A public thank-you to the researcher, a clear vulnerability disclosure policy and a plan to reach every remaining device.", "Ett offentligt tack till forskaren, en tydlig policy för sårbarhetsrapporter och en plan för att nå varje kvarvarande enhet."],
           ["A short statement that the issue is fixed.", "Ett kort uttalande om att problemet är åtgärdat."],
-          ["No comment beyond the advisory.", "Ingen kommentar utöver säkerhetsinformationen."]
+          ["Let the advisory speak for itself, and answer journalists only in writing.", "Låt säkerhetsinformationen tala för sig själv, och svara journalister endast skriftligt."]
         ], {
           knowns: [["The flaw, the fix and the earlier exploitation are public.", "Felet, rättningen och det tidigare utnyttjandet är offentliga."]],
           uncertainties: [["How many devices will ever be updated.", "Hur många enheter som någonsin kommer att uppdateras."]],
