@@ -134,6 +134,9 @@
         title: L(["Theirs for months", "Deras i månader"]),
         twist: L(["The acquired company's network has been under someone else's control for about {{num.monthsInside}} months. The attacker held administrator rights over their whole directory and simply walked across the new trust.", "Det förvärvade företagets nätverk har varit under någon annans kontroll i ungefär {{num.monthsInside}} månader. Angriparen hade administratörsrättigheter över hela deras katalog och gick helt enkelt över det nya förtroendet."]),
         twistKind: "cause",
+        branches: [
+          { when: { decision: "d1", option: "A" }, narrativeAppend: { en: "Because the link and the trust were cut, the acquired company's staff lost access to the shared finance system on the day of their first month-end close with you.", sv: "Eftersom länken och förtroendet kapades förlorade det förvärvade företagets personal åtkomsten till det gemensamma ekonomisystemet samma dag som deras första månadsbokslut med er." } }
+        ],
         assumptionChallenged: L(["A migration script misbehaved.", "Ett migreringsskript betedde sig fel."]),
         reveals: ["hf-months"],
         narrative: L([
@@ -162,7 +165,7 @@
         decision: dec("d2", "ciso", ["How do you handle their directory?", "Hur hanterar ni deras katalog?"], [
           ["Treat it as lost: rebuild their identity platform, and reconnect only through a new, clean design.", "Behandla den som förlorad: bygg om deras identitetsplattform, och koppla ihop igen bara via en ny, ren lösning."],
           ["Clean it in place: remove the attacker's accounts and tasks.", "Sanera på plats: ta bort angriparens konton och aktiviteter."],
-          ["Leave it to the acquired company's IT.", "Överlåt det till det förvärvade företagets IT."]
+          ["Let the acquired company's IT clean it, with your team reviewing; they know their own systems, and the trust is already cut.", "Låt det förvärvade företagets IT sanera, med ert team som granskar; de känner sina egna system, och förtroendet är redan kapat."]
         ], {
           knowns: [["The attacker had full control for months.", "Angriparen har haft full kontroll i månader."]],
           uncertainties: [["Every way back in the attacker created.", "Varje väg tillbaka in som angriparen skapat."]],
@@ -187,6 +190,10 @@
         title: L(["The due diligence", "Företagsgranskningen"]),
         twist: L(["An email in the acquired company's archive, sent before the deal closed, warns management that the remote-access gateway “looks compromised”. The due diligence questionnaire said “no known incidents”.", "Ett mejl i det förvärvade företagets arkiv, skickat innan affären slutfördes, varnar ledningen för att gatewayen för fjärråtkomst ”ser komprometterad ut”. Frågeformuläret i företagsgranskningen angav ”inga kända incidenter”."]),
         twistKind: "impact",
+        reconsider: { decision: "d1", pressure: { en: "The sellers knew. If you cut the link, the integration team has stood idle for a week. If you kept it open, the attacker had another week of walking across.", sv: "Säljarna visste. Om ni kapade länken har integrationsteamet stått still i en vecka. Om ni lät den vara öppen fick angriparen ytterligare en vecka att gå över." } },
+        branches: [
+          { when: { decision: "d2", option: "A" }, narrativeAppend: { en: "Because their identity platform is being rebuilt, the acquired company's sales team cannot sign in, and two key engineers have hinted that they may leave.", sv: "Eftersom deras identitetsplattform byggs om kan det förvärvade företagets säljteam inte logga in, och två nyckelpersoner bland utvecklarna har antytt att de kan sluta." } }
+        ],
         assumptionChallenged: L(["The sellers told us everything they knew.", "Säljarna berättade allt de visste."]),
         reveals: ["hf-diligence"],
         narrative: L([
@@ -214,8 +221,8 @@
         challenges: [ch("The former CEO of the acquired company now sits in your management team.", "Det förvärvade företagets tidigare vd sitter nu i er ledningsgrupp.")],
         decision: dec("d3", "ceo", ["What do you do about the sellers?", "Vad gör ni med säljarna?"], [
           ["Preserve the evidence, notify the sellers of a warranty claim, and keep the incident response separate from the dispute.", "Säkra bevisen, underrätta säljarna om ett garantikrav, och håll incidenthanteringen åtskild från tvisten."],
-          ["Confront the former CEO in the management meeting.", "Konfrontera den tidigare vd:n på ledningsmötet."],
-          ["Let it go to protect the integration.", "Låt det vara för att skydda integrationen."]
+          ["Raise it with the former CEO directly before any claim, and give them the chance to explain.", "Ta upp det direkt med den tidigare vd:n innan något krav ställs, och ge hen chansen att förklara."],
+          ["Park the dispute for six months, so the integration and the people who must deliver it are not poisoned by it.", "Lägg tvisten på is i sex månader, så att integrationen och de som ska genomföra den inte förgiftas av den."]
         ], {
           knowns: [["The risk was known before closing and not disclosed.", "Risken var känd före tillträdet och redovisades inte."]],
           uncertainties: [["What the contract's warranties actually cover.", "Vad avtalets garantier faktiskt täcker."]],
@@ -240,6 +247,7 @@
         title: L(["What came across", "Vad som kom över"]),
         twist: L(["Overnight the attacker read {{num.mailboxes}} of your finance and M&A mailboxes. And the acquired product's code-signing key was copied months ago: anything signed with it can no longer be trusted.", "Under natten läste angriparen {{num.mailboxes}} av era brevlådor inom ekonomi och förvärv. Och den förvärvade produktens kodsigneringsnyckel kopierades för flera månader sedan: inget som signerats med den går längre att lita på."]),
         twistKind: "scope",
+        reconsider: { decision: "d2", pressure: { en: "Overnight the attacker read {{num.mailboxes}} of your own finance and M&A mailboxes. Was your plan for their directory fast enough?", sv: "I natt läste angriparen {{num.mailboxes}} av era egna brevlådor inom ekonomi och företagsförvärv. Var er plan för deras katalog tillräckligt snabb?" } },
         assumptionChallenged: L(["The damage is limited to the acquired company.", "Skadan är begränsad till det förvärvade företaget."]),
         reveals: ["hf-signing"],
         narrative: L([
@@ -281,7 +289,7 @@
         decision: dec("d4", "ciso", ["How do you deal with the signing key?", "Hur hanterar ni signeringsnyckeln?"], [
           ["Revoke it, issue a new key from a clean build environment, and tell customers how to verify their installations.", "Återkalla den, utfärda en ny nyckel från en ren byggmiljö och berätta för kunderna hur de kontrollerar sina installationer."],
           ["Issue a new key quietly and stop using the old one.", "Utfärda en ny nyckel i tysthet och sluta använda den gamla."],
-          ["Wait until something signed with it turns up.", "Vänta tills något som signerats med den dyker upp."]
+          ["Keep the old key valid for now and watch for misuse; revoking it breaks every customer installation tonight.", "Låt den gamla nyckeln vara giltig tills vidare och bevaka missbruk; att återkalla den slår ut varje kundinstallation i natt."]
         ], {
           knowns: [["The private key left the build server months ago.", "Den privata nyckeln lämnade byggservern för flera månader sedan."]],
           uncertainties: [["Whether anything malicious has been signed.", "Om något skadligt har signerats."]],
@@ -344,6 +352,10 @@
         title: L(["Six months later", "Sex månader senare"]),
         twist: L(["The integration is six months late. The sellers dispute the warranty claim, and the board wants to know why security was not part of the deal.", "Integrationen är sex månader försenad. Säljarna bestrider garantikravet, och styrelsen vill veta varför säkerheten inte var en del av affären."]),
         twistKind: "impact",
+        reconsider: { decision: "d3", pressure: { en: "The sellers dispute the warranty claim, and the integration is six months late. Did the way you handled them help you, or hurt you?", sv: "Säljarna bestrider garantikravet, och integrationen är sex månader försenad. Hjälpte eller stjälpte det sätt ni hanterade dem på?" } },
+        branches: [
+          { when: { decision: "d3", option: "A" }, narrativeAppend: { en: "Because a warranty claim was served, the former CEO, still on the acquired company's board, has stopped cooperating with the investigation.", sv: "Eftersom ett garantikrav framställdes har den tidigare vd:n, som fortfarande sitter i det förvärvade företagets styrelse, slutat samarbeta med utredningen." } }
+        ],
         assumptionChallenged: L(["Security is an IT question after the deal.", "Säkerhet är en IT-fråga efter affären."]),
         narrative: L([
           "Six months later. The board reviews a deal worth {{num.dealValue}} million, and the integration is far behind plan.\n\nThe incident is closed, but its costs are still arriving: the rebuild, the warranty dispute with the sellers and the customers who left. The chair wants to know what will be different in the next acquisition.",
@@ -371,7 +383,7 @@
         decision: dec("d5", "cfo", ["What changes in your acquisition process?", "Vad ändras i er förvärvsprocess?"], [
           ["Security assessment with evidence before signing, specific warranties, and no network connection until a compromise assessment is clean.", "En säkerhetsbedömning med belägg före undertecknandet, särskilda garantier och ingen nätverksanslutning förrän en intrångsbedömning är ren."],
           ["Add more security questions to the questionnaire.", "Lägg till fler säkerhetsfrågor i frågeformuläret."],
-          ["Keep the process; this was bad luck.", "Behåll processen; det här var otur."]
+          ["Keep the process, but turn the security questionnaire into a signed warranty, so a false answer costs the seller.", "Behåll processen, men gör säkerhetsformuläret till en undertecknad garanti, så att ett felaktigt svar kostar säljaren."]
         ], {
           knowns: [["A questionnaire answer hid a known compromise.", "Ett svar i frågeformuläret dolde ett känt intrång."]],
           uncertainties: [["How common this is in deals.", "Hur vanligt det här är i affärer."]],

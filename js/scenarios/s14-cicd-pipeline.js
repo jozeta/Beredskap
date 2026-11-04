@@ -141,6 +141,9 @@
         title: L(["Published by mistake", "Publicerad av misstag"]),
         twist: L(["The keys were committed to a public code repository {{num.leakDays}} days ago.", "Nycklarna lades upp i ett öppet kodförråd för {{num.leakDays}} dagar sedan."]),
         twistKind: "cause",
+        branches: [
+          { when: { decision: "d1", option: "A" }, narrativeAppend: { en: "Because today's release was paused, a customer's planned go-live slipped, and their project manager has escalated to your CEO.", sv: "Eftersom dagens release pausades sköts en kunds planerade driftstart upp, och deras projektledare har gått direkt till er vd." } }
+        ],
         assumptionChallenged: L(["The key was stolen recently.", "Nyckeln stals nyligen."]),
         reveals: ["hf-keys"],
         narrative: L([
@@ -173,7 +176,7 @@
         decision: dec("d2", "ciso", ["How do you scope the investigation?", "Hur avgränsar ni utredningen?"], [
           ["Review every action by the key since it leaked, starting with the build account.", "Granska varje åtgärd som nyckeln har gjort sedan läckan, med början i byggkontot."],
           ["Review the mining activity and close the repository.", "Granska utvinningen och stäng kodförrådet."],
-          ["Close the repository and move on.", "Stäng kodförrådet och gå vidare."]
+          ["Close the repository and review only the last week of the key's activity, where the bill shows use.", "Stäng kodförrådet och granska bara nyckelns senaste vecka, där fakturan visar användning."]
         ], {
           knowns: [["The key leaked {{num.leakDays}} days ago with admin rights.", "Nyckeln läckte för {{num.leakDays}} dagar sedan med administratörsrättigheter."]],
           uncertainties: [["What it was used for besides mining.", "Vad den användes till förutom utvinning."]],
@@ -240,7 +243,7 @@
         decision: dec("d3", "ceo", ["How do you respond to customers?", "Hur agerar ni mot kunderna?"], [
           ["Notify customers today with indicators and guidance, withdraw the affected releases and stop all builds.", "Underrätta kunderna i dag med indikatorer och vägledning, dra tillbaka de drabbade versionerna och stoppa alla byggen."],
           ["Withdraw the releases and notify once the analysis is complete.", "Dra tillbaka versionerna och underrätta när analysen är klar."],
-          ["Ship a clean release quietly and notify later.", "Leverera en ren version i tysthet och underrätta senare."]
+          ["Ship a clean release today and notify customers tomorrow with full indicators, so the warning and the fix arrive together.", "Leverera en ren version i dag och underrätta kunderna i morgon med fullständiga indikatorer, så att varningen och rättningen kommer samtidigt."]
         ], {
           knowns: [["Signed releases contain a loader.", "Signerade versioner innehåller en laddare."]],
           uncertainties: [["Whether the loader has been used at customers.", "Om laddaren har använts hos kunder."]],
@@ -266,6 +269,10 @@
         title: L(["Can you trust your signature?", "Kan ni lita på er signatur?"]),
         twist: L(["The signing key was readable with the leaked keys. Every signature since the leak is in doubt.", "Signeringsnyckeln gick att läsa med de läckta nycklarna. Varje signatur sedan läckan är tveksam."]),
         twistKind: "impact",
+        reconsider: { decision: "d1", pressure: { en: "The signing key was exposed as well. If you paused the release, customers waited for nothing that would have protected them. If you shipped it, it carries a signature you can no longer vouch for.", sv: "Signeringsnyckeln var också exponerad. Om ni pausade releasen väntade kunderna förgäves på något som ändå inte hade skyddat dem. Om ni släppte den bär den en signatur ni inte längre kan gå i god för." } },
+        branches: [
+          { when: { decision: "d3", option: "A" }, narrativeAppend: { en: "Because customers were warned today, three of them have blocked your update servers, so they will not receive the fix either.", sv: "Eftersom kunderna varnades i dag har tre av dem spärrat era uppdateringsservrar, så de kommer inte att få rättningen heller." } }
+        ],
         assumptionChallenged: L(["Releases signed outside the pipeline are safe.", "Versioner som signerats utanför pipelinen är säkra."]),
         reveals: ["hf-signing"],
         narrative: L([
@@ -319,6 +326,9 @@
         title: L(["Show us", "Visa oss"]),
         twist: L(["A major customer suspends your contract until you prove which releases are clean — and their regulator is asking them.", "En stor kund pausar ert avtal tills ni bevisar vilka versioner som är rena – och deras tillsynsmyndighet frågar dem."]),
         twistKind: "authority",
+        branches: [
+          { when: { decision: "d4", option: "A" }, narrativeAppend: { en: "Because the signing key was revoked, every customer's automatic updates now fail with a signature error.", sv: "Eftersom signeringsnyckeln återkallades misslyckas nu varje kunds automatiska uppdateringar med ett signaturfel." } }
+        ],
         assumptionChallenged: L(["We decide when our product is safe again.", "Vi bestämmer när vår produkt är säker igen."]),
         narrative: L([
           "The next day. Customers have read your security notice, and the account managers' phones have not stopped ringing.\n\nMost customers want reassurance. One of the largest wants something else: proof, in writing, of exactly which releases can be trusted, and their own regulator is asking them the same question.",
@@ -346,7 +356,7 @@
         decision: dec("d5", "ceo", ["How do you answer the customer?", "Hur svarar ni kunden?"], [
           ["Commission an independent assessment, share component lists and a dated plan.", "Beställ en oberoende bedömning, dela komponentlistor och en daterad plan."],
           ["Share what you have and ask them to resume.", "Dela det ni har och be dem återuppta."],
-          ["Offer a discount instead of an assessment.", "Erbjud rabatt i stället för en bedömning."]
+          ["Invite the customer's own auditor on site next week instead of waiting a month for an independent assessment.", "Bjud in kundens egen revisor på plats nästa vecka i stället för att vänta en månad på en oberoende bedömning."]
         ], {
           knowns: [["A key customer has paused.", "En nyckelkund har pausat."]],
           uncertainties: [["How many will follow.", "Hur många som kommer att följa efter."]],
@@ -371,6 +381,7 @@
         title: L(["Also on the public registry", "Även i det öppna registret"]),
         twist: L(["A tainted version of your open-source library was published to a public package registry and downloaded {{num.downloads}} times.", "En manipulerad version av ert bibliotek med öppen källkod publicerades i ett öppet paketregister och laddades ned {{num.downloads}} gånger."]),
         twistKind: "scope",
+        reconsider: { decision: "d3", pressure: { en: "{{num.downloads}} public downloads. Customers you warned early ask why open-source users were not warned at the same time. Customers you have not told yet will read it in the advisory.", sv: "{{num.downloads}} offentliga nedladdningar. Kunder som ni varnade tidigt frågar varför användarna av den öppna koden inte varnades samtidigt. Kunder som ni ännu inte berättat för kommer att läsa det i bulletinen." } },
         assumptionChallenged: L(["Only your paying customers are affected.", "Bara era betalande kunder är drabbade."]),
         reveals: ["hf-registry"],
         narrative: L([
@@ -424,6 +435,7 @@
         title: L(["Rebuilding the factory", "Att bygga om fabriken"]),
         twist: L(["A critical security fix must ship this week, but there is no build system you can trust yet.", "En kritisk säkerhetsrättning måste levereras den här veckan, men det finns ännu inget byggsystem ni kan lita på."]),
         twistKind: "impact",
+        reconsider: { decision: "d4", pressure: { en: "A critical fix must ship this week. If you revoked the key, nobody can verify a new release yet. If you kept it, the fix will carry the doubtful signature.", sv: "En kritisk rättning måste ut den här veckan. Om ni återkallade nyckeln kan ingen ännu kontrollera en ny version. Om ni behöll den kommer rättningen att bära den tvivelaktiga signaturen." } },
         assumptionChallenged: L(["We can freeze releases until the rebuild is done.", "Vi kan frysa releaser tills återuppbyggnaden är klar."]),
         narrative: L([
           "Three days later. The old build environment has been shut down and a clean one is being built from scratch, slowly and carefully.\n\nThen an advisory lands that cannot wait for the rebuild: a component you ship has a critical vulnerability that attackers are already using.",
@@ -514,7 +526,7 @@
         decision: dec("d8", "cio", ["What do you change?", "Vad ändrar ni?"], [
           ["Short-lived credentials, blocking secret scans, hardware-backed signing and a named owner for the build chain.", "Kortlivade inloggningsuppgifter, blockerande genomsökning efter hemligheter, hårdvaruskyddad signering och en utsedd ägare för byggkedjan."],
           ["Rotate all keys and add scanning reports.", "Byt alla nycklar och lägg till rapporter från genomsökningen."],
-          ["Training for developers.", "Utbildning för utvecklare."]
+          ["Training for every developer, and one named owner for secrets in each team.", "Utbildning för varje utvecklare, och en utsedd ansvarig för hemligheter i varje team."]
         ], {
           knowns: [["Long-lived keys are everywhere.", "Långlivade nycklar finns överallt."]],
           uncertainties: [["How much this will slow development.", "Hur mycket det här kommer att bromsa utvecklingen."]],

@@ -103,7 +103,7 @@
         decision: dec("d1", "incidentCommander", ["What do you do first?", "Vad gör ni först?"], [
           ["Establish whether the documents are genuine and what they say, before looking for any source.", "Ta reda på om dokumenten är äkta och vad de säger, innan ni letar efter någon källa."],
           ["Start an IT investigation to identify who leaked them.", "Starta en IT-utredning för att identifiera vem som läckte dem."],
-          ["Have lawyers demand the newspaper return the documents.", "Låt jurister kräva att tidningen lämnar tillbaka dokumenten."]
+          ["Have lawyers write to the newspaper today, asking it not to publish confidential documents until you have had a chance to respond.", "Låt jurister skriva till tidningen i dag och be den att inte publicera konfidentiella dokument förrän ni har fått möjlighet att svara."]
         ], {
           knowns: [["A reporter holds genuine-looking internal documents.", "En reporter har interna dokument som ser äkta ut."]],
           uncertainties: [["Whether the documents are accurate, and how they left.", "Om dokumenten är korrekta, och hur de kom ut."]],
@@ -128,6 +128,9 @@
         title: L(["Reported twice", "Rapporterat två gånger"]),
         twist: L(["No intrusion. The documents match two reports made through your own whistleblowing channel last year. Both were closed as “a commercial matter”, without investigation.", "Inget intrång. Dokumenten stämmer med två rapporter som gjordes via er egen visselblåsarkanal förra året. Båda avslutades som ”en kommersiell fråga”, utan utredning."]),
         twistKind: "cause",
+        branches: [
+          { when: { decision: "d1", option: "B" }, narrativeAppend: { en: "Because an IT investigation into the leak had already started, the union asks whether staff who use the whistleblowing channel are being monitored.", sv: "Eftersom en IT-utredning av läckan redan hade startat frågar facket om personal som använder visselblåsarkanalen blir övervakad." } }
+        ],
         assumptionChallenged: L(["Someone stole our documents.", "Någon har stulit våra dokument."]),
         reveals: ["hf-reports"],
         narrative: L([
@@ -185,6 +188,7 @@
         title: L(["Page 41", "Sidan 41"]),
         twist: L(["The reporter, checking facts, mentions a salary spreadsheet in the folder: names, roles and pay for {{num.staff|number}} employees. It has nothing to do with the story.", "Reportern nämner, under faktakontrollen, ett lönekalkylblad i mappen: namn, befattningar och löner för {{num.staff|number}} anställda. Det har ingenting med berättelsen att göra."]),
         twistKind: "scope",
+        reconsider: { decision: "d1", pressure: { en: "The folder also holds salary data for {{num.staff|number}} people. If you started an IT hunt for the source, staff have noticed. If you only checked the documents, you still do not know what else left the building.", sv: "Mappen innehåller också lönedata för {{num.staff|number}} personer. Om ni startade en IT-jakt på källan har personalen märkt det. Om ni bara kontrollerade dokumenten vet ni fortfarande inte vad mer som lämnade huset." } },
         assumptionChallenged: L(["The leak only concerns the billing documents.", "Läckan gäller bara faktureringsdokumenten."]),
         reveals: ["hf-hr"],
         narrative: L([
@@ -217,7 +221,7 @@
         decision: dec("d3", "dpo", ["How do you handle the salary data?", "Hur hanterar ni lönedatan?"], [
           ["Notify the regulator, tell affected staff today, and ask the newspaper in writing not to keep the sheet.", "Anmäl till tillsynsmyndigheten, berätta för berörd personal i dag och be tidningen skriftligt att inte behålla kalkylbladet."],
           ["Ask the newspaper to delete it and notify no one, since it will not be published.", "Be tidningen radera det och anmäl inte till någon, eftersom det inte kommer att publiceras."],
-          ["Wait to see whether the salary sheet appears anywhere.", "Vänta och se om lönekalkylbladet dyker upp någonstans."]
+          ["Ask the newspaper for written confirmation that the sheet is deleted, and decide on notification once you have it.", "Be tidningen om en skriftlig bekräftelse på att kalkylbladet är raderat, och besluta om anmälan när ni har fått den."]
         ], {
           knowns: [["A third party holds staff salary data.", "En tredje part har personalens lönedata."]],
           uncertainties: [["Whether anyone else received the folder.", "Om någon annan har fått mappen."]],
@@ -242,6 +246,10 @@
         title: L(["Thursday", "Torsdag"]),
         twist: L(["The article runs, and it includes something you had not found: the same cut support was also billed to public-sector customers under a framework agreement with strict terms. By noon, the consumer regulator has asked for your billing records.", "Artikeln publiceras, och den innehåller något ni inte hade hittat: samma bortplockade support fakturerades också kunder i offentlig sektor enligt ett ramavtal med strikta villkor. Vid lunch har konsumentmyndigheten begärt in era faktureringsunderlag."]),
         twistKind: "scope",
+        reconsider: { decision: "d2", pressure: { en: "The article is out and the public-sector customers are furious. Inside the company, people are guessing who the source is. Does your stance on the source still hold?", sv: "Artikeln är publicerad och kunderna i offentlig sektor är rasande. Inom företaget gissar folk vem källan är. Håller ert förhållningssätt till källan fortfarande?" } },
+        branches: [
+          { when: { decision: "d3", option: "A" }, narrativeAppend: { en: "Because staff were told about the salary sheet, pay comparisons are circulating internally, and three managers have asked to talk to HR.", sv: "Eftersom personalen fick veta om lönekalkylbladet cirkulerar lönejämförelser internt, och tre chefer har bett att få prata med HR." } }
+        ],
         assumptionChallenged: L(["The billing problem only concerns ordinary commercial customers.", "Faktureringsproblemet gäller bara vanliga kommersiella kunder."]),
         narrative: L([
           "{{time.T+2880|weekday|cap}}, morning. The article is on the front page of the newspaper's website. The headline is about customers paying for something they did not get, and the second paragraph is about a company that ignored its own staff.\n\n{{person.serviceOwner.name}}'s phone has been ringing since seven. The leak itself is mentioned once, near the end.",
@@ -286,7 +294,7 @@
         decision: dec("d4", "ceo", ["What is your public response?", "Vilket är ert offentliga svar?"], [
           ["Acknowledge the billing error, commit to refunds, and announce an independent review of how the reports were handled.", "Erkänn faktureringsfelet, åta er att betala tillbaka och tillkännage en oberoende granskning av hur rapporterna hanterades."],
           ["Say you are investigating and will comment when it is complete.", "Säg att ni utreder och kommer att kommentera när utredningen är klar."],
-          ["Focus on the leak of confidential documents.", "Fokusera på läckan av konfidentiella dokument."]
+          ["Lead with the facts of the billing, and say clearly that the documents were taken without permission.", "Börja med fakta om faktureringen, och säg tydligt att dokumenten togs utan tillstånd."]
         ], {
           knowns: [["The billing allegation is accurate.", "Påståendet om faktureringen stämmer."]],
           uncertainties: [["The full amount owed.", "Hela beloppet som ska betalas tillbaka."]],
@@ -349,6 +357,10 @@
         title: L(["Every closed case", "Varje avslutat ärende"]),
         twist: L(["The external review reads three years of the channel: 19 reports, 17 closed by the same case handler, most on the day they arrived. Two concerned safety.", "Den externa granskningen läser tre år av kanalen: 19 rapporter, 17 avslutade av samma handläggare, de flesta samma dag som de kom in. Två gällde säkerhet."]),
         twistKind: "scope",
+        reconsider: { decision: "d4", pressure: { en: "Seventeen of nineteen reports were closed by the same handler. Was your first public answer still the right one?", sv: "Sjutton av nitton rapporter avslutades av samma handläggare. Var ert första offentliga svar fortfarande det rätta?" } },
+        branches: [
+          { when: { decision: "d4", option: "A" }, narrativeAppend: { en: "Because you acknowledged the error and committed to refunds, public-sector customers now claim refunds for five years, not the two in the article.", sv: "Eftersom ni erkände felet och åtog er att betala tillbaka kräver kunderna i offentlig sektor nu återbetalning för fem år, inte de två som artikeln nämnde." } }
+        ],
         assumptionChallenged: L(["The channel failed once.", "Kanalen fallerade en gång."]),
         reveals: ["hf-channel"],
         narrative: L([
@@ -377,7 +389,7 @@
         decision: dec("d5", "ceo", ["What changes?", "Vad ändras?"], [
           ["Reopen every closed report, move the channel to an independent party, and report outcomes to the board quarterly.", "Öppna alla avslutade rapporter igen, flytta kanalen till en oberoende part och rapportera utfallen till styrelsen varje kvartal."],
           ["Replace the case handler and keep the channel in-house.", "Byt handläggare och behåll kanalen internt."],
-          ["Send a reminder about the channel to all staff.", "Skicka en påminnelse om kanalen till all personal."]
+          ["Relaunch the channel with a new case handler and a reminder to all staff, keeping it in-house where people know it.", "Starta om kanalen med en ny handläggare och en påminnelse till all personal, och behåll den internt där folk känner till den."]
         ], {
           knowns: [["The channel closed almost everything without investigation.", "Kanalen avslutade nästan allt utan utredning."]],
           uncertainties: [["How many people stopped reporting because of it.", "Hur många som slutade rapportera på grund av det."]],

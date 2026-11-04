@@ -114,7 +114,7 @@
         challenges: [ch("Restarting the switches would probably get the line running — and erase evidence.", "En omstart av switcharna skulle troligen få igång linjen – och radera spår.")],
         decision: dec("d1", "incidentCommander", ["What do you do first?", "Vad gör ni först?"], [
           ["Keep the line in safe stop, preserve evidence and disconnect the plant network from IT.", "Behåll linjen i säkert stopp, säkra spår och koppla bort fabriksnätet från IT."],
-          ["Restart the switches and try to resume production.", "Starta om switcharna och försök återuppta produktionen."],
+          ["Restart the network switches, the likeliest cause of a controller dropout, and resume once the line reports healthy.", "Starta om nätverksswitcharna, den troligaste orsaken till att styrsystem tappar kontakten, och återuppta när linjen rapporterar normalt läge."],
           ["Keep the line in safe stop and investigate before changing anything.", "Behåll linjen i säkert stopp och utred innan något ändras."]
         ], {
           knowns: [["Line 3 controllers restart repeatedly.", "Styrsystemen på linje 3 startar om upprepade gånger."], ["Unusual IT-to-plant traffic was seen.", "Ovanlig trafik mellan IT och fabrik har setts."]],
@@ -140,6 +140,9 @@
         title: L(["Not your network to pull", "Inte ert nätverk att koppla ur"]),
         twist: L(["Operations has the final say over the plant network — and warns that isolation could create a hazard.", "Produktionen har sista ordet över fabriksnätet – och varnar för att en isolering kan skapa en fara."]),
         twistKind: "authority",
+        branches: [
+          { when: { decision: "d1", option: "A" }, narrativeAppend: { en: "Because the plant network was cut off from IT, production planning stopped receiving orders, and the morning shift does not know what to run.", sv: "Eftersom fabriksnätet kopplades bort från IT slutade produktionsplaneringen att få order, och morgonskiftet vet inte vad de ska köra." } }
+        ],
         assumptionChallenged: L(["IT decides how to contain a cyber incident.", "IT bestämmer hur en cyberincident ska begränsas."]),
         narrative: L([
           "{{time.T+60|clock}}. The plant manager has arrived on site, and is unhappy about what IT wants to do.\n\nFor IT, cutting the plant off from the office network is the standard first move against malware. For the plant manager, the network is part of how lines 1 and 2 run safely, and pulling a cable is not a neutral act.",
@@ -197,6 +200,7 @@
         title: L(["Someone changed the logic", "Någon ändrade logiken"]),
         twist: L(["The controllers keep restarting because someone downloaded modified logic to them.", "Styrsystemen startar om eftersom någon har laddat ned ändrad logik till dem."]),
         twistKind: "cause",
+        reconsider: { decision: "d2", pressure: { en: "Someone downloaded modified logic to the controllers. If you took the time to move lines 1 and 2 to local setpoints, the attacker had that time too. If you isolated at once, you cut the operators off from their only view of line 3.", sv: "Någon har laddat ner ändrad logik till styrsystemen. Om ni tog tid på er att ställa om linje 1 och 2 till lokala börvärden fick angriparen samma tid. Om ni isolerade direkt skar ni av operatörernas enda insyn i linje 3." } },
         assumptionChallenged: L(["This is a network or hardware fault.", "Det här är ett nätverks- eller hårdvarufel."]),
         reveals: ["hf-ews"],
         narrative: L([
@@ -262,6 +266,9 @@
         title: L(["The forgotten rule", "Den bortglömda regeln"]),
         twist: L(["The engineering workstation was reached from the IT network through a rule opened for a vendor and never closed.", "Ingenjörsarbetsstationen nåddes från IT-nätet via en regel som öppnades för en leverantör och aldrig stängdes."]),
         twistKind: "scope",
+        branches: [
+          { when: { decision: "d3", option: "A" }, narrativeAppend: { en: "Because every line was brought to a stop, a customer's just-in-time delivery has been missed, and their own line stops at noon.", sv: "Eftersom alla linjer stoppades har en kunds leverans just-in-time uteblivit, och deras egen linje stannar vid lunch." } }
+        ],
         assumptionChallenged: L(["The plant network is separated from IT.", "Fabriksnätet är avskilt från IT."]),
         reveals: ["hf-boundary"],
         narrative: L([
@@ -327,6 +334,7 @@
         title: L(["The safety trip", "Säkerhetsstoppet"]),
         twist: L(["The modified logic disabled a safety trip on line 3. This was not only disruption.", "Den ändrade logiken kopplade bort ett säkerhetsstopp på linje 3. Det här var inte bara störning."]),
         twistKind: "impact",
+        reconsider: { decision: "d3", pressure: { en: "A safety trip was disabled on line 3. Lines 1 and 2 may carry the same change. Do you still stand by what you did with them?", sv: "En säkerhetsfunktion var bortkopplad på linje 3. Linje 1 och 2 kan bära samma ändring. Står ni fortfarande fast vid det ni gjorde med dem?" } },
         assumptionChallenged: L(["The attacker only wanted to stop production.", "Angriparen ville bara stoppa produktionen."]),
         reveals: ["hf-safety"],
         narrative: L([
@@ -364,7 +372,7 @@
         decision: dec("d5", "ceo", ["How do you treat the safety bypass?", "Hur hanterar ni förbikopplingen av säkerheten?"], [
           ["As a serious safety incident: inform staff, report to authorities and verify every safety function before restart.", "Som en allvarlig säkerhetsincident: informera personalen, rapportera till myndigheterna och kontrollera varje säkerhetsfunktion före omstart."],
           ["Fix the logic and report it as part of the cyber incident.", "Rätta logiken och rapportera det som en del av cyberincidenten."],
-          ["Fix it quietly; nobody was hurt.", "Rätta det i tysthet; ingen kom till skada."]
+          ["Fix the logic now and report the bypass once the investigation shows how it happened, so the report is right first time.", "Rätta logiken nu och rapportera förbikopplingen när utredningen visar hur den gick till, så att rapporten blir rätt från början."]
         ], {
           knowns: [["A safety trip was deliberately disabled.", "Ett säkerhetsstopp kopplades avsiktligt bort."]],
           uncertainties: [["Whether other safety functions were touched.", "Om andra säkerhetsfunktioner har rörts."]],
@@ -390,6 +398,9 @@
         title: L(["Permission to restart", "Tillstånd att starta"]),
         twist: L(["You cannot restart on your own: the authorities and the OT vendor must be satisfied first.", "Ni kan inte starta på egen hand: myndigheterna och OT-leverantören måste vara nöjda först."]),
         twistKind: "authority",
+        branches: [
+          { when: { decision: "d5", option: "A" }, narrativeAppend: { en: "Because the bypass was reported to the authorities, a labour inspector arrives tomorrow, and staff are asking whether it is safe to come to work.", sv: "Eftersom förbikopplingen rapporterades till myndigheterna kommer en arbetsmiljöinspektör i morgon, och personalen frågar om det är säkert att gå till jobbet." } }
+        ],
         assumptionChallenged: L(["We restart when we are ready.", "Vi startar när vi är redo."]),
         narrative: L([
           "Morning. The authorities have been informed, and the OT vendor's engineers are on site with their reference files.\n\nProduction management wants a restart date: customers are waiting and every hour costs money. But restarting is no longer a decision {{org.name}} can take alone.",
@@ -506,6 +517,7 @@
         title: L(["The sister plant", "Systerfabriken"]),
         twist: L(["The sister plant uses the same workstation image — and the same firewall rule.", "Systerfabriken använder samma avbild för arbetsstationer – och samma brandväggsregel."]),
         twistKind: "scope",
+        reconsider: { decision: "d4", pressure: { en: "The sister plant has the same rule. If you closed only that one rule here, the same door is open there. If you closed every path, the vendor cannot reach either plant to help you.", sv: "Systerfabriken har samma regel. Om ni bara stängde den enda regeln här står samma dörr öppen där. Om ni stängde alla vägar kan leverantören inte nå någon av fabrikerna för att hjälpa er." } },
         assumptionChallenged: L(["The incident is limited to this plant.", "Incidenten är begränsad till den här fabriken."]),
         reveals: ["hf-sister"],
         narrative: L([
@@ -534,7 +546,7 @@
         decision: dec("d8", "ceo", ["What do you do at the sister plant?", "Vad gör ni i systerfabriken?"], [
           ["Close the path immediately and verify logic without stopping, with a safe stop ready.", "Stäng vägen omedelbart och kontrollera logiken utan att stoppa, med ett säkert stopp förberett."],
           ["Stop the sister plant until checked.", "Stoppa systerfabriken tills den är kontrollerad."],
-          ["Close the rule and carry on.", "Stäng regeln och fortsätt som vanligt."]
+          ["Close the rule and keep producing; stopping a second plant on suspicion alone would break every delivery promise you have.", "Stäng regeln och fortsätt producera; att stoppa en andra fabrik enbart på misstanke skulle bryta varje leveranslöfte ni har."]
         ], {
           knowns: [["The same path likely exists there.", "Samma väg finns troligen där."]],
           uncertainties: [["Whether the attacker used it.", "Om angriparen har använt den."]],

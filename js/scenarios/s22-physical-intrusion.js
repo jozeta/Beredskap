@@ -106,8 +106,8 @@
         challenges: [ch("The printer vendor's support line opens at nine.", "Skrivarleverantörens support öppnar klockan nio.")],
         decision: dec("d1", "securityOfficer", ["What do you do with the box?", "Vad gör ni med lådan?"], [
           ["Photograph it, leave it powered, isolate its port at the switch, and call security and IT.", "Fotografera den, låt den vara strömsatt, isolera dess port i switchen och kalla in säkerhet och IT."],
-          ["Unplug it and put it in a drawer.", "Dra ur den och lägg den i en låda."],
-          ["Leave it until the printer vendor confirms.", "Låt den sitta tills skrivarleverantören bekräftar."]
+          ["Unplug it at once: a device nobody recognises should not stay on your network one minute longer.", "Dra ur den direkt: en enhet som ingen känner igen ska inte sitta kvar i ert nät en minut till."],
+          ["Leave it untouched and call the printer vendor first; if it is theirs, pulling it breaks the service contract.", "Rör den inte och ring skrivarleverantören först; om den är deras bryter ni serviceavtalet genom att dra ur den."]
         ], {
           knowns: [["The box is plugged into the network.", "Lådan är inkopplad i nätverket."]],
           uncertainties: [["Whether it belongs to a vendor.", "Om den tillhör en leverantör."]],
@@ -132,6 +132,9 @@
         title: L(["Not ours", "Inte vår"]),
         twist: L(["The printer vendor has never seen it. Inside is a small computer with a mobile data card, and the switch logs show it has been active on your network for {{num.daysActive}} days.", "Skrivarleverantören har aldrig sett den. Inuti finns en liten dator med ett mobildatakort, och switchens loggar visar att den har varit aktiv i ert nätverk i {{num.daysActive}} dagar."]),
         twistKind: "cause",
+        branches: [
+          { when: { decision: "d1", option: "A" }, narrativeAppend: { en: "Because the box was left powered, it sent one last burst of data over its mobile card before the port was isolated.", sv: "Eftersom lådan lämnades strömsatt hann den skicka en sista mängd data över sitt mobilkort innan porten isolerades." } }
+        ],
         assumptionChallenged: L(["It is a vendor's monitoring device.", "Det är en leverantörs övervakningsenhet."]),
         reveals: ["hf-device"],
         narrative: L([
@@ -164,7 +167,7 @@
         decision: dec("d2", "incidentCommander", ["How do you organise the response?", "Hur organiserar ni insatsen?"], [
           ["One incident team with security, facilities and IT under a single lead, and the police informed.", "En incidentgrupp med säkerhet, fastighet och IT under en gemensam ledning, och polisen informerad."],
           ["IT handles the device; facilities handles the building.", "IT hanterar enheten; fastighet hanterar byggnaden."],
-          ["Treat it as a lost-property case until more is known.", "Behandla det som ett hittegodsärende tills mer är känt."]
+          ["Keep it low-key: security and IT look into it quietly, and nobody else is told until you know what it is.", "Håll det lågmält: säkerhet och IT undersöker det i tysthet, och ingen annan får veta förrän ni vet vad det är."]
         ], {
           knowns: [["The device is not a vendor's and talks out over mobile data.", "Enheten är inte en leverantörs och kommunicerar ut via mobildata."]],
           uncertainties: [["Who placed it, and whether there are more.", "Vem som placerade den, och om det finns fler."]],
@@ -189,6 +192,10 @@
         title: L(["The vest", "Västen"]),
         twist: L(["Camera footage from {{num.daysActive}} days ago shows a person in a contractor's vest following two employees through the staff entrance. The visitor log has no entry that morning.", "Kameror från för {{num.daysActive}} dagar sedan visar en person i entreprenörsväst som följer två anställda genom personalingången. Besöksliggaren har ingen post den morgonen."]),
         twistKind: "impact",
+        reconsider: { decision: "d1", pressure: { en: "The box was active for {{num.daysActive}} days. If you left it powered and isolated, you kept the evidence and its owner's attention. If you unplugged it, whoever placed it knows they have been found.", sv: "Lådan var aktiv i {{num.daysActive}} dagar. Om ni lät den vara strömsatt och isolerad behöll ni bevisen, och dess ägares uppmärksamhet. Om ni drog ur den vet den som placerade den att den har hittats." } },
+        branches: [
+          { when: { decision: "d2", option: "A" }, narrativeAppend: { en: "Because the police were told early, a uniformed patrol arrived at reception, and the story is spreading among staff.", sv: "Eftersom polisen kontaktades tidigt kom en polispatrull i uniform till receptionen, och historien sprids bland personalen." } }
+        ],
         assumptionChallenged: L(["Our badge system keeps strangers out.", "Vårt passersystem håller främlingar ute."]),
         reveals: ["hf-visit"],
         narrative: L([
@@ -217,7 +224,7 @@
         decision: dec("d3", "securityOfficer", ["What do you do now?", "Vad gör ni nu?"], [
           ["Preserve all footage, walk the visitor's route and sweep every area for devices.", "Säkra alla inspelningar, gå besökarens väg och genomsök alla utrymmen efter enheter."],
           ["Preserve the footage and wait for the police.", "Säkra inspelningarna och vänta på polisen."],
-          ["Issue a reminder about holding doors.", "Skicka ut en påminnelse om att inte hålla upp dörrar."]
+          ["Send a calm reminder about badges today and sweep the building tonight, without alarming staff during the working day.", "Skicka en lugn påminnelse om passerkort i dag och genomsök byggnaden i kväll, utan att oroa personalen under arbetsdagen."]
         ], {
           knowns: [["The visitor was inside for 39 minutes.", "Besökaren var inne i 39 minuter."]],
           uncertainties: [["Where else they went.", "Var de mer gick."]],
@@ -242,6 +249,7 @@
         title: L(["What it caught", "Vad den fångade"]),
         twist: L(["The box was not only watching. It answered login requests on the network and collected password hashes; one administrator password was cracked and used to open the HR file share. A second box is found in a meeting room.", "Lådan bara iakttog inte. Den besvarade inloggningsförfrågningar i nätverket och samlade in lösenordshashar; ett administratörslösenord knäcktes och användes för att öppna HR:s filutdelning. En andra låda hittas i ett mötesrum."]),
         twistKind: "scope",
+        reconsider: { decision: "d2", pressure: { en: "A second box has turned up in a meeting room. Whoever leads this now answers to IT, facilities and the police at once.", sv: "En andra låda har dykt upp i ett mötesrum. Den som leder arbetet svarar nu inför IT, fastighet och polisen på en gång." } },
         assumptionChallenged: L(["It only mapped the network.", "Den kartlade bara nätverket."]),
         reveals: ["hf-second"],
         narrative: L([
@@ -283,7 +291,7 @@
         decision: dec("d4", "ciso", ["How do you clean up the credentials?", "Hur städar ni upp inloggningsuppgifterna?"], [
           ["Reset every captured account, starting with administrators and the access-control system, and notify the DPA about the HR files.", "Återställ varje fångat konto, med början i administratörer och passersystemet, och anmäl HR-filerna till dataskyddsmyndigheten."],
           ["Reset the cracked administrator account only.", "Återställ bara det knäckta administratörskontot."],
-          ["Force a company-wide password change next week.", "Tvinga fram ett lösenordsbyte för hela företaget nästa vecka."]
+          ["Force a company-wide password change tonight, before you know exactly which accounts were captured.", "Tvinga fram ett lösenordsbyte för hela företaget i kväll, innan ni vet exakt vilka konton som fångades."]
         ], {
           knowns: [["One admin account was cracked and used.", "Ett administratörskonto knäcktes och användes."]],
           uncertainties: [["Which other hashes are being cracked right now.", "Vilka andra hashar som knäcks just nu."]],
@@ -346,6 +354,10 @@
         title: L(["Holding the door", "Att hålla upp dörren"]),
         twist: L(["The story spreads internally in a version where “two colleagues let a burglar in”. The two employees are on sick leave, and a local paper is asking.", "Historien sprids internt i en version där ”två kollegor släppte in en inbrottstjuv”. De två anställda är sjukskrivna, och en lokaltidning ställer frågor."]),
         twistKind: "impact",
+        reconsider: { decision: "d4", pressure: { en: "The HR files were opened with a cracked administrator password. Was your reset wide enough, and was it fast enough?", sv: "HR-filerna öppnades med ett knäckt administratörslösenord. Var er återställning tillräckligt bred, och tillräckligt snabb?" } },
+        branches: [
+          { when: { decision: "d4", option: "A" }, narrativeAppend: { en: "Because every captured account was reset, including access control, staff were locked out of the building for an hour this morning.", sv: "Eftersom varje fångat konto återställdes, även passersystemet, var personalen utelåst från byggnaden i en timme i morse." } }
+        ],
         assumptionChallenged: L(["This is a technical incident with technical fixes.", "Det här är en teknisk incident med tekniska lösningar."]),
         narrative: L([
           "{{time.T+2880|weekday|cap}}. The devices are gone, the passwords changed and the investigation is with the police. Inside the office, a different story has taken hold.\n\n{{person.hr.name}} asks for a plan before the rumours settle into the version everyone remembers. Two colleagues are at the centre of that version, and a local journalist has started asking questions.",
@@ -373,7 +385,7 @@
         decision: dec("d5", "ceo", ["How do you close this with staff?", "Hur avslutar ni det här med personalen?"], [
           ["A no-blame message from the CEO, support for the two employees, and a simple rule: everyone badges in, everyone may ask.", "Ett budskap utan skuldbeläggning från vd, stöd till de två anställda och en enkel regel: alla passerar med kort, alla får fråga."],
           ["A strict new policy with sanctions for holding doors.", "En strikt ny policy med sanktioner för att hålla upp dörrar."],
-          ["Say nothing until the rumours die down.", "Säg ingenting tills ryktena har lagt sig."]
+          ["Say nothing more internally while the police investigate; any statement could reach the local paper.", "Säg inget mer internt medan polisen utreder; varje uttalande kan nå lokaltidningen."]
         ], {
           knowns: [["The employees were polite, not careless.", "De anställda var artiga, inte slarviga."]],
           uncertainties: [["Whether staff will report the next stranger.", "Om personalen kommer att rapportera nästa främling."]],

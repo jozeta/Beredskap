@@ -114,7 +114,7 @@
         decision: dec("d1", "incidentCommander", ["What is your first move?", "Vad är ert första drag?"], [
           ["Check certificate validity across the chain before treating it as an attack.", "Kontrollera certifikatens giltighet i hela kedjan innan det behandlas som ett angrepp."],
           ["Declare a cyber attack and cut all external connections.", "Utlys ett cyberangrepp och kapa alla externa förbindelser."],
-          ["Wait for the morning team.", "Vänta på morgonens team."]
+          ["Let the on-call engineer stabilise what they can, and wake nobody else until you know what this is.", "Låt jourteknikern stabilisera det som går, och väck ingen annan förrän ni vet vad det här är."]
         ], {
           knowns: [["Everything failed at once at midnight with trust errors.", "Allt fallerade samtidigt vid midnatt med förtroendefel."]],
           uncertainties: [["Whether anything malicious is involved.", "Om något skadligt är inblandat."]],
@@ -139,6 +139,9 @@
         title: L(["A date nobody wrote down", "Ett datum ingen skrev upp"]),
         twist: L(["It isn't an attack. The certificate of your internal intermediate certificate authority expired at 00:00. Every certificate it issued is now distrusted. Nobody had it on a list.", "Det är inget angrepp. Certifikatet för er interna mellanliggande certifikatutfärdare gick ut klockan 00.00. Varje certifikat den utfärdat är nu misstrott. Ingen hade det på någon lista."]),
         twistKind: "cause",
+        branches: [
+          { when: { decision: "d1", option: "B" }, narrativeAppend: { en: "Because every external connection was cut, the night's card payments failed for two hours, and the payment partner has logged an incident against you.", sv: "Eftersom varje extern förbindelse kapades misslyckades nattens kortbetalningar i två timmar, och betalpartnern har registrerat en incident mot er." } }
+        ],
         assumptionChallenged: L(["Someone is attacking our certificate infrastructure.", "Någon angriper vår certifikatinfrastruktur."]),
         reveals: ["hf-expiry"],
         narrative: L([
@@ -192,6 +195,7 @@
         title: L(["The safe", "Kassaskåpet"]),
         twist: L(["Renewing needs the offline root certificate authority, kept in a safe with a hardware key. The two people who know the procedure are on holiday and on a flight.", "Förnyelsen kräver den frånkopplade rotcertifikatutfärdaren, som förvaras i ett kassaskåp med en hårdvarunyckel. De två personer som kan proceduren är på semester respektive på ett flyg."]),
         twistKind: "impact",
+        reconsider: { decision: "d2", pressure: { en: "Renewal needs a safe nobody can open tonight. If you refused to switch checks off, the payment integration stays down until a keyholder lands. If you switched them off, you are running without the protection the certificates exist for.", sv: "Förnyelsen kräver ett kassaskåp som ingen kan öppna i natt. Om ni vägrade stänga av kontrollerna är betalintegrationen nere tills en nyckelinnehavare landar. Om ni stängde av dem kör ni utan det skydd som certifikaten finns till för." } },
         assumptionChallenged: L(["Renewal is a quick admin task.", "Förnyelse är en snabb administrativ uppgift."]),
         reveals: ["hf-root"],
         narrative: L([
@@ -219,7 +223,7 @@
         challenges: [ch("The safe's second key is in a drawer at the departed engineer's old desk.", "Kassaskåpets andra nyckel ligger i en låda i den tidigare teknikerns gamla skrivbord.")],
         decision: dec("d3", "ciso", ["How do you get the root ceremony done?", "Hur får ni ceremonin för roten genomförd?"], [
           ["Reach a keyholder by phone, bring them in, and do the ceremony with two witnesses and a written record.", "Nå en nyckelinnehavare per telefon, ta in hen, och genomför ceremonin med två vittnen och ett skriftligt protokoll."],
-          ["Force the safe and guess the procedure.", "Bryt upp kassaskåpet och gissa proceduren."],
+          ["Have facilities open the safe tonight and follow the written procedure in the binder, without the keyholders.", "Låt fastighet öppna kassaskåpet i natt och följ den skriftliga proceduren i pärmen, utan nyckelinnehavarna."],
           ["Abandon the internal PKI and buy public certificates for everything.", "Överge den interna PKI:n och köp allmänt betrodda certifikat för allt."]
         ], {
           knowns: [["The root can only be used by its keyholders.", "Roten kan bara användas av sina nyckelinnehavare."]],
@@ -245,6 +249,10 @@
         title: L(["The fix that wasn't", "Lösningen som inte var det"]),
         twist: L(["The overnight workaround switched off certificate checking on {{num.bypassed}} systems. This morning {{num.installs}} staff ran a fake IT “certificate fix”, and one integration is sending orders to a look-alike server.", "Nattens nödlösning stängde av certifikatkontrollen på {{num.bypassed}} system. I morse körde {{num.installs}} anställda en falsk ”certifikatlösning” från IT, och en integration skickar beställningar till en efterliknande server."]),
         twistKind: "scope",
+        reconsider: { decision: "d1", pressure: { en: "Staff ran a fake “certificate fix” this morning: someone used your midnight outage as cover. Was it an attack after all, and does your first call still stand?", sv: "Personalen körde en falsk ”certifikatlösning” i morse: någon använde ert midnattsavbrott som täckmantel. Var det ett angrepp trots allt, och står ert första beslut sig?" } },
+        branches: [
+          { when: { decision: "d2", option: "B" }, narrativeAppend: { en: "Because certificate checking was switched off to keep the integrations running, the look-alike server was accepted without a single warning.", sv: "Eftersom certifikatkontrollen stängdes av för att hålla integrationerna igång accepterades den efterliknande servern utan en enda varning." } }
+        ],
         assumptionChallenged: L(["This is an outage, not a security incident.", "Det här är ett avbrott, inte en säkerhetsincident."]),
         reveals: ["hf-workaround"],
         narrative: L([
@@ -286,7 +294,7 @@
         decision: dec("d4", "ciso", ["What do you do now?", "Vad gör ni nu?"], [
           ["Turn checking back on everywhere, remove the fake root from every computer, block the look-alike host, and treat it as a security incident.", "Slå på kontrollen igen överallt, ta bort den falska roten från varje dator, blockera den efterliknande värden och behandla det som en säkerhetsincident."],
           ["Fix the one integration and leave the other workarounds until the PKI is stable.", "Laga den enda integrationen och låt de andra nödlösningarna vara tills PKI:n är stabil."],
-          ["Warn staff and let them remove the certificate themselves.", "Varna personalen och låt dem ta bort certifikatet själva."]
+          ["Warn staff with clear steps to remove the fake certificate themselves, and keep IT focused on the integrations.", "Varna personalen med tydliga steg för att själva ta bort det falska certifikatet, och låt IT fokusera på integrationerna."]
         ], {
           knowns: [["Checks are off on many systems; a fake root is installed on some computers.", "Kontrollerna är avstängda på många system; en falsk rot är installerad på en del datorer."]],
           uncertainties: [["What else the attacker intercepted.", "Vad mer angriparen fångade upp."]],
@@ -349,6 +357,10 @@
         title: L(["Every date", "Varje datum"]),
         twist: L(["A full search finds {{num.systems}} certificates in use across the company. Forty expire in the next ninety days; nobody owns most of them.", "En fullständig genomsökning hittar {{num.systems}} certifikat i bruk i företaget. Fyrtio går ut inom nittio dagar; de flesta saknar ägare."]),
         twistKind: "impact",
+        reconsider: { decision: "d4", pressure: { en: "The payment partner wants independent confirmation before reconnecting. Was your clean-up thorough enough to show them?", sv: "Betalpartnern vill ha en oberoende bekräftelse innan de kopplar upp igen. Var er sanering tillräckligt grundlig för att visa upp?" } },
+        branches: [
+          { when: { decision: "d3", option: "A" }, narrativeAppend: { en: "Because a keyholder was called back from holiday, they arrived exhausted, and the ceremony record has two errors the auditor will find.", sv: "Eftersom en nyckelinnehavare kallades tillbaka från semestern kom hen utmattad, och ceremoniprotokollet har två fel som revisorn kommer att hitta." } }
+        ],
         assumptionChallenged: L(["It was one forgotten certificate.", "Det var ett bortglömt certifikat."]),
         narrative: L([
           "{{time.T+4320|weekday|cap}}. {{person.itOps.name}} presents the results of a full search for certificates across the company, something nobody had done before.\n\nThe midnight failure was one certificate that nobody had on a list. The search shows how many more there are, and how many dates are waiting in the next few months.",
@@ -375,7 +387,7 @@
         challenges: [ch("Two of the expiring certificates belong to a system nobody admits to running.", "Två av certifikaten som går ut tillhör ett system som ingen säger sig driva.")],
         decision: dec("d5", "cio", ["What do you change?", "Vad ändrar ni?"], [
           ["One owner for certificates and keys, an inventory with alerts, automatic renewal where possible, and two trained keyholders more.", "En ägare för certifikat och nycklar, en förteckning med larm, automatisk förnyelse där det går och två utbildade nyckelinnehavare till."],
-          ["Put the expiry dates in a shared calendar.", "Lägg utgångsdatumen i en gemensam kalender."],
+          ["Put every expiry date in a shared calendar with reminders to named owners, starting this week.", "Lägg varje utgångsdatum i en gemensam kalender med påminnelser till utsedda ägare, med start den här veckan."],
           ["Buy longer-lived certificates.", "Köp certifikat med längre livslängd."]
         ], {
           knowns: [["Most certificates have no owner.", "De flesta certifikat saknar ägare."]],
