@@ -152,6 +152,36 @@
         customer: svc({ en: "Customer service and outage alerts", sv: "Kundtjänst och driftinformation" }, 8, 4, ["web", "telephony"])
       },
       crownJewels: { en: "process control systems for water and heat", sv: "processtyrningen för vatten och värme" }
+    },
+    insurance: {
+      model: { en: "property, motor and cyber insurance for households and businesses", sv: "sak-, motor- och cyberförsäkring för hushåll och företag" },
+      services: {
+        primary: svc({ en: "Claims handling and payouts", sv: "Skadereglering och utbetalningar" }, 24, 4, ["database", "erp", "payments", "web"]),
+        secondary: svc({ en: "Policy administration and pricing", sv: "Försäkringsadministration och prissättning" }, 48, 24, ["database", "erp", "identity"]),
+        support: svc({ en: "Broker and partner portal", sv: "Mäklar- och partnerportalen" }, 8, 4, ["web", "identity", "cloud"]),
+        customer: svc({ en: "Customer service and claims line", sv: "Kundtjänst och skadeanmälan" }, 8, 4, ["telephony", "web", "email"])
+      },
+      crownJewels: { en: "policyholder records, claims and health data, and payout accounts", sv: "försäkringstagarnas uppgifter, skade- och hälsodata samt utbetalningskonton" }
+    },
+    media: {
+      model: { en: "regional news published online, in print and in an app", sv: "regionala nyheter som publiceras på webben, i tryck och i en app" },
+      services: {
+        primary: svc({ en: "Publishing system and news site", sv: "Publiceringssystemet och nyhetssajten" }, 2, 0.5, ["web", "cloud", "identity"]),
+        secondary: svc({ en: "Print production", sv: "Tryckproduktion" }, 8, 4, ["fileServers", "network", "ot"]),
+        support: svc({ en: "Subscriptions and advertising", sv: "Prenumerationer och annonser" }, 24, 8, ["payments", "database", "web"]),
+        customer: svc({ en: "Reader app and newsletters", sv: "Läsarappen och nyhetsbreven" }, 8, 4, ["cloud", "email", "web"])
+      },
+      crownJewels: { en: "unpublished stories, source material and the publishing system", sv: "opublicerade artiklar, källmaterial och publiceringssystemet" }
+    },
+    government: {
+      model: { en: "national benefits and public registers for every resident", sv: "statliga ersättningar och offentliga register för alla invånare" },
+      services: {
+        primary: svc({ en: "Benefit payments", sv: "Utbetalning av ersättningar" }, 24, 0, ["payments", "database", "erp"]),
+        secondary: svc({ en: "Population and protected-identity registers", sv: "Folkbokförings- och skyddsregister" }, 8, 0, ["database", "identity", "network"]),
+        support: svc({ en: "Case management", sv: "Ärendehantering" }, 24, 4, ["database", "identity", "fileServers"]),
+        customer: svc({ en: "E-services and contact centre", sv: "E-tjänster och kontaktcenter" }, 8, 4, ["web", "telephony", "identity"])
+      },
+      crownJewels: { en: "personal data on every resident, including protected identities, and the payment files", sv: "personuppgifter om alla invånare, inklusive skyddade identiteter, och utbetalningsfilerna" }
     }
   };
 

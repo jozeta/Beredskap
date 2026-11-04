@@ -90,7 +90,10 @@
     education: { sv: ["{core} Utbildning AB", "{core} Friskolor AB", "{core} Yrkeshögskola AB"], en: ["{core} Education Trust", "{core} Learning Group", "{core} College Ltd"] },
     transport: { sv: ["{core} Trafik AB", "{core} Buss & Tåg AB", "{core} Färjelinjer AB"], en: ["{core} Transit Ltd", "{core} Rail Group", "{core} Ferries Ltd"] },
     technology: { sv: ["{core} Systems AB", "{core} Digital AB", "{core} IT-tjänster AB"], en: ["{core} Systems Ltd", "{core} Digital Group", "{core} Software Ltd"] },
-    utilities: { sv: ["{core} Vatten AB", "{core} Miljö & Vatten AB", "{core} Fjärrvärme AB"], en: ["{core} Water Ltd", "{core} Utilities Group", "{core} Heat & Water Ltd"] }
+    utilities: { sv: ["{core} Vatten AB", "{core} Miljö & Vatten AB", "{core} Fjärrvärme AB"], en: ["{core} Water Ltd", "{core} Utilities Group", "{core} Heat & Water Ltd"] },
+    insurance: { sv: ["{core} Försäkring AB", "{core} Ömsesidig Försäkring", "{core} Sakförsäkring AB"], en: ["{core} Insurance Ltd", "{core} Mutual", "{core} Assurance Group"] },
+    media: { sv: ["{core} Media AB", "{core} Nyheter AB", "{core}-Tidningen AB"], en: ["{core} Media Group", "The {core} Herald", "{core} News Ltd"] },
+    government: { sv: ["{core}verket", "{core}myndigheten", "Statens {core}nämnd"], en: ["National {core} Agency", "{core} Authority", "The {core} Office"] }
   };
 
   const cities = {

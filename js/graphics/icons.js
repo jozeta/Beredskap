@@ -243,7 +243,16 @@
     "restore-day": ["database", "check"],
     "time-sync": ["clock", "wifi-off"],
     "grey-zone": ["flag", "network"],
-    "ai-agent": ["robot", "card"]
+    "ai-agent": ["robot", "card"],
+    "claims-fraud": ["coins", "shield"],
+    "underwriting-ai": ["robot", "scale"],
+    "insurer-ransomware": ["skull-lock", "shield"],
+    "source-protection": ["user-secret", "eye"],
+    "election-night": ["newspaper", "power"],
+    "newsroom-hijack": ["newspaper", "warning"],
+    "benefits-outage": ["coins", "clock"],
+    "public-warning-spoof": ["megaphone", "wifi-off"],
+    "protected-identity": ["user-secret", "lock"]
   };
 
   function emblemMarkup(main, badge) {

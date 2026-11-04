@@ -19,7 +19,7 @@
       // branching exercises
       "data-loss", "saas-provider", "api-abuse", "brand-hijack", "ai-abuse", "extortion", "payment-card", "water-utility", "sim-swap", "regional-crisis",
       "cloud-destruction", "physical-intrusion", "vulnerability-disclosure", "acquisition", "certificate-expiry",
-      "policy-breach", "misdirected-data", "whistleblowing", "insider-data-theft", "insider-sabotage", "cryptomining", "resource-misuse", "dependency-compromise", "dependency-confusion", "browser-extension", "oauth-consent", "supplier-outage", "disaster-recovery", "recovery-test", "time-sync", "hybrid-threat", "agentic-ai"
+      "policy-breach", "misdirected-data", "whistleblowing", "insider-data-theft", "insider-sabotage", "cryptomining", "resource-misuse", "dependency-compromise", "dependency-confusion", "browser-extension", "oauth-consent", "supplier-outage", "disaster-recovery", "recovery-test", "time-sync", "hybrid-threat", "agentic-ai", "claims-fraud", "underwriting-ai", "insurer-ransomware", "source-protection", "election-night", "newsroom-hijack", "benefits-outage", "public-warning-spoof", "protected-identity"
     ],
 
     // Spec section 13. Template `archetype` strings map to a letter for display and filtering.
@@ -34,7 +34,7 @@
 
     sectors: [
       "logistics", "retail", "manufacturing", "energy", "healthcare", "finance",
-      "public", "telecom", "education", "transport", "technology", "utilities"
+      "public", "telecom", "education", "transport", "technology", "utilities", "insurance", "media", "government"
     ],
 
     difficulties: ["introductory", "intermediate", "advanced", "executive"],
