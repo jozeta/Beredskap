@@ -520,6 +520,80 @@
       assert.equal(S().apply(shown, { type: "gotoStage", index: 2 }, T0).activeChallenge, null, "jumping clears it");
     });
 
+    test("after a challenge the room can change its mind; the new choice is recorded and reported", () => {
+      const ex = exercise({ stageCount: 8 });
+      let s = S().create(ex, T0);
+      const [first, second] = ex.stages[0].decision.options;
+      s = S().apply(s, { type: "decision", decisionId: "d1", entry: { option: first.key, text: "" } }, T0);
+      s = S().apply(s, { type: "challengeShow", key: "d1", index: 0 }, T0);
+      const p = S().project(s, T0);
+      assert.equal(p.challenge.choice.text, first.text.en, "the card shows the room's current choice");
+      assert.ok(BK.ui.stageRenderer.renderCanvas(p, { preview: true }).textContent.includes(first.text.en));
+      assert.equal(S().apply(s, { type: "challengeChange", key: "d1", option: first.key }, T0), s, "same option is no change");
+      const c = S().apply(s, { type: "challengeChange", key: "d1", option: second.key }, T0);
+      assert.equal(c.decisions.d1.option, second.key, "new choice recorded");
+      assert.ok(c.challenges.d1.outcome === "changed" && c.challenges.d1.from === first.key && c.challenges.d1.changedTo === second.key);
+      assert.equal(c.activeChallenge, null, "card leaves the stage");
+      assert.equal(BK.io.export.report(c, "en").challenges[0].changed, first.key + " → " + second.key);
+      assert.equal(BK.io.import.validate(BK.io.export.toJSON(ex, c)).session.challenges.d1.changedTo, second.key);
+    });
+
+    test("interrupts follow what the room chose or did not choose, change the exercise and stay in play", () => {
+      const ex = exercise({ stageCount: 8, meters: true });
+      const disc = (s) => S().slides(s).find((x) => x.type === "discussion" && x.stageId === "p1");
+      let s = S().create(ex, T0);
+      assert.deepEqual(S().interruptOptions(s, "en"), [], "nothing before the first stage");
+      s = S().apply(s, { type: "gotoSlide", slideId: disc(s).id }, T0);
+      let opts = S().interruptOptions(s, "en");
+      assert.deepEqual(opts.map((x) => x.id), ["i1", "i2"], "both offered before the room decides");
+      assert.ok(opts.every((x) => !x.decided && x.trigger.option));
+      // Nothing an interrupt could say reaches the stage before it is played.
+      const unplayed = JSON.stringify(S().project(s, T0));
+      opts.forEach((x) => x.outcomes.forEach((o) => assert.ok(!unplayed.includes(o.text), "unplayed interrupt on stage")));
+      const byAuthored = (k) => ex.stages[0].decision.options.find((o) => o.authored === k);
+      // Chose B: only the "chosen B" interrupt fits. Did not choose B: only the other one.
+      const choseB = S().apply(s, { type: "decision", decisionId: "d1", entry: { option: byAuthored("B").key, text: "" } }, T0);
+      assert.deepEqual(S().interruptOptions(choseB, "en").map((x) => x.id), ["i1"]);
+      const choseA = S().apply(s, { type: "decision", decisionId: "d1", entry: { option: byAuthored("A").key, text: "" } }, T0);
+      opts = S().interruptOptions(choseA, "en");
+      assert.deepEqual(opts.map((x) => x.id), ["i2"]);
+      // Play an outcome that reopens the decision and moves a meter.
+      const ir = ex.stages[0].decision.interrupts.find((x) => x.id === "i2");
+      const k = ir.outcomes.findIndex((o) => o.reopen && o.meters);
+      const trust = S().meterValues(choseA).find((m) => m.id === "trust").value;
+      const f = S().apply(choseA, { type: "interruptFire", key: "d1", id: "i2", outcome: k }, T0);
+      assert.equal(f.decisions.d1.option, null, "the room must decide again");
+      assert.equal(f.decisions.d1.reopenedFrom, byAuthored("A").key);
+      assert.equal(S().meterValues(f).find((m) => m.id === "trust").value, trust + ir.outcomes[k].meters.trust);
+      const p = S().project(f, T0);
+      assert.ok(p.interrupt.text === ir.outcomes[k].text.en && p.interrupt.reopened);
+      assert.deepEqual(p.facts, [ir.outcomes[k].fact.en], "its fact stays in play");
+      assert.ok(BK.ui.stageRenderer.renderCanvas(p, { preview: true }).textContent.includes(ir.outcomes[k].text.en));
+      assert.equal(S().apply(f, { type: "interruptFire", key: "d1", id: "i2", outcome: 0 }, T0), f, "each interrupt plays once");
+      const later = S().apply(f, { type: "next" }, T0);
+      assert.equal(later.activeInterrupt, null, "moving on takes it off the stage");
+      assert.deepEqual(S().project(later, T0).facts, [ir.outcomes[k].fact.en], "the fact remains");
+      const row = BK.io.export.report(f, "en").interrupts[0];
+      assert.ok(row.reopened && row.fact === ir.outcomes[k].fact.en);
+      assert.ok(BK.io.export.markdown(f, "en").includes("Interrupts"));
+      assert.equal(BK.io.import.validate(BK.io.export.toJSON(ex, f)).session.interrupts["d1/i2"].outcome, k);
+      const bad = JSON.parse(BK.io.export.toJSON(ex, f));
+      bad.session.interrupts["d1/i2"].outcome = 9;
+      assert.throws(() => BK.io.import.validate(JSON.stringify(bad)), "unknown outcome accepted");
+    });
+
+    test("every decision point of every scenario has two interrupts that cover every option", () => {
+      const bad = [];
+      BK.scenarios.list().forEach((tpl) => {
+        const points = tpl.format === "branching" ? tpl.pages.filter((pg) => pg.choice).map((pg) => [pg.id, pg.interrupts, pg.choice.options]) : tpl.stages.filter((st) => st.decision).map((st) => [st.decision.id, st.decision.interrupts, st.decision.options]);
+        points.forEach(([id, irs, options]) => {
+          const ok = (irs || []).length === 2 && options.every((o) => irs.some((ir) => (ir.when.chosen ? ir.when.chosen === o.key : ir.when.notChosen !== o.key)));
+          if (!ok) bad.push(tpl.id + " › " + id);
+        });
+      });
+      assert.deepEqual(bad.slice(0, 10), [], bad.length + " decision points without two covering interrupts");
+    });
+
     test("every scenario has three bilingual challenges for every option of every decision point", () => {
       const missing = [];
       BK.scenarios.list().forEach((tpl) => {

@@ -59,6 +59,7 @@
       "div",
       { class: "fx-form" },
       el("p", { class: "pres-decision__q", text: BK.loc(d.question) }),
+      log.reopenedFrom && !log.option ? el("p", { class: "notice notice--warn small", text: t("interrupt.reopenedNotice", { option: log.reopenedFrom }) }) : null,
       d.options.length
         ? c.segmented({
             label: t("presenter.decisionOption"),

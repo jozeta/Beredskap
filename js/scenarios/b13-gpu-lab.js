@@ -12,7 +12,7 @@
   "use strict";
 
   const BK = window.BK;
-  const { L, q, inj, act, kpi, pg, ask, opt, pb, end, vr, rt } = BK.scenarios.h;
+  const { L, q, inj, act, kpi, pg, ask, opt, pb, end, vr, rt, ir, io } = BK.scenarios.h;
 
   BK.scenarios.register({
     id: "b13-gpu-lab",
@@ -97,7 +97,19 @@
               pb(["The lab was not asked", "Labbet tillfrågades inte"], ["The research director objects that freedom to run long jobs is part of why people work in the lab, and the decision was taken in a facilities meeting without them. They want it reversed until someone explains why. Who did you consult before switching off a research lab?", "Forskningschefen invänder att friheten att köra långa jobb är en del av varför folk jobbar i labbet, och att beslutet togs på ett fastighetsmöte utan dem. Hen vill att det rivs upp tills någon förklarar varför. Vem rådfrågade ni innan ni stängde av ett forskningslabb?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The quiet log pull", "Den tysta loggkontrollen"], [
+            io(["The logs are complete", "Loggarna är kompletta"], ["The export comes back complete: months of job and login records, untouched. Nobody in the lab seems to have noticed that you asked.", "Uttaget kommer tillbaka komplett: månader av jobb- och inloggningsposter, orörda. Ingen i labbet verkar ha märkt att ni frågade."], ["A full copy of the cluster logs was taken before anyone was warned.", "En fullständig kopia av klustrets loggar togs innan någon varnades."]),
+            io(["HR asks who authorised it", "HR frågar vem som beslutade"], ["HR hears that security is reading named researchers' logins because of a power bill. They want to know who authorised it, and ask you to pause until someone signs.", "HR får höra att säkerhet läser namngivna forskares inloggningar på grund av en elräkning. De vill veta vem som beslutade det och ber er pausa tills någon skriver under."], ["HR has asked who authorised reading staff login records.", "HR har frågat vem som beslutade att läsa personalens inloggningar."], { reopen: true }),
+            io(["Hot again tonight", "Varmt igen i natt"], ["While you read, the cluster runs hot again overnight. Facilities says a third alarm would put the hardware at risk, and asks how long the quiet approach will take.", "Medan ni läser går klustret varmt igen under natten. Fastighet säger att ett tredje larm skulle sätta hårdvaran i fara och frågar hur lång tid den tysta vägen tar."], ["The cluster ran hot again during the quiet review.", "Klustret gick varmt igen under den tysta granskningen."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["No records secured", "Inga register säkrade"], [
+            io(["The records roll over", "Registren skrivs över"], ["{{person.itOps.name}} warns that the scheduler keeps job records only for a limited time, and nobody has copied them. The oldest nights roll off at the end of the week.", "{{person.itOps.name}} varnar för att schemaläggaren bara sparar jobbposter en begränsad tid, och ingen har kopierat dem. De äldsta nätterna försvinner i slutet av veckan."], ["The oldest job records roll off at the end of the week unless copied.", "De äldsta jobbposterna försvinner i slutet av veckan om de inte kopieras."], { reopen: true }),
+            io(["The lab hears of it", "Labbet får höra det"], ["The research director learns that the lab's nights were discussed in a facilities meeting without them, and asks why nobody from the lab was invited.", "Forskningschefen får veta att labbets nätter diskuterades på ett fastighetsmöte utan dem, och frågar varför ingen från labbet bjöds in."], ["The research director knows the lab's night use is being discussed.", "Forskningschefen vet att labbets nattanvändning diskuteras."]),
+            io(["Only the graph", "Bara diagrammet"], ["Facilities asks for the cluster's records to match against the power graph. Nobody has them yet, so the graph is still the only evidence of anything at all.", "Fastighet ber om klustrets register för att jämföra med eldiagrammet. Ingen har dem än, så diagrammet är fortfarande det enda belägget för något överhuvudtaget."], ["The power graph was still the only evidence after the first day.", "Eldiagrammet var fortfarande det enda belägget efter första dagen."])
+          ])
+        ]
       }),
 
       pg("c2", ["Jobs nobody booked", "Jobb som ingen bokade"], [
@@ -137,7 +149,19 @@
               pb(["Meanwhile, port 3333", "Under tiden, port 3333"], ["The CISO points out that while you plan a careful conversation, the proxy talking to the internet on port 3333 stays up, and nobody knows what it is. A talk tomorrow does nothing about it. Is the conversation really the first priority?", "CISO påpekar att medan ni planerar ett försiktigt samtal står proxyn som pratar med internet på port 3333 kvar, och ingen vet vad den är. Ett samtal i morgon gör ingenting åt den. Är samtalet verkligen det första som ska göras?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The formal case opens", "Det formella ärendet öppnas"], [
+            io(["A solid file", "Ett stabilt underlag"], ["IT copies the job records before anything is touched, and HR has a case file ready by evening. Legal says the process looks solid on paper.", "IT kopierar jobbposterna innan något rörs, och HR har ett ärende klart till kvällen. Juristen säger att processen ser stabil ut på papperet."], ["A formal HR case is open, with copied job records behind it.", "Ett formellt HR-ärende är öppnat, med kopierade jobbposter som underlag."]),
+            io(["They must be told", "Hen måste informeras"], ["HR's rules say the data scientist must be told about the case within a day and offered a representative. That will happen before the proxy has been traced.", "HR:s regler säger att dataanalytikern ska informeras om ärendet inom ett dygn och erbjudas ett ombud. Det sker innan proxyn har spårats."], ["The data scientist must be told about the HR case within a day.", "Dataanalytikern ska informeras om HR-ärendet inom ett dygn."], { reopen: true }),
+            io(["One more night", "En natt till"], ["Legal wants nothing touched until the evidence is copied, so the jobs run again tonight on all {{num.gpus}} GPUs. The cooling log shows another hot night.", "Juristen vill att inget rörs förrän bevisen är kopierade, så jobben körs igen i natt på alla {{num.gpus}} GPU:er. Kylloggen visar ännu en varm natt."], ["The mining ran one more night while the case was prepared.", "Kryptobrytningen pågick en natt till medan ärendet förbereddes."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["No formal process yet", "Ingen formell process än"], [
+            io(["The folder changed", "Mappen ändrades"], ["IT notices that the miner's script folder was modified overnight. Nobody had copied it, so nobody can say what changed or who changed it.", "IT märker att mappen med brytningsskriptet ändrades under natten. Ingen hade kopierat den, så ingen kan säga vad som ändrades eller av vem."], ["The miner's script folder changed overnight before anyone copied it.", "Mappen med brytningsskriptet ändrades under natten innan någon kopierat den."]),
+            io(["HR hears it second-hand", "HR får höra det i andra hand"], ["HR hears about the miner from IT operations, not from you, and asks why it was left out. It wants the decision taken again with HR in the room.", "HR får höra om kryptobrytningen från IT-drift, inte från er, och frågar varför de hölls utanför. De vill att beslutet fattas om med HR i rummet."], ["HR heard about the case from IT operations, not from the crisis team.", "HR fick höra om ärendet från IT-drift, inte från krisledningen."], { reopen: true }),
+            io(["Business as usual", "Allt som vanligt"], ["The data scientist works normally the next day and says nothing. Either they have not noticed anything, or they are waiting to see what you know.", "Dataanalytikern arbetar som vanligt nästa dag och säger ingenting. Antingen har hen inte märkt något, eller så väntar hen på att se vad ni vet."], ["The data scientist said nothing about the night jobs the next day.", "Dataanalytikern sa ingenting om nattjobben dagen efter."])
+          ])
+        ]
       }),
 
       pg("l1", ["The pool", "Poolen"], [
@@ -162,7 +186,19 @@
               pb(["A helpdesk ticket", "Ett ärende till supporten"], ["The data scientist files a helpdesk ticket: their “training jobs” have lost their network connection since last night. The helpdesk asks you what to answer. Do you let them lie, tell the truth, or ignore the ticket, and what does each say about your plan?", "Dataanalytikern skickar ett ärende till supporten: hens ”träningsjobb” har tappat nätverket sedan i går kväll. Supporten frågar er vad de ska svara. Låter ni dem ljuga, säga sanningen eller ignorera ärendet, och vad säger vart och ett om er plan?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The tunnel is closed", "Tunneln är stängd"], [
+            io(["Mining traffic only", "Bara brytningstrafik"], ["The first pass over the tunnel's traffic shows nothing but mining. The SOC is relieved, but points out that the oldest weeks were never logged.", "Den första genomgången av tunnelns trafik visar inget annat än kryptobrytning. SOC är lättade, men påpekar att de äldsta veckorna aldrig loggades."], ["The first pass found only mining traffic; the oldest weeks were never logged.", "Första genomgången hittade bara brytningstrafik; de äldsta veckorna loggades aldrig."]),
+            io(["The CIO wants it smaller", "CIO vill krympa det"], ["The outside forensic firm quotes several weeks and a large fee to check months of traffic. {{person.cio.name}} asks whether a crypto miner justifies that and wants the scope cut.", "Den externa forensiska firman räknar med flera veckor och ett stort arvode för att gå igenom månader av trafik. {{person.cio.name}} frågar om en kryptobrytare motiverar det och vill skära ner omfattningen."], ["The CIO wants the tunnel check cut down.", "CIO vill skära ner kontrollen av tunneln."], { reopen: true }),
+            io(["A helpdesk ticket", "Ett ärende till supporten"], ["Within hours the data scientist files a helpdesk ticket: their “training jobs” have lost network access. They have noticed, before HR has spoken to them.", "Inom några timmar skickar dataanalytikern ett ärende till supporten: hens ”träningsjobb” har tappat nätverket. Hen har märkt det innan HR har pratat med hen."], ["The data scientist has noticed that the jobs lost network access.", "Dataanalytikern har märkt att jobben tappat nätverket."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["The tunnel stays", "Tunneln står kvar"], [
+            io(["A new address", "En ny adress"], ["The next night the miner reaches the same pool through a different address. The block held for about an hour.", "Natten efter når brytningsprogrammet samma pool via en annan adress. Blockeringen höll i ungefär en timme."], ["The miner reconnected through a new pool address after the block.", "Brytningsprogrammet anslöt via en ny pooladress efter blockeringen."], { reopen: true }),
+            io(["The SOC lead's note", "SOC-chefens anteckning"], ["{{person.socLead.name}} writes into the incident log that they advised closing the tunnel, because it works in both directions and the block does not touch it.", "{{person.socLead.name}} skriver in i incidentloggen att hen rådde er att stänga tunneln, eftersom den fungerar åt båda hållen och blockeringen inte rör den."], ["The SOC lead's advice to close the tunnel is on record.", "SOC-chefens råd att stänga tunneln finns dokumenterat."]),
+            io(["Almost silent", "Nästan tyst"], ["After the block the tunnel carries almost no traffic. Some in the room take this as proof that the problem is solved.", "Efter blockeringen går nästan ingen trafik genom tunneln. Några i rummet ser det som ett bevis på att problemet är löst."], ["The tunnel was nearly silent in the days after the pool was blocked.", "Tunneln var nästan tyst dagarna efter att poolen blockerats."])
+          ])
+        ]
       }),
 
       pg("c3", ["How much?", "Hur mycket?"], [
@@ -190,7 +226,19 @@
               pb(["The slow jobs are missing", "De långsamma jobben saknas"], ["Facilities notes that the estimate leaves out the three research jobs that ran slowly, because nobody knew how to price them. Their owners may ask why their lost weeks are not in the record. Will a rough number later look like you played it down?", "Fastighet påpekar att uppskattningen utelämnar de tre forskningsjobben som gick långsamt, eftersom ingen visste hur de skulle prissättas. De som äger jobben kan fråga varför deras förlorade veckor inte finns med. Kommer en grov siffra senare att se ut som att ni tonade ner det?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Documenting the cost", "Kostnaden dokumenteras"], [
+            io(["Finance books it", "Ekonomi bokför den"], ["Finance accepts the sourced figure of around {{num.cost|currency}} and books it as a loss. Legal says it will stand up to questions.", "Ekonomi godtar den styrkta siffran på omkring {{num.cost|currency}} och bokför den som en förlust. Juristen säger att den håller för frågor."], ["Finance has booked the documented cost as a loss.", "Ekonomi har bokfört den dokumenterade kostnaden som en förlust."]),
+            io(["The wear figure falls", "Slitagesiffran faller"], ["The hardware supplier will not confirm the GPU wear estimate, the largest part of the total. Without it, the sourced figure drops sharply.", "Hårdvaruleverantören vill inte bekräfta uppskattningen av slitaget på GPU:erna, den största delen av summan. Utan den sjunker den styrkta siffran kraftigt."], ["The supplier would not confirm the GPU wear estimate.", "Leverantören ville inte bekräfta uppskattningen av GPU-slitaget."], { reopen: true }),
+            io(["More people know", "Fler vet"], ["Gathering sources pulled in finance, facilities and two research leads. By evening, more people know who is involved than the crisis team.", "Att samla underlag drog in ekonomi, fastighet och två forskningsledare. Till kvällen vet fler än krisledningen vem det gäller."], ["More people than the crisis team now know who is involved.", "Fler än krisledningen vet nu vem det gäller."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["A rough number", "En grov siffra"], [
+            io(["Finance won't book it", "Ekonomi bokför den inte"], ["Finance will not record a loss based on a meeting note; the auditors would ask where it came from. Without a booked figure, there is nothing formal to claim back.", "Ekonomi vägrar bokföra en förlust som bygger på en mötesanteckning; revisorerna skulle fråga var den kommer ifrån. Utan en bokförd siffra finns inget formellt att kräva tillbaka."], ["Finance has refused to book the rough estimate.", "Ekonomi har vägrat bokföra den grova uppskattningen."], { reopen: true }),
+            io(["Good enough", "Gott nog"], ["{{person.cio.name}} accepts the rough figure and says it is high enough to make the point. Nobody asks how it was reached, for now.", "{{person.cio.name}} godtar den grova siffran och säger att den är tillräckligt hög för att göra poängen. Ingen frågar hur den togs fram, än så länge."], ["The CIO accepted the rough estimate without asking how it was made.", "CIO godtog den grova uppskattningen utan att fråga hur den togs fram."]),
+            io(["The slow jobs are missing", "De långsamma jobben saknas"], ["A research lead asks why the three slowed research jobs are not in the estimate. Nobody knew how to price them, so they were left out.", "En forskningsledare frågar varför de tre försenade forskningsjobben inte finns med i uppskattningen. Ingen visste hur de skulle prissättas, så de utelämnades."], ["The rough estimate leaves out the three slowed research jobs.", "Den grova uppskattningen utelämnar de tre försenade forskningsjobben."])
+          ])
+        ]
       }),
 
       pg("c3b", ["The conversation", "Samtalet"], [
@@ -214,7 +262,19 @@
               pb(["Last year's warning", "Fjolårets varning"], ["HR reminds you that last year a technician got a formal written warning for using a company van for a private move. That case was smaller and handled strictly. How do you explain to staff why this one was settled with a handshake?", "HR påminner om att en tekniker förra året fick en formell skriftlig varning för att ha använt en firmabil till en privat flytt. Det ärendet var mindre och hanterades strikt. Hur förklarar ni för personalen varför det här löstes med ett handslag?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["A formal process follows", "En formell process följer"], [
+            io(["They agree to it", "Hen går med på det"], ["The data scientist nods, thanks you for being straight, and agrees to a meeting with HR and a representative this week.", "Dataanalytikern nickar, tackar för att ni är raka och går med på ett möte med HR och ett ombud den här veckan."], ["The data scientist has agreed to a formal meeting with HR this week.", "Dataanalytikern har gått med på ett formellt möte med HR den här veckan."]),
+            io(["They stop talking", "Hen slutar prata"], ["At the words “formal process”, the data scientist asks for a union representative and says nothing more, including about the colleague who “borrowed the script”.", "Vid orden ”formell process” ber dataanalytikern om ett fackligt ombud och säger inget mer, inte heller om kollegan som ”lånade skriptet”."], ["The data scientist will say nothing more without a union representative.", "Dataanalytikern säger inget mer utan ett fackligt ombud."], { reopen: true }),
+            io(["The manager objects", "Chefen invänder"], ["Their manager says four good years and an immediate confession should count, and that the whole lab is watching how honesty is treated.", "Hens chef menar att fyra bra år och ett omedelbart erkännande borde räknas, och att hela labbet ser hur ärlighet bemöts."], ["The data scientist's manager has objected to a formal process.", "Dataanalytikerns chef har invänt mot en formell process."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Settled with a handshake", "Löst med ett handslag"], [
+            io(["Relief all round", "Lättnad överallt"], ["The data scientist thanks you, visibly relieved, and promises to pay for the electricity. The room feels it handled a difficult moment kindly.", "Dataanalytikern tackar er, synbart lättad, och lovar att betala för elen. Rummet känner att det hanterade ett svårt ögonblick vänligt."], ["The data scientist has promised to pay for the electricity.", "Dataanalytikern har lovat att betala för elen."]),
+            io(["HR finds out", "HR får veta"], ["HR learns that the matter was closed in a meeting room without them, and points out that a technician got a formal warning last year for far less.", "HR får veta att ärendet avslutades i ett mötesrum utan dem, och påpekar att en tekniker fick en formell varning förra året för betydligt mindre."], ["HR has objected to the case being closed informally.", "HR har invänt mot att ärendet avslutades informellt."], { reopen: true }),
+            io(["Who borrowed it?", "Vem lånade det?"], ["Nobody asked who “borrowed the script”. IT cannot tell from the data scientist's account alone whether anyone else is still running it.", "Ingen frågade vem som ”lånade skriptet”. IT kan inte avgöra utifrån dataanalytikerns konto om någon annan fortfarande kör det."], ["Nobody yet knows who borrowed the script.", "Ingen vet ännu vem som lånade skriptet."])
+          ])
+        ]
       }),
 
       pg("c4", ["A second account", "Ett andra konto"], [
@@ -245,7 +305,19 @@
               pb(["Other interns are watching", "Andra praktikanter ser på"], ["There are four other interns in the lab, and they know what happened. HR asks what rule now applies to them: if one intern can run a miner without consequence, what do you tell the others?", "Det finns fyra andra praktikanter i labbet, och de vet vad som hänt. HR frågar vilken regel som nu gäller för dem: om en praktikant kan köra kryptobrytning utan följder, vad säger ni till de andra?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Same rules for both", "Samma regler för båda"], [
+            io(["HR says it will hold", "HR säger att det håller"], ["HR reviews the approach and says equal rules, weighed by who led and who followed, is the version most likely to survive a later challenge.", "HR går igenom upplägget och säger att samma regler, vägda efter vem som ledde och vem som följde, är den version som mest troligt håller vid en senare prövning."], ["HR considers the equal-rules approach defensible.", "HR bedömer att likabehandlingen går att försvara."]),
+            io(["The university calls", "Universitetet ringer"], ["The intern's university supervisor says any formal sanction must be reported to the school and could cost the intern their degree credits. The same rule lands very unequally.", "Praktikantens handledare på universitetet säger att varje formell påföljd måste rapporteras till skolan och kan kosta praktikanten studiepoängen. Samma regel slår väldigt olika."], ["A formal sanction would be reported to the intern's university.", "En formell påföljd skulle rapporteras till praktikantens universitet."], { reopen: true }),
+            io(["“A benchmark”", "”Ett prestandatest”"], ["The intern says they were told the script was a GPU benchmark and never knew it mined anything. You cannot show what they understood.", "Praktikanten säger att hen fick höra att skriptet var ett prestandatest för GPU:erna och aldrig visste att det bröt något. Ni kan inte visa vad hen förstod."], ["The intern says they believed the script was a benchmark.", "Praktikanten säger att hen trodde att skriptet var ett prestandatest."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Two different outcomes", "Två olika utfall"], [
+            io(["Colleagues notice", "Kollegorna märker det"], ["By lunch, people are asking HR why the two are being handled so differently. There is no comfortable answer to give them.", "Vid lunch frågar folk HR varför de två hanteras så olika. Det finns inget bekvämt svar att ge dem."], ["Staff have noticed that the two are being treated differently.", "Personalen har märkt att de två behandlas olika."]),
+            io(["The first argument", "Det första argumentet"], ["The senior's representative argues that the other account ran the same script with a different outcome, and that this alone makes the case against their member unfair.", "Seniorns ombud menar att det andra kontot körde samma skript med ett annat utfall, och att det ensamt gör ärendet mot deras medlem orättvist."], ["The representative is using the unequal treatment as their first argument.", "Ombudet använder den olika behandlingen som sitt första argument."], { reopen: true }),
+            io(["One less problem", "Ett problem mindre"], ["{{person.cio.name}} says the intern's part is now off the table and the room can focus on the senior. It feels like progress.", "{{person.cio.name}} säger att praktikantens del nu är avklarad och att rummet kan fokusera på seniorn. Det känns som ett steg framåt."], ["The CIO considers the intern's part settled.", "CIO anser att praktikantens del är avklarad."])
+          ])
+        ]
       }),
 
       pg("l2", ["The policy", "Riktlinjerna"], [
@@ -269,7 +341,19 @@
               pb(["Legal won't sign", "Juristen skriver inte under"], ["Legal says they will not put their name to a sanction that ignores the policy wording; if you proceed, the business owns the risk alone. Nobody else in the room is a lawyer. Who signs, and are you sure about it?", "Juristen säger att hen inte sätter sitt namn på en påföljd som bortser från riktlinjernas formulering; om ni går vidare bär verksamheten risken ensam. Ingen annan i rummet är jurist. Vem skriver under, och är ni säkra på det?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Weighing the gap", "Luckan vägs in"], [
+            io(["Harder to overturn", "Svårare att riva upp"], ["Legal says a sanction that openly weighs the policy gap is much harder to overturn. The representative has less to attack.", "Juristen säger att en påföljd som öppet väger in luckan i riktlinjerna är mycket svårare att riva upp. Ombudet har mindre att angripa."], ["Legal expects a sanction that weighs the gap to hold up.", "Juristen räknar med att en påföljd som väger in luckan håller."]),
+            io(["Read as an admission", "Läses som ett erkännande"], ["The representative gets hold of the draft of the new policy and calls it proof that mining was never forbidden under the old one.", "Ombudet får tag i utkastet till de nya riktlinjerna och kallar det ett bevis för att kryptobrytning aldrig var förbjuden enligt de gamla."], ["The representative has the draft policy and calls it an admission.", "Ombudet har utkastet till riktlinjerna och kallar det ett erkännande."], { reopen: true }),
+            io(["A game server", "En spelserver"], ["Someone has been found running a game server on a lab machine, citing the wiki's “experiment freely”. Your approach is already being quoted as a precedent.", "Någon har visat sig köra en spelserver på en labbmaskin med hänvisning till wikins ”experimentera fritt”. Ert upplägg citeras redan som ett prejudikat."], ["A game server was found on a lab machine under the “experiment freely” line.", "En spelserver hittades på en labbmaskin med stöd av raden ”experimentera fritt”."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["“Obviously wrong”", "”Uppenbart fel”"], [
+            io(["The wiki in print", "Wikin på papper"], ["The representative brings a printout of the lab wiki: researchers may “experiment freely” outside booked hours. It is still linked from the lab's start page.", "Ombudet tar med en utskrift av labbets wiki: forskare får ”experimentera fritt” utanför bokade tider. Den länkas fortfarande från labbets startsida."], ["The representative is using the lab wiki's “experiment freely” page.", "Ombudet använder labbwikins sida om att ”experimentera fritt”."], { reopen: true }),
+            io(["Managers agree", "Cheferna håller med"], ["{{person.cio.name}} says this is the clear line staff need, and most managers agree. Nobody in the room argues.", "{{person.cio.name}} säger att det här är den tydliga gräns som personalen behöver, och de flesta chefer håller med. Ingen i rummet säger emot."], ["The CIO and most managers back treating it as obviously wrong.", "CIO och de flesta chefer stöder att det behandlas som uppenbart fel."]),
+            io(["Others did it too", "Andra har också gjort det"], ["A researcher tells you privately that others have run personal jobs on the cluster at night, citing the same wiki line.", "En forskare berättar i förtroende att andra har kört privata jobb på klustret nattetid, med stöd av samma rad på wikin."], ["Others have run personal jobs on the cluster at night.", "Andra har kört privata jobb på klustret nattetid."])
+          ])
+        ]
       }),
 
       pg("c5", ["The tunnel", "Tunneln"], [
@@ -304,7 +388,19 @@
               pb(["What did the union ask for?", "Vad bad facket om?"], ["Legal re-reads the union's letter: it asks you to stop the monitoring and limit who sees the logs, not to destroy them. Deleting records during an incident may itself breach retention duties. Did anyone ask the union what they actually want before you agreed?", "Juristen läser fackets brev igen: det ber er sluta med bevakningen och begränsa vilka som ser loggarna, inte att förstöra dem. Att radera uppgifter mitt i en incident kan i sig bryta mot bevarandeplikter. Frågade någon facket vad de faktiskt vill innan ni gick med på det?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The forensic check", "Den forensiska undersökningen"], [
+            io(["Nothing in the first pass", "Inget i första genomgången"], ["The forensic firm's first look at the node finds nothing beyond mining traffic. They warn that the connection logs do not cover the whole period.", "Den forensiska firmans första titt på noden hittar inget utöver brytningstrafik. De varnar för att anslutningsloggarna inte täcker hela perioden."], ["The first forensic pass found only mining traffic, with gaps in the logs.", "Första forensiska genomgången hittade bara brytningstrafik, med luckor i loggarna."]),
+            io(["Two projects stop", "Två projekt stannar"], ["Imaging the cluster takes nodes offline for days, and both customer projects stop. One customer's project lead is already asking why.", "Avbildningen av klustret tar noder ur drift i flera dagar, och båda kundprojekten stannar. En kunds projektledare frågar redan varför."], ["Both customer projects paused during the forensic imaging.", "Båda kundprojekten pausades under den forensiska avbildningen."], { reopen: true }),
+            io(["Does this trigger notice?", "Utlöser det en underrättelse?"], ["Legal says that opening a forensic investigation into possible access to customer data may already trigger the contracts' notice clause, before there is any result.", "Juristen säger att en forensisk utredning av möjlig åtkomst till kunddata redan kan utlösa avtalens klausul om underrättelse, innan det finns något resultat."], ["Legal thinks the customer contracts may require notice of the investigation.", "Juristen bedömer att kundavtalen kan kräva underrättelse om utredningen."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["No forensic check", "Ingen forensisk undersökning"], [
+            io(["The contract clause", "Avtalsklausulen"], ["{{person.serviceOwner.name}} reads the customer contracts aloud: any suspected unauthorised access to the research environment must be reported. Scanners have been trying the port for weeks.", "{{person.serviceOwner.name}} läser kundavtalen högt: varje misstänkt obehörig åtkomst till forskningsmiljön ska rapporteras. Skannrar har provat porten i veckor."], ["The contracts require notice of suspected unauthorised access.", "Avtalen kräver underrättelse vid misstänkt obehörig åtkomst."], { reopen: true }),
+            io(["Quiet days", "Lugna dagar"], ["The SOC sees nothing unusual on the cluster for the next few days. {{person.cio.name}} calls the security side closed.", "SOC ser inget ovanligt på klustret de närmaste dagarna. {{person.cio.name}} kallar säkerhetssidan avslutad."], ["The SOC saw nothing unusual on the cluster in the following days.", "SOC såg inget ovanligt på klustret de närmaste dagarna."]),
+            io(["The CISO's minute", "CISO:s protokollsanteckning"], ["{{person.ciso.name}} asks the minutes to record that a forensic check was recommended and not done, with a named owner for that decision.", "{{person.ciso.name}} vill att protokollet visar att en forensisk kontroll rekommenderades men inte gjordes, med en namngiven ägare för beslutet."], ["The minutes record that a forensic check was advised and declined.", "Protokollet visar att en forensisk kontroll tillråddes och valdes bort."])
+          ])
+        ]
       }),
 
       pg("l3", ["The research deadline", "Forskningsdeadline"], [
@@ -328,7 +424,19 @@
               pb(["Two stories", "Två berättelser"], ["The CISO warns that the incident record and the project's own records now describe the same weeks differently. If either ever reaches a customer or a court, two versions look like concealment. Which version will you defend?", "CISO varnar för att incidentdokumentationen och projektets egna anteckningar nu beskriver samma veckor olika. Om någon av dem når en kund eller en domstol ser två versioner ut som mörkläggning. Vilken version tänker ni försvara?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The delay on record", "Förseningen dokumenteras"], [
+            io(["Finally written down", "Äntligen nedskrivet"], ["The project lead thanks you: for the first time, someone has written down why their mornings were slow.", "Projektledaren tackar er: för första gången har någon skrivit ner varför deras morgnar var långsamma."], ["The project lead's complaints are now part of the record.", "Projektledarens klagomål finns nu med i dokumentationen."]),
+            io(["IT objects", "IT invänder"], ["IT operations objects to being recorded as having dismissed two complaints, and asks for the wording to be changed before the record is final.", "IT-drift invänder mot att dokumenteras som att de avfärdade två klagomål, och vill att formuleringen ändras innan dokumentationen fastställs."], ["IT operations disputes how the record describes its role.", "IT-drift ifrågasätter hur dokumentationen beskriver deras roll."]),
+            io(["The link is challenged", "Sambandet ifrågasätts"], ["The data scientist's representative argues that slow mornings have many causes, and that their member is being blamed for a customer milestone on a pattern, not a measurement.", "Dataanalytikerns ombud menar att långsamma morgnar har många orsaker, och att deras medlem får skulden för en kunds delleverans utifrån ett mönster, inte en mätning."], ["The representative disputes the link between the mining and the delay.", "Ombudet ifrågasätter sambandet mellan kryptobrytningen och förseningen."], { reopen: true })
+          ]),
+          ir("i2", { notChosen: "A" }, ["Kept separate", "Hålls separat"], [
+            io(["“Ignored again”", "”Ignorerat igen”"], ["The project lead learns that the delay will be left out, and says it is the third time their problem has been brushed aside.", "Projektledaren får veta att förseningen utelämnas, och säger att det är tredje gången deras problem viftas bort."], ["The project lead feels the delay was deliberately left out.", "Projektledaren upplever att förseningen medvetet utelämnades."], { reopen: true }),
+            io(["A cleaner case", "Ett renare ärende"], ["Legal says a narrower case is easier to defend, and the representative has one thing less to attack.", "Juristen säger att ett snävare ärende är lättare att försvara, och att ombudet har en sak mindre att angripa."], ["The case against the data scientist stays narrow.", "Ärendet mot dataanalytikern förblir snävt."]),
+            io(["Two versions", "Två versioner"], ["The project's own notes describe the slow weeks differently from the incident record. Nobody has decided which version is the official one.", "Projektets egna anteckningar beskriver de långsamma veckorna annorlunda än incidentdokumentationen. Ingen har bestämt vilken version som är den officiella."], ["The project notes and the incident record describe the delay differently.", "Projektets anteckningar och incidentdokumentationen beskriver förseningen olika."])
+          ])
+        ]
       }),
 
       pg("c6", ["The rumour", "Ryktet"], [
@@ -358,7 +466,19 @@
               pb(["And the intern?", "Och praktikanten?"], ["The intern ran the same script. If the senior is made an example today, staff will ask whether the intern is next, and whether their name will be in an email too. What do you announce about them?", "Praktikanten körde samma skript. Om seniorn görs till ett exempel i dag kommer personalen att fråga om praktikanten står på tur, och om hens namn också hamnar i ett mejl. Vad meddelar ni om hen?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "C" }, ["Making an example", "Ett exempel statueras"], [
+            io(["Some applaud", "Några applåderar"], ["Several managers reply to {{person.cio.name}} that it was about time someone drew a line. For an afternoon, the signal seems to have landed.", "Flera chefer svarar {{person.cio.name}} att det var på tiden att någon drog en gräns. Under en eftermiddag verkar signalen ha gått fram."], ["Some managers have openly applauded the dismissal.", "Några chefer har öppet applåderat uppsägningen."]),
+            io(["HR will not sign", "HR skriver inte under"], ["{{person.hr.name}} refuses to issue a dismissal today: the employment agreement requires consultation with the union first. Without HR, nobody knows how to do it correctly.", "{{person.hr.name}} vägrar utfärda en uppsägning i dag: kollektivavtalet kräver förhandling med facket först. Utan HR vet ingen hur det görs korrekt."], ["HR has refused to process a dismissal without union consultation.", "HR har vägrat genomföra en uppsägning utan förhandling med facket."], { reopen: true }),
+            io(["Forwarded outside", "Vidarebefordrat externt"], ["Within the hour, the all-staff announcement has been forwarded outside the company. A former employee posts a screenshot.", "Inom en timme har meddelandet till all personal vidarebefordrats utanför företaget. En före detta anställd lägger ut en skärmdump."], ["The announcement has been forwarded outside the company.", "Meddelandet har vidarebefordrats utanför företaget."], { meters: { media: 1 } })
+          ]),
+          ir("i2", { notChosen: "C" }, ["No example made", "Inget exempel statueras"], [
+            io(["The CIO drafts their own", "CIO skriver sitt eget"], ["{{person.cio.name}} says the company looks soft and drafts a message of their own to all staff for tomorrow. HR has not seen it.", "{{person.cio.name}} säger att företaget ser mjukt ut och skriver ett eget meddelande till all personal till i morgon. HR har inte sett det."], ["The CIO has drafted a message of their own to all staff.", "CIO har skrivit ett eget utkast till meddelande till all personal."], { reopen: true }),
+            io(["The guessing slows", "Gissningarna avtar"], ["The coffee-room guessing slows down. Most people seem willing to wait for the process to run its course.", "Gissningarna i fikarummet avtar. De flesta verkar beredda att vänta på att processen går sin gång."], ["The guessing in the coffee room has slowed for now.", "Gissningarna i fikarummet har avtagit för stunden."]),
+            io(["The wrong name", "Fel namn"], ["A researcher with nothing to do with the case comes to HR upset: colleagues have stopped talking to them because of a guess.", "En forskare som inte har något med ärendet att göra kommer upprörd till HR: kollegor har slutat prata med hen på grund av en gissning."], ["An uninvolved researcher is being shunned because of a wrong guess.", "En oinblandad forskare fryses ut på grund av en felaktig gissning."])
+          ])
+        ]
       }),
 
       pg("c7", ["Paying it back", "Att betala tillbaka"], [
@@ -389,7 +509,19 @@
               pb(["Who runs the pipeline?", "Vem kör flödet?"], ["The lab manager says the data scientist is the only one who knows the training pipeline for a customer delivery due next month. A dismissal means they leave this week. Who takes over tomorrow?", "Labbchefen säger att dataanalytikern är den enda som kan träningsflödet för en kundleverans nästa månad. En uppsägning betyder att hen går den här veckan. Vem tar över i morgon?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Repayment and a warning", "Återbetalning och en varning"], [
+            io(["Signed and paying", "Underskrivet och betalt"], ["The written warning is signed and the first repayment arrives on time. The union calls the matter settled.", "Den skriftliga varningen är underskriven och den första återbetalningen kommer i tid. Facket kallar ärendet avgjort."], ["The repayment has started and the written warning is signed.", "Återbetalningen har börjat och den skriftliga varningen är underskriven."]),
+            io(["The intern asks too", "Praktikanten vill också"], ["The intern asks for the same deal, but on an intern's pay their share would take most of a year to repay.", "Praktikanten ber om samma uppgörelse, men med en praktikantlön skulle hens del ta större delen av ett år att betala."], ["The intern has asked for the same settlement.", "Praktikanten har bett om samma uppgörelse."]),
+            io(["Closed for good", "Avslutat för gott"], ["The representative will only sign if the agreement closes the matter for good, including anything later found about the proxy.", "Ombudet skriver bara under om överenskommelsen avslutar ärendet för gott, inklusive allt som senare kommer fram om proxyn."], ["The representative wants the agreement to close the matter for good.", "Ombudet vill att överenskommelsen avslutar ärendet för gott."], { reopen: true })
+          ]),
+          ir("i2", { notChosen: "A" }, ["The offer is turned down", "Erbjudandet avvisas"], [
+            io(["On record", "Dokumenterat"], ["The union points out that a full repayment and a warning were offered in writing. Anything harsher will be compared with that offer.", "Facket påpekar att full återbetalning och en varning erbjöds skriftligt. Allt hårdare kommer att jämföras med det erbjudandet."], ["The repayment offer was made in writing and turned down.", "Återbetalningserbjudandet lämnades skriftligt och avvisades."], { reopen: true }),
+            io(["A firm line", "En fast linje"], ["Several staff who hear about it say firmness was right. It feels like the signal {{person.cio.name}} wanted.", "Flera i personalen som hör talas om det säger att fastheten var rätt. Det känns som den signal {{person.cio.name}} ville ha."], ["Some staff see the firmer line as the right signal.", "En del i personalen ser den fastare linjen som rätt signal."]),
+            io(["Sick leave", "Sjukskrivning"], ["The data scientist goes on sick leave the same day. Two research projects lose the person who runs their models.", "Dataanalytikern sjukskriver sig samma dag. Två forskningsprojekt förlorar den som kör deras modeller."], ["The data scientist went on sick leave; two projects lost their model runner.", "Dataanalytikern sjukskrev sig; två projekt förlorade den som kör modellerna."])
+          ])
+        ]
       }),
 
       pg("l4", ["Who uses the cluster?", "Vem använder klustret?"], [
@@ -413,7 +545,19 @@
               pb(["The CISO logs the risk", "CISO registrerar risken"], ["The CISO says they will record unmonitored GPU use as a formal risk, with the CIO named as the person who accepted it. The CIO has not been asked yet. Will they sign it?", "CISO säger att hen kommer att registrera obevakad GPU-användning som en formell risk, med CIO angiven som den som accepterade den. CIO har inte tillfrågats än. Kommer hen att skriva under?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The new alert", "Det nya larmet"], [
+            io(["It works", "Det fungerar"], ["In the first week the alert flags one heavy unbooked job. It is a legitimate experiment, and the researcher books it without complaint.", "Första veckan flaggar larmet ett tungt obokat jobb. Det är ett legitimt experiment, och forskaren bokar det utan att klaga."], ["The new alert has fired once, on a legitimate job.", "Det nya larmet har gått en gång, på ett legitimt jobb."]),
+            io(["Twelve false alarms", "Tolv falsklarm"], ["The alert fires twelve times in its first week, every one a legitimate job from researchers who never use the calendar. The SOC asks who triages them at night.", "Larmet går tolv gånger första veckan, varje gång ett legitimt jobb från forskare som aldrig använder kalendern. SOC frågar vem som ska hantera dem på natten."], ["The alert fired twelve times in its first week, all legitimate jobs.", "Larmet gick tolv gånger första veckan, alla för legitima jobb."], { reopen: true }),
+            io(["The union wants a say", "Facket vill vara med"], ["The union says a new alert on employees' activity must be negotiated before it is switched on, not just published.", "Facket säger att ett nytt larm på anställdas aktivitet måste förhandlas innan det slås på, inte bara publiceras."], ["The union has asked to negotiate the new alert.", "Facket har begärt förhandling om det nya larmet."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["No oversight", "Ingen tillsyn"], [
+            io(["The audit question", "Revisionsfrågan"], ["{{person.serviceOwner.name}} says the next customer audit will ask what changed after this incident. Right now the honest answer is “nothing”.", "{{person.serviceOwner.name}} säger att nästa kundrevision kommer att fråga vad som ändrades efter incidenten. Just nu är det ärliga svaret ”ingenting”."], ["The next customer audit will ask what changed after the incident.", "Nästa kundrevision kommer att fråga vad som ändrades efter incidenten."], { reopen: true }),
+            io(["A vote of trust", "En förtroendeförklaring"], ["The researchers are relieved. The lab manager says trust is the best control they have, and the mood in the lab lifts.", "Forskarna är lättade. Labbchefen säger att förtroende är den bästa kontroll de har, och stämningen i labbet lättar."], ["The lab sees the decision as a vote of trust.", "Labbet ser beslutet som en förtroendeförklaring."]),
+            io(["Another heavy job", "Ännu ett tungt jobb"], ["IT operations sees a heavy unbooked job this week. It is probably legitimate, but nobody can know without asking someone.", "IT-drift ser ett tungt obokat jobb den här veckan. Det är troligen legitimt, men ingen kan veta det utan att fråga någon."], ["A heavy unbooked job ran this week; nobody checked what it was.", "Ett tungt obokat jobb kördes den här veckan; ingen kontrollerade vad det var."])
+          ])
+        ]
       }),
 
       pg("c8", ["The customer", "Kunden"], [
@@ -437,7 +581,19 @@
               pb(["The service owner refuses", "Tjänsteägaren vägrar"], ["The service owner, who owns the customer relationship, says they will not put their name to “technical problems”. The project lead is willing. Do you let the more junior person send it, and what does that say about the message?", "Tjänsteägaren, som äger kundrelationen, säger att hen inte sätter sitt namn på ”tekniska problem”. Projektledaren är villig. Låter ni den mer juniora personen skicka det, och vad säger det om budskapet?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Telling the customer", "Kunden får veta"], [
+            io(["They value it", "De uppskattar det"], ["The customer thanks you for being straight, and says they would rather hear it from you than from anyone else.", "Kunden tackar för att ni är raka, och säger att de hellre hör det från er än från någon annan."], ["The customer has said it values hearing it directly.", "Kunden har sagt att de uppskattar att höra det direkt."]),
+            io(["“Was our data touched?”", "”Berördes vår data?”"], ["The customer's first question is not about the delay but whether their data was touched. They want a written answer by the end of the week.", "Kundens första fråga handlar inte om förseningen utan om deras data berördes. De vill ha ett skriftligt svar före veckans slut."], ["The customer wants a written answer on whether its data was touched.", "Kunden vill ha ett skriftligt svar på om deras data berördes."]),
+            io(["A reserved claim", "Ett förbehållet krav"], ["The customer's lawyer cites the contract's dedicated-use clause and reserves the right to claim damages on top of the delay.", "Kundens jurist hänvisar till avtalets klausul om avsatt användning och förbehåller sig rätten att kräva skadestånd utöver förseningen."], ["The customer has reserved the right to claim damages.", "Kunden har förbehållit sig rätten att kräva skadestånd."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["“Technical problems”", "”Tekniska problem”"], [
+            io(["They accept", "De godtar"], ["The customer accepts the discount and asks nothing more. The account manager is relieved.", "Kunden godtar rabatten och frågar inget mer. Kundansvarig är lättad."], ["The customer accepted the discount without further questions, for now.", "Kunden godtog rabatten utan fler frågor, än så länge."]),
+            io(["They have heard something", "De har hört något"], ["The customer's project lead replies: “We've heard there was cryptocurrency mining on the cluster. Is that the technical problem?” Your letter went out an hour ago.", "Kundens projektledare svarar: ”Vi har hört att det förekommit kryptobrytning på klustret. Är det det tekniska problemet?” Ert brev gick ut för en timme sedan."], ["The customer has asked whether mining was the technical problem.", "Kunden har frågat om kryptobrytning var det tekniska problemet."], { reopen: true, meters: { trust: -1 } }),
+            io(["The service owner refuses", "Tjänsteägaren vägrar"], ["{{person.serviceOwner.name}}, who owns the customer relationship, refuses to put their name to “technical problems”. Someone more junior will have to sign.", "{{person.serviceOwner.name}}, som äger kundrelationen, vägrar sätta sitt namn på ”tekniska problem”. Någon mer junior får skriva under."], ["The service owner refused to sign the “technical problems” letter.", "Tjänsteägaren vägrade skriva under brevet om ”tekniska problem”."])
+          ])
+        ]
       }),
 
       pg("c9", ["The team", "Teamet"], [
@@ -460,7 +616,19 @@
               pb(["Can it be hidden at all?", "Får den ens vara dold?"], ["Legal points out that employees must be told what is collected about them and why. Monitoring that only security can see still has to be announced, so it is not really secret. If it is announced but not shown, what have you gained?", "Juristen påpekar att anställda ska få veta vad som samlas in om dem och varför. Bevakning som bara säkerhet kan se måste ändå meddelas, så den är inte riktigt hemlig. Om den meddelas men inte visas, vad har ni då vunnit?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Visible monitoring", "Synlig bevakning"], [
+            io(["The team settles", "Teamet lugnar sig"], ["The team's manager says people can live with monitoring they can see. The sense that the whole team is under suspicion starts to ease.", "Teamets chef säger att folk kan leva med bevakning de kan se. Känslan av att hela teamet är misstänkt börjar släppa."], ["The team has accepted monitoring it can see.", "Teamet har accepterat bevakning som det kan se."]),
+            io(["Where is the line?", "Var går gränsen?"], ["Within a week, someone asks in the team channel exactly where the alert thresholds sit. {{person.ciso.name}} wonders who wants to know, and why.", "Inom en vecka frågar någon i teamets kanal exakt var larmgränserna går. {{person.ciso.name}} undrar vem som vill veta, och varför."], ["Someone has asked exactly where the alert thresholds are.", "Någon har frågat exakt var larmgränserna går."]),
+            io(["Nobody is building it", "Ingen bygger den"], ["IT operations says a dashboard the team can understand is weeks of unbudgeted work. Until then there is no monitoring at all.", "IT-drift säger att en översikt som teamet kan förstå är flera veckors arbete utan budget. Fram till dess finns ingen bevakning alls."], ["The visible dashboard is unbudgeted and weeks away.", "Den synliga översikten saknar budget och ligger veckor bort."], { reopen: true })
+          ]),
+          ir("i2", { notChosen: "A" }, ["Hidden monitoring", "Dold bevakning"], [
+            io(["The agent is spotted", "Agenten upptäcks"], ["A researcher finds the new monitoring agent on a cluster node and asks in the team channel what it is. Twenty people are waiting for the answer.", "En forskare hittar den nya bevakningsagenten på en klusternod och frågar i teamets kanal vad det är. Tjugo personer väntar på svaret."], ["The team has spotted the monitoring agent and is asking about it.", "Teamet har upptäckt bevakningsagenten och frågar om den."], { reopen: true }),
+            io(["All quiet", "Allt är lugnt"], ["The monitoring flags nothing unusual in its first weeks. {{person.ciso.name}} says that is what a quiet control looks like.", "Bevakningen flaggar inget ovanligt de första veckorna. {{person.ciso.name}} säger att det är så en tyst kontroll ser ut."], ["The hidden monitoring flagged nothing in its first weeks.", "Den dolda bevakningen flaggade inget de första veckorna."]),
+            io(["Interviews elsewhere", "Intervjuer på annat håll"], ["The team's manager tells you that two of their best researchers are now interviewing elsewhere.", "Teamets chef berättar att två av de bästa forskarna nu går på intervjuer på annat håll."], ["Two of the team's best researchers are interviewing elsewhere.", "Två av teamets bästa forskare går på intervjuer på annat håll."])
+          ])
+        ]
       }),
 
       pg("c10", ["What changes", "Vad som ändras"], [
@@ -489,7 +657,19 @@
               pb(["Everyone feels blamed", "Alla känner sig utpekade"], ["Researchers who had nothing to do with the case read a company-wide reminder as a collective accusation, and a reply-all thread starts. The one message meant to close the case reopens it. Was everyone the right audience?", "Forskare som inte hade något med ärendet att göra läser en påminnelse till hela företaget som en kollektiv anklagelse, och en svara-alla-tråd startar. Det enda meddelandet som skulle avsluta ärendet öppnar det igen. Var alla rätt mottagare?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The full package", "Hela paketet"], [
+            io(["Researchers join in", "Forskarna hänger på"], ["Two senior researchers volunteer to help write the compute rules, and the draft is linked from the lab's start page.", "Två seniora forskare erbjuder sig att hjälpa till att skriva reglerna för datorkraft, och utkastet länkas från labbets startsida."], ["Researchers are helping write the new compute rules.", "Forskare hjälper till att skriva de nya reglerna för datorkraft."]),
+            io(["Downloads blocked", "Nedladdningar blockeras"], ["On its first morning, the egress filter blocks the public model and dataset downloads researchers use every day. Three experiments stop.", "Första morgonen blockerar filtret för utgående trafik nedladdningar av publika modeller och dataset som forskarna använder varje dag. Tre experiment stannar."], ["The egress filter blocked research downloads on its first morning.", "Filtret för utgående trafik blockerade forskningens nedladdningar första morgonen."], { reopen: true }),
+            io(["One of three", "En av tre"], ["IT operations says it can deliver one of the three changes this quarter, not all of them. Someone has to choose which comes first.", "IT-drift säger att de kan leverera en av de tre ändringarna det här kvartalet, inte alla. Någon måste välja vilken som kommer först."], ["IT can deliver only one of the three changes this quarter.", "IT kan bara leverera en av de tre ändringarna det här kvartalet."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["A partial fix", "En halv lösning"], [
+            io(["It feels finished", "Det känns klart"], ["{{person.cio.name}} announces the change as the end of the matter, and the power graph stays flat. It feels finished.", "{{person.cio.name}} presenterar ändringen som slutet på ärendet, och eldiagrammet förblir platt. Det känns klart."], ["The CIO has declared the matter finished.", "CIO har förklarat ärendet avslutat."]),
+            io(["The network is still open", "Nätverket är fortfarande öppet"], ["{{person.ciso.name}} notes that nothing you chose touches outbound traffic. A proxy started tomorrow would look exactly like the last one.", "{{person.ciso.name}} påpekar att inget av det ni valde rör utgående trafik. En proxy som startas i morgon skulle se exakt ut som den förra."], ["Outbound traffic from the cluster is still unfiltered.", "Utgående trafik från klustret filtreras fortfarande inte."], { reopen: true }),
+            io(["Everyone feels blamed", "Alla känner sig utpekade"], ["Researchers who had nothing to do with the case read the change as a collective accusation, and say so in the team channel.", "Forskare som inte hade något med ärendet att göra läser ändringen som en kollektiv anklagelse, och säger det i teamets kanal."], ["Uninvolved researchers feel collectively blamed.", "Oinblandade forskare känner sig kollektivt anklagade."])
+          ])
+        ]
       }),
 
       pg("r-end", ["Outcome", "Utfall"], ["Routing to the ending.", "Vidare till slutet."], {
@@ -546,7 +726,19 @@
               pb(["Put it in writing", "Skriv det"], ["To stand by the dismissal, legal must answer the union in writing, citing the rule that was broken. The policy never mentioned computing power. What do you write in that reply?", "För att stå fast vid uppsägningen måste juristen svara facket skriftligt och ange vilken regel som bröts. Riktlinjerna nämnde aldrig datorkraft. Vad skriver ni i det svaret?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The withdrawal", "Tillbakadragandet"], [
+            io(["Late, but respected", "Sent, men respekterat"], ["Several researchers tell HR that admitting the mistake was the right thing to do, even if it came late.", "Flera forskare säger till HR att det var rätt att erkänna misstaget, även om det kom sent."], ["Some staff respected the withdrawal, late as it was.", "En del i personalen respekterade tillbakadragandet, trots att det kom sent."]),
+            io(["The name again", "Namnet igen"], ["The withdrawal goes to all staff and puts the name in front of everyone a second time. Within the hour it has been forwarded outside the company too.", "Rättelsen går till all personal och visar namnet för alla en gång till. Inom en timme har även den vidarebefordrats utanför företaget."], ["The withdrawal repeated the name and was forwarded outside.", "Rättelsen upprepade namnet och vidarebefordrades externt."], { meters: { media: 1 } }),
+            io(["No “we were wrong”", "Inget ”vi hade fel”"], ["{{person.cio.name}} sent the original and refuses to sign anything that says “we were wrong”. The union says anything softer is not a withdrawal.", "{{person.cio.name}} skickade originalet och vägrar skriva under något där det står ”vi hade fel”. Facket säger att allt mjukare inte är en rättelse."], ["The CIO has refused to sign a withdrawal saying “we were wrong”.", "CIO har vägrat skriva under en rättelse där det står ”vi hade fel”."], { reopen: true })
+          ]),
+          ir("i2", { notChosen: "A" }, ["Standing firm", "Att stå fast"], [
+            io(["Legal's estimate", "Juristens bedömning"], ["Legal gives an honest estimate: with the process skipped and the public naming, the company will probably lose in the labour court and pay damages.", "Juristen ger en ärlig bedömning: med den överhoppade processen och det offentliga utpekandet förlorar företaget troligen i arbetsdomstolen och får betala skadestånd."], ["Legal expects the company to lose in the labour court.", "Juristen räknar med att företaget förlorar i arbetsdomstolen."], { reopen: true }),
+            io(["Managers back you", "Cheferna stöttar er"], ["Some managers say openly that backing down now would be worse than losing in court. The firm line has supporters.", "Några chefer säger öppet att det vore värre att backa nu än att förlora i domstol. Den fasta linjen har anhängare."], ["Some managers openly back standing firm.", "Några chefer stöder öppet att ni står fast."]),
+            io(["“Am I next?”", "”Står jag på tur?”"], ["The intern who ran the same script asks HR whether they will be dismissed and named too.", "Praktikanten som körde samma skript frågar HR om hen också kommer att sägas upp och pekas ut."], ["The intern has asked HR whether they are next.", "Praktikanten har frågat HR om hen står på tur."])
+          ])
+        ]
       }),
       pg("x2", ["The labour lawyer", "Arbetsrättsjuristen"], [
         "The union's lawyer writes formally. The dismissal lacked grounds under the policy, skipped consultation, and the public naming harmed the employee's reputation.\n\nThey propose reinstatement or damages. Meanwhile the data scientist's colleagues have signed a letter supporting them, not because they approve of the mining, but because of how it was done.",
@@ -567,7 +759,19 @@
               pb(["Everything else waits", "Allt annat får vänta"], ["Legal and HR will spend weeks preparing the case. The policy rewrite and the lab review are both on hold until it is over. Is winning this case worth everything that stops while you fight it?", "Juristen och HR kommer att lägga veckor på att förbereda målet. Omskrivningen av riktlinjerna och genomgången av labbet ligger på is tills det är över. Är det värt allt som stannar medan ni driver det att vinna det här målet?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Negotiating", "Förhandling"], [
+            io(["Talks open", "Samtal inleds"], ["The union's lawyer agrees to talks and holds off on further steps for now. For the first time in a week, the temperature drops.", "Fackets jurist går med på samtal och avvaktar med fler steg tills vidare. För första gången på en vecka sjunker temperaturen."], ["Settlement talks with the union's lawyer have opened.", "Förlikningssamtal med fackets jurist har inletts."]),
+            io(["The correction is news", "Rättelsen blir en nyhet"], ["The correction to all staff revives a story that was starting to fade. People who missed the first email now read both.", "Rättelsen till all personal väcker liv i en historia som höll på att tona bort. De som missade det första mejlet läser nu båda."], ["The correction revived the story inside the company.", "Rättelsen väckte liv i historien inom företaget."]),
+            io(["Reinstatement first", "Återanställning först"], ["The lawyer's first demand is reinstatement. Two lab managers say they will not work with the data scientist again.", "Juristens första krav är återanställning. Två labbchefer säger att de inte tänker arbeta med dataanalytikern igen."], ["Two lab managers refuse to work with the data scientist again.", "Två labbchefer vägrar arbeta med dataanalytikern igen."], { reopen: true })
+          ]),
+          ir("i2", { notChosen: "A" }, ["Going to court", "Till domstol"], [
+            io(["The emails", "Mejlen"], ["The union's lawyer asks for every internal email about the dismissal, including the one that said “as an example to everyone”.", "Fackets jurist begär ut alla interna mejl om uppsägningen, inklusive det där det stod ”som ett exempel för alla”."], ["The union has asked for the internal emails about the dismissal.", "Facket har begärt ut de interna mejlen om uppsägningen."], { reopen: true }),
+            io(["A strong stand", "En stark hållning"], ["{{person.cio.name}} tells managers the company will not be pushed around, and several say they feel backed.", "{{person.cio.name}} säger till cheferna att företaget inte låter sig köras över, och flera säger att de känner sig stöttade."], ["Managers have been told the company will fight the case.", "Cheferna har fått veta att företaget tänker driva målet."]),
+            io(["Everything waits", "Allt annat får vänta"], ["Legal and HR clear their calendars to prepare. The policy rewrite and the lab review are both on hold until it is over.", "Juristen och HR rensar sina kalendrar för att förbereda sig. Omskrivningen av riktlinjerna och genomgången av labbet ligger på is tills det är över."], ["The policy rewrite and lab review are on hold during the dispute.", "Omskrivningen av riktlinjerna och labbgenomgången ligger på is under tvisten."])
+          ])
+        ]
       }),
       pg("x3", ["Meanwhile, the tunnel", "Under tiden, tunneln"], [
         "With everyone focused on the dismissal, nobody followed up on the proxy program. It is still running on the cluster node, and the mining pool block did nothing to the tunnel itself.\n\n{{person.socLead.name}} notices new connections through it from an address that is not a mining pool.",
@@ -588,7 +792,19 @@
               pb(["It will come out in the dispute", "Det kommer fram i tvisten"], ["The proxy is part of the dismissal case, and the union's lawyer will ask about it. If it emerges that you found outside connections and said nothing, it looks worse than the tunnel itself. Can quiet survive the labour court?", "Proxyn är en del av uppsägningsärendet, och fackets jurist kommer att fråga om den. Om det kommer fram att ni hittade anslutningar utifrån och teg ser det värre ut än själva tunneln. Håller tystnaden i arbetsdomstolen?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The investigation", "Utredningen"], [
+            io(["Cut off", "Avskuret"], ["The tunnel is closed and the unknown address disappears from the logs. The SOC starts working back through what it reached.", "Tunneln stängs och den okända adressen försvinner ur loggarna. SOC börjar arbeta sig bakåt genom vad den kom åt."], ["The tunnel is closed and the investigation has begun.", "Tunneln är stängd och utredningen har börjat."]),
+            io(["The clock starts", "Klockan börjar gå"], ["Legal warns that with an investigation into possible access to customer data under way, notification deadlines may now be running.", "Juristen varnar för att när en utredning av möjlig åtkomst till kunddata pågår kan tidsfristerna för underrättelse nu löpa."], ["Notification deadlines may have started running.", "Tidsfristerna för underrättelse kan ha börjat löpa."]),
+            io(["The one who knows", "Den enda som vet"], ["The only person who knows how the proxy was set up is the data scientist you dismissed and are now in dispute with.", "Den enda som vet hur proxyn sattes upp är dataanalytikern som ni sa upp och nu är i tvist med."], ["Only the dismissed data scientist knows how the proxy was set up.", "Bara den uppsagda dataanalytikern vet hur proxyn sattes upp."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Closed quietly", "Stängt i tysthet"], [
+            io(["The SOC lead objects", "SOC-chefen invänder"], ["{{person.socLead.name}} closes the tunnel but refuses to sign off that nothing needs investigating or reporting, and puts the objection in writing.", "{{person.socLead.name}} stänger tunneln men vägrar intyga att inget behöver utredas eller rapporteras, och lämnar sin invändning skriftligt."], ["The SOC lead has put their objection to “quietly” in writing.", "SOC-chefen har lämnat sin invändning mot ”i tysthet” skriftligt."], { reopen: true }),
+            io(["Nothing more heard", "Inget mer hörs"], ["The tunnel is closed and nothing more is heard. For now, the bad news has stopped.", "Tunneln är stängd och inget mer hörs. För stunden har de dåliga nyheterna upphört."], ["Nothing more was heard in the first days after the tunnel closed.", "Inget mer hördes de första dagarna efter att tunneln stängdes."]),
+            io(["The lawyer asks", "Juristen frågar"], ["The union's lawyer asks in writing what the company knows about the proxy and when it found out.", "Fackets jurist frågar skriftligt vad företaget vet om proxyn och när det fick veta det."], ["The union's lawyer has asked what the company knows about the proxy.", "Fackets jurist har frågat vad företaget vet om proxyn."])
+          ])
+        ]
       }),
       pg("x4", ["The customer", "Kunden"], [
         "The investigation finds that someone used the tunnel to browse the cluster's storage for two days, including one customer's research data.\n\nThe customer must be told, and so must the regulator. The dismissal case is still running, and the union points out that the person blamed for everything warned nobody about the proxy because nobody asked.",
@@ -609,7 +825,19 @@
               pb(["The service owner calls anyway", "Tjänsteägaren ringer ändå"], ["The service owner, who has worked with the customer for years, says they will not let lawyers be the only voice and plans to call the customer tonight. Do you stop them, and what happens to the relationship if you do?", "Tjänsteägaren, som har arbetat med kunden i flera år, säger att hen inte låter jurister vara den enda rösten och tänker ringa kunden i kväll. Stoppar ni hen, och vad händer med relationen om ni gör det?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Full disclosure", "Full öppenhet"], [
+            io(["Early notice noted", "Tidigt besked noterat"], ["The customer acknowledges that you told them early and in full, and says that will count when they decide what comes next.", "Kunden konstaterar att ni berättade tidigt och fullständigt, och säger att det kommer att väga in när de bestämmer vad som händer härnäst."], ["The customer acknowledged the early, full notice.", "Kunden har bekräftat det tidiga och fullständiga beskedet."]),
+            io(["“Move our data today”", "”Flytta vår data i dag”"], ["The customer replies within the hour: they want their data moved off the cluster today. IT operations says a safe move takes a week.", "Kunden svarar inom en timme: de vill att deras data flyttas från klustret i dag. IT-drift säger att en säker flytt tar en vecka."], ["The customer has demanded its data be moved off the cluster.", "Kunden har krävt att dess data flyttas från klustret."], { meters: { trust: -1 } }),
+            io(["Used in the dispute", "Används i tvisten"], ["The union's lawyer cites your disclosure as proof that the company, not their member, left the cluster exposed.", "Fackets jurist hänvisar till er redovisning som bevis för att det var företaget, inte deras medlem, som lämnade klustret exponerat."], ["The union is using the disclosure in the dismissal dispute.", "Facket använder redovisningen i uppsägningstvisten."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Through the lawyers", "Via juristerna"], [
+            io(["Follow-up questions", "Följdfrågor"], ["The regulator replies to your minimal notice with a list of follow-up questions: what happened, when, how, and which data.", "Tillsynsmyndigheten svarar på ert minimala besked med en lista följdfrågor: vad som hänt, när, hur och vilken data."], ["The regulator has sent follow-up questions on the minimal notice.", "Tillsynsmyndigheten har skickat följdfrågor om det minimala beskedet."], { meters: { regulator: 1 } }),
+            io(["The service owner calls", "Tjänsteägaren ringer"], ["{{person.serviceOwner.name}} will not let lawyers be the only voice and calls the customer that evening, saying more than the letter did.", "{{person.serviceOwner.name}} låter inte jurister vara den enda rösten och ringer kunden samma kväll, och säger mer än brevet gjorde."], ["The service owner told the customer more than the lawyers' letter.", "Tjänsteägaren har berättat mer för kunden än juristernas brev."], { reopen: true }),
+            io(["It holds, for now", "Det håller, än så länge"], ["The customer's lawyers acknowledge the letter and ask nothing further this week.", "Kundens jurister bekräftar brevet och frågar inget mer den här veckan."], ["The customer's lawyers have not asked for more yet.", "Kundens jurister har inte bett om mer än."])
+          ])
+        ]
       }),
       pg("e5", ["Half a year later", "Ett halvår senare"], ["A misuse case became an unlawful dismissal, a labour dispute, and a customer data exposure through a tunnel nobody closed while everyone was busy making an example.\n\nThe company settled with the data scientist. The customer did not renew.", "Ett missbruksärende blev en olaglig uppsägning, en arbetstvist och en exponering av kunddata via en tunnel som ingen stängde medan alla var upptagna med att statuera exempel.\n\nFöretaget förliktes med dataanalytikern. Kunden förnyade inte avtalet."], {
         ending: end(5, ["The example backfired", "Exemplet slog tillbaka"], [

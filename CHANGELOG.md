@@ -6,6 +6,12 @@ Changes are grouped by app version (shown in Settings, set in `js/core/namespace
 
 ## Unreleased
 
+## 0.4.0 (2026-11-04)
+
+- Interrupts: the facilitator can twist the exercise at any time. Every decision point in all 61 scenarios has two interrupts (1,316 in total, 3,948 outcomes), one triggered by the room choosing a key option and one by it not choosing it, each with 2–3 outcomes. The chosen outcome is shown to the room, stays in play for the rest of the exercise (“Still in play” under later decisions), and can reopen the decision and move the pressure meters. Listed in the debrief and reports
+- b20: the minister's line at question time now holds on every path through the story
+- Challenges: the card shows the room's current choice and asks whether they stand by it; “Room changes to …” records a new choice in one click (branching: takes the new path), and the debrief shows the change (A → C)
+
 ## 0.3.0 (2026-11-04)
 
 - Challenge cards are now written for each option: every option of every decision point in all 61 scenarios has three challenges that make that choice harder to keep (5,220 in English and Swedish). After the room chooses, the presenter lists the three for that choice and the facilitator picks one. Replaces the generic, randomly drawn deck

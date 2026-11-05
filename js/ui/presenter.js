@@ -150,12 +150,12 @@
 
   /** When a card covers the room's slide, say which and offer to hide it right under the preview. */
   function coverBar(p) {
-    const cover = p.deadline ? ["deadline.title", { type: "deadlineHide" }] : p.challenge ? ["challenge.title", { type: "challengeHide" }] : p.complication ? ["complication.title", { type: "complicationHide" }] : null;
+    const cover = p.deadline ? ["deadline.title", { type: "deadlineHide" }] : p.interrupt ? ["interrupt.title", { type: "interruptHide" }] : p.challenge ? ["challenge.title", { type: "challengeHide" }] : p.complication ? ["complication.title", { type: "complicationHide" }] : null;
     if (!cover || p.paused || p.screen !== "normal") return null;
     return el(
       "div",
       { class: "pres-cover notice notice--warn small" },
-      el("span", { text: t(p.deadline || p.challenge ? "presenter.coverOn" : "presenter.coverOnStays", { card: t(cover[0]) }) }),
+      el("span", { text: t(p.deadline || p.challenge || p.interrupt ? "presenter.coverOn" : "presenter.coverOnStays", { card: t(cover[0]) }) }),
       c.button({ label: t("presenter.coverHide"), icon: "eye-off", size: "sm", kind: "primary", onClick: () => view.ctrl.dispatch(cover[1]) })
     );
   }
@@ -489,8 +489,91 @@
               options: S().CHALLENGE_OUTCOMES.map((o) => ({ value: o, label: t("challenge.outcome." + o) })),
               onChange: (v) => d({ type: "challengeOutcome", key, outcome: v })
             }),
-            current.outcome === "changed" ? el("p", { class: "muted small", text: t(f.branching ? "challenge.changedHintBranching" : "challenge.changedHint") }) : null
+            // Changing its mind: one click per other option records the new choice (branching: takes the new path).
+            current.changedTo
+              ? el("p", { class: "notice small", text: t("challenge.changedTo", { from: current.from, to: current.changedTo }) })
+              : el(
+                  "div",
+                  { class: "pres-change" },
+                  el("p", { class: "muted small", text: t("challenge.changeHint") }),
+                  el(
+                    "div",
+                    { class: "actions" },
+                    dp.options
+                      .filter((o) => o.key !== dp.chosen.key)
+                      .map((o) => c.button({ label: t("challenge.changeTo", { option: (f.branching ? "" : o.key + " — ") + BK.loc(o.text) }), icon: "route", size: "sm", onClick: () => d({ type: "challengeChange", key, option: o.key }) }))
+                  )
+                )
           ]
+        : null
+    );
+  }
+
+  /**
+   * Interrupts: twists to play at the decision points reached so far, triggered by what the room chose
+   * or did not choose. Pick an outcome to show it to the room; its fact stays in play.
+   */
+  function interruptCard(sess) {
+    if (sess.status === "ended" || sess.instance.format === "custom") return null;
+    const d = view.ctrl.dispatch;
+    const lang = BK.i18n.getLang();
+    const list = S().interruptOptions(sess, lang);
+    const open = list.filter((x) => x.used == null);
+    const where = (x) => (sess.instance.format === "branching" ? "§ " + x.where : t("editor.stageN", { n: x.where }));
+    return c.card(
+      { class: ["card", "pres-card", "pres-interrupt", sess.activeInterrupt && "is-current"] },
+      el("h2", { text: t("interrupt.presenterTitle") }),
+      el("p", { class: "muted small", text: t("interrupt.hint") }),
+      sess.activeInterrupt
+        ? el("div", { class: "actions" }, c.badge(t("challenge.onStage"), "warn"), c.button({ label: t("interrupt.hide"), icon: "eye-off", size: "sm", onClick: () => d({ type: "interruptHide" }) }))
+        : null,
+      open.length
+        ? el(
+            "ul",
+            { class: "pres-cards" },
+            open.map((x) =>
+              el(
+                "li",
+                { class: ["pres-card-item", x.current && "is-active"] },
+                el(
+                  "div",
+                  { class: "badges" },
+                  c.badge(where(x), "neutral"),
+                  c.badge(x.decided ? t("interrupt.fits") : t("interrupt.ifLeaning"), x.decided ? "accent" : "info")
+                ),
+                el("p", null, el("strong", { text: x.title })),
+                el("p", { class: "muted small", text: t(x.trigger.kind === "chosen" ? "interrupt.whenChosen" : "interrupt.whenNotChosen", { option: x.trigger.option }) }),
+                el(
+                  "ol",
+                  { class: "pres-options" },
+                  x.outcomes.map((o) =>
+                    el(
+                      "li",
+                      { class: "pres-option" },
+                      el("div", { class: "pres-option__head" }, el("strong", { class: "pres-option__text", text: o.label }), o.reopen ? c.badge(t("interrupt.reopens"), "warn") : null),
+                      el("p", { class: "small", text: o.text }),
+                      el("p", { class: "muted small", text: t("interrupt.factPrefix") + " " + o.fact }),
+                      el("div", { class: "actions" }, c.button({ label: t("interrupt.play"), icon: "route", size: "sm", kind: "primary", onClick: () => d({ type: "interruptFire", key: x.key, id: x.id, outcome: o.index }) }))
+                    )
+                  )
+                )
+              )
+            )
+          )
+        : el("p", { class: "muted small", text: t("interrupt.none") }),
+      list.filter((x) => x.used != null).length
+        ? el(
+            "div",
+            null,
+            el("h3", { class: "eyebrow", text: t("interrupt.played") }),
+            el(
+              "ul",
+              { class: "bullets" },
+              list
+                .filter((x) => x.used != null)
+                .map((x) => el("li", null, el("strong", { text: x.title + ": " }), x.outcomes[x.used].label, " ", c.button({ label: t("interrupt.showAgain"), size: "sm", kind: "ghost", onClick: () => d({ type: "interruptShow", ref: x.ref }) })))
+            )
+          )
         : null
     );
   }
@@ -707,6 +790,7 @@
                 { class: "pres-side" },
                 deadlineCard(sess),
                 choiceCard(sess, f.branching),
+                interruptCard(sess),
                 challengeCard(sess, f),
                 branchCard(sess, f.branching),
                 notesCard(f),
@@ -715,7 +799,7 @@
                 roleCard(f),
                 facilitationCards(sess)
               )
-            : el("div", { class: "pres-side" }, deadlineCard(sess), timerCard(sess), notesCard(f), reconsiderCard(sess, f), decisionCard(sess, f), challengeCard(sess, f), injectsCard(f), roleCard(f), facilitationCards(sess), factsCard(f))
+            : el("div", { class: "pres-side" }, deadlineCard(sess), timerCard(sess), notesCard(f), reconsiderCard(sess, f), decisionCard(sess, f), interruptCard(sess), challengeCard(sess, f), injectsCard(f), roleCard(f), facilitationCards(sess), factsCard(f))
         )
       )
     );

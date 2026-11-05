@@ -12,7 +12,7 @@
   "use strict";
 
   const BK = window.BK;
-  const { L, q, inj, act, kpi, pg, ask, opt, pb, end, vr, rt } = BK.scenarios.h;
+  const { L, q, inj, act, kpi, pg, ask, opt, pb, end, vr, rt, ir, io } = BK.scenarios.h;
 
   BK.scenarios.register({
     id: "b15-oauth-consent",
@@ -97,7 +97,19 @@
               pb(["The email is already delivered", "Mejlet är redan levererat"], ["The phishing email is already sitting in hundreds of inboxes, and blocking the domain does not pull a single copy back. People are still opening it. Do you also remove it and warn all staff, and who sends that warning without spreading panic?", "Nätfiskemejlet ligger redan i hundratals inkorgar, och domänspärren drar inte tillbaka ett enda exemplar. Folk öppnar det fortfarande. Tar ni också bort det och varnar all personal, och vem skickar den varningen utan att sprida panik?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["After the revocation", "Efter återkallelsen"], [
+            io(["Activity stops", "Aktiviteten upphör"], ["The SOC watches QuickSign's activity drop to nothing within minutes. No new reads, no new downloads. The dashboard that was full of its traffic an hour ago is quiet.", "SOC ser QuickSigns aktivitet sjunka till noll inom några minuter. Inga nya läsningar, inga nya nedladdningar. Översikten som var full av dess trafik för en timme sedan är tyst."], ["The app's activity stopped within minutes of the revocation.", "Appens aktivitet upphörde inom några minuter efter återkallelsen."]),
+            io(["A deal stalls", "En affär stannar"], ["A sales team was in the middle of a signing with a customer, using what they believed was the new tool. The signing fails, the customer is waiting, and the sales manager wants to know who decided this.", "Ett säljteam var mitt i en signering med en kund, med det de trodde var det nya verktyget. Signeringen misslyckas, kunden väntar och försäljningschefen vill veta vem som beslutade det här."], ["A customer signing was interrupted by the revocation.", "En signering med en kund avbröts av återkallelsen."]),
+            io(["A last burst", "En sista topp"], ["The log shows a sharp burst of reading and downloading in the minutes before the revocation took effect. Nobody can yet say whether it was routine or the app grabbing what it could.", "Loggen visar en kraftig topp av läsningar och nedladdningar under minuterna innan återkallelsen fick effekt. Ingen kan ännu säga om det var rutin eller appen som tog det den kunde."], ["The app made a burst of reads just before the revocation took effect.", "Appen gjorde en topp av läsningar strax innan återkallelsen fick effekt."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["The app keeps reading", "Appen fortsätter läsa"], [
+            io(["Reading speeds up", "Läsningen ökar"], ["An hour later, {{person.socLead.name}} reports that QuickSign is reading more mailboxes per minute than before. Whatever you did, it has not touched the app.", "En timme senare rapporterar {{person.socLead.name}} att QuickSign läser fler brevlådor per minut än tidigare. Vad ni än gjorde har det inte rört appen."], ["The app kept reading for at least an hour after the first decision.", "Appen fortsatte läsa i minst en timme efter det första beslutet."], { reopen: true }),
+            io(["A quiet half hour", "En lugn halvtimme"], ["For half an hour no new consents appear on the dashboard. It feels as if the measure worked, and some in the room start to relax.", "I en halvtimme dyker inga nya samtycken upp på översikten. Det känns som om åtgärden fungerade, och en del i rummet börjar slappna av."], ["No new consents were seen in the half hour after the first measure.", "Inga nya samtycken syntes under halvtimmen efter den första åtgärden."]),
+            io(["Users try themselves", "Användarna försöker själva"], ["Several of the users ask whether they should remove the app from their own account settings. A few already have; most cannot find where.", "Flera av användarna frågar om de ska ta bort appen i sina egna kontoinställningar. Några har redan gjort det; de flesta hittar inte var."], ["A few users removed the app from their own accounts; most did not.", "Några användare tog bort appen från sina egna konton; de flesta gjorde det inte."])
+          ])
+        ]
       }),
 
       pg("c2", ["No password needed", "Inget lösenord behövs"], [
@@ -131,7 +143,19 @@
               pb(["Nobody is reading the logs", "Ingen läser loggarna"], ["{{person.socLead.name}} notes that the platform has recorded every message and file the app touched, and nobody is looking at that record while the interviews go on. Who is checking what the app actually did, and when?", "{{person.socLead.name}} påpekar att plattformen har loggat varje meddelande och fil appen rört, och att ingen tittar på den loggen medan intervjuerna pågår. Vem kontrollerar vad appen faktiskt gjorde, och när?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The full audit", "Den fullständiga granskningen"], [
+            io(["The logs are complete", "Loggarna är kompletta"], ["{{person.itOps.name}} confirms that the platform logged every action the app took, from the first consent onwards. The team can build an exact timeline.", "{{person.itOps.name}} bekräftar att plattformen loggade varje åtgärd appen gjorde, från det första samtycket och framåt. Teamet kan bygga en exakt tidslinje."], ["The platform logs cover the app's whole period of access.", "Plattformens loggar täcker hela perioden då appen hade åtkomst."]),
+            io(["The helpdesk drowns", "Supporten drunknar"], ["The audit takes the same people who run the helpdesk. By the afternoon the support queue has doubled and managers are calling the crisis team directly.", "Granskningen tar samma personer som sköter supporten. Till eftermiddagen har supportkön fördubblats och chefer ringer krisledningen direkt."], ["The helpdesk backlog grew while the team ran the audit.", "Supportkön växte medan teamet genomförde granskningen."]),
+            io(["A privacy objection", "En integritetsinvändning"], ["A staff representative demands a written basis before anyone reads logs about colleagues' mail. The audit continues, but only under agreed limits on who may see what.", "Ett personalombud kräver ett skriftligt underlag innan någon läser loggar om kollegors e-post. Granskningen fortsätter, men bara inom överenskomna gränser för vem som får se vad."], ["The audit runs under written limits agreed with staff representatives.", "Granskningen sker inom skriftliga gränser överenskomna med personalombuden."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["No full picture", "Ingen helhetsbild"], [
+            io(["Looks clean so far", "Ser rent ut hittills"], ["The few mailboxes anyone has looked at so far show only reading: nothing sent, nothing changed. Someone suggests the app was only browsing.", "De få brevlådor som någon hittills har tittat på visar bara läsning: inget skickat, inget ändrat. Någon föreslår att appen bara bläddrade."], ["The first mailboxes looked at showed only reading.", "De första brevlådorna som granskades visade bara läsning."]),
+            io(["The DPO wants totals", "Dataskyddsombudet vill ha totalsiffror"], ["{{person.dpo.name}} says plainly that without a full audit nobody can say how many people's data was read, and any notification will need that number. The approach has to be decided again.", "{{person.dpo.name}} säger rakt ut att utan en fullständig granskning kan ingen säga hur många personers uppgifter som lästes, och varje anmälan kommer att behöva den siffran. Tillvägagångssättet måste beslutas på nytt."], ["The DPO formally asked for a full count of what was read.", "Dataskyddsombudet har formellt begärt en fullständig sammanställning av vad som lästes."], { reopen: true }),
+            io(["“Did it send mail?”", "”Skickade den mejl?”"], ["One of the users asks whether the app could have sent email in their name to customers. Nobody in the room can answer yet.", "En av användarna frågar om appen kan ha skickat e-post i hens namn till kunder. Ingen i rummet kan svara på det ännu."], ["Nobody can yet say whether the app sent any mail.", "Ingen kan ännu säga om appen skickade någon e-post."])
+          ])
+        ]
       }),
 
       pg("l1", ["What it read", "Vad den läste"], [
@@ -161,7 +185,19 @@
               pb(["The DPO will not sign", "Dataskyddsombudet skriver inte under"], ["{{person.dpo.name}} says plainly that an estimate from file names is not something they will put their name to. If the regulator asks how you know what was taken, the answer would be “we guessed”. Do you overrule the DPO, or pay for the full classification?", "{{person.dpo.name}} säger rakt ut att en uppskattning utifrån filnamn inte är något hen sätter sitt namn på. Om tillsynsmyndigheten frågar hur ni vet vad som togs blir svaret ”vi gissade”. Kör ni över dataskyddsombudet, eller betalar ni för den fullständiga klassificeringen?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The classification", "Klassificeringen"], [
+            io(["Concrete categories", "Konkreta kategorier"], ["The first batch is classified by evening. {{person.dpo.name}} now has concrete categories of data and rough counts, not guesses. The room feels on solid ground.", "Den första omgången är klassificerad till kvällen. {{person.dpo.name}} har nu konkreta kategorier av uppgifter och ungefärliga antal, inte gissningar. Rummet känner att det står på fast mark."], ["The first classified batch gave the DPO concrete categories of data.", "Den första klassificerade omgången gav dataskyddsombudet konkreta kategorier av uppgifter."]),
+            io(["HR keeps its files", "HR behåller sina filer"], ["{{person.hr.name}} refuses to let the IT team open HR files. Only HR's own staff may classify them, and they are also busy with the users. That part slows to a crawl.", "{{person.hr.name}} vägrar låta IT-teamet öppna HR-filerna. Bara HR:s egen personal får klassificera dem, och de har också fullt upp med användarna. Den delen går mycket långsamt."], ["HR files are classified by HR staff only, which slowed that part.", "HR-filer klassificeras bara av HR-personal, vilket bromsade den delen."]),
+            io(["Locked files", "Låsta filer"], ["A number of the downloaded files are password-protected spreadsheets and archives. The team cannot open them, and nobody knows what is inside.", "Ett antal av de nedladdade filerna är lösenordsskyddade kalkyler och arkiv. Teamet kan inte öppna dem, och ingen vet vad de innehåller."], ["Some downloaded files were password-protected and could not be classified.", "En del nedladdade filer var lösenordsskyddade och kunde inte klassificeras."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Estimates from names", "Uppskattningar utifrån namn"], [
+            io(["Mostly harmless", "Mest ofarligt"], ["The file names suggest templates, marketing material and old drafts. The estimate says little of it is sensitive, and the room is relieved.", "Filnamnen tyder på mallar, marknadsmaterial och gamla utkast. Uppskattningen säger att lite av det är känsligt, och rummet känner sig lättat."], ["The file-name estimate suggested mostly low-sensitivity material.", "Uppskattningen utifrån filnamn tydde på mest material med låg känslighet."]),
+            io(["A salary list", "En lönelista"], ["A spot-check opens a file called “Q3 notes”. It holds the full salary list with staff ID numbers. The estimate no longer holds, and the room has to decide again how far to scope.", "Ett stickprov öppnar en fil som heter ”Anteckningar Q3”. Den innehåller hela lönelistan med personnummer. Uppskattningen håller inte längre, och rummet måste besluta på nytt hur långt kartläggningen ska gå."], ["A spot-check found personal data in a file whose name gave no hint.", "Ett stickprov hittade personuppgifter i en fil vars namn inte antydde något."], { reopen: true }),
+            io(["Marked unverified", "Märkt som overifierad"], ["{{person.dpo.name}} accepts the estimate only as a working figure, and insists it is marked “unverified” in every document that uses it.", "{{person.dpo.name}} godtar uppskattningen bara som en arbetssiffra, och kräver att den märks ”ej verifierad” i varje dokument där den används."], ["Every document marks the data estimate as unverified.", "Varje dokument märker uppskattningen av uppgifterna som ej verifierad."])
+          ])
+        ]
       }),
 
       pg("c3", ["Anyone can say yes", "Vem som helst kan säga ja"], [
@@ -192,7 +228,19 @@
               pb(["The workarounds begin", "Genvägarna börjar"], ["The SOC notices staff forwarding work mail to private accounts, so they can use their tools there instead. The block has moved company data somewhere you cannot see at all. Is the company actually safer tonight than it was this morning?", "SOC märker att personal vidarebefordrar jobbmejl till privata konton för att kunna använda sina verktyg där i stället. Spärren har flyttat företagsdata dit ni inte ser något alls. Är företaget faktiskt säkrare i kväll än det var i morse?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "B" }, ["Only one publisher blocked", "Bara en utgivare spärrad"], [
+            io(["The block holds", "Spärren håller"], ["No further consents to QuickSign are recorded. The dashboard is green, and someone suggests the setting question can wait until after the crisis.", "Inga fler samtycken till QuickSign registreras. Översikten är grön, och någon föreslår att frågan om inställningen kan vänta tills krisen är över."], ["No further consents to QuickSign were recorded after the block.", "Inga fler samtycken till QuickSign registrerades efter spärren."]),
+            io(["A lookalike request", "En snarlik förfrågan"], ["A user forwards a consent screen to the SOC: a different signing app, a different unverified publisher, the same request for mail and files. They did not click, but ask why it was allowed to ask at all.", "En användare vidarebefordrar en samtyckesskärm till SOC: en annan signeringsapp, en annan overifierad utgivare, samma begäran om e-post och filer. Hen klickade inte, men frågar varför den alls fick fråga."], ["A second lookalike consent request reached staff after the block.", "En andra snarlik samtyckesförfrågan nådde personalen efter spärren."], { reopen: true }),
+            io(["No signature", "Ingen underskrift"], ["{{person.ciso.name}} puts a written risk acceptance for the open setting on the table and asks who will sign it. Nobody reaches for a pen yet.", "{{person.ciso.name}} lägger ett skriftligt riskaccepterande för den öppna inställningen på bordet och frågar vem som skriver under. Ingen sträcker sig efter pennan ännu."], ["The open consent setting has no signed risk acceptance.", "Den öppna samtyckesinställningen saknar ett undertecknat riskaccepterande."])
+          ]),
+          ir("i2", { notChosen: "B" }, ["Consent locked down", "Samtycket låst"], [
+            io(["A second email bounces", "Ett andra mejl studsar"], ["Later that day, another “contract ready to sign” email arrives. Two people click, and this time the platform stops them before any access is granted.", "Senare samma dag kommer ytterligare ett mejl om att ”avtalet är klart att signera”. Två personer klickar, och den här gången stoppar plattformen dem innan någon åtkomst ges."], ["A second consent attempt was stopped by the new setting.", "Ett andra samtyckesförsök stoppades av den nya inställningen."]),
+            io(["The morning queue", "Morgonkön"], ["By the next morning, dozens of requests to approve or unblock everyday tools are waiting, and one administrator to handle them. Staff are complaining loudly.", "Nästa morgon väntar dussintals förfrågningar om att godkänna eller häva spärren för vardagsverktyg, och en administratör som ska hantera dem. Personalen klagar högljutt."], ["A queue of app requests built up on the first morning.", "En kö av appförfrågningar byggdes upp den första morgonen."]),
+            io(["Mail goes private", "E-posten blir privat"], ["The SOC notices a team forwarding work mail to private accounts so they can keep using a tool there. It is not malicious, but the data is now somewhere you cannot see.", "SOC märker att ett team vidarebefordrar jobbmejl till privata konton för att kunna fortsätta använda ett verktyg där. Det är inte illasinnat, men datan finns nu någonstans där ni inte ser den."], ["Some staff forwarded work mail to private accounts to keep a tool working.", "En del anställda vidarebefordrade jobbmejl till privata konton för att behålla ett verktyg."])
+          ])
+        ]
       }),
 
       pg("c3b", ["The users", "Användarna"], [
@@ -215,7 +263,19 @@
               pb(["A senior name on the list", "Ett högt uppsatt namn på listan"], ["One of the people who clicked Accept is a member of the management team. HR asks whether they get the same note as everyone else. Do you apply the policy to them too, and what happens to the message if you do not?", "En av dem som klickade Godkänn sitter i ledningsgruppen. HR frågar om hen ska få samma notering som alla andra. Tillämpar ni riktlinjerna på hen också, och vad händer med budskapet om ni inte gör det?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "B" }, ["The policy notes", "Noteringarna"], [
+            io(["Management approves", "Ledningen gillar det"], ["The management team welcomes the notes. One manager says it finally sends the right signal about clicking Accept on anything.", "Ledningsgruppen välkomnar noteringarna. En chef säger att det äntligen sänder rätt signal om att klicka Godkänn på vad som helst."], ["The management team backed the policy notes.", "Ledningsgruppen ställde sig bakom noteringarna."]),
+            io(["A hidden click", "Ett dolt klick"], ["The SOC finds a user who also accepted the app, and deleted the email instead of coming forward. They say they saw what was happening to the others. The approach has to be decided again.", "SOC hittar en användare som också godkände appen, och som raderade mejlet i stället för att höra av sig. Hen säger att hen såg vad som hände med de andra. Hållningen måste beslutas på nytt."], ["At least one user hid their consent after the notes were announced.", "Minst en användare dolde sitt samtycke efter att noteringarna aviserats."], { reopen: true }),
+            io(["Which rule?", "Vilken regel?"], ["The staff representatives ask in writing which rule was broken. {{person.legal.name}} notes that the policy covers passwords and says nothing about apps.", "Personalombuden frågar skriftligen vilken regel som bröts. {{person.legal.name}} konstaterar att riktlinjerna gäller lösenord och inte säger något om appar."], ["The staff representatives challenged the notes in writing.", "Personalombuden har ifrågasatt noteringarna skriftligen."])
+          ]),
+          ir("i2", { notChosen: "B" }, ["No blame", "Ingen skuld"], [
+            io(["Users open up", "Användarna öppnar sig"], ["Relieved, the users hand over the original emails and describe exactly what they saw and when. {{person.socLead.name}} says it is the best material the SOC has had all day.", "Lättade lämnar användarna över de ursprungliga mejlen och beskriver exakt vad de såg och när. {{person.socLead.name}} säger att det är det bästa underlag SOC har fått på hela dagen."], ["Users handed over the original emails and their own timelines.", "Användarna lämnade över de ursprungliga mejlen och sina egna tidslinjer."]),
+            io(["The manager escalates", "Chefen går vidare"], ["The manager who wanted discipline takes it to the top, saying the crisis team is soft on carelessness. The objection is now formal.", "Chefen som ville ha disciplinära åtgärder tar det till högsta ledningen och säger att krisledningen är för mjuk mot slarv. Invändningen är nu formell."], ["A senior manager has formally objected to the no-blame approach.", "En högre chef har formellt invänt mot hållningen utan skuld."]),
+            io(["A flood of reports", "En flod av rapporter"], ["Staff start reporting every odd email to the SOC. Most are newsletters and harmless invites, and the analysts are spending hours sorting them.", "Personalen börjar rapportera varje konstigt mejl till SOC. De flesta är nyhetsbrev och ofarliga inbjudningar, och analytikerna lägger timmar på att sortera dem."], ["Staff reports of suspicious email rose sharply, mostly false alarms.", "Personalens rapporter om misstänkta mejl ökade kraftigt, mest falsklarm."])
+          ])
+        ]
       }),
 
       pg("c4", ["Hidden rules", "Dolda regler"], [
@@ -244,7 +304,19 @@
               pb(["Back to work as usual", "Tillbaka till vardagen"], ["Nobody has told the four billing staff what was in their mailboxes. They are sending invoices from them today as if nothing happened. Do you tell them, and should they keep working in mailboxes an outsider has been reading?", "Ingen har berättat för de fyra faktureringshandläggarna vad som fanns i deras brevlådor. De skickar fakturor därifrån i dag som om ingenting hänt. Berättar ni det för dem, och ska de fortsätta arbeta i brevlådor som en utomstående har läst?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The company-wide search", "Sökningen i hela företaget"], [
+            io(["Only the four", "Bara de fyra"], ["The search across every mailbox finds no other rules created by the app. The four look like the whole of it.", "Sökningen i varje brevlåda hittar inga andra regler som skapats av appen. De fyra ser ut att vara allt."], ["The search found no other rules created by the app.", "Sökningen hittade inga andra regler skapade av appen."]),
+            io(["Deleted too soon", "Raderade för tidigt"], ["{{person.legal.name}} discovers the four rules were deleted before anyone exported them in full. What remains is the log entry and a few screenshots.", "{{person.legal.name}} upptäcker att de fyra reglerna raderades innan någon exporterade dem fullständigt. Det som finns kvar är loggposten och några skärmbilder."], ["The rules were removed before a full export was made.", "Reglerna togs bort innan en fullständig export gjordes."]),
+            io(["Hundreds of rules", "Hundratals regler"], ["The search also returns hundreds of forwarding rules made by staff themselves, many to private accounts. None came from QuickSign, and nobody knows what to do with them.", "Sökningen ger också hundratals vidarebefordringsregler som personalen själv skapat, många till privata konton. Ingen kommer från QuickSign, och ingen vet vad man ska göra med dem."], ["Hundreds of staff-made forwarding rules to private accounts were found.", "Hundratals vidarebefordringsregler till privata konton, skapade av personalen, hittades."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Only the four removed", "Bara de fyra borttagna"], [
+            io(["Forwarding stops", "Vidarebefordringen upphör"], ["Over the next hours, nothing more reaches the outside address. The fix looks complete, and the four billing staff go back to work.", "Under de närmaste timmarna når inget mer den externa adressen. Åtgärden ser fullständig ut, och de fyra faktureringshandläggarna återgår till arbetet."], ["No further mail reached the outside address after the four rules were removed.", "Ingen mer e-post nådde den externa adressen efter att de fyra reglerna tagits bort."]),
+            io(["Found by name only", "Bara hittade via namnet"], ["{{person.socLead.name}} points out that the rules were found by searching for the app's name. Nobody has checked for anything that would not carry it. The room has to decide again.", "{{person.socLead.name}} påpekar att reglerna hittades genom en sökning på appens namn. Ingen har letat efter något som inte bär det namnet. Rummet måste besluta på nytt."], ["Nobody has checked for rules not tied to the app's name.", "Ingen har letat efter regler som inte är knutna till appens namn."], { reopen: true }),
+            io(["The hidden folder", "Den dolda mappen"], ["The billing staff open the hidden folder and find days of customer payment emails nobody answered. Some customers have chased twice.", "Faktureringshandläggarna öppnar den dolda mappen och hittar flera dagars betalningsmejl från kunder som ingen har besvarat. En del kunder har påmint två gånger."], ["The hidden folders held days of unanswered customer payment emails.", "De dolda mapparna innehöll flera dagars obesvarade betalningsmejl från kunder."])
+          ])
+        ]
       }),
 
       pg("l2", ["Open invoices", "Öppna fakturor"], [
@@ -268,7 +340,19 @@
               pb(["Your own payments too", "Era egna betalningar också"], ["The forwarded threads also include suppliers sending invoices to you. Someone could just as easily ask your accounts payable to update a supplier's bank details. Is waiting also putting your own outgoing payments at risk?", "De vidarebefordrade trådarna innehåller också leverantörer som skickar fakturor till er. Någon kan lika gärna be er leverantörsreskontra uppdatera en leverantörs bankuppgifter. Utsätter väntan också era egna utgående betalningar för risk?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The warning is ready", "Varningen är klar"], [
+            io(["Ready in time", "Klar i tid"], ["Within the hour, legal and comms approve the wording, and finance checks phone numbers against the contracts rather than the email threads.", "Inom en timme godkänner juristerna och kommunikation formuleringen, och ekonomi kontrollerar telefonnummer mot avtalen i stället för mot e-posttrådarna."], ["A customer warning and a verified contact list are ready.", "En varning till kunderna och en kontrollerad kontaktlista är klara."]),
+            io(["Sales strikes names", "Försäljning stryker namn"], ["Before the list is approved, account managers quietly remove several of their largest customers, worried about renewals. Nobody in the room noticed until now.", "Innan listan godkänns stryker kundansvariga i tysthet flera av sina största kunder, oroliga för förlängningar. Ingen i rummet märkte det förrän nu."], ["Several large customers were left off the warning list by sales.", "Flera stora kunder ströks från varningslistan av försäljning."]),
+            io(["Nobody presses send", "Ingen trycker på skicka"], ["The warning is drafted and approved, but nobody has been given the authority or a moment to send it. It sits in a folder.", "Varningen är skriven och godkänd, men ingen har fått mandat eller en tidpunkt för att skicka den. Den ligger i en mapp."], ["The prepared warning has not been sent and has no owner for sending.", "Den förberedda varningen har inte skickats och ingen äger utskicket."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Waiting and seeing", "Vänta och se"], [
+            io(["A normal day", "En vanlig dag"], ["By the end of the day, no customer has raised anything unusual and payments are arriving as normal. Waiting looks sensible.", "Vid dagens slut har ingen kund tagit upp något ovanligt och betalningarna kommer in som vanligt. Att vänta ser klokt ut."], ["No customer had reported anything odd by the end of the day.", "Ingen kund hade rapporterat något konstigt vid dagens slut."]),
+            io(["Minuted", "Protokollfört"], ["{{person.cfo.name}} puts the list of large payments due this week on the table, and {{person.legal.name}} asks for the decision to wait to be minuted, by name. The room has to decide again.", "{{person.cfo.name}} lägger listan över stora betalningar som förfaller i veckan på bordet, och {{person.legal.name}} vill att beslutet att vänta protokollförs, med namn. Rummet måste besluta på nytt."], ["The decision to wait was minuted, with the payments due this week.", "Beslutet att vänta protokollfördes, tillsammans med veckans förfallande betalningar."], { reopen: true }),
+            io(["“Why no reply?”", "”Varför inget svar?”"], ["A customer calls to ask why their question about an invoice last week was never answered. Finance cannot tell them without explaining the hidden folder.", "En kund ringer och frågar varför deras fråga om en faktura förra veckan aldrig besvarades. Ekonomi kan inte svara utan att förklara den dolda mappen."], ["Customers whose emails were hidden are asking why nobody replied.", "Kunder vars mejl doldes frågar varför ingen svarade."])
+          ])
+        ]
       }),
 
       pg("c5", ["The data", "Datan"], [
@@ -304,7 +388,19 @@
               pb(["It can be done by hand", "Det går att göra för hand"], ["Pressed on it, {{person.cfo.name}}'s team admits the month-end reports could be produced manually with a couple of extra days' work. The deadline is real, but not impossible. Is a reporting date worth reopening the door you just closed?", "När {{person.cfo.name}}s team pressas medger de att månadsrapporterna kan tas fram manuellt med ett par dagars extra arbete. Tidsgränsen är verklig, men inte omöjlig. Är ett rapportdatum värt att öppna dörren ni just stängde?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The notification is sent", "Anmälan är skickad"], [
+            io(["Acknowledged", "Bekräftad"], ["{{reg.dpaShort}} acknowledges the notification the same day and asks for a supplement when the scoping is done. No further questions for now.", "{{reg.dpaShort}} bekräftar anmälan samma dag och ber om en komplettering när kartläggningen är klar. Inga fler frågor för tillfället."], ["The regulator acknowledged the notification and expects a supplement.", "Tillsynsmyndigheten bekräftade anmälan och väntar på en komplettering."]),
+            io(["The figure will move", "Siffran kommer att ändras"], ["{{person.legal.name}} points out that the figures sent are a minimum. When the supplement goes in, they may rise, and the first number is the one people remember.", "{{person.legal.name}} påpekar att de skickade siffrorna är ett minimum. När kompletteringen lämnas kan de stiga, och det är den första siffran folk minns."], ["The notification gave figures that may need correcting upwards.", "Anmälan innehöll siffror som kan behöva justeras uppåt."]),
+            io(["Staff hear first", "Personalen hör det först"], ["Word of the notification reaches staff through the grapevine before anyone has told the affected colleagues directly. Several ask {{person.dpo.name}} why they had to hear it this way.", "Ryktet om anmälan når personalen innan någon har berättat det direkt för de berörda kollegorna. Flera frågar {{person.dpo.name}} varför de fick höra det på det sättet."], ["Staff heard about the notification before being told directly.", "Personalen hörde om anmälan innan de fick veta det direkt."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["No notification yet", "Ingen anmälan ännu"], [
+            io(["Nearly there", "Nästan klart"], ["{{person.itOps.name}} thinks the scoping might finish close to the deadline after all. Waiting a little longer starts to look harmless.", "{{person.itOps.name}} tror att kartläggningen kanske blir klar nära tidsgränsen trots allt. Att vänta lite till börjar se ofarligt ut."], ["The scoping team thinks it might finish close to the deadline.", "Kartläggningsteamet tror att det kan bli klart nära tidsgränsen."]),
+            io(["The DPO objects", "Dataskyddsombudet invänder"], ["{{person.dpo.name}} puts the 72-hour duty in writing and asks for the disagreement to be minuted. The DPO will say so if the regulator asks. The room has to decide again.", "{{person.dpo.name}} skriver ner skyldigheten att anmäla inom 72 timmar och vill att oenigheten protokollförs. Dataskyddsombudet kommer att säga det om tillsynsmyndigheten frågar. Rummet måste besluta på nytt."], ["The DPO's written objection to the notification timing is on file.", "Dataskyddsombudets skriftliga invändning mot tidpunkten för anmälan finns diarieförd."], { reopen: true }),
+            io(["“Were my notes read?”", "”Lästes mina intyg?”"], ["An affected employee emails {{person.dpo.name}} directly, asking whether their medical notes were among the files read. Nobody has decided what to say.", "En berörd anställd mejlar {{person.dpo.name}} direkt och frågar om hens läkarintyg fanns bland filerna som lästes. Ingen har bestämt vad man ska svara."], ["An affected employee asked directly whether their health data was read.", "En berörd anställd har frågat direkt om hens hälsouppgifter lästes."])
+          ])
+        ]
       }),
 
       pg("l3", ["Verified?", "Verifierad?"], [
@@ -328,7 +424,19 @@
               pb(["Your name in their logs", "Ert namn i deras loggar"], ["{{person.socLead.name}} notes that when the firm does find out, its logs will show your company's users granting access. Without a word from you, they may assume you were part of the problem. Is staying out of it really the cautious option?", "{{person.socLead.name}} påpekar att när företaget väl får veta kommer deras loggar att visa att era användare gav åtkomst. Utan ett ord från er kan de anta att ni var en del av problemet. Är det verkligen det försiktiga valet att hålla sig utanför?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Contacting the firm", "Kontakten med företaget"], [
+            io(["A grateful firm", "Ett tacksamt företag"], ["The firm's owner calls back within the hour, thanks you, and has the compromised admin account locked by the afternoon.", "Företagets ägare ringer tillbaka inom en timme, tackar och har låst det komprometterade administratörskontot till eftermiddagen."], ["The firm has locked its compromised admin account.", "Företaget har låst sitt komprometterade administratörskonto."]),
+            io(["“That's not us”", "”Det är inte vi”"], ["The owner answers defensively: they have never built any app and resent the suggestion. A lawyer is now copied on every message.", "Ägaren svarar defensivt: de har aldrig byggt någon app och ogillar antydan. En jurist får nu kopia på varje meddelande."], ["The firm's owner disputed the warning and involved a lawyer.", "Företagets ägare har bestridit varningen och kopplat in en jurist."]),
+            io(["An unverified reply", "Ett overifierat svar"], ["A reply arrives from an address nobody can tie to the firm, thanking you and asking for your log extracts. It might be them. It might not.", "Ett svar kommer från en adress som ingen kan knyta till företaget, med tack och en begäran om era loggutdrag. Det kan vara de. Det kan också vara någon annan."], ["A reply asking for your logs came from an address nobody could verify.", "Ett svar som bad om era loggar kom från en adress som ingen kunde verifiera."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Leaving it to the platform", "Lämnat åt plattformen"], [
+            io(["Someone else told them", "Någon annan berättade"], ["An industry contact mentions that another affected company has already warned the firm. It seems the job was done without you.", "En branschkontakt nämner att ett annat drabbat företag redan har varnat företaget. Det verkar som att jobbet blev gjort utan er."], ["Another victim company has reportedly warned the firm.", "Ett annat drabbat företag ska ha varnat företaget."]),
+            io(["They call first", "De ringer först"], ["The firm calls you. Its logs show your users granting access, and it wants to know what your company is doing with its name. The room has to decide again what to tell them.", "Företaget ringer er. Deras loggar visar att era användare gav åtkomst, och de vill veta vad ert företag gör med deras namn. Rummet måste besluta på nytt vad ni ska säga."], ["The firm contacted you first, suspicious of your company.", "Företaget kontaktade er först, misstänksamt mot ert företag."], { reopen: true }),
+            io(["Still active", "Fortfarande aktivt"], ["Days pass with no word from anyone. As far as {{person.socLead.name}} can see, the firm's compromised account is still active on the platform.", "Dagar går utan besked från någon. Så vitt {{person.socLead.name}} kan se är företagets komprometterade konto fortfarande aktivt på plattformen."], ["The firm's compromised account still appears active.", "Företagets komprometterade konto verkar fortfarande vara aktivt."])
+          ])
+        ]
       }),
 
       pg("c6", ["A customer's email", "En kunds mejl"], [
@@ -365,7 +473,19 @@
               pb(["Each invoice due this week", "Varje faktura som förfaller i veckan"], ["{{person.cfo.name}} puts the list of large invoices due this week on the table. Every one of those customers is in a thread someone outside has read. If one of them pays the wrong account, who in this room explains why you said nothing?", "{{person.cfo.name}} lägger listan över stora fakturor som förfaller den här veckan på bordet. Varje kund på den finns i en tråd som någon utanför har läst. Om en av dem betalar till fel konto, vem i rummet förklarar varför ni inte sa något?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Calling the customers", "Samtalen till kunderna"], [
+            io(["Two payments held", "Två betalningar stoppade"], ["During the calls, two more customers say they received the same bank-change email and had not yet acted on it. Both hold their payments.", "Under samtalen säger ytterligare två kunder att de fått samma mejl om ändrade bankuppgifter och att de ännu inte agerat på det. Båda håller inne sina betalningar."], ["Two more customers held payments after being warned.", "Ytterligare två kunder höll inne betalningar efter varningen."]),
+            io(["A customer pauses everything", "En kund pausar allt"], ["One large customer reacts to the call by pausing every payment to you until it has done its own security review. Finance's cash forecast for the month just changed.", "En stor kund reagerar på samtalet genom att pausa alla betalningar till er tills den gjort en egen säkerhetsgranskning. Ekonomis likviditetsprognos för månaden har just ändrats."], ["One large customer paused all payments pending its own security review.", "En stor kund pausade alla betalningar i väntan på en egen säkerhetsgranskning."], { meters: { trust: -1 } }),
+            io(["Which account?", "Vilket konto?"], ["One customer says they paid an invoice yesterday and are not sure which bank details their system used. Their bank needs days to confirm.", "En kund säger att de betalade en faktura i går och inte är säkra på vilka bankuppgifter deras system använde. Deras bank behöver flera dagar för att bekräfta."], ["One customer cannot yet confirm which account their last payment went to.", "En kund kan ännu inte bekräfta till vilket konto deras senaste betalning gick."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["The others don't know", "De andra vet inget"], [
+            io(["Nobody else asks", "Ingen annan frågar"], ["For the rest of the day, no other customer mentions the bank-change email. It starts to look like a single attempt.", "Resten av dagen nämner ingen annan kund mejlet om ändrade bankuppgifter. Det börjar se ut som ett enstaka försök."], ["No other customer raised the bank-detail email that day.", "Ingen annan kund tog upp mejlet om bankuppgifter den dagen."]),
+            io(["A payment scheduled", "En betalning planerad"], ["Finance learns by chance that another customer received the same email and has already scheduled a large payment to the new details for tomorrow. The room has to decide again.", "Ekonomi får av en slump veta att en annan kund fått samma mejl och redan har lagt upp en stor betalning till de nya uppgifterna i morgon. Rummet måste besluta på nytt."], ["Another customer has a payment to the fake details scheduled.", "En annan kund har en betalning till de falska uppgifterna inlagd."], { reopen: true }),
+            io(["Word may travel", "Det kan spridas"], ["The customer who asked mentions that their accounts team works with several of your other customers and will “mention it to be safe”.", "Kunden som frågade nämner att deras ekonomiavdelning arbetar med flera av era andra kunder och kommer att ”nämna det för säkerhets skull”."], ["The customer who asked may be telling others about the fake email.", "Kunden som frågade kan berätta om det falska mejlet för andra."])
+          ])
+        ]
       }),
 
       pg("c7", ["Every other app", "Alla andra appar"], [
@@ -388,7 +508,19 @@
               pb(["The insurer's questionnaire", "Försäkringsbolagets frågeformulär"], ["Your insurer's renewal questionnaire asks a plain question: have all third-party apps with access to company data been reviewed? The honest answer is “only some”. Do you answer honestly and risk the terms, or widen the review?", "Försäkringsbolagets frågeformulär inför förnyelsen ställer en enkel fråga: har alla tredjepartsappar med åtkomst till företagets data granskats? Det ärliga svaret är ”bara en del”. Svarar ni ärligt och riskerar villkoren, eller vidgar ni granskningen?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Reviewing every app", "Granskningen av alla appar"], [
+            io(["An easy clean-up", "En enkel städning"], ["The first pass removes dozens of apps nobody has used in years. Not a single complaint comes in.", "Den första genomgången tar bort dussintals appar som ingen har använt på flera år. Inte ett enda klagomål kommer in."], ["Dozens of unused apps were removed without any complaints.", "Dussintals oanvända appar togs bort utan några klagomål."]),
+            io(["Payroll breaks", "Lönen går sönder"], ["Removing an app nobody could explain stops a payroll export that, it turns out, ran through it every night. Payroll is a day late.", "När en app som ingen kunde förklara tas bort stoppas en löneexport som, visar det sig, gick via den varje natt. Lönen blir en dag sen."], ["Removing an unexplained app delayed payroll by a day.", "Att en oförklarad app togs bort försenade lönen med en dag."]),
+            io(["An old unknown", "En gammal okänd"], ["The review finds an old app with broad mail access and a publisher nobody can identify. There is no sign of misuse, but the logs do not go back far enough to be sure.", "Granskningen hittar en gammal app med bred åtkomst till e-post och en utgivare som ingen kan identifiera. Det finns inga tecken på missbruk, men loggarna går inte tillräckligt långt tillbaka för att vara säker."], ["One old app with broad mail access has an unidentified publisher.", "En gammal app med bred åtkomst till e-post har en oidentifierad utgivare."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Only mail apps reviewed", "Bara e-postappar granskade"], [
+            io(["Nothing malicious", "Inget skadligt"], ["The review of mail-reading apps finds nothing that looks malicious. The list is long but, on the surface, respectable.", "Granskningen av appar som läser e-post hittar inget som ser skadligt ut. Listan är lång men, på ytan, respektabel."], ["The mail-app review found nothing that looked malicious.", "Granskningen av e-postappar hittade inget som såg skadligt ut."]),
+            io(["A file reader", "En filläsare"], ["{{person.socLead.name}} flags an app with read access to every shared drive, connected by someone who has since left. It is outside the review. The scope has to be decided again.", "{{person.socLead.name}} flaggar en app med läsåtkomst till alla delade mappar, inkopplad av någon som sedan har slutat. Den ligger utanför granskningen. Omfattningen måste beslutas på nytt."], ["An app with read access to all shared drives sits outside the review.", "En app med läsåtkomst till alla delade mappar ligger utanför granskningen."], { reopen: true }),
+            io(["The insurer asks", "Försäkringsbolaget frågar"], ["The insurer's renewal questionnaire arrives early, with a plain question: have all connected apps been reviewed?", "Försäkringsbolagets frågeformulär inför förnyelsen kommer tidigt, med en enkel fråga: har alla anslutna appar granskats?"], ["The insurer asked whether all connected apps have been reviewed.", "Försäkringsbolaget har frågat om alla anslutna appar har granskats."])
+          ])
+        ]
       }),
 
       pg("l4", ["What would have warned them?", "Vad hade kunnat varna dem?"], [
@@ -412,7 +544,19 @@
               pb(["The thirty want to know now", "De trettio vill veta nu"], ["Several of the people who clicked Accept ask what they should have looked for, so it does not happen again. Telling them “it will be in next year's course” is not an answer. What do you tell them this week?", "Flera av dem som klickade Godkänn frågar vad de borde ha tittat efter, så att det inte händer igen. Att säga ”det kommer i nästa års kurs” är inget svar. Vad säger ni till dem den här veckan?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Real examples", "Verkliga exempel"], [
+            io(["People forward screens", "Folk skickar skärmar"], ["Within days, staff forward two suspicious consent screens to the SOC before clicking anything. Both are blocked.", "Inom några dagar skickar personalen två misstänkta samtyckesskärmar till SOC innan de klickar på något. Båda spärras."], ["Staff have started forwarding suspicious consent screens to the SOC.", "Personalen har börjat skicka misstänkta samtyckesskärmar till SOC."]),
+            io(["Everyone guesses who", "Alla gissar vem"], ["The example uses the real QuickSign screen. Colleagues start guessing who clicked, and two of the {{num.users}} ask HR to make it stop.", "Exemplet använder den riktiga QuickSign-skärmen. Kollegor börjar gissa vem som klickade, och två av de {{num.users}} ber HR att få stopp på det."], ["Colleagues have been guessing who clicked, from the training example.", "Kollegor har gissat vem som klickade, utifrån utbildningsexemplet."]),
+            io(["Half would still click", "Hälften skulle ändå klicka"], ["A quick poll after the session finds about half of staff would still press Accept on a screen that looks routine. Nobody is sure what that says about the training.", "En snabb enkät efter passet visar att ungefär hälften av personalen ändå skulle trycka Godkänn på en skärm som ser rutinmässig ut. Ingen vet riktigt vad det säger om utbildningen."], ["A quick poll found about half would still click Accept.", "En snabb enkät visade att ungefär hälften ändå skulle klicka Godkänn."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Waiting for the course", "I väntan på kursen"], [
+            io(["A quiet few days", "Några lugna dagar"], ["In the following days, no new consent phishing is reported. The annual course feels like enough.", "Under de följande dagarna rapporteras inget nytt nätfiske via samtycke. Den årliga kursen känns som tillräckligt."], ["No new consent phishing was reported in the following days.", "Inget nytt nätfiske via samtycke rapporterades under de följande dagarna."]),
+            io(["The thirty ask now", "De trettio frågar nu"], ["Several of the people who clicked ask what they should look for so it never happens again. “Next year's course” is not an answer they accept. The room has to decide again.", "Flera av dem som klickade frågar vad de ska titta efter så att det aldrig händer igen. ”Nästa års kurs” är inget svar de godtar. Rummet måste besluta på nytt."], ["Users who clicked have asked for guidance before the course.", "Användare som klickade har bett om vägledning före kursen."], { reopen: true }),
+            io(["“Is this one fine?”", "”Är den här okej?”"], ["A user asks the SOC about a consent screen for a well-known survey tool. The analyst cannot tell quickly whether it is genuine, and there is no guidance to point to.", "En användare frågar SOC om en samtyckesskärm för ett välkänt enkätverktyg. Analytikern kan inte snabbt avgöra om den är äkta, och det finns ingen vägledning att hänvisa till."], ["Staff have no guidance on how to judge consent screens.", "Personalen saknar vägledning för att bedöma samtyckesskärmar."])
+          ])
+        ]
       }),
 
       pg("c8", ["The platform", "Plattformen"], [
@@ -435,7 +579,19 @@
               pb(["You knew", "Ni visste"], ["{{person.legal.name}} asks how this will look if the app goes on to defraud other companies' customers, and it emerges that you had the evidence and chose not to send it. Can you explain that choice to someone it harmed?", "{{person.legal.name}} frågar hur det kommer att se ut om appen fortsätter att lura andra företags kunder, och det kommer fram att ni hade beläggen men valde att inte skicka dem. Kan ni förklara det valet för någon som drabbades?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The report is filed", "Rapporten är inskickad"], [
+            io(["Disabled everywhere", "Inaktiverad överallt"], ["Within a day, the platform disables QuickSign for every company it reached. A peer at another firm calls to say thank you.", "Inom ett dygn inaktiverar plattformen QuickSign för varje företag den nådde. En kollega på ett annat företag ringer och tackar."], ["The platform disabled the app for all its customers.", "Plattformen inaktiverade appen för alla sina kunder."]),
+            io(["Half a day lost", "En halv dag förlorad"], ["Redacting the evidence took {{person.socLead.name}} half a day. In that time, customers' IT teams waited for answers and two escalated to your CEO.", "Att maskera beläggen tog {{person.socLead.name}} en halv dag. Under tiden väntade kundernas IT-team på svar och två eskalerade till er vd."], ["Customers' IT teams waited half a day while the report was prepared.", "Kundernas IT-team väntade en halv dag medan rapporten togs fram."]),
+            io(["An automated receipt", "Ett automatiskt kvitto"], ["The platform sends an automated receipt and nothing else. Nobody can say whether anyone has read the report.", "Plattformen skickar ett automatiskt kvitto och inget mer. Ingen kan säga om någon har läst rapporten."], ["The report got an automated receipt and no reply.", "Rapporten fick ett automatiskt kvitto och inget svar."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Not reported", "Inte rapporterad"], [
+            io(["Nobody asks", "Ingen frågar"], ["Days pass and nobody outside the company asks about QuickSign. It seems the decision cost nothing.", "Dagar går och ingen utanför företaget frågar om QuickSign. Beslutet verkar inte ha kostat något."], ["Nobody outside the company has asked about a report.", "Ingen utanför företaget har frågat om en rapport."]),
+            io(["A peer is hit", "En kollega drabbas"], ["A security lead at another company in your sector calls: their staff consented to the same app this morning. They ask whether you reported it. The room has to decide again.", "En säkerhetsansvarig på ett annat företag i er bransch ringer: deras personal gav samtycke till samma app i morse. Hen frågar om ni rapporterade den. Rummet måste besluta på nytt."], ["Another company in your sector was hit by the same app.", "Ett annat företag i er bransch drabbades av samma app."], { reopen: true }),
+            io(["“Under review”", "”Under granskning”"], ["The app's listing on the platform now says “under review”. Nobody knows who reported it, or whether it will be disabled.", "Appens post på plattformen står nu som ”under granskning”. Ingen vet vem som rapporterade den, eller om den kommer att inaktiveras."], ["The app is marked “under review” by the platform; the source is unknown.", "Appen är märkt ”under granskning” av plattformen; källan är okänd."])
+          ])
+        ]
       }),
 
       pg("c9", ["The thirty", "De trettio"], [
@@ -461,7 +617,19 @@
               pb(["A request in writing", "En begäran skriftligen"], ["A staff representative asks for a written statement on whether anyone will face consequences for clicking Accept. Saying nothing is no longer an option they will accept. Do you put an answer in writing, and what does it say?", "Ett personalombud begär ett skriftligt besked om huruvida någon kommer att få konsekvenser för att ha klickat Godkänn. Att inte säga något accepterar ombudet inte längre. Ger ni ett skriftligt svar, och vad står det i det?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The message lands", "Budskapet når fram"], [
+            io(["Reports return", "Rapporterna kommer tillbaka"], ["Within a day, the SOC starts receiving reports of suspicious emails again, two from people on the list of {{num.users}}.", "Inom ett dygn börjar SOC få rapporter om misstänkta mejl igen, två från personer på listan över de {{num.users}}."], ["Staff reports of suspicious email have resumed.", "Personalens rapporter om misstänkta mejl har kommit tillbaka."]),
+            io(["“So nobody is responsible?”", "”Så ingen ansvarar?”"], ["Two senior managers question the message openly in the company chat. Others add thumbs-up. The tone of the thread is not kind.", "Två högre chefer ifrågasätter budskapet öppet i företagets chatt. Andra lägger till tummen upp. Tonen i tråden är inte vänlig."], ["Senior managers have publicly questioned the no-blame message.", "Högre chefer har offentligt ifrågasatt budskapet om att ingen bär skuld."]),
+            io(["A note on file", "En notering i akten"], ["One of the users finds a note about the incident in their HR file. HR calls it administrative, but the message promised otherwise. The room has to decide again.", "En av användarna hittar en notering om incidenten i sin personalakt. HR kallar den administrativ, men budskapet lovade något annat. Rummet måste besluta på nytt."], ["At least one user's HR file holds a note about the incident.", "Minst en användares personalakt innehåller en notering om incidenten."], { reopen: true })
+          ]),
+          ir("i2", { notChosen: "A" }, ["Silence", "Tystnad"], [
+            io(["It dies down", "Det lägger sig"], ["Within a week, nobody talks about QuickSign any more. Saying nothing seems to have worked.", "Inom en vecka pratar ingen om QuickSign längre. Att inte säga något verkar ha fungerat."], ["Talk about the incident died down within a week.", "Pratet om incidenten lade sig inom en vecka."]),
+            io(["A written demand", "Ett skriftligt krav"], ["The staff representatives demand a written statement on whether anyone will face consequences for clicking Accept. Silence is no longer an option they accept. The room has to decide again.", "Personalombuden kräver ett skriftligt besked om huruvida någon får konsekvenser för att ha klickat Godkänn. Tystnad godtar de inte längre. Rummet måste besluta på nytt."], ["Staff representatives have demanded a written statement on consequences.", "Personalombuden har krävt ett skriftligt besked om konsekvenser."], { reopen: true }),
+            io(["Fewer reports", "Färre rapporter"], ["{{person.socLead.name}} notices that staff reports of suspicious email have dropped. It could mean fewer attacks. Nobody really believes that.", "{{person.socLead.name}} märker att personalens rapporter om misstänkta mejl har minskat. Det kan betyda färre angrepp. Ingen tror riktigt på det."], ["Staff reports of suspicious email have dropped since the incident.", "Personalens rapporter om misstänkta mejl har minskat sedan incidenten."])
+          ])
+        ]
       }),
 
       pg("c10", ["What changes", "Vad som ändras"], [
@@ -490,7 +658,19 @@
               pb(["Every month, forever", "Varje månad, för alltid"], ["Monthly simulations need someone to design, run and follow up every one, and the security team is already stretched. The first time a real incident clashes with the schedule, something gives. Who runs them, and what happens when they stop?", "Månatliga simuleringar kräver någon som utformar, genomför och följer upp varje omgång, och säkerhetsteamet är redan hårt belastat. Första gången en riktig incident krockar med schemat ger något vika. Vem genomför dem, och vad händer när de upphör?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Approval and alerts", "Godkännande och larm"], [
+            io(["The first alert works", "Det första larmet fungerar"], ["Days later, an alert flags a new consent to an unknown app. The SOC blocks it within minutes, before anything is read.", "Några dagar senare flaggar ett larm ett nytt samtycke till en okänd app. SOC spärrar den inom några minuter, innan något har lästs."], ["The first new-consent alert led to a block within minutes.", "Det första larmet om nytt samtycke ledde till en spärr inom några minuter."]),
+            io(["Rubber stamps", "Gummistämplar"], ["On the first busy day, approvers clear forty requests in an hour. {{person.itOps.name}} doubts any of them were actually read.", "Den första hektiska dagen godkänner godkännarna fyrtio förfrågningar på en timme. {{person.itOps.name}} tvivlar på att någon av dem faktiskt lästes."], ["Approvers cleared the first day's queue mostly without checks.", "Godkännarna betade av den första dagens kö mest utan kontroller."]),
+            io(["A Saturday alert", "Ett larm en lördag"], ["An alert fires on a Saturday and nobody sees it until Monday. It turns out to be harmless, this time.", "Ett larm går en lördag och ingen ser det förrän på måndagen. Det visar sig vara ofarligt, den här gången."], ["A weekend alert went unseen until Monday; it was harmless.", "Ett helglarm syntes inte förrän på måndagen; det var ofarligt."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["No approval, no alerts", "Inget godkännande, inga larm"], [
+            io(["A quiet stretch", "En lugn period"], ["In the days after the meeting, no new suspicious app appears. The chosen measure seems to be enough.", "Under dagarna efter mötet dyker ingen ny misstänkt app upp. Den valda åtgärden verkar räcka."], ["No new suspicious app was seen in the days after the decision.", "Ingen ny misstänkt app syntes under dagarna efter beslutet."]),
+            io(["The auditors ask", "Revisorerna frågar"], ["The auditors ask {{person.ciso.name}} a direct question: has the root cause been fixed, and how would you know if it happened again? The room has to decide again.", "Revisorerna ställer en direkt fråga till {{person.ciso.name}}: har grundorsaken åtgärdats, och hur skulle ni märka om det hände igen? Rummet måste besluta på nytt."], ["The auditors asked whether the root cause has been fixed.", "Revisorerna har frågat om grundorsaken har åtgärdats."], { reopen: true }),
+            io(["Found by chance", "Upptäckt av en slump"], ["{{person.itOps.name}} notices by chance that a dozen users connected a new “meeting notes” app last week, with access to their calendars. Nobody was alerted. It may be harmless.", "{{person.itOps.name}} märker av en slump att ett dussin användare kopplade in en ny app för ”mötesanteckningar” förra veckan, med åtkomst till sina kalendrar. Ingen larmades. Den kan vara ofarlig."], ["A dozen users connected an unvetted app without anyone being alerted.", "Ett dussin användare kopplade in en ogranskad app utan att någon larmades."])
+          ])
+        ]
       }),
 
       pg("r-end", ["Outcome", "Utfall"], ["Routing to the ending.", "Vidare till slutet."], {
@@ -547,7 +727,19 @@
               pb(["What should they have checked?", "Vad borde de ha kontrollerat?"], ["The customer points out that the email arrived in the middle of a real thread, from your billing address, with your own invoice attached. They ask what more they were supposed to check. Can you name the check you expected, and did you tell them to do it?", "Kunden påpekar att mejlet kom mitt i en verklig tråd, från er faktureringsadress, med er egen faktura bifogad. De frågar vad mer de borde ha kontrollerat. Kan ni nämna kontrollen ni förväntade er, och bad ni dem någonsin göra den?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Warning, three days late", "Varning, tre dagar för sent"], [
+            io(["Most customers hold", "De flesta håller inne"], ["Most customers thank you for the call and put their payments on hold until they have checked the details by phone.", "De flesta kunder tackar för samtalet och lägger sina betalningar på is tills de har kontrollerat uppgifterna per telefon."], ["Most customers held their payments after the warning.", "De flesta kunder höll inne sina betalningar efter varningen."]),
+            io(["The bank wants a report", "Banken vill ha en anmälan"], ["The customer's bank will only attempt a recall with a formal fraud report and the fake email, today. Handing it over means admitting what you knew and when.", "Kundens bank försöker bara återkalla betalningen med en formell bedrägerianmälan och det falska mejlet, i dag. Att lämna över det innebär att erkänna vad ni visste och när."], ["The bank requires a formal fraud report before attempting a recall.", "Banken kräver en formell bedrägerianmälan innan den försöker återkalla betalningen."]),
+            io(["Not sure where it went", "Osäkert vart den gick"], ["One customer cannot tell whether their payment last week went to your real account or the new one. Their bank will take days to confirm.", "En kund kan inte avgöra om deras betalning förra veckan gick till ert riktiga konto eller till det nya. Deras bank behöver flera dagar för att bekräfta."], ["One customer cannot yet tell which account their payment went to.", "En kund kan ännu inte avgöra till vilket konto deras betalning gick."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Blaming the customer", "Skulden på kunden"], [
+            io(["They accept it", "De godtar det"], ["The customer's finance manager accepts your position, apologises, and says they will review their own payment checks.", "Kundens ekonomichef godtar er hållning, ber om ursäkt och säger att de ska se över sina egna betalningskontroller."], ["The customer's finance manager initially accepted your position.", "Kundens ekonomichef godtog till en början er hållning."]),
+            io(["Their lawyer writes", "Deras jurist skriver"], ["Within the hour, the customer's lawyer asks a single question: on what date did you first know your mailboxes were compromised? The room has to decide again.", "Inom en timme ställer kundens jurist en enda fråga: vilket datum visste ni första gången att era brevlådor var komprometterade? Rummet måste besluta på nytt."], ["The customer's lawyer has asked when you first knew of the compromise.", "Kundens jurist har frågat när ni först kände till intrånget."], { reopen: true, meters: { trust: -1 } }),
+            io(["Nobody else warned", "Ingen annan varnad"], ["Finance realises that no other customer has been told anything. Nobody can say whether others have paid the new account too.", "Ekonomi inser att ingen annan kund har fått veta något. Ingen kan säga om fler har betalat till det nya kontot."], ["Nobody knows yet whether other customers paid the new account.", "Ingen vet ännu om andra kunder har betalat till det nya kontot."])
+          ])
+        ]
       }),
       pg("x2", ["More payments", "Fler betalningar"], [
         "Once you start asking, two more customers find they paid the new account. The bank can recall part of one payment. The rest is gone.\n\nThe customers ask the same question: you knew on Tuesday that your email was compromised, so why did you not tell us?",
@@ -568,7 +760,19 @@
               pb(["Sales sees the exits", "Försäljning ser utgångarna"], ["Account managers report that all three customers have mentioned ending their contracts, and one is talking to a competitor. Winning the argument about controls will not keep them. Is being right worth more than the customers?", "De kundansvariga rapporterar att alla tre kunder har nämnt att säga upp sina avtal, och att en pratar med en konkurrent. Att vinna diskussionen om kontroller håller inte kvar dem. Är det värt mer att ha rätt än att ha kunderna?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Accepting responsibility", "Att ta ansvar"], [
+            io(["Still talking", "Fortfarande i samtal"], ["One defrauded customer says your honest answer is the only reason they are still at the table. They ask for a proposal within the week.", "En lurad kund säger att ert ärliga svar är det enda skälet till att de fortfarande sitter vid bordet. De vill ha ett förslag inom veckan."], ["One defrauded customer is waiting for your compensation proposal.", "En lurad kund väntar på ert förslag om ersättning."]),
+            io(["The insurer warns", "Försäkringsbolaget varnar"], ["Your insurer writes that admitting liability before it has assessed the claim may affect your cover. The admission has already been made.", "Försäkringsbolaget skriver att ett erkännande av ansvar innan bolaget bedömt skadan kan påverka ert skydd. Erkännandet är redan gjort."], ["The insurer warned that admitting liability may affect your cover.", "Försäkringsbolaget har varnat för att ett erkännande av ansvar kan påverka skyddet."]),
+            io(["A discount request", "En begäran om rabatt"], ["A customer that lost nothing asks for a discount for the disruption and the extra checks it now has to run. Where does responsibility end?", "En kund som inte förlorade något begär rabatt för störningen och de extra kontroller den nu måste göra. Var slutar ansvaret?"], ["A customer that lost nothing has asked for a discount.", "En kund som inte förlorade något har begärt rabatt."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Pointing at their controls", "Hänvisning till deras kontroller"], [
+            io(["Defensible on paper", "Försvarbart på papperet"], ["{{person.legal.name}} reviews the contracts and says the position holds up on paper. Payment checks were the customers' responsibility.", "{{person.legal.name}} går igenom avtalen och säger att hållningen håller på papperet. Betalningskontrollerna var kundernas ansvar."], ["Legal considers the position defensible on paper.", "Juristerna bedömer hållningen som försvarbar på papperet."]),
+            io(["A joint letter", "Ett gemensamt brev"], ["The defrauded customers compare notes and send a joint letter: the fake emails came from inside your real threads, after you knew. The room has to decide again.", "De lurade kunderna jämför och skickar ett gemensamt brev: de falska mejlen kom inifrån era verkliga trådar, efter att ni visste. Rummet måste besluta på nytt."], ["The defrauded customers have sent a joint letter.", "De lurade kunderna har skickat ett gemensamt brev."], { reopen: true, meters: { trust: -1 } }),
+            io(["Logs requested", "Loggar begärda"], ["One customer's lawyer formally requests your audit logs. Refusing looks like hiding; handing them over shows the timeline.", "En kunds jurist begär formellt era granskningsloggar. Att vägra ser ut som att dölja; att lämna ut dem visar tidslinjen."], ["One customer's lawyer has formally requested your audit logs.", "En kunds jurist har formellt begärt era granskningsloggar."])
+          ])
+        ]
       }),
       pg("x3", ["The regulator and the press", "Tillsynsmyndigheten och pressen"], [
         "One of the customers has complained to the regulator and talked to a trade journalist. The story is simple: a company knew its email was hijacked and let customers pay fraudsters for three days.\n\nThe regulator asks for your timeline, including when you first knew about the forwarding rules.",
@@ -589,7 +793,19 @@
               pb(["The customer's copy", "Kundens kopia"], ["The customer who complained still has your email confirming that the first fake message was fraudulent, dated days before your timeline begins. They have already shared it with the regulator. How does your timeline survive that one email?", "Kunden som klagade har fortfarande ert mejl som bekräftade att det första falska meddelandet var ett bedrägeri, daterat dagar innan er tidslinje börjar. De har redan delat det med tillsynsmyndigheten. Hur klarar sig er tidslinje mot det enda mejlet?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The full timeline", "Hela tidslinjen"], [
+            io(["Noted as complete", "Noterad som fullständig"], ["The regulator acknowledges the timeline and notes that it is complete, including the decision to keep quiet. It says this will be taken into account.", "Tillsynsmyndigheten bekräftar tidslinjen och noterar att den är fullständig, inklusive beslutet att tiga. Myndigheten säger att det kommer att beaktas."], ["The regulator noted that the timeline was complete.", "Tillsynsmyndigheten noterade att tidslinjen var fullständig."]),
+            io(["In the trade press", "I fackpressen"], ["The trade journalist publishes the same day, quoting the line about the decision to keep quiet. Customers start forwarding the article.", "Fackjournalisten publicerar samma dag och citerar raden om beslutet att tiga. Kunder börjar vidarebefordra artikeln."], ["The trade press has reported the decision to keep quiet.", "Fackpressen har rapporterat om beslutet att tiga."], { meters: { media: 1 } }),
+            io(["An objection recorded", "En invändning noterad"], ["A team member who argued against the silence asks for that objection to be recorded in the timeline. Others named in it go quiet.", "En person i teamet som argumenterade mot tystnaden vill att invändningen förs in i tidslinjen. Andra som nämns i den blir tysta."], ["A team member asked to have their objection to the silence recorded.", "En person i teamet har bett att få sin invändning mot tystnaden noterad."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["The shortened timeline", "Den förkortade tidslinjen"], [
+            io(["Accepted, for now", "Godtagen, tills vidare"], ["The regulator acknowledges the timeline without comment. For now, nobody asks about the days before the first fraud.", "Tillsynsmyndigheten bekräftar tidslinjen utan kommentar. Än så länge frågar ingen om dagarna före det första bedrägeriet."], ["The regulator acknowledged the timeline without comment, for now.", "Tillsynsmyndigheten bekräftade tidslinjen utan kommentar, tills vidare."]),
+            io(["The logs, please", "Loggarna, tack"], ["The regulator asks for your audit logs covering the days before the first fraud. Anyone comparing them with your timeline will see the gap. The room has to decide again.", "Tillsynsmyndigheten begär era granskningsloggar för dagarna före det första bedrägeriet. Den som jämför dem med er tidslinje ser luckan. Rummet måste besluta på nytt."], ["The regulator asked for the audit logs from before the first fraud.", "Tillsynsmyndigheten har begärt granskningsloggarna från tiden före det första bedrägeriet."], { reopen: true, meters: { regulator: 1 } }),
+            io(["No DPO signature", "Ingen underskrift från dataskyddsombudet"], ["{{person.dpo.name}} declines to sign the timeline and says so in writing. The regulator will notice the missing name.", "{{person.dpo.name}} avböjer att skriva under tidslinjen och säger det skriftligt. Tillsynsmyndigheten kommer att märka det saknade namnet."], ["The DPO declined to sign the timeline.", "Dataskyddsombudet avböjde att skriva under tidslinjen."])
+          ])
+        ]
       }),
       pg("x4", ["The customers leave", "Kunderna lämnar"], [
         "Two of the defrauded customers end their contracts. A third agrees to stay if you cover its loss.\n\nInside the company, the decision to stay quiet has become the story everyone tells about the incident, more than the app itself.",
@@ -610,7 +826,19 @@
               pb(["Bad luck for whom?", "Otur för vem?"], ["The third customer, still waiting for an answer on its loss, hears how the incident is being described internally. They ask whether your company also considers their payment bad luck. What do you tell them?", "Den tredje kunden, som fortfarande väntar på besked om sin förlust, hör hur incidenten beskrivs internt. De frågar om ert företag också betraktar deras betalning som otur. Vad säger ni till dem?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["A new step in the plan", "Ett nytt steg i planen"], [
+            io(["The dry run works", "Övningen fungerar"], ["A short dry run of the new step shows that customer warnings could go out within hours of a compromise being found.", "En kort genomkörning av det nya steget visar att varningar till kunder kan gå ut inom några timmar efter att ett intrång upptäckts."], ["A dry run showed customer warnings can go out within hours.", "En genomkörning visade att varningar till kunder kan gå ut inom några timmar."]),
+            io(["Nobody owns it", "Ingen äger det"], ["Finance, comms and security each say the step belongs to someone else. The plan has the step, but no name next to it.", "Ekonomi, kommunikation och säkerhet säger alla att steget hör till någon annan. Planen har steget, men inget namn bredvid."], ["The new step still has no named owner.", "Det nya steget saknar fortfarande en namngiven ägare."]),
+            io(["The third customer waits", "Den tredje kunden väntar"], ["While the plan is being written, the third customer asks a second time whether you will cover its loss. Nobody has answered.", "Medan planen skrivs frågar den tredje kunden för andra gången om ni täcker dess förlust. Ingen har svarat."], ["The third customer is still waiting for an answer on its loss.", "Den tredje kunden väntar fortfarande på besked om sin förlust."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Calling it bad luck", "Att kalla det otur"], [
+            io(["Topic closed", "Ämnet avslutat"], ["The management team seems relieved. The incident is filed as bad luck and the next meeting moves on to other business.", "Ledningsgruppen verkar lättad. Incidenten arkiveras som otur och nästa möte går vidare till annat."], ["Management has closed the topic as bad luck.", "Ledningen har avslutat ämnet som otur."]),
+            io(["“What has changed?”", "”Vad har ändrats?”"], ["The regulator's open case includes a direct question: what has the company changed since the incident? “Bad luck” is not an answer. The room has to decide again.", "Tillsynsmyndighetens öppna ärende innehåller en direkt fråga: vad har företaget ändrat sedan incidenten? ”Otur” är inget svar. Rummet måste besluta på nytt."], ["The regulator asked what has changed since the incident.", "Tillsynsmyndigheten har frågat vad som ändrats sedan incidenten."], { reopen: true, meters: { regulator: 1 } }),
+            io(["Staff don't buy it", "Personalen köper det inte"], ["An anonymous post on the intranet asks whose “bad luck” it was. It gets more replies than anything posted this year.", "Ett anonymt inlägg på intranätet frågar vems ”otur” det var. Det får fler svar än något annat som publicerats i år."], ["Staff openly question the “bad luck” explanation.", "Personalen ifrågasätter öppet förklaringen om ”otur”."])
+          ])
+        ]
       }),
       pg("e5", ["Three months later", "Tre månader senare"], ["A consent prompt became stolen mail, and staying quiet turned stolen mail into customers paying criminals for three days.\n\nTwo customers are gone and the regulator's case is open. The app was revoked on the first day; the silence lasted longer.", "En samtyckesfråga blev stulen e-post, och tystnaden gjorde stulen e-post till kunder som betalade brottslingar i tre dagar.\n\nTvå kunder är borta och tillsynsmyndighetens ärende är öppet. Appen återkallades den första dagen; tystnaden varade längre."], {
         ending: end(5, ["The silence cost the most", "Tystnaden kostade mest"], [

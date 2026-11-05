@@ -136,6 +136,13 @@
 .s-complication--deadline .s-complication__kicker { color: var(--danger); }
 .s-complication--challenge .s-complication__card { border-top-color: var(--accent); }
 .s-complication--challenge .s-complication__kicker { color: var(--accent); }
+.s-complication--interrupt .s-complication__card { border-top-color: var(--warn); }
+.s-complication__ask { display: block; margin-bottom: 8px; font-size: 26px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-muted); }
+/* Facts left in play by interrupts, under the room's decision. */
+.s-slide > .s-facts { flex: none; }
+.s-facts { margin-top: 28px; padding: 18px 28px; border-radius: 12px; border-left: 8px solid var(--warn); background: color-mix(in srgb, var(--warn) 10%, var(--surface)); }
+.s-facts__label { display: flex; gap: 12px; align-items: center; margin: 0 0 8px; font-size: 24px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--warn); }
+.s-facts__list { margin: 0; padding-left: 28px; font-size: calc(32px * var(--fit, 1)); line-height: 1.35; }
 .s-complication__choice { margin: 32px 0 0; padding: 24px 32px; font-size: 44px; line-height: 1.35; font-weight: 700; background: var(--surface-2); border-radius: 16px; }
 
 /* ---- Title ------------------------------------------------------------------------------------ */

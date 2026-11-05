@@ -18,7 +18,7 @@ npx --yes eslint@10.14.0 .        # lint, incl. rules blocking innerHTML/outerHT
 ```
 
 - `index.html` also works from `file://`, but run tests **over HTTP**: from `file://` four
-  source-reading tests are skipped (220 pass over HTTP, 216 + 4 skipped from file://).
+  source-reading tests are skipped (225 pass over HTTP, 221 + 4 skipped from file://).
 - Quick source scan for forbidden APIs:
   `grep -rnE "eval\(|new Function|innerHTML\s*=|fetch\(|XMLHttpRequest" js | grep -v "js/graphics/icons.js"`
 

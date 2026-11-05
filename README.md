@@ -27,7 +27,12 @@ debrief, an after-action report and an improvement plan with owners and due date
 - **Pushback on every decision.** Every option of every decision point has three
   challenges written for it: a cost of that choice landing, someone who objects to it,
   a fact that undermines it. After the room chooses, the facilitator picks one of the
-  three and puts it on the stage, to make the choice harder to keep. An optional
+  three and puts it on the stage, to make the choice harder to keep, and the room
+  can stand by its choice or change it on the spot. *Interrupts* let the facilitator
+  twist the exercise at any time: each decision point has interrupts triggered by
+  what the room chose, or did not choose, each with several outcomes (the log audit
+  finds nothing, finds clear evidence, or finds the logs wiped). The outcome stays in
+  play for the rest of the exercise and can reopen the decision. An optional
   decision deadline makes indecision a decision: when the countdown runs out, the
   decision owner (or, in a branching exercise, the story) chooses for the room.
 - **Build your own.** A slide editor with 53 templates (questions, decisions, email and
@@ -337,9 +342,19 @@ troubleshooting.
   presenter's *Challenge the decision* lists the three challenges written for that
   option (5,220 across all scenarios). Pick one to show on the stage, then record
   whether the room stood firm or changed its mind; if it changed, record the new
-  decision (branching: *Undo* and choose again). The card leaves the stage when you
-  move on. The debrief and reports list every challenge and the response.
-  Challenges never give away a later twist.
+  decision with one click (*Room changes to …*; in branching exercises the story
+  takes the new path). The card shows the room's current choice and asks whether
+  they stand by it. It leaves the stage when you move on. The debrief and reports
+  list every challenge, the response and any change (A → C). Challenges never give
+  away a later twist.
+- **Interrupts.** The presenter's *Interrupt* panel is always available. Every
+  decision point has two interrupts around one key option: one plays if the room
+  chose it, one if it did not, so one always fits; before the room decides, both
+  are offered with their trigger. Each has 2–3 outcomes pulling in different
+  directions. Playing one shows it on the stage; its fact stays in play (*Still in
+  play* under later decisions), it can reopen the decision (the room must decide
+  again) and move the pressure meters. Interrupts from earlier decision points stay
+  available until used. The debrief lists every interrupt played.
 - **Decision deadline** (setup, *Extra pressure*, off by default). In a discussion
   exercise, the stage's countdown is the deadline: if it runs out with no decision
   recorded, the decision owner picks an option alone (seeded, so a re-run picks the
@@ -501,7 +516,10 @@ A **stage** has these fields:
   tradeoffs{}, evaluation[], discussionMinutes }`; every option carries
   `pushback[]`: exactly three `{ title, text }` challenge cards (with the helpers:
   `dec(..., { pushback: { A: [pb(...), pb(...), pb(...)], B: [...] } })`, and on
-  branching options `opt(..., { pushback: [...] })`);
+  branching options `opt(..., { pushback: [...] })`); and every decision carries
+  `interrupts[]`: exactly two `ir(id, { chosen | notChosen: letter }, title, [io(label,
+  text, fact, { reopen?, meters? }) ×2–3])` around one option, so one always applies
+  (branching: on the page, `pg(..., { interrupts: [...] })`);
 - `facilitator{ notes, expected, hints[] }`.
 
 An **inject** has these fields:
@@ -713,6 +731,8 @@ The validator enforces these rules for every stage count from `minStages` to
 - Every option needs three pushback cards that make *that* choice harder to keep
   (a consequence, a stakeholder who objects, a fact that undermines it), each ending
   in a hard question, and none revealing a later twist or hidden fact.
+- Every decision point needs two interrupts. Their facts must stay true for the
+  rest of the exercise (prefer time-bound facts), and must not settle a later reveal.
 - Decisions are open-ended first. Options are optional aids.
 - Misleading injects must be intentional, and the facilitator note must say
   so. On stage, reliability is shown only if the source would realistically
@@ -758,8 +778,8 @@ page text.
 
 Open `tests.html`. The runner has no dependencies. It reports *passed*,
 *failed* and *skipped* separately and never counts a skipped test as passed.
-Current result: **220 passed, 0 failed** when served over HTTP. From `file://`
-the result is 216 passed and 4 skipped; the skipped four read source files
+Current result: **225 passed, 0 failed** when served over HTTP. From `file://`
+the result is 221 passed and 4 skipped; the skipped four read source files
 (including the check that the app version matches `CHANGELOG.md`).
 
 | Suite | Covers |

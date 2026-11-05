@@ -194,9 +194,14 @@
         const ch = session.challenges[key];
         const content = ch.shownAt ? S.challengeContent(session, key, lang) : null;
         const dp = content && S.decisionPoint(session, key);
-        return dp ? { stage: where(dp), question: content.question, card: content.title, text: content.text, outcome: ch.outcome || "" } : null;
+        return dp ? { stage: where(dp), question: content.question, card: content.title, text: content.text, outcome: ch.outcome || "", changed: ch.changedTo ? ch.from + " → " + ch.changedTo : "" } : null;
       })
       .filter(Boolean);
+    const interrupts = Object.keys(session.interrupts || {})
+      .map((ref) => S.interruptContent(session, ref, lang))
+      .filter(Boolean)
+      .sort((a, b) => (a.at < b.at ? -1 : 1))
+      .map((x) => ({ stage: branching ? "§ " + x.where : String(x.where), question: x.question, title: x.title, outcome: x.label, text: x.text, fact: x.fact, reopened: x.reopened }));
 
     return {
       lang,
@@ -223,6 +228,7 @@
       reconsidered,
       deadlines,
       challenges,
+      interrupts,
       assumptions: (inst.debrief.assumptionsVsReality || []).map((a) => ({ assumption: L(a.assumption, lang), reality: L(a.reality, lang), stage: a.stage ? stageNo(a.stage) || null : null })),
       lessons: (inst.debrief.keyLessons || []).map((x) => L(x, lang)),
       strengths: (inst.debrief.strengthsToLookFor || []).map((x) => L(x, lang)),
@@ -405,7 +411,11 @@
     }
     if (r.challenges && r.challenges.length) {
       h(2, t("report.challenges", null, l));
-      r.challenges.forEach((x) => li(x.stage + " · " + x.question + " — " + x.card + " → **" + (x.outcome ? t("challenge.outcome." + x.outcome, null, l) : t("report.notRecorded", null, l)) + "**"));
+      r.challenges.forEach((x) => li(x.stage + " · " + x.question + " — " + x.card + " → **" + (x.outcome ? t("challenge.outcome." + x.outcome, null, l) : t("report.notRecorded", null, l)) + "**" + (x.changed ? " (" + x.changed + ")" : "")));
+    }
+    if (r.interrupts && r.interrupts.length) {
+      h(2, t("report.interrupts", null, l));
+      r.interrupts.forEach((x) => li(x.stage + " · " + x.title + " — **" + x.outcome + "**: " + x.fact + (x.reopened ? " (" + t("interrupt.reopens", null, l) + ")" : "")));
     }
 
     if (full) {

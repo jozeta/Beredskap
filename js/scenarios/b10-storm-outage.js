@@ -12,7 +12,7 @@
   "use strict";
 
   const BK = window.BK;
-  const { L, q, inj, act, pg, ask, opt, pb, end, vr, rt } = BK.scenarios.h;
+  const { L, q, inj, act, pg, ask, opt, pb, ir, io, end, vr, rt } = BK.scenarios.h;
 
   BK.scenarios.register({
     id: "b10-storm-outage",
@@ -70,6 +70,18 @@
         ],
         discuss: [q("If phones and chat don't work, how does the crisis team find each other?", "Om telefon och chatt inte fungerar, hur hittar krisgruppen varandra?", ["incidentCommander", "dutyOfficer"])],
         facilitator: { notes: L(["No attacker yet. The test is whether the organisation can lead without its normal tools.", "Ingen angripare ännu. Provet är om organisationen kan leda utan sina vanliga verktyg."]) },
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The fallback in use", "Reservlösningen används"], [
+            io(["The team assembles", "Gruppen samlas"], ["One by one the crisis team reaches the meeting point. Within the hour most of them are there, and the satellite phone gets a line out.", "En efter en når krisgruppen mötesplatsen. Inom en timme är de flesta på plats, och satellittelefonen får en förbindelse."], ["Most of the crisis team gathered at the meeting point on the first evening.", "Större delen av krisgruppen samlades på mötesplatsen den första kvällen."]),
+            io(["The road is blocked", "Vägen är blockerad"], ["Fallen trees block the only road to the meeting point. Half the team turns back, and the other half is stuck on the wrong side. You need another way to gather.", "Nedfallna träd blockerar den enda vägen till mötesplatsen. Halva gruppen vänder, och andra halvan sitter fast på fel sida. Ni behöver ett annat sätt att samlas."], ["The road to the meeting point was blocked on the first evening.", "Vägen till mötesplatsen var blockerad den första kvällen."], { reopen: true }),
+            io(["An old contact list", "En gammal kontaktlista"], ["The satellite phone works, but the printed contact list beside it is years old. Some numbers ring strangers, others nobody at all.", "Satellittelefonen fungerar, men den utskrivna kontaktlistan bredvid den är flera år gammal. En del nummer går till okända, andra till ingen alls."], ["The fallback kit's contact list was years out of date.", "Kontaktlistan i reservlösningen var flera år gammal."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["No agreed meeting place", "Ingen överenskommen mötesplats"], [
+            io(["The chat holds up", "Chatten håller"], ["Enough messages get through for three members of the crisis team to start coordinating. It feels like the team is working.", "Tillräckligt många meddelanden går fram för att tre i krisgruppen ska kunna börja samordna. Det känns som att gruppen fungerar."], ["On the first evening, three crisis team members coordinated over a patchy chat.", "Den första kvällen samordnade tre i krisgruppen via en ostadig chatt."]),
+            io(["The network goes silent", "Nätet tystnar"], ["The last mast nearby loses power. No calls, no messages, nothing. Whatever you planned to do now depends on a network that is gone for the night.", "Den sista masten i närheten förlorar strömmen. Inga samtal, inga meddelanden, ingenting. Det ni tänkt göra hänger nu på ett nät som är borta för natten."], ["The mobile network went completely silent for hours on the first evening.", "Mobilnätet var helt tyst i flera timmar den första kvällen."], { reopen: true }),
+            io(["Conflicting orders", "Motstridiga besked"], ["The depot gets two instructions through two channels from two managers: one says stay, one says go home. Nobody knows which came last.", "Depån får två besked via två kanaler från två chefer: det ena säger stanna, det andra åk hem. Ingen vet vilket som kom sist."], ["The depot received conflicting instructions on the first evening.", "Depån fick motstridiga besked den första kvällen."])
+          ])
+        ],
         choice: ask(["How do you get the crisis team together?", "Hur samlar ni krisgruppen?"], ["Uses a pre-agreed fallback: meeting point, landline or radio, without waiting for the network.", "Använder en förutbestämd reservlösning: mötesplats, fast telefon eller radio, utan att vänta på nätet."], [
           opt(["The agreed fallback: meeting point and satellite phone", "Den överenskomna reservlösningen: mötesplats och satellittelefon"], "c2", ["Works if it was agreed and the phone is charged.", "Fungerar om den var överenskommen och telefonen är laddad."], {
             set: "fallbackComms",
@@ -106,6 +118,18 @@
           "Ingen samlade krisledningen under natten. På morgonen får ni veta att en av de {{num.onShift}} personerna på nattskiftet körde hem på en avstängd väg och krockade med ett nedfallet träd.\n\nPersonen är skadad men vid liv, och ligger på sjukhus. Ingen på företaget visste var hen var på sex timmar. Resten av skiftet är fortfarande kvar på depån och väntar på besked."
         ], ["Because nobody led the night, people made their own decisions.", "Eftersom ingen ledde under natten fattade folk egna beslut."])],
         discuss: [q("How do you know everyone is safe if you can't call them?", "Hur vet ni att alla är i säkerhet om ni inte kan ringa dem?", ["hr", "facilities"])],
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Holding the night shift", "Nattskiftet stannar"], [
+            io(["Everyone counted", "Alla räknade"], ["HR and the shift leader go through the list name by name. Every person on the night shift is accounted for, and families are told where they are.", "HR och skiftledaren går igenom listan namn för namn. Varje person på nattskiftet är redovisad, och familjerna får veta var de är."], ["Every person on the night shift was accounted for on the first night.", "Varje person på nattskiftet var redovisad den första natten."]),
+            io(["The loading bay roof", "Taket över lastkajen"], ["The wind tears open the roof over the loading bay. Nobody is hurt, but that part of the depot is no longer a safe place to keep people.", "Vinden river upp taket över lastkajen. Ingen skadas, men den delen av depån är inte längre en säker plats att hålla folk på."], ["The loading bay roof was torn open on the first night; that area is closed.", "Taket över lastkajen slets upp den första natten; den delen är avstängd."], { reopen: true }),
+            io(["One name too many", "Ett namn för mycket"], ["The headcount comes out one higher than the shift rota. Someone is on site whom nobody listed, and nobody can yet say who.", "Räkningen ger en person mer än skiftschemat. Någon är på plats som ingen har listat, och ingen kan ännu säga vem."], ["One person on site that night was not on the shift rota.", "En person på plats den natten fanns inte med på skiftschemat."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Nobody holds the shift", "Ingen håller ihop skiftet"], [
+            io(["Most made it home", "De flesta kom hem"], ["Word trickles in through the night: most of the shift say they got home. It looks as if things worked out.", "Under natten droppar beskeden in: de flesta i skiftet säger att de kom hem. Det ser ut som att det ordnade sig."], ["By morning, most of the night shift had reported getting home.", "På morgonen hade de flesta på nattskiftet meddelat att de kommit hem."]),
+            io(["A family calls", "En familj ringer"], ["A landline call gets through: a family says their relative left the depot hours ago and has not arrived. Nobody at the company can say where they are.", "Ett samtal på fast telefon går fram: en familj säger att deras anhörige lämnade depån för flera timmar sedan och inte har kommit fram. Ingen på företaget kan säga var personen är."], ["A family reported a night-shift worker missing during the first night.", "En familj anmälde en person på nattskiftet som saknad under den första natten."], { reopen: true }),
+            io(["Nobody has the count", "Ingen har siffran"], ["Some staff stayed, some left on their own, some are sleeping in their cars in the yard. Nobody can give you a number.", "En del stannade, en del åkte på eget initiativ, några sover i bilarna på gården. Ingen kan ge er en siffra."], ["Nobody had a full count of who stayed at the depot on the first night.", "Ingen hade en fullständig bild av vilka som stannade på depån den första natten."])
+          ])
+        ],
         choice: ask(["What about the people on shift?", "Vad gäller för dem som är i tjänst?"], ["Accounts for everyone and keeps them safe where they are.", "Redovisar alla och håller dem säkra där de är."], [
           opt(["Account for everyone; keep them safe on site until roads open", "Redovisa alla; håll dem säkra på plats tills vägarna öppnar"], "l1", ["Food, heat and a list of names.", "Mat, värme och en lista med namn."], {
             set: "staffSafe",
@@ -138,6 +162,18 @@
       ], {
         long: true,
         skipTo: "c3",
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Load shed", "Lasten bortkopplad"], [
+            io(["The tank stretches", "Tanken räcker längre"], ["The generator settles at a low, steady load. Facilities recalculates and now expects the fuel to last well beyond {{num.fuelHours}} hours.", "Reservkraften stabiliseras på en låg, jämn last. Fastighet räknar om och tror nu att bränslet räcker en bra bit längre än {{num.fuelHours}} timmar."], ["With load shed, the fuel lasts well beyond {{num.fuelHours}} hours.", "Med lasten bortkopplad räcker bränslet en bra bit längre än {{num.fuelHours}} timmar."]),
+            io(["The wrong system went down", "Fel system gick ned"], ["Switching off a “non-critical” server takes the warehouse system's database with it. The depot loses sight of what is loaded where. What is critical has to be decided again.", "När en ”icke-kritisk” server stängs av följer lagersystemets databas med. Depån ser inte längre vad som är lastat var. Vad som är kritiskt måste avgöras igen."], ["A shutdown on the first night briefly took the warehouse system down with it.", "En avstängning den första natten tog en stund ned lagersystemet också."], { reopen: true }),
+            io(["Two readings", "Två mätvärden"], ["The tank gauge and a manual dip give different readings, hours apart in what they mean. Nobody knows which one to trust.", "Tankmätaren och en manuell pejling visar olika värden, som skiljer flera timmar. Ingen vet vilket man ska lita på."], ["On the first night the tank gauge and the manual reading disagreed.", "Den första natten stämde inte tankmätaren och den manuella pejlingen överens."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Everything still running", "Allt går fortfarande"], [
+            io(["A tanker, maybe", "En tankbil, kanske"], ["The fuel supplier gets through on a landline: they hope to get a tanker to you once a road is cleared. They promise nothing.", "Bränsleleverantören når fram via fast telefon: de hoppas få fram en tankbil när en väg är röjd. De lovar ingenting."], ["The fuel supplier hopes to get a tanker through, but promises nothing.", "Bränsleleverantören hoppas få fram en tankbil, men lovar ingenting."]),
+            io(["Burning faster", "Förbrukar snabbare"], ["Facilities checks the tank again an hour later. At full load the generator is burning faster than its rating, and the fuel will run out hours sooner than you thought.", "Fastighet kontrollerar tanken igen en timme senare. Vid full last förbrukar reservkraften mer än den är märkt för, och bränslet tar slut flera timmar tidigare än ni trodde."], ["The generator is burning fuel faster than its rating at full load.", "Reservkraften förbrukar mer bränsle än den är märkt för vid full last."], { reopen: true }),
+            io(["Nobody owns the reserve", "Ingen äger reserven"], ["Facilities says IT decides what runs, and IT says facilities owns the fuel. Nobody will name a reserve level.", "Fastighet säger att IT bestämmer vad som går, och IT säger att fastighet äger bränslet. Ingen vill ange en reservnivå."], ["Nobody has formally taken ownership of the fuel reserve.", "Ingen har formellt tagit ansvar för bränslereserven."])
+          ])
+        ],
         choice: ask(["How do you use the fuel?", "Hur använder ni bränslet?"], ["Sheds non-critical load to stretch the fuel.", "Kopplar bort det som inte är kritiskt för att dryga ut bränslet."], [
           opt(["Shut down everything non-critical to stretch it", "Stäng ned allt som inte är kritiskt för att dryga ut det"], "c3", ["Choices about what matters, made calmly now.", "Beslut om vad som är viktigt, fattade i lugn och ro nu."], {
             set: "fuelStretched",
@@ -165,6 +201,18 @@
           "Day one, evening. Because non-critical systems were shut down, the generator will last about thirty hours instead of {{num.fuelHours}}.\n\nPower is still out, and the forecast says it may take another day. Thirty hours is more time, but not enough to be sure. The question is how to use it.",
           "Dag ett, kväll. Eftersom icke-kritiska system stängdes av räcker reservkraften i ungefär trettio timmar i stället för {{num.fuelHours}}.\n\nStrömmen är fortfarande borta, och prognosen säger att det kan ta ett dygn till. Trettio timmar är mer tid, men inte tillräckligt för att vara säker. Frågan är hur ni använder den."
         ], ["Because you stretched the fuel, you have time to choose.", "Eftersom ni drygade ut bränslet har ni tid att välja."])],
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The controlled shutdown", "Den kontrollerade nedstängningen"], [
+            io(["Clean and quiet", "Rent och lugnt"], ["System by system, the data room goes quiet. Every server stops cleanly, and IT is confident the restart will be easy.", "System för system tystnar datahallen. Varje server stannar rent, och IT är säkra på att omstarten blir enkel."], ["The data room was shut down cleanly, one system at a time.", "Datahallen stängdes ned rent, ett system i taget."]),
+            io(["The depot goes blind", "Depån blir blind"], ["With the warehouse system down, the depot cannot see what is loaded on which truck. Staff start unloading to check by hand. The warehouse lead demands the system back on.", "Med lagersystemet nere kan depån inte se vad som är lastat på vilken bil. Personalen börjar lasta av för att kontrollera för hand. Lageransvarig kräver att systemet startas igen."], ["With systems shut down, the depot could not see what was loaded where.", "Med systemen nedstängda kunde depån inte se vad som var lastat var."], { reopen: true }),
+            io(["One server refuses", "En server vägrar"], ["One old server will not shut down and has to be switched off at the plug. Nobody can say whether it will come back.", "En gammal server går inte att stänga ned och måste slås av vid kontakten. Ingen kan säga om den kommer tillbaka."], ["One old server had to be switched off at the plug.", "En gammal server fick slås av vid kontakten."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["No clean shutdown", "Ingen ren nedstängning"], [
+            io(["Orders still coming", "Ordrarna kommer fortfarande"], ["For now, the order system keeps taking orders and sales are delighted. Keeping things running looks like the right call.", "Än så länge tar ordersystemet emot beställningar och försäljning är förtjust. Att hålla igång ser ut att vara rätt beslut."], ["The order system kept taking orders into the first night.", "Ordersystemet fortsatte ta emot beställningar en bit in på första natten."]),
+            io(["A generator stutter", "Reservkraften hackar"], ["The generator stutters for a few seconds. Several systems restart on their own and come back slowly. IT asks whether you really want to ride this out.", "Reservkraften hackar några sekunder. Flera system startar om av sig själva och kommer långsamt tillbaka. IT frågar om ni verkligen vill rida ut det här."], ["A brief generator stutter restarted several systems; all came back.", "Ett kort avbrott i reservkraften startade om flera system; alla kom tillbaka."], { reopen: true }),
+            io(["IT is split", "IT är oense"], ["Half the IT team wants to shut down now, the other half wants to run on. Both have good arguments, and nobody is sure.", "Halva IT-teamet vill stänga ned nu, andra halvan vill köra vidare. Båda har goda argument, och ingen är säker."], ["The IT team was split over whether to shut down.", "IT-teamet var oense om huruvida man skulle stänga ned."])
+          ])
+        ],
         choice: ask(["What do you do with the data room?", "Vad gör ni med datarummet?"], ["Shuts down in a controlled order rather than letting systems crash.", "Stänger ned i kontrollerad ordning i stället för att låta systemen krascha."], [
           opt(["A controlled shutdown before the fuel runs out", "En kontrollerad nedstängning innan bränslet tar slut"], "c4", ["Clean restart later.", "En ren omstart senare."], {
             pushback: [
@@ -195,6 +243,18 @@
         "The secondary site, in another town, still has power and working connections.\n\nBut data replication between the sites runs {{num.replicationLag}} hours behind. Switching over means losing the most recent orders, deliveries and changes, which someone will have to find and re-enter by hand.",
         "Reservanläggningen, i en annan ort, har fortfarande ström och fungerande förbindelser.\n\nMen datareplikeringen mellan anläggningarna ligger {{num.replicationLag}} timmar efter. Att växla över innebär att de senaste beställningarna, leveranserna och ändringarna försvinner, och någon måste leta upp och lägga in dem för hand."
       ], {
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Running from the other site", "Drift från den andra anläggningen"], [
+            io(["The switch holds", "Övergången håller"], ["The warehouse and order systems come up at the secondary site, slowly. The customer portal does not come up with them, but the core is running.", "Lager- och ordersystemen kommer igång på reservanläggningen, långsamt. Kundportalen följer inte med, men kärnan är igång."], ["Warehouse and order systems run from the secondary site; the portal does not.", "Lager- och ordersystemen körs från reservanläggningen; kundportalen gör det inte."]),
+            io(["A bigger gap", "Ett större glapp"], ["IT finds that some records never reached the secondary site at all, not just the last {{num.replicationLag}} hours. Nobody knows how much is missing.", "IT upptäcker att en del poster aldrig nådde reservanläggningen alls, inte bara de senaste {{num.replicationLag}} timmarna. Ingen vet hur mycket som saknas."], ["Some records never reached the secondary site at all.", "En del poster nådde aldrig reservanläggningen alls."], { reopen: true, meters: { trust: -1 } }),
+            io(["Under protest", "Under protest"], ["The secondary site takes your load, but its manager sends a formal complaint: their own systems have slowed to a crawl.", "Reservanläggningen tar er last, men chefen där skickar ett formellt klagomål: deras egna system har blivit mycket långsamma."], ["The secondary site accepted your load under formal protest.", "Reservanläggningen tog emot er last under formell protest."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Staying on the primary", "Kvar på den primära"], [
+            io(["The generator holds", "Reservkraften håller"], ["The primary generator runs steadily, and nobody has to re-enter anything. For now, staying put looks wise.", "Den primära reservkraften går jämnt, och ingen behöver mata in något igen. Just nu ser det klokt ut att stanna kvar."], ["The primary generator was running steadily when the failover was declined.", "Den primära reservkraften gick jämnt när övergången valdes bort."]),
+            io(["The window closes", "Fönstret stängs"], ["The secondary site reports that the storm has reached them. Their connections are dropping, and a failover is no longer possible tonight.", "Reservanläggningen rapporterar att stormen har nått dem. Förbindelserna bryts, och en övergång är inte längre möjlig i natt."], ["Failover to the secondary site was not possible on the first night.", "En övergång till reservanläggningen var inte möjlig den första natten."]),
+            io(["An objection on file", "En invändning till protokollet"], ["The service owner puts a written objection on file: declining the failover was, in their view, the riskier choice.", "Tjänsteägaren lämnar en skriftlig invändning: att avstå från övergången var enligt hen det mer riskfyllda valet."], ["The service owner formally objected to declining the failover.", "Tjänsteägaren invände formellt mot att övergången valdes bort."])
+          ])
+        ],
         choice: ask(["Do you run from there?", "Kör ni därifrån?"], ["Accepts known data loss deliberately, and records what must be re-entered.", "Accepterar en känd dataförlust medvetet, och dokumenterar vad som måste föras in igen."], [
           opt(["Yes, and list what must be re-entered", "Ja, och lista vad som måste föras in igen"], "c4", ["A deliberate trade.", "En medveten avvägning."], {
             pushback: [
@@ -217,6 +277,18 @@
         "Tomorrow's deliveries cannot leave the depot: the roads are closed and the warehouse system is struggling.\n\nThe customer portal is down. Customers are calling the usual phone numbers, which ring in offices without power where nobody can answer. Some of your customers are shops and care homes waiting for supplies.",
         "Morgondagens leveranser kan inte lämna depån: vägarna är avstängda och lagersystemet har problem.\n\nKundportalen ligger nere. Kunderna ringer de vanliga telefonnumren, som ringer på kontor utan ström där ingen kan svara. En del av era kunder är butiker och äldreboenden som väntar på leveranser."
       ], {
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The status page is up", "Statussidan är uppe"], [
+            io(["Customers read it", "Kunderna läser den"], ["Calls to colleagues' private phones drop. Customers say the page is the only place they get straight answers.", "Samtalen till kollegornas privata telefoner minskar. Kunderna säger att sidan är det enda ställe där de får raka besked."], ["The status page is customers' main source of news about deliveries.", "Statussidan är kundernas viktigaste källa till besked om leveranserna."], { meters: { trust: 1 } }),
+            io(["An update missed", "En missad uppdatering"], ["The page promised an update by morning. Nobody posted one. Customers share screenshots of the stale page and ask whether anyone is there.", "Sidan lovade en uppdatering till morgonen. Ingen lade ut någon. Kunderna delar skärmbilder av den inaktuella sidan och undrar om det finns någon där."], ["An update promised on the status page was missed.", "En uppdatering som statussidan utlovade uteblev."], { reopen: true, meters: { trust: -1 } }),
+            io(["They want a date", "De vill ha ett datum"], ["Care homes have read the page and call back: they need a delivery date to plan around. Nobody can give one.", "Äldreboendena har läst sidan och ringer tillbaka: de behöver ett leveransdatum att planera efter. Ingen kan ge något."], ["Care homes are asking for delivery dates nobody can give.", "Äldreboendena frågar efter leveransdatum som ingen kan ge."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["No word to customers", "Inget besked till kunderna"], [
+            io(["Few complaints", "Få klagomål"], ["Most customers are without power too, and only a handful complain. Silence seems to be costing nothing.", "De flesta kunder är också utan ström, och bara ett fåtal klagar. Tystnaden verkar inte kosta något."], ["So far few customers have complained; most are without power too.", "Hittills har få kunder klagat; de flesta är också utan ström."]),
+            io(["The rumour spreads", "Ryktet sprids"], ["A local online group claims you have stopped deliveries for good. It is shared widely, and customers start asking competitors instead.", "En lokal grupp på nätet påstår att ni har slutat leverera för gott. Inlägget delas flitigt, och kunderna börjar fråga konkurrenterna i stället."], ["A rumour that you stopped deliveries for good is circulating locally.", "Ett rykte om att ni slutat leverera för gott sprids lokalt."], { reopen: true, meters: { trust: -1, media: 1 } }),
+            io(["Answers from private phones", "Svar från privata telefoner"], ["Staff are answering customers from their private phones, each with their own idea of when deliveries will resume.", "Personalen svarar kunder från sina privata telefoner, var och en med sin egen bild av när leveranserna kommer igång."], ["Staff are giving customers differing answers from private phones.", "Personalen ger kunderna olika besked från privata telefoner."])
+          ])
+        ],
         choice: ask(["How do you reach customers?", "Hur når ni kunderna?"], ["Uses whatever channel still works, with honest expectations.", "Använder den kanal som fortfarande fungerar, med ärliga förväntningar."], [
           opt(["A status page hosted elsewhere and messages where possible", "En statussida som ligger någon annanstans och meddelanden där det går"], "l2", ["Some reach, honest expectations.", "Viss räckvidd, ärliga förväntningar."], {
             pushback: [
@@ -241,6 +313,18 @@
       ], {
         long: true,
         skipTo: "c5",
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Trucks on loan", "Utlånade lastbilar"], [
+            io(["Mentioned on the radio", "Nämnda i radion"], ["Local radio reports that your trucks are moving elderly residents and water. People notice who is helping.", "Lokalradion berättar att era lastbilar flyttar äldre invånare och kör ut vatten. Folk lägger märke till vem som hjälper."], ["Local radio reported that your trucks are helping the municipality.", "Lokalradion rapporterade att era lastbilar hjälper kommunen."], { meters: { trust: 1 } }),
+            io(["A truck is stuck", "En lastbil sitter fast"], ["One lent truck is stranded on a cut-off road with your driver inside. The driver is safe but cannot get out for hours. Do you keep lending?", "En utlånad lastbil sitter fast på en avskuren väg med er förare i. Föraren är oskadd men kommer inte loss på flera timmar. Fortsätter ni låna ut?"], ["A lent truck and its driver were stuck for hours on a cut-off road.", "En utlånad lastbil och dess förare satt fast i flera timmar på en avskuren väg."], { reopen: true }),
+            io(["They want more", "De vill ha mer"], ["The municipality thanks you and asks for more diesel than you offered. Saying no now feels harder than saying no at the start.", "Kommunen tackar och ber om mer diesel än ni erbjöd. Att säga nej nu känns svårare än att ha sagt nej från början."], ["The municipality has asked for more diesel than you offered.", "Kommunen har bett om mer diesel än ni erbjöd."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["The request declined", "Förfrågan avböjd"], [
+            io(["They found others", "De hittade andra"], ["The municipality calls back: other vehicles have been found. Nobody mentions your answer again.", "Kommunen ringer tillbaka: andra fordon har ordnats. Ingen nämner ert svar igen."], ["The municipality found other vehicles for its priority needs.", "Kommunen hittade andra fordon för sina prioriterade behov."]),
+            io(["Another cold night", "Ännu en kall natt"], ["Local news reports that elderly residents spent another night without heat because no vehicles were available. Your depot is mentioned by name.", "Lokala nyheter rapporterar att äldre invånare tillbringade ännu en natt utan värme eftersom inga fordon fanns. Er depå nämns vid namn."], ["Local news reported residents left without heat for another night.", "Lokala nyheter rapporterade att invånare blev utan värme ännu en natt."], { reopen: true, meters: { media: 1 } }),
+            io(["The clearing list changes", "Röjningslistan ändras"], ["The municipality revises its road-clearing priorities. Nobody can tell you whether your depot moved up or down.", "Kommunen gör om sin prioritering av vägröjningen. Ingen kan säga om er depå flyttades upp eller ned."], ["Road-clearing priorities changed; your depot's place on the list is unclear.", "Prioriteringen av vägröjningen ändrades; er depås plats på listan är oklar."])
+          ])
+        ],
         choice: ask(["Do you help?", "Hjälper ni till?"], ["Contributes what it can spare without risking its own safety.", "Bidrar med det som kan avvaras utan att riskera den egna säkerheten."], [
           opt(["Offer what you can spare", "Erbjud det ni kan avvara"], "c5", ["Good for the region; you remember who helped.", "Bra för regionen; man minns vem som hjälpte."], {
             pushback: [
@@ -274,6 +358,18 @@
           ], { headline: ["Storm emergency payment for employees", "Krisersättning för anställda efter stormen"], meta: { from: "hr-support@{{asset.lookalikeDomain}}", subject: L(["Emergency payment", "Krisersättning"]) }, tests: ["lo4"] })
         ],
         discuss: [q("Why do scams work so well during a real crisis?", "Varför fungerar bedrägerier så bra under en verklig kris?", ["ciso", "hr"])],
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The warning goes out", "Varningen går ut"], [
+            io(["Reports flood in", "Anmälningarna strömmar in"], ["Within the hour staff forward dozens of suspicious emails to the crisis team. It looks as if the warning is working.", "Inom en timme vidarebefordrar personalen dussintals misstänkta mejl till krisgruppen. Det ser ut som att varningen fungerar."], ["Staff are forwarding suspicious emails to the crisis team.", "Personalen vidarebefordrar misstänkta mejl till krisgruppen."]),
+            io(["A fake warning", "En falsk varning"], ["A copy of your own warning starts circulating, word for word, with one change: a link to “check whether your account is affected”. Staff cannot tell which one is real.", "En kopia av er egen varning börjar cirkulera, ord för ord, med en ändring: en länk för att ”kontrollera om ditt konto är drabbat”. Personalen kan inte avgöra vilken som är äkta."], ["A fake copy of your scam warning is circulating with a malicious link.", "En falsk kopia av er varning cirkulerar med en skadlig länk."], { reopen: true }),
+            io(["Not sure if they did", "Osäkra på om de gjorde det"], ["Several staff write that they opened the email on a phone in the dark and cannot remember whether they entered anything.", "Flera anställda skriver att de öppnade mejlet på telefonen i mörkret och inte minns om de fyllde i något."], ["Several staff are unsure whether they entered details on the fake page.", "Flera anställda är osäkra på om de lämnade uppgifter på den falska sidan."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["No warning yet", "Ingen varning än"], [
+            io(["The filter catches some", "Filtret fångar en del"], ["IT notices the mail filter has quarantined a batch of the scam emails. It seems the problem is partly handling itself.", "IT ser att e-postfiltret har satt en del av bedrägerimejlen i karantän. Problemet verkar delvis lösa sig självt."], ["The mail filter quarantined some, but not all, of the scam emails.", "E-postfiltret satte en del av bedrägerimejlen i karantän, men inte alla."]),
+            io(["An unfamiliar sign-in", "En okänd inloggning"], ["IT sees a staff mailbox signed into from an unfamiliar location, minutes after the password-reset email arrived. Waiting no longer looks like an option.", "IT ser att en anställds brevlåda har loggats in i från en okänd plats, några minuter efter att mejlet om lösenordsåterställning kom. Att vänta ser inte längre ut som ett alternativ."], ["A staff mailbox was signed into from an unfamiliar location.", "En anställds brevlåda loggades in i från en okänd plats."], { reopen: true }),
+            io(["Replies to the fake HR", "Svar till falska HR"], ["Staff are replying to the fake HR address with questions about the payment, and some get friendly answers back.", "Personalen svarar den falska HR-adressen med frågor om ersättningen, och en del får vänliga svar tillbaka."], ["Staff are corresponding with the fake HR address.", "Personalen brevväxlar med den falska HR-adressen."])
+          ])
+        ],
         choice: ask(["What do you do?", "Vad gör ni?"], ["Warns staff through the crisis channel and states what real messages will look like.", "Varnar personalen via krisgruppens kanal och anger hur riktiga meddelanden kommer att se ut."], [
           opt(["Warn through the crisis channel; block the senders", "Varna via krisgruppens kanal; blockera avsändarna"], "l3", ["Fast and believable.", "Snabbt och trovärdigt."], {
             set: "phishWarned",
@@ -309,6 +405,18 @@
       ], {
         long: true,
         skipTo: "c6",
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["IT never asks", "IT frågar aldrig"], [
+            io(["Callers hang up", "Uppringarna lägger på"], ["A warehouse clerk asks the next “IT” caller for a call-back number. The line goes dead. The rule is spreading.", "En lagerarbetare ber nästa ”IT”-uppringare om ett nummer att ringa tillbaka till. Linjen dör. Regeln sprider sig."], ["Staff have started challenging callers who claim to be IT.", "Personalen har börjat ifrågasätta uppringare som säger att de är IT."]),
+            io(["The call-back number is dead", "Återuppringningsnumret är dött"], ["Staff who call the announced number get no answer: it rings in an office without power. Some give up, and one answers the next caller instead.", "De som ringer det utlysta numret får inget svar: det ringer på ett kontor utan ström. En del ger upp, och en svarar nästa uppringare i stället."], ["The announced IT call-back number rang unanswered on the first day.", "Det utlysta numret till IT gick inte att nå den första dagen."], { reopen: true }),
+            io(["A quick check", "En snabb kontroll"], ["IT takes a quick look at the finance employee's account and finds nothing unusual. The check took five minutes.", "IT tittar snabbt på kontot för personen på ekonomi och hittar inget ovanligt. Kontrollen tog fem minuter."], ["A quick first check of the finance account found nothing unusual.", "En snabb första kontroll av ekonomikontot visade inget ovanligt."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Investigating first", "Utredning först"], [
+            io(["A pattern emerges", "Ett mönster framträder"], ["IT links several calls to the same range of numbers. It feels like progress, though it leads nowhere yet.", "IT kopplar flera samtal till samma nummerserie. Det känns som ett framsteg, även om det inte leder någonstans än."], ["IT linked several calls to one number range that leads nowhere yet.", "IT kopplade flera samtal till en nummerserie som ännu inte leder någonstans."]),
+            io(["The code was used", "Koden användes"], ["IT sees a successful sign-in to the finance employee's account from somewhere else, minutes after the call. Someone else is in.", "IT ser en lyckad inloggning på ekonomipersonens konto från en annan plats, några minuter efter samtalet. Någon annan är inne."], ["Someone else signed in to the finance employee's account.", "Någon annan loggade in på ekonomipersonens konto."], { reopen: true }),
+            io(["The calls stop", "Samtalen upphör"], ["The fake helpdesk calls suddenly stop. Nobody knows whether the scammers gave up or got what they wanted.", "De falska supportsamtalen upphör plötsligt. Ingen vet om bedragarna gav upp eller fick det de ville ha."], ["The fake helpdesk calls stopped suddenly; nobody knows why.", "De falska supportsamtalen upphörde plötsligt; ingen vet varför."])
+          ])
+        ],
         choice: ask(["How do you stop it?", "Hur stoppar ni det?"], ["Announces that IT never asks for codes, and gives a call-back route.", "Meddelar att IT aldrig ber om koder, och anger en väg för återuppringning."], [
           opt(["Announce: IT never asks for codes; call back on a known number", "Meddela: IT ber aldrig om koder; ring tillbaka på ett känt nummer"], "c6", ["Clear rule, easy to follow.", "Tydlig regel, lätt att följa."], {
             set: "phishWarned",
@@ -336,6 +444,18 @@
           "Day two. Power returns to head office in the afternoon.\n\nTwo servers did not come back after the hard crash when the fuel ran out, and the warehouse database reports corruption. Every department still wants everything back immediately, and the IT team has been awake for thirty hours.",
           "Dag två. Strömmen kommer tillbaka till huvudkontoret på eftermiddagen.\n\nTvå servrar kom inte tillbaka efter den hårda kraschen när bränslet tog slut, och lagerdatabasen rapporterar skadad data. Alla avdelningar vill ändå ha allt tillbaka omedelbart, och IT-teamet har varit vakna i trettio timmar."
         ], ["Because the data room ran until it crashed, the restart is harder.", "Eftersom datarummet gick tills det kraschade blir omstarten svårare."])],
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Restart in order", "Omstart i ordning"], [
+            io(["A smooth first hour", "En lugn första timme"], ["The first two systems on the list come back cleanly and pass their checks. The order looks right.", "De två första systemen på listan kommer tillbaka rent och klarar kontrollerna. Ordningen ser ut att stämma."], ["The first two systems on the restart list came back cleanly.", "De två första systemen på omstartslistan kom tillbaka rent."]),
+            io(["An unlisted server", "En olistad server"], ["The third system will not start: it needs a server nobody put on the whiteboard. The order has to be worked out again.", "Det tredje systemet startar inte: det behöver en server som ingen skrev upp på whiteboarden. Ordningen måste göras om."], ["An unlisted server blocked the restart order on day two.", "En server som inte fanns med stoppade omstartsordningen dag två."], { reopen: true }),
+            io(["Sales goes ahead", "Försäljning kör själva"], ["A sales manager gets a contractor to start the order system out of turn. It works, for now, and nobody checked it.", "En försäljningschef får en konsult att starta ordersystemet före sin tur. Det fungerar, just nu, och ingen har kontrollerat det."], ["Sales restarted its own system out of turn on day two.", "Försäljning startade sitt eget system före sin tur dag två."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["No restart order", "Ingen omstartsordning"], [
+            io(["Departments help themselves", "Avdelningarna tar själva"], ["Department leads with admin passwords start bringing their own systems up. Some of them work.", "Avdelningschefer med administratörslösenord börjar starta sina egna system. En del av dem fungerar."], ["Some departments restarted their own systems on day two.", "Några avdelningar startade sina egna system dag två."]),
+            io(["The power trips", "Strömmen löser ut"], ["A surge of load trips the power at head office. Everything that was running goes down again, hard. Facilities asks for a plan before anyone touches a switch.", "En lasttopp får strömmen på huvudkontoret att lösa ut. Allt som var igång går ned igen, hårt. Fastighet vill ha en plan innan någon rör en strömbrytare."], ["Head office power tripped once on the afternoon of day two.", "Strömmen på huvudkontoret löste ut en gång på eftermiddagen dag två."], { reopen: true }),
+            io(["A few hours of sleep", "Några timmars sömn"], ["With no clear order to follow, part of the IT team takes the chance to sleep for a few hours. Nobody is sure whether that helps or hurts.", "Utan någon tydlig ordning att följa passar en del av IT-teamet på att sova några timmar. Ingen vet om det hjälper eller stjälper."], ["Part of the IT team slept for a few hours on day two.", "En del av IT-teamet sov några timmar dag två."])
+          ])
+        ],
         choice: ask(["How do you restart?", "Hur startar ni igen?"], ["Restarts in priority order with checks at each step.", "Startar i prioritetsordning med kontroller i varje steg."], [
           opt(["In priority order, checking each system", "I prioritetsordning, med kontroll av varje system"], "c7", ["Slower first hour, fewer surprises.", "Långsammare första timme, färre överraskningar."], {
             pushback: [
@@ -372,6 +492,18 @@
         "The bills start arriving: spoiled chilled goods, overtime for everyone who worked through, hired generators and emergency repairs.\n\nThe insurer asks for documentation of every cost, with dates and decisions. Nobody kept a proper log during the first night.",
         "Räkningarna börjar komma: förstörda kylvaror, övertid för alla som arbetade igenom, hyrda elverk och akuta reparationer.\n\nFörsäkringsbolaget begär dokumentation för varje kostnad, med datum och beslut. Ingen förde en ordentlig logg under den första natten."
       ], {
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Building the log", "Loggen sammanställs"], [
+            io(["Receipts come in", "Kvittona kommer in"], ["Staff hand in receipts within days, and the claim starts to look solid.", "Personalen lämnar in kvitton inom några dagar, och anspråket börjar se stabilt ut."], ["Most receipts from the storm have been collected.", "De flesta kvitton från stormen har samlats in."]),
+            io(["The accounts disagree", "Berättelserna går isär"], ["The rebuilt timeline contradicts itself: three people give three times for the same first-night decision. The insurer queries the whole log.", "Den återskapade tidslinjen motsäger sig själv: tre personer anger tre olika tider för samma beslut den första natten. Försäkringsbolaget ifrågasätter hela loggen."], ["The rebuilt log disagrees with itself on first-night times.", "Den återskapade loggen är motsägelsefull om tiderna den första natten."], { reopen: true }),
+            io(["The adjuster wants interviews", "Skadereglerare vill intervjua"], ["The insurer's adjuster asks to interview staff directly about the first night, without managers present.", "Försäkringsbolagets skadereglerare vill intervjua personalen direkt om den första natten, utan chefer närvarande."], ["The insurer's adjuster wants to interview staff directly.", "Försäkringsbolagets skadereglerare vill intervjua personalen direkt."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Estimates later", "Uppskattningar senare"], [
+            io(["Estimates accepted, for now", "Uppskattningar godtas, tills vidare"], ["The insurer agrees to work from estimates for now, pending receipts. It seems there is no hurry.", "Försäkringsbolaget går med på att utgå från uppskattningar tills vidare, i väntan på kvitton. Det verkar inte brådska."], ["The insurer accepted estimates for now, pending receipts.", "Försäkringsbolaget godtog uppskattningar tills vidare, i väntan på kvitton."]),
+            io(["Receipts lost", "Kvitton borta"], ["Several receipts for hired generators have been thrown away. Staff who paid on their own cards are out of pocket and asking who will repay them.", "Flera kvitton för hyrda elverk har slängts. Anställda som betalade med egna kort står för kostnaden och frågar vem som ska betala tillbaka."], ["Some storm receipts were lost; staff are out of pocket.", "En del kvitton från stormen har försvunnit; anställda står för kostnaden."], { reopen: true }),
+            io(["Overtime that doesn't add up", "Övertid som inte går ihop"], ["Overtime claims from the storm do not match the shift rota. It may be honest confusion, or not.", "Övertidsanspråken från stormen stämmer inte med skiftschemat. Det kan vara ärlig förvirring, eller inte."], ["Overtime claims from the storm do not match the shift rota.", "Övertidsanspråken från stormen stämmer inte med skiftschemat."])
+          ])
+        ],
         choice: ask(["How do you handle the claim?", "Hur hanterar ni anspråket?"], ["Documents decisions and costs as they happen.", "Dokumenterar beslut och kostnader allteftersom."], [
           opt(["Assemble the crisis log and receipts now", "Sammanställ krisloggen och kvittona nu"], "l4", ["Memory fades by the week.", "Minnet bleknar för varje vecka."], {
             pushback: [
@@ -396,6 +528,18 @@
       ], {
         long: true,
         skipTo: "c8",
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Diverse connections", "Olika förbindelser"], [
+            io(["Budget approved", "Budget beviljad"], ["Management approves the budget for a second carrier and satellite backup without a fight. The storm made the case.", "Ledningen beviljar budgeten för en andra operatör och satellitreserv utan strid. Stormen gjorde argumenten åt er."], ["Budget for diverse connections has been approved.", "Budget för olika förbindelser har beviljats."]),
+            io(["Same poles", "Samma stolpar"], ["A route survey shows the proposed second carrier runs its cables along the same road and poles as the first. On paper it is diverse; in a storm it is not.", "En kartläggning visar att den föreslagna andra operatören drar sina kablar längs samma väg och stolpar som den första. På papperet är det olika; i en storm är det inte det."], ["The proposed second carrier shares the first carrier's cable route.", "Den föreslagna andra operatören delar kabelsträckning med den första."], { reopen: true }),
+            io(["A box nobody can use", "En låda ingen kan använda"], ["A satellite terminal arrives quickly. Nobody on staff has been trained to set it up.", "En satellitterminal levereras snabbt. Ingen i personalen har utbildats i att koppla upp den."], ["A satellite terminal has arrived; nobody is trained to use it.", "En satellitterminal har kommit; ingen är utbildad att använda den."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Only the credit", "Bara krediteringen"], [
+            io(["Paid promptly", "Snabbt utbetald"], ["The telecom provider pays the service credit without argument. The matter feels closed.", "Teleoperatören betalar krediteringen utan diskussion. Ärendet känns avslutat."], ["The telecom provider paid the service credit promptly.", "Teleoperatören betalade krediteringen snabbt."]),
+            io(["A contract condition", "Ett avtalsvillkor"], ["A large customer makes connectivity resilience a condition of renewing its contract. The credit does not answer that.", "En stor kund gör robusta förbindelser till ett villkor för att förnya avtalet. Krediteringen besvarar inte det."], ["A large customer made connectivity resilience a contract condition.", "En stor kund har gjort robusta förbindelser till ett avtalsvillkor."], { reopen: true, meters: { trust: -1 } }),
+            io(["A priority tier", "En prioriterad nivå"], ["The provider offers a paid “priority” tier. The small print says emergency services still come first in a regional event.", "Operatören erbjuder en betald ”prioriterad” nivå. Det finstilta säger att samhällsviktiga tjänster ändå går först vid en regional händelse."], ["The provider offered a paid priority tier that still yields to emergency services.", "Operatören erbjöd en betald prioriterad nivå som ändå viker för samhällsviktiga tjänster."])
+          ])
+        ],
         choice: ask(["What do you do with that?", "Vad gör ni med det?"], ["Plans for suppliers failing in a regional event, not only for compensation.", "Planerar för att leverantörer fallerar vid en regional händelse, inte bara för ersättning."], [
           opt(["Plan for diverse connections and a satellite backup", "Planera för olika förbindelser och satellitreserv"], "c8", ["Assumes the region fails together.", "Utgår från att regionen fallerar samtidigt."], {
             pushback: [
@@ -418,6 +562,18 @@
         "A week later, everything runs again. The roads are clear, deliveries have caught up and the depot is back to normal routines.\n\nEveryone is tired, and many would like to put the storm behind them as quickly as possible.",
         "En vecka senare fungerar allt igen. Vägarna är röjda, leveranserna har kommit ikapp och depån är tillbaka i sina vanliga rutiner.\n\nAlla är trötta, och många vill gärna lägga stormen bakom sig så fort som möjligt."
       ], {
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The review meets", "Genomgången hålls"], [
+            io(["Staff speak up", "Personalen säger sitt"], ["Night-shift staff and site managers speak frankly, and the room hears things nobody had written down.", "Nattskiftet och platscheferna talar öppet, och rummet får höra saker som ingen hade skrivit ned."], ["The review gathered frank accounts from every site.", "Genomgången samlade in öppna berättelser från alla anläggningar."]),
+            io(["It turns into blame", "Det blir skuldbeläggning"], ["The first session turns into an argument about who decided what on the first night. Two site managers walk out.", "Det första mötet blir ett gräl om vem som beslutade vad den första natten. Två platschefer går därifrån."], ["The first review session turned into an argument about blame.", "Det första mötet i genomgången blev ett gräl om skuld."], { reopen: true }),
+            io(["A different story", "En annan berättelse"], ["The night shift's account of the first night differs from management's on several points. Both sides are sure they are right.", "Nattskiftets berättelse om den första natten skiljer sig från ledningens på flera punkter. Båda sidor är säkra på att de har rätt."], ["The night shift's account of the first night differs from management's.", "Nattskiftets bild av den första natten skiljer sig från ledningens."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Moving on", "Vidare"], [
+            io(["Relief", "Lättnad"], ["Most staff seem relieved not to go through it all again. Work settles back into routine.", "De flesta verkar lättade över att slippa gå igenom allt igen. Arbetet faller tillbaka i sina rutiner."], ["Most staff seemed relieved to move on.", "De flesta i personalen verkade lättade över att gå vidare."]),
+            io(["A formal request", "En formell begäran"], ["The safety representative files a formal request for a review of how staff were protected during the storm. Moving on now means refusing it in writing.", "Skyddsombudet lämnar in en formell begäran om en genomgång av hur personalen skyddades under stormen. Att gå vidare nu betyder att neka skriftligt."], ["The safety representative formally requested a review of the storm.", "Skyddsombudet har formellt begärt en genomgång av stormen."], { reopen: true }),
+            io(["An unofficial version", "En inofficiell version"], ["An unofficial account of the storm, written by staff, is circulating internally. Parts of it are accurate.", "En inofficiell berättelse om stormen, skriven av personal, cirkulerar internt. Delar av den stämmer."], ["An unofficial staff account of the storm is circulating internally.", "En inofficiell berättelse om stormen, skriven av personal, cirkulerar internt."])
+          ])
+        ],
         choice: ask(["What happens now?", "Vad händer nu?"], ["Holds an after-action review with the people who were there.", "Håller en genomgång efteråt med dem som var där."], [
           opt(["An after-action review with staff from every site", "En genomgång efteråt med personal från alla anläggningar"], "c9", ["Captures what really happened.", "Fångar vad som verkligen hände."], {
             pushback: [
@@ -440,6 +596,18 @@
         "Someone reads the business continuity plan aloud. It assumed, on almost every page, that phones would work and that people could be reached.\n\nIt was written four years ago, and nobody had ever tested it.",
         "Någon läser kontinuitetsplanen högt. På nästan varje sida utgick den från att telefonerna skulle fungera och att folk gick att nå.\n\nDen skrevs för fyra år sedan, och ingen hade någonsin testat den."
       ], {
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Exercise and kit", "Övning och krislåda"], [
+            io(["A date is set", "Ett datum är satt"], ["Management backs the plan and the first blackout exercise gets a date in the calendar.", "Ledningen ställer sig bakom planen och den första övningen med strömavbrott får ett datum i kalendern."], ["The first blackout exercise has a date in the calendar.", "Den första övningen med strömavbrott har ett datum i kalendern."]),
+            io(["Operations says no", "Verksamheten säger nej"], ["Operations refuses to give up a delivery day for the exercise and takes it to the CEO. Without that day, the exercise is paper again.", "Verksamheten vägrar avstå en leveransdag för övningen och tar det till vd. Utan den dagen blir övningen papper igen."], ["Operations refused to give up a delivery day for the exercise.", "Verksamheten vägrade avstå en leveransdag för övningen."], { reopen: true }),
+            io(["An old kit", "En gammal krislåda"], ["Someone finds an old crisis kit in a storeroom: a radio with no batteries and a list of people who have left.", "Någon hittar en gammal krislåda i ett förråd: en radio utan batterier och en lista med personer som har slutat."], ["An old, half-stocked crisis kit was found in a storeroom.", "En gammal, halvtom krislåda hittades i ett förråd."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Only the document", "Bara dokumentet"], [
+            io(["Approved as written", "Godkänt som det är"], ["The updated plan is approved without changes and praised for being clear. It reads well.", "Den uppdaterade planen godkänns utan ändringar och får beröm för att vara tydlig. Den är bra att läsa."], ["The updated continuity plan was approved without changes.", "Den uppdaterade kontinuitetsplanen godkändes utan ändringar."]),
+            io(["The insurer wants a test", "Försäkringsbolaget vill se ett test"], ["The insurer makes a tested continuity plan a condition of renewing your cover. An updated document does not meet it.", "Försäkringsbolaget gör en testad kontinuitetsplan till villkor för att förnya försäkringen. Ett uppdaterat dokument uppfyller inte det."], ["The insurer made a tested plan a condition of renewal.", "Försäkringsbolaget har gjort en testad plan till villkor för förnyelse."], { reopen: true }),
+            io(["No owner", "Ingen ägare"], ["The updated plan is finished, but the cover page has no owner's name. Nobody volunteers.", "Den uppdaterade planen är klar, men försättsbladet saknar en ägare. Ingen anmäler sig."], ["The updated plan has no named owner yet.", "Den uppdaterade planen har ännu ingen namngiven ägare."])
+          ])
+        ],
         choice: ask(["What do you change?", "Vad ändrar ni?"], ["Tests the plan in a blackout exercise and adds offline fallbacks.", "Testar planen i en övning med strömavbrott och lägger till reservlösningar som fungerar utan nät."], [
           opt(["A yearly blackout exercise and an offline crisis kit", "En årlig övning med strömavbrott och en krislåda som fungerar utan nät"], "c10", ["Practice, not paper.", "Övning, inte papper."], {
             pushback: [
@@ -462,6 +630,18 @@
         "The last finding of the review is about the scams. They peaked exactly when people were most tired and least able to check anything: on the first night and the morning after.\n\nThe crisis plan says nothing about fraud. Next time, the scammers will be just as quick.",
         "Det sista fyndet i genomgången handlar om bedrägerierna. De nådde sin topp precis när folk var som tröttast och minst kunde kontrollera något: den första natten och morgonen efter.\n\nKrisplanen säger ingenting om bedrägerier. Nästa gång kommer bedragarna att vara lika snabba."
       ], {
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The warning line", "Varningsraden"], [
+            io(["Template ready", "Mallen är klar"], ["Communications adds a short scam warning to the first-message template. It took an afternoon.", "Kommunikation lägger till en kort varning för bedrägerier i mallen för det första krismeddelandet. Det tog en eftermiddag."], ["A scam warning line is now in the first crisis message template.", "En varningsrad om bedrägerier finns nu i mallen för det första krismeddelandet."]),
+            io(["The safety line is missed", "Säkerhetsbeskedet missas"], ["In a test send, most staff remember the scam warning and miss the instruction about where to go. The first message is now too crowded.", "I ett testutskick minns de flesta varningen för bedrägerier men missar beskedet om vart de ska ta vägen. Det första meddelandet är nu för fullt."], ["In a test send, staff missed the safety instruction.", "I ett testutskick missade personalen säkerhetsbeskedet."], { reopen: true }),
+            io(["Scammers copy warnings", "Bedragare kopierar varningar"], ["A peer network of security leads reports that scammers now copy crisis warnings word for word. A warning is only as good as its channel.", "Ett nätverk av säkerhetsansvariga rapporterar att bedragare nu kopierar krisvarningar ord för ord. En varning är bara så bra som sin kanal."], ["Scammers are known to copy crisis warnings word for word.", "Bedragare är kända för att kopiera krisvarningar ord för ord."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Nothing in the plan", "Inget i planen"], [
+            io(["Quiet months", "Lugna månader"], ["Since the storm, no new scams have been reported. It does look like a one-off.", "Sedan stormen har inga nya bedrägerier rapporterats. Det ser faktiskt ut som en engångsföreteelse."], ["No new storm-related scams have been reported since.", "Inga nya stormrelaterade bedrägerier har rapporterats sedan dess."]),
+            io(["A new scam", "Ett nytt bedrägeri"], ["Weeks later, staff receive an email about a “storm compensation fund” asking for bank details. It is the same trick, back again.", "Några veckor senare får personalen ett mejl om en ”stormersättningsfond” som ber om bankuppgifter. Det är samma knep, tillbaka igen."], ["A new storm-themed scam reached staff weeks after the storm.", "Ett nytt stormtema-bedrägeri nådde personalen några veckor efter stormen."], { reopen: true }),
+            io(["A written dissent", "En skriftlig reservation"], ["The CISO puts a written dissent on file. It changes nothing today, and it will be read after the next crisis.", "Säkerhetschefen lämnar en skriftlig reservation. Den ändrar ingenting i dag, och den kommer att läsas efter nästa kris."], ["The CISO has put a written dissent on file.", "Säkerhetschefen har lämnat en skriftlig reservation."])
+          ])
+        ],
         choice: ask(["What goes into the crisis plan?", "Vad förs in i krisplanen?"], ["Puts security warnings into crisis communications from the first hour.", "För in säkerhetsvarningar i kriskommunikationen från första timmen."], [
           opt(["Scam warnings in the first crisis message", "Varningar för bedrägerier i det första krismeddelandet"], "r-end", ["Prevents the predictable.", "Förebygger det förutsägbara."], {
             pushback: [
@@ -519,6 +699,18 @@
         "Your statement to the press blames a cyberattack for the delays. It sounds better than “we had no plan for a storm”.\n\nThe evening news reports that {{org.name}} was hit by a cyberattack during the storm. The next morning {{reg.csirt}} calls: they want details of the attack, so they can warn others.",
         "Ert uttalande till pressen skyller förseningarna på en cyberattack. Det låter bättre än ”vi hade ingen plan för en storm”.\n\nKvällsnyheterna rapporterar att {{org.name}} drabbades av en cyberattack under stormen. Nästa morgon ringer {{reg.csirt}}: de vill ha detaljer om attacken, så att de kan varna andra."
       ], {
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The truth to the CSIRT", "Sanningen till CSIRT"], [
+            io(["Closed quietly", "Stängt i tysthet"], ["{{reg.csirt}} thanks you for being straight and closes the report as a non-incident.", "{{reg.csirt}} tackar för ett rakt besked och stänger rapporten som en icke-incident."], ["{{reg.csirt}} closed the report as a non-incident.", "{{reg.csirt}} stängde rapporten som en icke-incident."]),
+            io(["A journalist checks", "En journalist kontrollerar"], ["A journalist calls {{reg.csirt}} to follow up the story. They confirm they have no record of an attack.", "En journalist ringer {{reg.csirt}} för att följa upp nyheten. De bekräftar att de inte har något angrepp registrerat."], ["{{reg.csirt}} told a journalist it has no record of an attack.", "{{reg.csirt}} har sagt till en journalist att de inte har något angrepp registrerat."], { meters: { media: 1 } }),
+            io(["A written summary", "En skriftlig sammanfattning"], ["{{reg.csirt}} asks for a short written summary of the outage, for their records. It will sit next to your press statement.", "{{reg.csirt}} ber om en kort skriftlig sammanfattning av avbrottet, för sina arkiv. Den kommer att ligga bredvid ert pressuttalande."], ["{{reg.csirt}} asked for a written summary of the outage.", "{{reg.csirt}} har bett om en skriftlig sammanfattning av avbrottet."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Vague with the CSIRT", "Vaga mot CSIRT"], [
+            io(["Accepted, for now", "Godtaget, tills vidare"], ["{{reg.csirt}} takes your answers without pushing. For the moment, it seems to have worked.", "{{reg.csirt}} tar emot era svar utan att trycka på. För stunden verkar det ha fungerat."], ["{{reg.csirt}} accepted your vague answers for now.", "{{reg.csirt}} godtog era vaga svar tills vidare."]),
+            io(["A regional warning", "En regional varning"], ["{{reg.csirt}} drafts a warning to other companies in the region, based on your report. They send you the draft to check.", "{{reg.csirt}} skriver ett utkast till en varning till andra företag i regionen, utifrån er rapport. De skickar utkastet till er för granskning."], ["{{reg.csirt}} drafted a regional warning based on your report.", "{{reg.csirt}} har skrivit ett utkast till regional varning utifrån er rapport."], { reopen: true, meters: { regulator: 1 } }),
+            io(["A meeting request", "En begäran om möte"], ["{{reg.csirt}} asks for a meeting with your technical staff next week. They are polite, and they are not dropping it.", "{{reg.csirt}} ber om ett möte med er tekniska personal nästa vecka. De är artiga, och de släpper det inte."], ["{{reg.csirt}} has requested a meeting with your technical staff.", "{{reg.csirt}} har begärt ett möte med er tekniska personal."])
+          ])
+        ],
         choice: ask(["What do you tell the CSIRT?", "Vad säger ni till CSIRT?"], ["Tells the authority the truth immediately.", "Berättar sanningen för myndigheten omedelbart."], [
           opt(["The truth: it was the storm", "Sanningen: det var stormen"], "x2", ["Now the press statement is the problem.", "Nu är pressuttalandet problemet."], {
             pushback: [
@@ -540,6 +732,18 @@
         "Staff who worked through the night read the news. Several of them tell the local paper there was no attack, only a storm and no plan.\n\nThe article quotes them by name, next to your statement.",
         "Anställda som arbetade igenom natten läser nyheterna. Flera av dem berättar för lokaltidningen att det inte var någon attack, bara en storm och ingen plan.\n\nArtikeln citerar dem med namn, bredvid ert uttalande."
       ], {
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The correction", "Rättelsen"], [
+            io(["Printed prominently", "Tryckt tydligt"], ["The local paper prints the correction prominently and calls it unusual candour.", "Lokaltidningen trycker rättelsen tydligt och kallar den ovanligt uppriktig."], ["The local paper printed your correction prominently.", "Lokaltidningen tryckte er rättelse tydligt."], { meters: { media: -1 } }),
+            io(["A bigger story", "En större nyhet"], ["Regional news picks up the correction: “Company admits inventing cyberattack.” More people now know than ever read the first story.", "Regionala nyheter tar upp rättelsen: ”Företag erkänner påhittad cyberattack.” Fler känner nu till det än någonsin läste den första nyheten."], ["Regional news reported that you admitted inventing the attack.", "Regionala nyheter rapporterade att ni erkänt att angreppet var påhittat."], { meters: { media: 1 } }),
+            io(["Staff left out", "Personalen utelämnad"], ["The staff quoted in the paper say the correction does not mention them, and they still do not know whether they will be punished.", "De anställda som citerades i tidningen säger att rättelsen inte nämner dem, och de vet fortfarande inte om de kommer att straffas."], ["The quoted staff say the correction ignored them.", "De citerade anställda säger att rättelsen förbigick dem."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Saying nothing more", "Inget mer sägs"], [
+            io(["No follow-up", "Ingen uppföljning"], ["The next day the paper moves on to storm damage elsewhere. It looks as if the story has died.", "Dagen efter går tidningen vidare till stormskador på annat håll. Det ser ut som att nyheten har dött."], ["The local paper ran no follow-up the next day.", "Lokaltidningen gjorde ingen uppföljning dagen efter."]),
+            io(["A second article", "En andra artikel"], ["A second article adds more staff accounts by name, and asks why management still says nothing.", "En andra artikel lägger till fler anställdas berättelser med namn, och frågar varför ledningen fortfarande tiger."], ["A second article added more named staff accounts.", "En andra artikel lade till fler namngivna anställdas berättelser."], { reopen: true, meters: { media: 1 } }),
+            io(["Private questions", "Frågor i det tysta"], ["Customers are asking account managers privately whether there was an attack. The answers vary.", "Kunder frågar kundansvariga i det tysta om det var ett angrepp. Svaren varierar."], ["Customers are asking privately whether there was an attack.", "Kunder frågar i det tysta om det var ett angrepp."])
+          ])
+        ],
         choice: ask(["How do you respond?", "Hur svarar ni?"], ["Corrects the record publicly.", "Rättar uppgifterna offentligt."], [
           opt(["Correct it publicly", "Rätta det offentligt"], "x3", ["Necessary.", "Nödvändigt."], {
             pushback: [
@@ -561,6 +765,18 @@
         "Your insurer has seen the news too. It notes the claim of a cyberattack, and asks whether you intend to claim under the cyber policy rather than the property policy.\n\nThe answer will be put in writing and compared with the evidence.",
         "Ert försäkringsbolag har också sett nyheterna. Det noterar påståendet om en cyberattack och frågar om ni tänker göra anspråk på cyberförsäkringen i stället för egendomsförsäkringen.\n\nSvaret kommer att dokumenteras skriftligt och jämföras med bevisen."
       ], {
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Weather, in writing", "Vädret, skriftligt"], [
+            io(["The claim proceeds", "Anspråket går vidare"], ["The insurer starts processing the claim under the property policy, with no further questions for now.", "Försäkringsbolaget börjar hantera anspråket under egendomsförsäkringen, utan fler frågor för stunden."], ["The insurer is processing the claim under the property policy.", "Försäkringsbolaget hanterar anspråket under egendomsförsäkringen."]),
+            io(["Explain the difference", "Förklara skillnaden"], ["The insurer asks, in writing, why your answer to them contradicts your public statement. The letter is copied to their legal team.", "Försäkringsbolaget frågar skriftligt varför ert svar till dem motsäger ert offentliga uttalande. Brevet går också till deras juridiska avdelning."], ["The insurer asked in writing why your statements differ.", "Försäkringsbolaget har skriftligt frågat varför era uttalanden skiljer sig."]),
+            io(["Finance grumbles", "Ekonomi muttrar"], ["Finance estimates that the cyber policy would have paid more, and says so in a meeting.", "Ekonomi uppskattar att cyberförsäkringen hade betalat mer, och säger det på ett möte."], ["Finance believes the cyber policy would have paid more.", "Ekonomi tror att cyberförsäkringen hade betalat mer."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["The option kept open", "Möjligheten hålls öppen"], [
+            io(["Noted, no comment", "Noterat, ingen kommentar"], ["The insurer notes your answer without comment. Nothing seems to happen.", "Försäkringsbolaget noterar ert svar utan kommentar. Ingenting verkar hända."], ["The insurer recorded that you kept the cyber option open.", "Försäkringsbolaget noterade att ni höll cybermöjligheten öppen."]),
+            io(["All payouts paused", "Alla utbetalningar pausade"], ["The insurer pauses every payout, property claim included, until the cause of the loss is clear.", "Försäkringsbolaget pausar alla utbetalningar, även egendomsanspråket, tills orsaken till förlusten är klarlagd."], ["The insurer paused all payouts until the cause is clear.", "Försäkringsbolaget har pausat alla utbetalningar tills orsaken är klarlagd."], { reopen: true }),
+            io(["Sent for review", "Skickat för granskning"], ["The insurer refers the file to its claims investigation team. It may be routine.", "Försäkringsbolaget skickar ärendet till sin utredningsgrupp för skador. Det kan vara rutin."], ["The insurer referred the file to its claims investigation team.", "Försäkringsbolaget har skickat ärendet till sin utredningsgrupp."])
+          ])
+        ],
         choice: ask(["What do you answer?", "Vad svarar ni?"], ["Keeps insurance claims strictly factual.", "Håller försäkringsanspråken strikt sakliga."], [
           opt(["No: the loss was weather", "Nej: förlusten berodde på vädret"], "x4", ["Correct, and awkward.", "Korrekt, och pinsamt."], {
             pushback: [
@@ -582,6 +798,18 @@
         "Customers and staff now question every statement from management, not only about the storm.\n\nThe union asks for an independent review, and two large customers ask for written assurances about your continuity planning.",
         "Kunder och personal ifrågasätter nu varje uttalande från ledningen, inte bara om stormen.\n\nFacket begär en oberoende granskning, och två stora kunder ber om skriftliga försäkringar om er kontinuitetsplanering."
       ], {
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The admission", "Erkännandet"], [
+            io(["The union steps back", "Facket backar"], ["The union welcomes the honest review and drops its demand for an independent one.", "Facket välkomnar den ärliga genomgången och släpper kravet på en oberoende granskning."], ["The union dropped its demand for an independent review.", "Facket släppte kravet på en oberoende granskning."]),
+            io(["Used against you", "Används mot er"], ["A large customer cites your admission in contract talks and asks for a lower price.", "En stor kund hänvisar till ert erkännande i avtalsförhandlingarna och begär ett lägre pris."], ["A large customer is using your admission in contract talks.", "En stor kund använder ert erkännande i avtalsförhandlingarna."], { meters: { trust: -1 } }),
+            io(["Divided staff", "Delad personal"], ["Some staff say the admission took courage; others say it came too late.", "En del i personalen säger att erkännandet krävde mod; andra säger att det kom för sent."], ["Staff reaction to the admission is divided.", "Personalens reaktion på erkännandet är delad."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Waiting it out", "Att vänta ut det"], [
+            io(["A quiet week", "En lugn vecka"], ["A week passes without new coverage. Waiting seems to be working.", "En vecka går utan nya artiklar. Att vänta verkar fungera."], ["A week passed without new coverage.", "En vecka gick utan nya artiklar."]),
+            io(["The union goes public", "Facket går ut"], ["The union publicly demands an independent review and tells the press why.", "Facket kräver offentligt en oberoende granskning och berättar för pressen varför."], ["The union publicly demanded an independent review.", "Facket har offentligt krävt en oberoende granskning."], { reopen: true, meters: { media: 1 } }),
+            io(["An audit request", "En begäran om revision"], ["A large customer asks to audit your continuity planning before signing the written assurances.", "En stor kund vill granska er kontinuitetsplanering innan den skriver under de skriftliga försäkringarna."], ["A large customer has asked to audit your continuity planning.", "En stor kund har begärt att få granska er kontinuitetsplanering."])
+          ])
+        ],
         choice: ask(["How do you rebuild it?", "Hur bygger ni upp det igen?"], ["Admits the misstatement and shares the honest review.", "Erkänner det felaktiga uttalandet och delar den ärliga genomgången."], [
           opt(["Admit it and publish the honest review", "Erkänn det och publicera den ärliga genomgången"], "e5", ["The slow way back.", "Den långsamma vägen tillbaka."], {
             pushback: [

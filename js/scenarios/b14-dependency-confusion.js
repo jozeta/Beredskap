@@ -12,7 +12,7 @@
   "use strict";
 
   const BK = window.BK;
-  const { L, q, inj, act, kpi, pg, ask, opt, pb, end, vr, rt } = BK.scenarios.h;
+  const { L, q, inj, act, kpi, pg, ask, opt, pb, ir, io, end, vr, rt } = BK.scenarios.h;
 
   BK.scenarios.register({
     id: "b14-dependency-confusion",
@@ -95,7 +95,19 @@
               pb(["Whose name is it?", "Vems namn är det?"], ["The registry asks you to show that the name belongs to you. On the public registry it never did: the name was free, and the stranger registered it first. On what grounds are you asking them to remove someone else's package?", "Registret ber er visa att namnet tillhör er. I det öppna registret har det aldrig gjort det: namnet var ledigt, och främlingen registrerade det först. Med vilken rätt ber ni dem ta bort någon annans paket?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The freeze holds", "Stoppet håller"], [
+            io(["Quiet in the logs", "Tyst i loggarna"], ["Since the freeze, no machine has downloaded version 99. The CI queue fills up with waiting builds, and some in the room say the danger is already behind you.", "Sedan stoppet har ingen maskin laddat ner version 99. Kön i CI fylls av väntande byggen, och några i rummet säger att faran redan är över."], ["No downloads of version 99 since the freeze.", "Inga nedladdningar av version 99 sedan stoppet."]),
+            io(["The CEO wants the fix out", "Vd vill få ut rättningen"], ["The customer who was promised a fix today has called {{person.ceo.name}} directly. The CEO asks the room to let that one release through, today, and wants to know who decided to stop everything.", "Kunden som utlovats en rättning i dag har ringt {{person.ceo.name}} direkt. Vd ber rummet släppa igenom just den releasen, i dag, och vill veta vem som beslutade att stoppa allt."], ["The CEO has asked for the customer fix to ship today.", "Vd har bett att kundrättningen levereras i dag."], { reopen: true }),
+            io(["The developers grumble", "Utvecklarna muttrar"], ["The developer chat fills with complaints. Nobody has been told why builds stopped, and rumours range from an outage to an audit.", "Utvecklarnas chatt fylls av klagomål. Ingen har fått veta varför byggena stoppades, och ryktena spänner från driftstörning till revision."], ["Developers have not been told why builds were frozen.", "Utvecklarna har inte fått veta varför byggena frystes."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Builds keep running", "Byggena fortsätter"], [
+            io(["A local rebuild", "Ett lokalt bygge"], ["A developer working from home mentions in chat that they rebuilt locally this morning and saw version 99 in their own output. Nobody had told them to stop.", "En utvecklare som jobbar hemifrån nämner i chatten att hen byggde lokalt i morse och såg version 99 i sin egen utskrift. Ingen hade sagt åt hen att sluta."], ["A developer laptop pulled version 99 during a local rebuild today.", "En utvecklardator hämtade version 99 vid ett lokalt bygge i dag."]),
+            io(["The CISO wants a stop", "Säkerhetschefen vill stoppa"], ["{{person.ciso.name}} writes to the room: until someone knows what version 99 does, builds should not run. The CISO wants that decision made now, not after lunch.", "{{person.ciso.name}} skriver till rummet: tills någon vet vad version 99 gör ska inga byggen köras. Säkerhetschefen vill att det beslutet fattas nu, inte efter lunch."], ["The CISO has asked in writing for builds to stop.", "Säkerhetschefen har skriftligen begärt att byggena stoppas."], { reopen: true }),
+            io(["A slow hour", "En lugn timme"], ["The next hour is quiet: hardly anyone pushes code, and no new build fetches the package. It looks as if carrying on was fine, but nobody has checked why.", "Nästa timme är lugn: nästan ingen skickar in kod, och inget nytt bygge hämtar paketet. Det ser ut som att det gick bra att fortsätta, men ingen har kontrollerat varför."], ["No new build fetched the package in the first hour.", "Inget nytt bygge hämtade paketet under den första timmen."])
+          ])
+        ]
       }),
 
       pg("c2", ["What it did", "Vad det gjorde"], [
@@ -130,7 +142,19 @@
               pb(["Nobody is counting machines", "Ingen räknar maskiner"], ["While you draft a careful email, nobody is working out which machines installed the package. Whatever the publisher answers, it will not tell you where their code ran. Who is doing that work while you wait for a reply?", "Medan ni formulerar ett försiktigt mejl är det ingen som tar reda på vilka maskiner som installerade paketet. Vad utgivaren än svarar kommer det inte att berätta var koden kördes. Vem gör det arbetet medan ni väntar på svar?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The hunt begins", "Jakten börjar"], [
+            io(["A fast list", "En snabb lista"], ["Within the hour, the CI logs give a clean list of the runners that installed the package. It feels like real progress, though the laptops are not on it.", "Inom en timme ger CI-loggarna en tydlig lista över maskinerna som installerade paketet. Det känns som ett verkligt framsteg, fast datorerna inte finns med."], ["The CI runners are listed; the laptops are not.", "CI-maskinerna är listade; datorerna är det inte."]),
+            io(["Developers object", "Utvecklarna protesterar"], ["Developers are asked to hand over their laptops for checking, with no explanation. Several refuse, the dev lead backs them, and the hunt stalls while everyone argues about it.", "Utvecklarna ombeds lämna in sina datorer för kontroll, utan förklaring. Flera vägrar, utvecklingsansvarig stöttar dem, och jakten står still medan alla bråkar om saken."], ["Developers objected to laptop checks made without an explanation.", "Utvecklarna protesterade mot datorkontroller som gjordes utan förklaring."], { reopen: true }),
+            io(["Nobody remembers", "Ingen minns"], ["Asked whether they rebuilt locally this week, some developers say yes, some say no, and many simply do not remember. The laptop list will rest on memory.", "På frågan om de byggt lokalt den här veckan svarar en del ja, en del nej, och många minns helt enkelt inte. Listan över datorer kommer att bygga på minnet."], ["Several developers cannot say whether they rebuilt locally this week.", "Flera utvecklare kan inte säga om de byggt lokalt den här veckan."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Nobody is counting", "Ingen räknar"], [
+            io(["“Is my laptop affected?”", "”Är min dator drabbad?”"], ["A developer asks in chat whether their laptop is affected, since they rebuilt last night. Nobody in the room can answer, and others start asking the same.", "En utvecklare frågar i chatten om hens dator är drabbad, eftersom hen byggde i går kväll. Ingen i rummet kan svara, och fler börjar fråga samma sak."], ["Developers are asking whether their laptops are affected; nobody can answer.", "Utvecklarna frågar om deras datorer är drabbade; ingen kan svara."]),
+            io(["Asked for a number", "Ombedda om en siffra"], ["{{person.ciso.name}} asks how many machines ran the package. The room has no number, not even a rough one, and the CISO says that has to change before anything else.", "{{person.ciso.name}} frågar hur många maskiner som körde paketet. Rummet har ingen siffra, inte ens ungefär, och säkerhetschefen säger att det måste ändras innan något annat."], ["The CISO asked for a count of affected machines and got none.", "Säkerhetschefen bad om antalet drabbade maskiner och fick inget."], { reopen: true }),
+            io(["No alarms", "Inga larm"], ["Hours pass and no alert fires on any machine. For some in the room, that settles it: the package must be as harmless as it says.", "Timmar går och inget larm går på någon maskin. För några i rummet avgör det saken: paketet måste vara så ofarligt som det påstår."], ["No alert fired on any machine in the first hours.", "Inget larm gick på någon maskin under de första timmarna."])
+          ])
+        ]
       }),
 
       pg("l1", ["Where it ran", "Var det kördes"], [
@@ -160,7 +184,19 @@
               pb(["You read one script", "Ni läste ett skript"], ["You know what the package sent because you read its install script. On the developer laptops, nobody has checked what else was cached or run alongside it. How sure are you that only names left those machines?", "Ni vet vad paketet skickade eftersom ni läste installationsskriptet. På utvecklardatorerna har ingen kontrollerat vad mer som cachats eller körts samtidigt. Hur säkra är ni på att bara namn lämnade de maskinerna?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The rotation", "Bytet"], [
+            io(["It goes cleanly", "Det går smidigt"], ["By evening most of the secrets have new values and nothing in production has broken. The cloud lead is surprised, and the room feels it has closed the exposure.", "Till kvällen har de flesta hemligheterna nya värden och inget i produktion har gått sönder. Molnansvarig är förvånad, och rummet känner att exponeringen är stängd."], ["Most secrets were rotated by evening without outages.", "De flesta hemligheter byttes till kvällen utan avbrott."]),
+            io(["Production breaks", "Produktionen går sönder"], ["Changing the database password takes a customer-facing service down for most of an hour. Support is flooded, and the cloud lead asks whether the rest should wait.", "Bytet av databaslösenordet tar ner en kundnära tjänst i nästan en timme. Supporten översvämmas, och molnansvarig frågar om resten ska vänta."], ["Rotating the database password caused a customer-facing outage.", "Bytet av databaslösenordet orsakade ett avbrott för kunderna."], { reopen: true, meters: { trust: -1 } }),
+            io(["Laptops lag behind", "Datorerna halkar efter"], ["The CI secrets are done, but developers on laptops are still re-signing in and fixing their tools. Nobody can say for certain which old values still sit in local files.", "CI-hemligheterna är klara, men utvecklarna på datorerna loggar fortfarande in på nytt och lagar sina verktyg. Ingen kan säga säkert vilka gamla värden som ligger kvar i lokala filer."], ["Developer laptops are still being reconfigured after the rotation.", "Utvecklardatorerna håller fortfarande på att ställas om efter bytet."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["The secrets stay", "Hemligheterna ligger kvar"], [
+            io(["On the record", "Till protokollet"], ["{{person.ciso.name}} writes the decision down: nothing rotated, because only names were sent. The note is filed with the incident log, with the room's names on it.", "{{person.ciso.name}} skriver ner beslutet: inget byts, eftersom bara namn skickades. Anteckningen läggs i incidentloggen, med rummets namn på."], ["The decision not to rotate is on record with names on it.", "Beslutet att inte byta något är dokumenterat med namn på."]),
+            io(["The publish token", "Publiceringstoken"], ["The release manager points out that the registry publish token from the release build can publish packages in your name, and customers update automatically. They will not sign off on leaving it.", "Releaseansvarig påpekar att registrets publiceringstoken från releasebygget kan publicera paket i ert namn, och kunderna uppdaterar automatiskt. Hen vägrar godkänna att den lämnas kvar."], ["The registry publish token was left valid after the first review.", "Registrets publiceringstoken lämnades giltig efter den första genomgången."], { reopen: true }),
+            io(["Nothing touches the keys", "Ingen rör nycklarna"], ["The cloud logs show no use of any listed key from outside your network over the first day. It looks as if “only names” was the right call.", "Molnloggarna visar ingen användning av någon listad nyckel utifrån under det första dygnet. Det ser ut som att ”bara namn” var rätt bedömning."], ["No listed key was used from outside in the first day.", "Ingen listad nyckel användes utifrån under det första dygnet."])
+          ])
+        ]
       }),
 
       pg("c3", ["The configuration", "Konfigurationen"], [
@@ -190,7 +226,19 @@
               pb(["When the block lifts", "När blockeringen hävs"], ["The day the block is lifted, the build tool still takes the highest version from anywhere. Nothing in the configuration has changed. Is this a fix, or a pause before the same problem comes back?", "Den dag blockeringen hävs tar byggverktyget fortfarande den högsta versionen varifrån som helst. Ingenting i konfigurationen har ändrats. Är det här en rättning, eller en paus innan samma problem kommer tillbaka?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The scoped rollout", "Utrullningen"], [
+            io(["Builds go green", "Byggena blir gröna"], ["The first projects switch over and build cleanly, taking the internal package from the internal registry. The dev lead says the rest should follow within days.", "De första projekten ställs om och bygger utan problem, med det interna paketet från det interna registret. Utvecklingsansvarig säger att resten bör följa inom några dagar."], ["The first projects build cleanly with the scoped configuration.", "De första projekten bygger utan problem med den nya konfigurationen."]),
+            io(["Old projects, own copies", "Gamla projekt, egna kopior"], ["The rollout finds old projects that carry their own copy of the build configuration. The fix does not reach them, and nobody owns several of them any more.", "Utrullningen hittar gamla projekt som har en egen kopia av byggkonfigurationen. Rättningen når inte dem, och flera av dem har ingen ägare längre."], ["Some old projects carry their own config the fix does not reach.", "En del gamla projekt har en egen konfiguration som rättningen inte når."]),
+            io(["A name that is both", "Ett namn som är båda"], ["One internal name turns out to be a real, popular public package too, used by one team. Scoping it breaks their build, and they ask which one they were meant to get.", "Ett internt namn visar sig också vara ett riktigt, populärt öppet paket som ett team använder. När namnet låses går deras bygge sönder, och de frågar vilket paket de egentligen skulle ha."], ["One internal name clashes with a real public package some teams use.", "Ett internt namn krockar med ett riktigt öppet paket som en del team använder."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["The source stays open", "Källan står öppen"], [
+            io(["The gap remains", "Luckan finns kvar"], ["The dev lead points out that for any new dependency, the tool still takes the highest version from any source. Today's change protects what you have, not what comes next.", "Utvecklingsansvarig påpekar att verktyget, för varje nytt beroende, fortfarande tar den högsta versionen från vilken källa som helst. Dagens ändring skyddar det ni har, inte det som kommer."], ["The build configuration still accepts the highest version from any source.", "Byggkonfigurationen tar fortfarande den högsta versionen från vilken källa som helst."]),
+            io(["The CISO's question", "Säkerhetschefens fråga"], ["{{person.ciso.name}} asks what stops the next internal name being taken tomorrow, in a project created next month. Nobody has an answer that covers it.", "{{person.ciso.name}} frågar vad som hindrar att nästa interna namn kapas i morgon, i ett projekt som skapas nästa månad. Ingen har ett svar som täcker det."], ["Nobody can say what protects projects created after today.", "Ingen kan säga vad som skyddar projekt som skapas efter i dag."], { reopen: true }),
+            io(["It seems to work", "Det verkar fungera"], ["In the first hours after the change, no CI build pulls an internal name from the public registry. The room starts to treat the problem as fixed.", "Under de första timmarna efter ändringen hämtar inget CI-bygge något internt namn från det öppna registret. Rummet börjar behandla problemet som löst."], ["No CI build pulled an internal name publicly in the first hours.", "Inget CI-bygge hämtade ett internt namn öppet under de första timmarna."])
+          ])
+        ]
       }),
 
       pg("c3b", ["The publisher", "Utgivaren"], [
@@ -220,7 +268,19 @@
               pb(["Your servers fetched it", "Era servrar hämtade det"], ["Legal can say it may have been unlawful, not that it was: your build servers went out and fetched the package themselves, as configured. Are you ready to argue that in public, against someone who will point that out?", "Juristen kan säga att det kan ha varit olagligt, inte att det var det: era byggservrar gick ut och hämtade paketet själva, enligt er konfiguration. Är ni beredda att driva det offentligt, mot någon som kommer att påpeka just det?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Good faith, in writing", "God tro, skriftligt"], [
+            io(["The claims check out", "Påståendena stämmer"], ["The researcher sends the list of machine names that called back. It matches your CI logs line by line, and the room starts to trust them.", "Forskaren skickar listan över maskinnamnen som hörde av sig. Den stämmer rad för rad med era CI-loggar, och rummet börjar lita på hen."], ["The researcher's machine list matches your CI logs.", "Forskarens lista över maskiner stämmer med era CI-loggar."]),
+            io(["Legal objects", "Juristen invänder"], ["{{person.legal.name}} reads the reply after it was sent and objects: an agreed disclosure date in writing could be read as consent to the test. Legal wants the agreement reworded.", "{{person.legal.name}} läser svaret efter att det skickats och invänder: ett skriftligt överenskommet publiceringsdatum kan läsas som ett samtycke till testet. Juristen vill att överenskommelsen formuleras om."], ["Legal has objected to the written disclosure agreement.", "Juristen har invänt mot den skriftliga överenskommelsen om publicering."], { reopen: true }),
+            io(["Asking for more", "Hen vill ha mer"], ["The researcher accepts the date but asks about a reward before confirming it. Some in the room hear a fair question; others hear pressure.", "Forskaren godtar datumet men frågar om en belöning innan hen bekräftar det. En del i rummet hör en rimlig fråga; andra hör påtryckning."], ["The researcher raised a reward before confirming the date.", "Forskaren tog upp en belöning innan datumet bekräftades."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["The legal email", "Det juridiska mejlet"], [
+            io(["Silence", "Tystnad"], ["No reply comes that day. Nobody can tell whether the researcher is talking to a lawyer, writing faster, or simply ignoring you.", "Inget svar kommer den dagen. Ingen kan avgöra om forskaren pratar med en advokat, skriver snabbare eller bara struntar i er."], ["The researcher did not reply on the first day.", "Forskaren svarade inte under den första dagen."]),
+            io(["Word gets around", "Det sprids"], ["Another security researcher writes to your general address asking whether you really threatened dc-research. Someone has already told them.", "En annan säkerhetsforskare skriver till er allmänna adress och frågar om ni verkligen hotade dc-research. Någon har redan berättat det."], ["Other researchers have heard about your legal email.", "Andra forskare har hört talas om ert juridiska mejl."], { reopen: true, meters: { media: 1 } }),
+            io(["The package disappears", "Paketet försvinner"], ["Version 99.0.0 vanishes from the public registry, with no reply. It may be compliance, or someone covering their tracks.", "Version 99.0.0 försvinner från det öppna registret, utan något svar. Det kan vara att hen rättar sig, eller att någon sopar igen spåren."], ["Version 99.0.0 has been removed from the public registry.", "Version 99.0.0 har tagits bort från det öppna registret."])
+          ])
+        ]
       }),
 
       pg("c4", ["Version 99.0.1", "Version 99.0.1"], [
@@ -252,7 +312,19 @@
               pb(["“We assume not”", "”Vi antar att inte”"], ["If a customer asks whether the hostile version touched your builds, “we assume not” is the only answer you will have. Would you accept that answer from one of your own suppliers?", "Om en kund frågar om den fientliga versionen nådde era byggen är ”vi antar att inte” det enda svar ni har. Skulle ni godta det svaret från en av era egna leverantörer?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The beacon hunt", "Jakten på anroparen"], [
+            io(["CI is clean", "CI är rent"], ["The hunt across the CI runners finds no trace of the beacon. The room breathes out, and someone suggests calling it done.", "Genomsökningen av CI-maskinerna hittar inga spår av anroparen. Rummet andas ut, och någon föreslår att ni ska kalla det klart."], ["The beacon hunt found nothing on the CI runners.", "Jakten hittade ingen anropare på CI-maskinerna."]),
+            io(["Laptops out of reach", "Datorer utom räckhåll"], ["Several developer laptops are offline, at home or travelling, and cannot be checked today. The hunt stops at the edge of the office network.", "Flera utvecklardatorer är avstängda, hemma eller på resa, och kan inte kontrolleras i dag. Jakten tar slut vid kanten av kontorsnätet."], ["Several developer laptops could not be checked on the first day.", "Flera utvecklardatorer kunde inte kontrolleras under den första dagen."]),
+            io(["One lookup", "En uppslagning"], ["The DNS logs show one lookup of {{asset.c2Domain}} from the office network, with no clear source. The SOC lead suspects a colleague looking the domain up, but cannot prove it.", "DNS-loggarna visar en uppslagning av {{asset.c2Domain}} från kontorsnätet, utan tydlig källa. SOC-ansvarig misstänker att en kollega slog upp domänen, men kan inte bevisa det."], ["One lookup of the beacon's domain came from the office; source unknown.", "En uppslagning av anroparens domän kom från kontoret; källan är okänd."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Nobody looked", "Ingen letade"], [
+            io(["The CSIRT asks", "CSIRT frågar"], ["{{reg.csirt}} thanks you for the report and asks one question back: have you checked your own machines for the beacon? You cannot say yes.", "{{reg.csirt}} tackar för rapporten och ställer en motfråga: har ni kontrollerat era egna maskiner efter anroparen? Ni kan inte svara ja."], ["{{reg.csirt}} asked whether your machines were checked; you could not say.", "{{reg.csirt}} frågade om era maskiner kontrollerats; ni kunde inte svara."], { reopen: true, meters: { regulator: 1 } }),
+            io(["The logs look clean", "Loggarna ser rena ut"], ["The CI logs show no build resolved version 99.0.1. It seems to prove the fix held, and the room moves on.", "CI-loggarna visar att inget bygge hämtade version 99.0.1. Det verkar bevisa att rättningen höll, och rummet går vidare."], ["CI logs show no build resolved version 99.0.1.", "CI-loggarna visar att inget bygge hämtade version 99.0.1."]),
+            io(["Five hours", "Fem timmar"], ["The registry removes the hostile version, but it was public for five hours. Nobody on your side knows who installed it in that time.", "Registret tar bort den fientliga versionen, men den låg ute i fem timmar. Ingen hos er vet vem som installerade den under den tiden."], ["The hostile version was public for hours; who installed it is unknown.", "Den fientliga versionen låg ute i timmar; vem som installerade den är okänt."])
+          ])
+        ]
       }),
 
       pg("l2", ["Other names", "Andra namn"], [
@@ -277,7 +349,19 @@
               pb(["One line again", "En rad igen"], ["The CISO points out that a single line of configuration nobody looked at for years is how you got here. Now one line is supposed to be the whole defence. Why should a single line be enough this time?", "Säkerhetschefen påpekar att en enda konfigurationsrad som ingen tittat på på flera år är anledningen till att ni är här. Nu ska en rad vara hela skyddet. Varför skulle en enda rad räcka den här gången?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The placeholders", "Platshållarna"], [
+            io(["Names secured", "Namnen säkrade"], ["By the afternoon every free internal name has an empty placeholder on the public registry. It cost almost nothing, and the room feels the door is shut.", "Till eftermiddagen har varje ledigt internt namn en tom platshållare i det öppna registret. Det kostade nästan ingenting, och rummet känner att dörren är stängd."], ["The free internal names are now reserved publicly.", "De lediga interna namnen är nu reserverade publikt."]),
+            io(["Flagged as squatting", "Flaggade som namnockupation"], ["The public registry's automated checks flag your empty packages as name-squatting and suspend a batch of them. The names are free again until someone reviews your appeal.", "Det öppna registrets automatiska kontroller flaggar era tomma paket som namnockupation och stänger av en del av dem. Namnen är lediga igen tills någon granskar ert överklagande."], ["The registry suspended some placeholders as name-squatting.", "Registret stängde av en del platshållare som namnockupation."], { reopen: true }),
+            io(["Someone was faster", "Någon var snabbare"], ["One of the names was registered by an unknown account an hour before you got to it. The package is empty, for now.", "Ett av namnen registrerades av ett okänt konto en timme innan ni hann dit. Paketet är tomt, än så länge."], ["One internal name was registered by an unknown account just before you.", "Ett internt namn registrerades av ett okänt konto strax före er."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["The names stay free", "Namnen förblir lediga"], [
+            io(["A name is taken", "Ett namn tas"], ["An unknown account registers one of your free internal names, with an empty package. Nothing is in it yet, and nobody knows who is behind it.", "Ett okänt konto registrerar ett av era lediga interna namn, med ett tomt paket. Det finns inget i det än, och ingen vet vem som ligger bakom."], ["An unknown account registered one of your free internal names.", "Ett okänt konto registrerade ett av era lediga interna namn."], { reopen: true }),
+            io(["The fix holds", "Rättningen håller"], ["The dev lead runs a test: a project with a deliberately clashing public name still gets the internal package. The configuration fix seems to be enough.", "Utvecklingsansvarig kör ett test: ett projekt med ett avsiktligt krockande öppet namn får ändå det interna paketet. Rättningen av konfigurationen verkar räcka."], ["A test showed the build picks the internal package over a public one.", "Ett test visade att bygget väljer det interna paketet framför ett öppet."]),
+            io(["An archived project", "Ett arkiverat projekt"], ["An archived project turns up that still uses the old build configuration. Nobody knows whether anyone still builds it.", "Ett arkiverat projekt dyker upp som fortfarande använder den gamla byggkonfigurationen. Ingen vet om någon fortfarande bygger det."], ["An archived project still uses the old build configuration.", "Ett arkiverat projekt använder fortfarande den gamla byggkonfigurationen."])
+          ])
+        ]
       }),
 
       pg("c5", ["The agent you shipped", "Agenten ni levererade"], [
@@ -310,7 +394,19 @@
               pb(["If this one is wrong", "Om den här blir fel"], ["You would ship a release built while the build chain is still under investigation, to customers already running a build that pulled a stranger's code. If something is wrong with this one too, what do you tell them?", "Ni skulle leverera en release byggd medan byggkedjan fortfarande utreds, till kunder som redan kör ett bygge som hämtat en främlings kod. Om även den här visar sig vara fel, vad säger ni då till dem?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Telling the customers", "Kunderna får veta"], [
+            io(["Customers say thank you", "Kunderna tackar"], ["Several customer security teams reply within hours, thanking you for telling them directly. One says it is the clearest supplier notice they have had this year.", "Flera av kundernas säkerhetsteam svarar inom några timmar och tackar för att ni berättade direkt. Ett av dem säger att det är det tydligaste leverantörsbesked de fått i år."], ["Several customers thanked you for telling them directly.", "Flera kunder tackade för att ni berättade direkt."]),
+            io(["Updates paused", "Uppdateringarna pausas"], ["A large customer with strict supplier rules pauses all agent updates and demands a formal incident report under the contract before it resumes.", "En stor kund med strikta leverantörskrav pausar alla uppdateringar av agenten och kräver en formell incidentrapport enligt avtalet innan de fortsätter."], ["A large customer paused updates pending a formal incident report.", "En stor kund har pausat uppdateringarna i väntan på en formell incidentrapport."], { meters: { trust: -1 } }),
+            io(["The list you don't have", "Listan ni saknar"], ["Customers ask for the full list of components in the agent. You do not have one ready, and producing it will take days.", "Kunderna ber om en fullständig lista över komponenterna i agenten. Ni har ingen färdig, och att ta fram den kommer att ta dagar."], ["Customers asked for a full component list you do not yet have.", "Kunderna har bett om en komponentlista som ni ännu inte har."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Without a word", "Utan ett ord"], [
+            io(["A customer notices", "En kund märker det"], ["A customer's security team spots the unscheduled update and asks what it fixed. Whatever you answer now will be compared with what the write-up says later.", "En kunds säkerhetsteam lägger märke till den oplanerade uppdateringen och frågar vad den rättade. Vad ni än svarar nu kommer att jämföras med vad texten säger senare."], ["A customer has asked what the unscheduled update fixed.", "En kund har frågat vad den oplanerade uppdateringen rättade."], { reopen: true }),
+            io(["Nobody asks", "Ingen frågar"], ["The release goes out and not one customer asks about it. Some in the room take that as proof that saying nothing was right.", "Releasen går ut och inte en enda kund frågar om den. Några i rummet tar det som bevis för att det var rätt att inte säga något."], ["The release went out and no customer has asked about it yet.", "Releasen gick ut och ingen kund har frågat om den än."]),
+            io(["Sales has no line", "Säljarna har inget svar"], ["An account manager asks what to tell a customer's procurement team, which has heard rumours of a supply chain issue. Nobody has agreed what to say.", "En kundansvarig frågar vad hen ska säga till en kunds inköpsavdelning, som hört rykten om ett problem i leverantörskedjan. Ingen har bestämt vad som ska sägas."], ["Account managers have no agreed line on the shipped build.", "Kundansvariga har inget överenskommet svar om det levererade bygget."])
+          ])
+        ]
       }),
 
       pg("l3", ["The write-up", "Texten"], [
@@ -334,7 +430,19 @@
               pb(["Giving up your say", "Att avstå från att påverka"], ["The researcher offered you a part in the text. Declining may also end any say over the final version, including which details about your builds stay in. Is “no comment” worth giving that up?", "Forskaren erbjöd er en plats i texten. Att tacka nej kan också betyda att ni inte får något att säga till om i slutversionen, inte heller om vilka detaljer om era byggen som står kvar. Är ”ingen kommentar” värt det?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Your statement", "Ert uttalande"], [
+            io(["Accepted as written", "Godtaget som det är"], ["The researcher includes your statement unchanged, right after the timeline. It reads as a company that found the problem and fixed it.", "Forskaren tar med ert uttalande oförändrat, direkt efter tidslinjen. Det läses som ett företag som hittade problemet och rättade det."], ["Your statement will appear unchanged in the write-up.", "Ert uttalande kommer att stå oförändrat i texten."]),
+            io(["Legal cuts it down", "Juristen kortar ner det"], ["{{person.legal.name}} trims the statement until it admits nothing. {{person.comms.name}} says it now reads as evasive, worse than saying nothing at all.", "{{person.legal.name}} kortar uttalandet tills det inte medger något. {{person.comms.name}} säger att det nu låter undanglidande, sämre än att inte säga något alls."], ["Legal has cut the statement to two cautious sentences.", "Juristen har kortat uttalandet till två försiktiga meningar."], { reopen: true }),
+            io(["It names you", "Det pekar ut er"], ["With your statement attached, anyone reading can tell which company in the timeline is yours. The anonymity the draft gave you is gone.", "Med ert uttalande bifogat kan alla som läser se vilket företag i tidslinjen som är ert. Den anonymitet utkastet gav er är borta."], ["With the statement, readers can tell which company in the timeline is you.", "Med uttalandet kan läsarna se vilket företag i tidslinjen som är ert."], { meters: { media: 1 } })
+          ]),
+          ir("i2", { notChosen: "A" }, ["No comment", "Ingen kommentar"], [
+            io(["A journalist asks", "En journalist frågar"], ["A trade journalist who has seen the draft under embargo asks whether the unnamed company is you. “No comment” is now an answer to a direct question.", "En branschjournalist som sett utkastet under embargo frågar om det namnlösa företaget är ert. ”Ingen kommentar” är nu svaret på en direkt fråga."], ["A trade journalist has asked whether you are the unnamed company.", "En branschjournalist har frågat om ni är det namnlösa företaget."], { meters: { media: 1 } }),
+            io(["“No response”", "”Inget svar”"], ["The researcher writes that without a statement, the timeline will simply record “no response” next to your entry. They give you until tomorrow.", "Forskaren skriver att tidslinjen, utan ett uttalande, helt enkelt kommer att ange ”inget svar” vid er rad. Hen ger er till i morgon."], ["Without a statement, the timeline will say “no response”.", "Utan ett uttalande kommer tidslinjen att ange ”inget svar”."], { reopen: true }),
+            io(["Nobody connects it", "Ingen kopplar ihop det"], ["The draft circulates in a small group and nobody links it to you. For now, staying quiet looks like the safe choice.", "Utkastet cirkulerar i en liten krets och ingen kopplar det till er. Än så länge ser tystnad ut som det säkra valet."], ["Nobody outside has yet linked the draft to you.", "Ingen utomstående har ännu kopplat utkastet till er."])
+          ])
+        ]
       }),
 
       pg("c6", ["Bounty or court", "Belöning eller domstol"], [
@@ -369,7 +477,19 @@
               pb(["Your configuration as evidence", "Er konfiguration som bevis"], ["A police report has to describe how the package got in: your build servers fetched it themselves, as configured. That document may become public. Are you ready for your own configuration to be the evidence?", "En polisanmälan måste beskriva hur paketet kom in: era byggservrar hämtade det själva, enligt er konfiguration. Det dokumentet kan bli offentligt. Är ni beredda på att er egen konfiguration blir beviset?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The reward", "Belöningen"], [
+            io(["The researcher accepts", "Forskaren tackar ja"], ["The researcher accepts the reward and says future findings will go through your new disclosure policy first. The CISO calls it the cheapest security improvement of the year.", "Forskaren tar emot belöningen och säger att framtida fynd först går via er nya policy. Säkerhetschefen kallar det årets billigaste säkerhetsförbättring."], ["The researcher accepted and will use your new disclosure channel.", "Forskaren tackade ja och kommer att använda er nya rapporteringskanal."]),
+            io(["The CEO wants reasons", "Vd vill ha skäl"], ["{{person.ceo.name}} hears that you plan to pay someone who ran code on your servers without permission, and asks to see the reasoning before any money moves.", "{{person.ceo.name}} får höra att ni tänker betala någon som körde kod på era servrar utan tillstånd, och vill se resonemanget innan några pengar betalas ut."], ["The CEO has asked to see the reasoning before any payment.", "Vd har bett att få se resonemanget innan något betalas ut."], { reopen: true }),
+            io(["Strings attached?", "Med villkor?"], ["The researcher asks whether the reward comes with conditions on the write-up. Nobody had thought about it, and the question makes it sound like hush money.", "Forskaren frågar om belöningen är kopplad till villkor för texten. Ingen hade tänkt på det, och frågan får det att låta som tystnadspengar."], ["The researcher asked whether the reward is tied to the write-up.", "Forskaren frågade om belöningen är kopplad till texten."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["No reward", "Ingen belöning"], [
+            io(["Noted in the write-up", "Noterat i texten"], ["The researcher says the write-up will mention that no reward was offered, as it does for every company in the timeline.", "Forskaren säger att texten kommer att nämna att ingen belöning erbjöds, precis som för varje företag i tidslinjen."], ["The write-up will note that no reward was offered.", "Texten kommer att nämna att ingen belöning erbjöds."]),
+            io(["The CISO dissents", "Säkerhetschefen reserverar sig"], ["{{person.ciso.name}} formally records disagreement: the researcher found the weakness before the copycat and told you. The CISO asks the room to decide again.", "{{person.ciso.name}} reserverar sig formellt: forskaren hittade svagheten före efterapningen och berättade det för er. Säkerhetschefen ber rummet besluta på nytt."], ["The CISO has formally disagreed with the decision.", "Säkerhetschefen har formellt reserverat sig mot beslutet."], { reopen: true }),
+            io(["The next researcher", "Nästa forskare"], ["A second researcher reports an unrelated weakness to your general support inbox. There is no channel for it, and support has filed it as spam.", "En annan forskare rapporterar en annan svaghet till er allmänna supportinkorg. Det finns ingen kanal för det, och supporten har sorterat det som skräppost."], ["A second researcher's report sits in the support inbox, marked as spam.", "En annan forskares rapport ligger i supportinkorgen, markerad som skräppost."])
+          ])
+        ]
       }),
 
       pg("c7", ["The secrets", "Hemligheterna"], [
@@ -396,7 +516,19 @@
               pb(["You saw it because it failed", "Ni såg det för att det misslyckades"], ["This attempt was visible because it failed and was logged. A successful use of another key might look like ordinary traffic. How would you know if one of the others had already been used?", "Försöket syntes eftersom det misslyckades och loggades. En lyckad användning av en annan nyckel kan se ut som vanlig trafik. Hur skulle ni veta om någon av de andra redan har använts?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Every door closed", "Alla dörrar stängs"], [
+            io(["The review is clean", "Granskningen är ren"], ["The first pass over every key's activity finds no other outside use. The room is confident the attempt was a one-off.", "Den första genomgången av alla nycklars aktivitet hittar ingen annan användning utifrån. Rummet är övertygat om att försöket var en enskild händelse."], ["The key review found no other outside use in the first pass.", "Genomgången av nycklarna hittade ingen annan användning utifrån i första omgången."]),
+            io(["A job breaks", "Ett jobb går sönder"], ["Rotating the last keys breaks a nightly report that customers rely on. They notice before you do.", "Bytet av de sista nycklarna får en nattlig rapport som kunderna är beroende av att gå sönder. De märker det innan ni gör det."], ["Rotating the remaining keys broke a customer-facing report job.", "Bytet av de återstående nycklarna fick ett kundnära rapportjobb att gå sönder."], { meters: { trust: -1 } }),
+            io(["Too little history", "För lite historik"], ["Several services keep only a short log history. The review cannot look back as far as the day the package first ran.", "Flera tjänster sparar bara en kort logghistorik. Granskningen kan inte se tillbaka ända till dagen då paketet först kördes."], ["Some services keep too little log history to review fully.", "En del tjänster sparar för lite logghistorik för en fullständig granskning."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["One key changed", "En nyckel byts"], [
+            io(["A second attempt", "Ett andra försök"], ["Two days later the audit log shows another failed attempt from outside, on a different key name from the same list.", "Två dagar senare visar granskningsloggen ännu ett misslyckat försök utifrån, med ett annat nyckelnamn från samma lista."], ["A second key from the list was tried from outside.", "En andra nyckel från listan prövades utifrån."], { reopen: true }),
+            io(["Quiet days", "Lugna dagar"], ["No further attempts are seen in the days that follow. It looks as if changing one key was enough.", "Inga fler försök syns under de följande dagarna. Det ser ut som att det räckte att byta en nyckel."], ["No further attempts were seen in the days that followed.", "Inga fler försök syntes under de följande dagarna."]),
+            io(["Who was watching?", "Vem tittade?"], ["The SOC confirms the captured list sat on a public page anyone could view. There is no way to know how many people saw it.", "SOC bekräftar att den fångade listan låg på en öppen sida som vem som helst kunde se. Det går inte att veta hur många som såg den."], ["Nobody can tell how many people viewed the captured list.", "Ingen kan säga hur många som såg den fångade listan."])
+          ])
+        ]
       }),
 
       pg("l4", ["Build hygiene", "Byggrutiner"], [
@@ -420,7 +552,19 @@
               pb(["What changed for customers?", "Vad ändrades för kunderna?"], ["Customers with strict supplier rules ask what has changed in how you build their product. The honest answer is “one line of configuration”. Will that satisfy them?", "Kunder med strikta leverantörskrav frågar vad som har ändrats i hur ni bygger deras produkt. Det ärliga svaret är ”en rad i konfigurationen”. Kommer det att räcka för dem?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Isolated releases", "Isolerade releaser"], [
+            io(["The first clean release", "Den första rena releasen"], ["The first release builds on an isolated runner with only the secrets it needs. It works first time, and the team is pleased.", "Den första releasen byggs på en isolerad maskin med bara de hemligheter den behöver. Det fungerar direkt, och teamet är nöjt."], ["The first release built on an isolated runner with minimal secrets.", "Den första releasen byggdes på en isolerad maskin med minimala hemligheter."]),
+            io(["The release slips", "Releasen försenas"], ["Setting up the isolation pushes the next customer release back by a week. The service owner has to explain the delay to customers.", "Arbetet med isoleringen skjuter nästa kundrelease en vecka framåt. Tjänsteägaren måste förklara förseningen för kunderna."], ["The next customer release is delayed while isolation is set up.", "Nästa kundrelease är försenad medan isoleringen sätts upp."]),
+            io(["A secret nobody knew", "En okänd hemlighet"], ["An isolated release fails because it depended on a secret nobody knew it used. Finding out what else is hidden like that will take time.", "En isolerad release misslyckas eftersom den var beroende av en hemlighet som ingen visste att den använde. Att ta reda på vad mer som döljer sig så kommer att ta tid."], ["Release builds relied on a secret nobody knew about.", "Releasebyggena var beroende av en hemlighet som ingen kände till."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Builds as before", "Byggen som förut"], [
+            io(["A customer audit", "En kundrevision"], ["A customer's supplier questionnaire arrives with a direct question: are release builds isolated from other builds? The honest answer is no.", "En kunds leverantörsenkät kommer med en direkt fråga: är releasebyggen isolerade från andra byggen? Det ärliga svaret är nej."], ["A customer's supplier audit asks whether release builds are isolated.", "En kunds leverantörsrevision frågar om releasebyggen är isolerade."], { reopen: true }),
+            io(["Back to speed", "Tillbaka i tempo"], ["Developers are relieved, and builds are back to their normal speed. Nobody misses the extra steps that were never introduced.", "Utvecklarna är lättade, och byggena går i normal takt igen. Ingen saknar de extra steg som aldrig infördes."], ["Developers welcomed the decision; builds are back to normal speed.", "Utvecklarna välkomnade beslutet; byggena går i normal takt igen."]),
+            io(["Another install script", "Ännu ett installationsskript"], ["A routine dependency update runs an install script nobody reviewed, on the same runner as a release. It looks harmless, and so did the last one.", "En vanlig uppdatering av ett beroende kör ett installationsskript som ingen granskat, på samma maskin som en release. Det ser ofarligt ut, och det gjorde det förra också."], ["An unreviewed install script ran on a release runner this week.", "Ett ogranskat installationsskript kördes på en releasemaskin den här veckan."])
+          ])
+        ]
       }),
 
       pg("c8", ["The product report", "Produktrapporten"], [
@@ -443,7 +587,19 @@
               pb(["The reading that suits you", "Den tolkning som passar er"], ["Legal said it is unclear whether this counts, not that it doesn't. Documenting a decision not to report means writing down the reading that happens to suit you. Is that what you want the record to show?", "Juristen sa att det är oklart om det räknas, inte att det inte gör det. Att dokumentera ett beslut att inte rapportera innebär att skriva ner den tolkning som råkar passa er. Är det vad ni vill att handlingarna ska visa?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The report is in", "Rapporten är inlämnad"], [
+            io(["Acknowledged", "Bekräftad"], ["{{reg.csirt}} acknowledges the report and thanks you for a clear account. No further questions come, for now.", "{{reg.csirt}} bekräftar rapporten och tackar för en tydlig redogörelse. Inga fler frågor kommer, än så länge."], ["{{reg.csirt}} acknowledged the report without further questions so far.", "{{reg.csirt}} bekräftade rapporten utan fler frågor än så länge."]),
+            io(["Late, they note", "Sent, noterar de"], ["The reply notes that the early warning arrived well after 24 hours from when you became aware, and asks why.", "Svaret noterar att den tidiga varningen kom långt efter 24 timmar från att ni fick kännedom, och frågar varför."], ["{{reg.csirt}} noted that your early warning came late.", "{{reg.csirt}} noterade att er tidiga varning kom sent."], { meters: { regulator: 1 } }),
+            io(["Follow-up questions", "Följdfrågor"], ["{{reg.csirt}} asks for the list of affected customers and a timeline of the build. Nobody can tell whether that is routine or the start of something bigger.", "{{reg.csirt}} ber om listan över drabbade kunder och en tidslinje för bygget. Ingen kan avgöra om det är rutin eller början på något större."], ["{{reg.csirt}} asked for the affected customer list and a build timeline.", "{{reg.csirt}} har bett om listan över drabbade kunder och en tidslinje för bygget."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Not reported", "Inte rapporterat"], [
+            io(["Asked why not", "Frågan varför inte"], ["A customer mentions the shipped build to {{reg.csirt}}, which contacts you to ask why it was not informed.", "En kund nämner det levererade bygget för {{reg.csirt}}, som kontaktar er och frågar varför de inte informerades."], ["{{reg.csirt}} has asked you why it was not informed.", "{{reg.csirt}} har frågat er varför de inte informerades."], { reopen: true, meters: { regulator: 1 } }),
+            io(["Counsel agrees", "Rådgivaren håller med"], ["External counsel reviews the reasoning and agrees that the threshold was not met. The room feels covered.", "En extern rådgivare går igenom resonemanget och håller med om att tröskeln inte nåddes. Rummet känner sig skyddat."], ["External counsel agreed with the decision not to report.", "En extern rådgivare höll med om beslutet att inte rapportera."]),
+            io(["The timeline will show it", "Tidslinjen visar det"], ["Someone points out that the researcher's write-up will show when you first knew. Anyone can compare that with your decision.", "Någon påpekar att forskarens text kommer att visa när ni först fick veta. Vem som helst kan jämföra det med ert beslut."], ["The write-up will show when you first knew.", "Texten kommer att visa när ni först fick veta."])
+          ])
+        ]
       }),
 
       pg("c9", ["The developers", "Utvecklarna"], [
@@ -465,7 +621,19 @@
               pb(["The lesson gets lost", "Lärdomen försvinner"], ["The CISO says the most important lesson of the week, that one developer reading a log line saved you, will be lost if you just move on. Is the time saved worth losing it?", "Säkerhetschefen säger att veckans viktigaste lärdom, att en utvecklare som läste en loggrad räddade er, går förlorad om ni bara går vidare. Är den sparade tiden värd att förlora den?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Thanked by name", "Tackad med namn"], [
+            io(["Others speak up", "Fler hör av sig"], ["After the thank-you, two other developers report odd things they had noticed in builds but kept to themselves.", "Efter tacket rapporterar två andra utvecklare konstigheter de lagt märke till i byggen men behållit för sig själva."], ["Two developers have reported oddities they had kept to themselves.", "Två utvecklare har rapporterat konstigheter de hållit för sig själva."]),
+            io(["Someone feels blamed", "Någon känner sig utpekad"], ["The team that owned the build configuration hears the thanks as an accusation: someone noticed, so someone else must have missed it.", "Teamet som ägde byggkonfigurationen hör tacket som en anklagelse: någon märkte det, så någon annan måste ha missat det."], ["The team that owned the build configuration feels blamed.", "Teamet som ägde byggkonfigurationen känner sig utpekat."]),
+            io(["Not outside, please", "Inte utåt, tack"], ["The developer is pleased, but asks not to be named outside the company. They do not want to be the person in the write-up.", "Utvecklaren är glad, men ber att inte bli namngiven utanför företaget. Hen vill inte vara personen i texten."], ["The developer asked not to be named outside the company.", "Utvecklaren bad att inte bli namngiven utanför företaget."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Moving on", "Vidare"], [
+            io(["The finder goes quiet", "Upptäckaren tystnar"], ["The developer who found version 99 stops posting in the team chat. A colleague says they feel overlooked.", "Utvecklaren som hittade version 99 slutar skriva i teamets chatt. En kollega säger att hen känner sig förbisedd."], ["The developer who found it feels overlooked.", "Utvecklaren som hittade det känner sig förbisedd."]),
+            io(["“Why bother?”", "”Varför bry sig?”"], ["In the retrospective a developer says that, after this week, they would not flag something odd in a log. Several nod.", "På uppföljningsmötet säger en utvecklare att hen, efter den här veckan, inte skulle flagga något konstigt i en logg. Flera nickar."], ["Developers say they doubt reporting oddities is worth it.", "Utvecklarna tvivlar på att det lönar sig att rapportera konstigheter."], { reopen: true }),
+            io(["Nobody minds", "Ingen bryr sig"], ["Most developers are simply glad the week is over and want to get back to work. Nobody asks for more.", "De flesta utvecklare är bara glada att veckan är slut och vill tillbaka till arbetet. Ingen ber om mer."], ["Most developers were relieved to move on quickly.", "De flesta utvecklare var lättade över att gå vidare snabbt."])
+          ])
+        ]
       }),
 
       pg("c10", ["What changes", "Vad som ändras"], [
@@ -494,7 +662,19 @@
               pb(["Where does secrecy end?", "Var slutar hemlighållandet?"], ["This treats internal names as secrets, and this week showed they never were. A developer asks whether names must now also be kept out of every error message, talk and public repository. Where does it end, and is it the first thing to change?", "Det här behandlar interna namn som hemligheter, och veckan visade att de aldrig var det. En utvecklare frågar om namnen nu också ska hållas borta från varje felmeddelande, föredrag och öppet kodförråd. Var slutar det, och är det rätt sak att ändra först?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The full package", "Hela paketet"], [
+            io(["Approved", "Godkänt"], ["{{person.ceo.name}} approves the budget for all three changes and names an owner for each. It looks like the technique is finished for you.", "{{person.ceo.name}} godkänner budgeten för alla tre ändringarna och utser en ansvarig för var och en. Det ser ut som att tekniken är slut för er del."], ["The changes have budget and named owners.", "Ändringarna har budget och utsedda ansvariga."]),
+            io(["Too much at once", "För mycket på en gång"], ["The dev lead warns that doing all three this quarter will halt product work. The service owner asks which customer promises should slip.", "Utvecklingsansvarig varnar för att alla tre detta kvartal stoppar produktarbetet. Tjänsteägaren frågar vilka kundlöften som ska skjutas upp."], ["The dev lead warned that all three at once halts product work.", "Utvecklingsansvarig har varnat för att alla tre på en gång stoppar produktarbetet."]),
+            io(["A team opts out", "Ett team hoppar av"], ["One team on a legacy build system says it cannot move to scoped packages at all. Nobody has decided whether that is an exception or a problem.", "Ett team med ett äldre byggsystem säger att det inte alls kan flytta till ett eget namnområde. Ingen har bestämt om det är ett undantag eller ett problem."], ["One legacy team says it cannot move to scoped packages.", "Ett team med äldre system säger att det inte kan flytta till eget namnområde."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Something less", "Något mindre"], [
+            io(["The CISO is not convinced", "Säkerhetschefen är inte övertygad"], ["{{person.ciso.name}} says the chosen change does not close the technique: the build tool would still take a stranger's package by name.", "{{person.ciso.name}} säger att den valda ändringen inte stänger tekniken: byggverktyget skulle fortfarande ta en främlings paket via namnet."], ["The CISO says the chosen change does not close the technique.", "Säkerhetschefen säger att den valda ändringen inte stänger tekniken."], { reopen: true }),
+            io(["It seems enough", "Det verkar räcka"], ["No internal name has appeared on the public registry in the two weeks since. The room takes that as a sign the work is done.", "Inget internt namn har dykt upp i det öppna registret under de två veckor som gått. Rummet tar det som ett tecken på att arbetet är klart."], ["No internal name has appeared publicly in the last two weeks.", "Inget internt namn har dykt upp publikt de senaste två veckorna."]),
+            io(["Old adverts", "Gamla annonser"], ["Archived copies of old job adverts on job sites still show your internal names. You cannot take those down.", "Arkiverade kopior av gamla platsannonser på jobbsajter visar fortfarande era interna namn. Dem kan ni inte ta bort."], ["Archived copies of old job adverts still show internal names.", "Arkiverade kopior av gamla platsannonser visar fortfarande interna namn."])
+          ])
+        ]
       }),
 
       pg("r-end", ["Outcome", "Utfall"], ["Routing to the ending.", "Vidare till slutet."], {
@@ -551,7 +731,19 @@
               pb(["Protecting what, exactly?", "Skyddar vad, exakt?"], ["The police have not said whether they will act at all. Meanwhile the fix, the hunt for the hostile version and the customers wait for attention. What exactly is the report protecting that is worth this?", "Polisen har inte sagt om de alls kommer att göra något. Under tiden väntar rättningen, jakten på den fientliga versionen och kunderna på uppmärksamhet. Vad exakt skyddar anmälan som är värt det här?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The apology", "Ursäkten"], [
+            io(["The story softens", "Tonen mildras"], ["Follow-up coverage quotes your apology, and some commentators say it took courage. The headline shifts, slightly.", "Uppföljande bevakning citerar er ursäkt, och några kommentatorer säger att det krävdes mod. Rubriken förskjuts, lite grann."], ["Your apology is quoted in follow-up coverage.", "Er ursäkt citeras i den uppföljande bevakningen."], { meters: { media: -1 } }),
+            io(["The police continue", "Polisen fortsätter"], ["The police say a withdrawn report will still be assessed. The researcher's lawyer asks why, if you meant the apology.", "Polisen säger att anmälan bedöms även om den dras tillbaka. Forskarens advokat frågar varför, om ni menade ursäkten."], ["The police will assess the report despite the withdrawal.", "Polisen kommer att bedöma anmälan trots att den dragits tillbaka."]),
+            io(["The researcher's terms", "Forskarens villkor"], ["The researcher accepts the apology privately, but asks for it to be made public too. Legal is uneasy about putting it in writing.", "Forskaren tar emot ursäkten privat, men vill att den också görs offentlig. Juristen är obekväm med att sätta den på pränt."], ["The researcher asked for your apology to be made public.", "Forskaren har bett att er ursäkt görs offentlig."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Standing firm", "Ni står på er"], [
+            io(["More headlines", "Fler rubriker"], ["A second wave of coverage quotes your defence of the police report next to the researcher's warning email.", "En andra våg av bevakning citerar ert försvar av polisanmälan bredvid forskarens varningsmejl."], ["A second wave of coverage quotes your defence of the report.", "En andra våg av bevakning citerar ert försvar av anmälan."], { meters: { media: 1 } }),
+            io(["Your own staff", "Er egen personal"], ["Members of your own security team publicly distance themselves from the report. Recruiters start getting questions.", "Medlemmar i ert eget säkerhetsteam tar offentligt avstånd från anmälan. Rekryterarna börjar få frågor."], ["Members of your security team have publicly distanced themselves.", "Medlemmar i ert säkerhetsteam har offentligt tagit avstånd."], { reopen: true }),
+            io(["Some agree", "Några håller med"], ["A few industry voices back you: testing on someone else's servers without permission is not research. The debate splits, and nobody wins it.", "Några röster i branschen stöttar er: att testa på någon annans servrar utan tillstånd är inte forskning. Debatten delar sig, och ingen vinner den."], ["A few industry voices have backed your stand.", "Några röster i branschen har stött er hållning."])
+          ])
+        ]
       }),
       pg("x2", ["The customers ask", "Kunderna frågar"], [
         "Customers have read the coverage. Several security teams ask whether the desktop agent they run was built with code from the researcher's package, and why they had to learn it from the news.\n\nTwo large customers pause automatic updates until you answer.",
@@ -572,7 +764,19 @@
               pb(["Updates stay paused", "Uppdateringarna förblir pausade"], ["The two customers who paused updates say a short statement is not enough to resume. Without updates they fall behind on fixes, including security fixes. How long can you leave them there?", "De två kunderna som pausat uppdateringarna säger att ett kort uttalande inte räcker för att starta igen. Utan uppdateringar halkar de efter med rättningar, även säkerhetsrättningar. Hur länge kan ni låta dem stå där?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The full account", "Hela redogörelsen"], [
+            io(["Updates resume", "Uppdateringarna återupptas"], ["One of the two large customers reads the account and turns automatic updates back on. The other is still reading.", "En av de två stora kunderna läser redogörelsen och slår på de automatiska uppdateringarna igen. Den andra läser fortfarande."], ["One of the two large customers has resumed automatic updates.", "En av de två stora kunderna har återupptagit de automatiska uppdateringarna."]),
+            io(["More questions", "Fler frågor"], ["The account raises a new question: did the hostile version ever reach your builds? Customers want a yes or no, and you cannot give one yet.", "Redogörelsen väcker en ny fråga: nådde den fientliga versionen någonsin era byggen? Kunderna vill ha ett ja eller nej, och ni kan inte ge något än."], ["Customers asked whether the hostile version reached your builds.", "Kunderna har frågat om den fientliga versionen nådde era byggen."]),
+            io(["The rebuild takes time", "Ombygget tar tid"], ["The clean rebuild will take several days to verify. Customers have the account, but not yet the build.", "Det rena ombygget tar flera dagar att verifiera. Kunderna har redogörelsen, men inte bygget än."], ["The clean rebuild will take several days.", "Det rena ombygget kommer att ta flera dagar."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["The short statement", "Det korta uttalandet"], [
+            io(["Not good enough", "Inte tillräckligt"], ["The two large customers reply that the statement does not answer what they asked. Their updates stay paused.", "De två stora kunderna svarar att uttalandet inte besvarar det de frågade. Deras uppdateringar förblir pausade."], ["Two large customers rejected the short statement.", "Två stora kunder har avvisat det korta uttalandet."], { reopen: true, meters: { trust: -1 } }),
+            io(["Accepted, for now", "Godtaget, tills vidare"], ["Most smaller customers accept the statement and move on. It looks as if a short answer was enough.", "De flesta mindre kunder godtar uttalandet och går vidare. Det ser ut som att ett kort svar räckte."], ["Most customers accepted the statement for now.", "De flesta kunder godtog uttalandet tills vidare."]),
+            io(["Quoted back", "Citerat tillbaka"], ["Coverage sets your statement side by side with the researcher's write-up. The two do not tell the same story.", "Bevakningen ställer ert uttalande bredvid forskarens text. De två berättar inte samma historia."], ["Coverage contrasts your statement with the write-up.", "Bevakningen ställer ert uttalande mot texten."], { meters: { media: 1 } })
+          ])
+        ]
       }),
       pg("x3", ["The copycat", "Efterapningen"], [
         "While attention was on the researcher, the hostile version's beacon kept calling home from two laptops that nobody checked.\n\n{{person.socLead.name}} finds it now, a week late. The laptops belong to developers with access to the release pipeline.",
@@ -593,7 +797,19 @@
               pb(["Only two?", "Bara två?"], ["These two were found a week late because nobody looked. Nobody has checked the other developer machines with the same care. Why would you trust that there are only two?", "De här två hittades en vecka för sent eftersom ingen letade. Ingen har kontrollerat de andra utvecklardatorerna lika noga. Varför skulle ni lita på att det bara är två?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The pipeline rebuild", "Ombygget av kedjan"], [
+            io(["No tampering found", "Ingen manipulation"], ["The first review of the release pipeline finds no sign of tampering. The room starts to believe the laptops never got further.", "Den första granskningen av releasekedjan hittar inga tecken på manipulation. Rummet börjar tro att datorerna aldrig tog sig längre."], ["The first review found no tampering in the release pipeline.", "Den första granskningen hittade ingen manipulation i releasekedjan."]),
+            io(["Releases stop", "Releaserna stoppas"], ["All customer releases halt while the pipeline is rebuilt. Customers who paused updates now have nothing to resume to.", "Alla kundreleaser stoppas medan kedjan byggs om. Kunderna som pausat uppdateringarna har nu inget att återuppta."], ["Customer releases are halted while the pipeline is rebuilt.", "Kundreleaserna är stoppade medan kedjan byggs om."], { meters: { trust: -1 } }),
+            io(["A token was used", "En token användes"], ["Logs show that a token from one of the two laptops was used on the pipeline this week. It may have been the developer, working as usual.", "Loggarna visar att en token från en av de två datorerna användes mot kedjan den här veckan. Det kan ha varit utvecklaren, som arbetade som vanligt."], ["A token from one laptop was used on the pipeline; by whom is unclear.", "En token från en av datorerna användes mot kedjan; av vem är oklart."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Two laptops cleaned", "Två datorer rensade"], [
+            io(["A third machine", "En tredje maskin"], ["A day after the clean-up, a third machine is found calling {{asset.c2Domain}}. The two laptops were not the whole story.", "Ett dygn efter rensningen hittas en tredje maskin som anropar {{asset.c2Domain}}. De två datorerna var inte hela historien."], ["A third machine was found calling the beacon's domain.", "En tredje maskin hittades som anropade anroparens domän."], { reopen: true }),
+            io(["Laptops wiped", "Datorerna rensade"], ["Both laptops are wiped and reinstalled, and the beacon goes silent. To most of the room, that is the end of it.", "Båda datorerna raderas och installeras om, och anroparen tystnar. För de flesta i rummet är saken därmed avslutad."], ["The two laptops have been wiped and reinstalled.", "De två datorerna har raderats och installerats om."]),
+            io(["The access question", "Frågan om åtkomsten"], ["Nobody can yet say whether the laptops' access to the release pipeline was used during the week the beacon ran.", "Ingen kan ännu säga om datorernas åtkomst till releasekedjan användes under veckan anroparen var aktiv."], ["Nobody can yet say whether the laptops' pipeline access was used.", "Ingen kan ännu säga om datorernas åtkomst till kedjan användes."])
+          ])
+        ]
       }),
       pg("x4", ["The supervisor", "Tillsynsmyndigheten"], [
         "{{reg.csirt}} has seen the coverage and asks about the hostile package, the shipped agent and the beacon on developer machines.\n\nThe researcher is cooperating with them. You are explaining, at the same time, why you reported the researcher to the police.",
@@ -614,7 +830,19 @@
               pb(["A slow drip", "Droppvis"], ["Each narrow answer brings another question, and the exchange drags on for weeks with your name attached. Is a slow drip really less exposure than one full account?", "Varje snävt svar leder till en ny fråga, och utbytet drar ut i veckor med ert namn kopplat till det. Är det droppvisa verkligen mindre utsatt än en fullständig redogörelse?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Full cooperation", "Fullt samarbete"], [
+            io(["Credit for openness", "Beröm för öppenheten"], ["{{reg.csirt}} notes your openness in its first reply and says it will focus on the technical fix, not the police report.", "{{reg.csirt}} noterar er öppenhet i sitt första svar och säger att de fokuserar på den tekniska rättningen, inte på polisanmälan."], ["{{reg.csirt}} noted your openness in its first reply.", "{{reg.csirt}} noterade er öppenhet i sitt första svar."], { meters: { regulator: -1 } }),
+            io(["Every answer, a question", "Varje svar, en fråga"], ["Your full account prompts a request for internal emails about the decision to go to the police. Legal is alarmed.", "Er fullständiga redogörelse leder till en begäran om interna mejl om beslutet att gå till polisen. Juristen är oroad."], ["{{reg.csirt}} has asked for internal emails about the police report.", "{{reg.csirt}} har bett om interna mejl om polisanmälan."]),
+            io(["Two versions", "Två versioner"], ["{{reg.csirt}} compares your timeline with the researcher's. They differ on two dates, and nobody is sure which side is right.", "{{reg.csirt}} jämför er tidslinje med forskarens. De skiljer sig åt på två datum, och ingen är säker på vem som har rätt."], ["Your timeline and the researcher's differ on two dates.", "Er tidslinje och forskarens skiljer sig åt på två datum."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Only what is asked", "Bara det som frågas"], [
+            io(["The researcher fills the gaps", "Forskaren fyller i luckorna"], ["{{reg.csirt}} learns from the researcher what you left out, including the beacon on the developer laptops. Its next letter is much less friendly.", "{{reg.csirt}} får veta av forskaren det ni utelämnade, bland annat anroparen på utvecklarnas datorer. Nästa brev är betydligt mindre vänligt."], ["{{reg.csirt}} learned details from the researcher that you left out.", "{{reg.csirt}} fick veta detaljer av forskaren som ni utelämnade."], { reopen: true, meters: { regulator: 1 } }),
+            io(["No follow-up yet", "Ingen uppföljning än"], ["Your short answers are received without comment. For a few days, it looks as if they were enough.", "Era korta svar tas emot utan kommentar. Under några dagar ser det ut som att de räckte."], ["{{reg.csirt}} has not followed up on your answers yet.", "{{reg.csirt}} har inte följt upp era svar än."]),
+            io(["A journalist asks", "En journalist frågar"], ["A journalist asks whether you are cooperating fully with {{reg.csirt}}. Any answer will be checked against what the researcher says.", "En journalist frågar om ni samarbetar fullt ut med {{reg.csirt}}. Vilket svar ni än ger kommer att stämmas av mot vad forskaren säger."], ["A journalist has asked whether you are cooperating fully.", "En journalist har frågat om ni samarbetar fullt ut."], { meters: { media: 1 } })
+          ])
+        ]
       }),
       pg("e5", ["Three months later", "Tre månader senare"], ["A researcher's warning became a public fight, a missed backdoor on developer laptops and a rebuilt release pipeline.\n\nThe technique was fixed eventually. The security community remembers the police report.", "En forskares varning blev en offentlig strid, en missad bakdörr på utvecklarnas datorer och en ombyggd releasekedja.\n\nTekniken rättades till slut. Säkerhetsvärlden minns polisanmälan."], {
         ending: end(5, ["Shooting the messenger", "Att skjuta budbäraren"], [

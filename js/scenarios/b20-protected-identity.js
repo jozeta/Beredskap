@@ -12,7 +12,7 @@
   "use strict";
 
   const BK = window.BK;
-  const { L, q, inj, act, kpi, pg, ask, opt, pb, end, vr, rt } = BK.scenarios.h;
+  const { L, q, inj, act, kpi, pg, ask, opt, pb, ir, io, end, vr, rt } = BK.scenarios.h;
 
   BK.scenarios.register({
     id: "b20-protected-identity",
@@ -104,7 +104,19 @@
               pb(["Her question", "Hennes fråga"], ["Through the police, the woman sends a message: she has done everything right for two years, and wants to know how this happened before she accepts a new address. Can you promise her the next address will be safer, without knowing how the last one leaked?", "Via polisen skickar kvinnan ett besked: hon har gjort allt rätt i två år och vill veta hur det här hände innan hon tar emot en ny adress. Kan ni lova att nästa adress blir säkrare, utan att veta hur den förra läckte?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The wide review", "Den breda granskningen"], [
+            io(["Staff lookups look clean", "Personalens sökningar ser rena ut"], ["The first pass over staff lookups finds nothing improper: every opening of a protected record carries a valid reason code. Whatever happened, it does not look like a caseworker acting alone.", "Första genomgången av personalens sökningar hittar inget otillbörligt: varje öppning av en skyddad post har en giltig orsakskod. Vad som än hänt ser det inte ut som en handläggare som agerat på egen hand."], ["The first pass found no improper staff lookups.", "Första genomgången hittade inga otillbörliga sökningar av personal."]),
+            io(["The review swamps everyone", "Granskningen slukar alla"], ["Two hours in, every analyst is reading logs and nobody has arranged where the woman and her children sleep tomorrow. {{person.securityOfficer.name}} asks you to decide again what comes first.", "Två timmar in läser varje analytiker loggar, och ingen har ordnat var kvinnan och barnen ska sova i morgon. {{person.securityOfficer.name}} ber er avgöra på nytt vad som kommer först."], ["Nobody was assigned to the woman's safety during the first hours.", "Ingen fick ansvar för kvinnans säkerhet under de första timmarna."], { reopen: true }),
+            io(["Two odd lookups", "Två udda sökningar"], ["The review turns up two other lookups of protected records with vague reason codes, by two different caseworkers. They may be sloppy paperwork. They may not. Nobody can say yet.", "Granskningen hittar två andra sökningar på skyddade poster med vaga orsakskoder, av två olika handläggare. Det kan vara slarvig dokumentation. Det kan också vara något annat. Ingen kan säga det ännu."], ["Two other lookups have vague reason codes, not yet explained.", "Två andra sökningar har vaga orsakskoder, ännu inte förklarade."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Only her record", "Bara hennes post"], [
+            io(["The trail stops", "Spåret tar slut"], ["Her team leader confirms the one lookup of her record: mail was returned, and the routine was followed. On her record alone, there is nothing more to find, and nobody is looking anywhere else.", "Gruppchefen bekräftar den enda sökningen på hennes post: posten kom i retur, och rutinen följdes. I hennes post finns inget mer att hitta, och ingen letar någon annanstans."], ["Her record's only lookup was legitimate; the trail stopped there.", "Den enda sökningen på hennes post var legitim; där tog spåret slut."]),
+            io(["The police ask wider", "Polisen frågar bredare"], ["The investigating officer asks a question nobody at the agency can answer: have other protected people been looked up the same way this month? Without a wider check, you have nothing to tell them.", "Utredaren ställer en fråga som ingen på myndigheten kan svara på: har andra skyddade personer slagits upp på samma sätt den här månaden? Utan en bredare kontroll har ni inget att säga."], ["The police asked whether other protected people were looked up; no answer yet.", "Polisen frågade om andra skyddade personer slagits upp; inget svar ännu."], { reopen: true }),
+            io(["Her lawyer writes", "Hennes jurist skriver"], ["The woman's lawyer sends a short letter: before she accepts any new address, she wants the agency to explain in writing how the last one left the register.", "Kvinnans jurist skickar ett kort brev: innan hon tar emot en ny adress vill hon att myndigheten skriftligt förklarar hur den förra lämnade registret."], ["Her lawyer has asked in writing how the address left the register.", "Hennes jurist har skriftligt frågat hur adressen lämnade registret."])
+          ])
+        ]
       }),
 
       pg("c2", ["The address service", "Adresstjänsten"], [
@@ -151,7 +163,19 @@
               pb(["His employer doesn't know", "Hans arbetsgivare vet inget"], ["The man who found the woman works for one of these clients. Saying nothing means his employer keeps the addresses and has no reason to check what he looked up. Are you comfortable leaving that company in the dark?", "Mannen som hittade kvinnan arbetar hos en av de här kunderna. Att tiga betyder att hans arbetsgivare behåller adresserna och inte har någon anledning att kontrollera vad han slog upp. Kan ni leva med att lämna det företaget ovetande?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The service goes dark", "Tjänsten släcks"], [
+            io(["The leak stops", "Läckan stoppas"], ["Within minutes of the shutdown, the batch calls stop. {{person.cio.name}} confirms in the log that no protected address left after the switch was thrown. For the first time today, the number is not growing.", "Inom några minuter efter nedstängningen upphör batch-anropen. {{person.cio.name}} bekräftar i loggen att ingen skyddad adress lämnade tjänsten efter att den stängdes. För första gången i dag växer inte siffran."], ["The log confirms the shutdown stopped the leak within minutes.", "Loggen bekräftar att nedstängningen stoppade läckan inom några minuter."]),
+            io(["The ministry wants it back", "Departementet vill ha den tillbaka"], ["The ministry calls: two banks and a debt collectors' trade body have complained, and the ministry expects a restart plan today. It asks whether a full shutdown was really necessary. You must decide again.", "Departementet ringer: två banker och inkassobranschens organisation har klagat, och departementet väntar sig en plan för omstart i dag. Det frågar om en total nedstängning verkligen var nödvändig. Ni måste avgöra på nytt."], ["The ministry has demanded a restart plan for the address service today.", "Departementet har krävt en plan för omstart av adresstjänsten i dag."], { reopen: true }),
+            io(["Clients go elsewhere", "Kunderna söker sig annanstans"], ["Some clients do not wait. A bank says it is buying addresses from a data broker while your service is off. Nobody knows what that broker's data contains.", "En del kunder väntar inte. En bank säger att den köper adresser från en datamäklare medan er tjänst är avstängd. Ingen vet vad den mäklarens uppgifter innehåller."], ["Some clients buy addresses from data brokers while the service is off.", "En del kunder köper adresser från datamäklare medan tjänsten är avstängd."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["The service stays up", "Tjänsten är kvar uppe"], [
+            io(["The fix holds", "Rättningen håller"], ["The fix goes live, and the next batch calls return “protected” where they should. The log looks clean from that moment on. The clients never noticed a thing.", "Rättningen går i drift, och nästa batch-anrop svarar ”skyddad” där de ska. Loggen ser ren ut från den stunden. Kunderna märkte ingenting."], ["After the fix went live, batch calls returned “protected” as intended.", "Efter att rättningen gått i drift svarade batch-anropen ”skyddad” som avsett."]),
+            io(["More went out first", "Fler gick ut först"], ["Before the fix lands, the log shows a large batch request from one client, made after you knew. It returned dozens more protected addresses in full. Keeping the service up has a cost you can count.", "Innan rättningen är på plats visar loggen ett stort batch-anrop från en kund, gjort efter att ni visste. Det lämnade ut dussintals fler skyddade adresser i sin helhet. Att låta tjänsten gå har en kostnad som går att räkna."], ["More protected addresses were returned after the fault was known.", "Fler skyddade adresser lämnades ut efter att felet var känt."], { reopen: true, meters: { regulator: 1 } }),
+            io(["The fix misfires", "Rättningen slår fel"], ["The first fix overcorrects: for a few hours it marks some ordinary people's addresses as protected. A bank calls to ask why. Nobody is sure yet whether every protected address is now covered.", "Den första rättningen slår över: i några timmar markerar den en del vanliga personers adresser som skyddade. En bank ringer och frågar varför. Ingen är säker ännu på att varje skyddad adress nu täcks."], ["The first fix wrongly blocked some ordinary addresses for a few hours.", "Den första rättningen spärrade felaktigt en del vanliga adresser i några timmar."])
+          ])
+        ]
       }),
 
       pg("l1", ["The caseworker", "Handläggaren"], [
@@ -176,7 +200,19 @@
               pb(["No closing date", "Inget slutdatum"], ["Nobody can say when the investigation will formally close: with the police and the regulator involved, it could be months. Your wait has no end. What is the real reason not to clear her now?", "Ingen kan säga när utredningen formellt avslutas: med polisen och tillsynsmyndigheten inblandade kan det ta månader. Er väntan har inget slut. Vad är det verkliga skälet att inte fria henne nu?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The written clearance", "Det skriftliga beskedet"], [
+            io(["She comes back", "Hon kommer tillbaka"], ["The caseworker reads the letter twice, then asks to return to work the same week. Her team leader says colleagues have started opening protected records again.", "Handläggaren läser brevet två gånger och ber sedan att få komma tillbaka samma vecka. Gruppchefen säger att kollegorna har börjat öppna skyddade poster igen."], ["The caseworker was cleared in writing and returned to work.", "Handläggaren friades skriftligt och återgick i arbete."]),
+            io(["The police object", "Polisen invänder"], ["The investigating officer calls, displeased: the agency has cleared someone in writing while the police case is still open, and has not asked them first. They want to know whether you will stand by it.", "Utredaren ringer, missnöjd: myndigheten har friat någon skriftligt medan polisens ärende fortfarande är öppet, utan att fråga dem först. Hen vill veta om ni står fast vid det."], ["The police have formally noted that the agency cleared her first.", "Polisen har formellt noterat att myndigheten friade henne först."], { reopen: true }),
+            io(["A lawyer, all the same", "En jurist, ändå"], ["The caseworker accepts the letter and thanks you. An hour later, her lawyer writes to ask what the agency will pay for the days she was treated as a suspect.", "Handläggaren tar emot brevet och tackar. En timme senare skriver hennes jurist och frågar vad myndigheten tänker betala för de dagar hon behandlades som misstänkt."], ["The caseworker accepted the clearance and has retained a lawyer.", "Handläggaren har godtagit beskedet och anlitat en jurist."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["The rumour hardens", "Ryktet sätter sig"], [
+            io(["She agrees to wait", "Hon går med på att vänta"], ["The caseworker says she understands and will wait for the formal result. She sounds calm on the phone. {{person.hr.name}} is not sure she means it.", "Handläggaren säger att hon förstår och väntar på det formella beskedet. Hon låter lugn i telefon. {{person.hr.name}} är inte säker på att hon menar det."], ["The caseworker agreed to wait, for now, without complaint.", "Handläggaren gick med på att vänta, tills vidare, utan att klaga."]),
+            io(["Named online", "Utpekad på nätet"], ["A post on social media names the caseworker as “the one who leaked a protected address”, and it is being shared. Her union says the agency's silence is now keeping the rumour alive. Can you still wait?", "Ett inlägg i sociala medier pekar ut handläggaren som ”den som läckte en skyddad adress”, och det delas vidare. Facket säger att myndighetens tystnad nu håller liv i ryktet. Kan ni fortfarande vänta?"], ["A social media post has named the caseworker as the leaker.", "Ett inlägg i sociala medier har pekat ut handläggaren som läckan."], { reopen: true, meters: { media: 1 } }),
+            io(["The pile grows", "Högen växer"], ["Nobody says it out loud, but caseworkers are leaving protected records untouched. Returned-mail cases for protected people are piling up, and some of them are urgent.", "Ingen säger det högt, men handläggarna låter de skyddade posterna vara. Ärenden med post i retur för skyddade personer hopar sig, och en del av dem är brådskande."], ["Returned-mail cases for protected people are piling up unprocessed.", "Ärenden med post i retur för skyddade personer hopar sig obehandlade."])
+          ])
+        ]
       }),
 
       pg("c3", ["The people-search site", "Personsöksajten"], [
@@ -213,7 +249,19 @@
               pb(["The client could act today", "Kunden kan agera i dag"], ["{{person.legal.name}} points out that the client company that sold the data has a contract with the site and could demand removal today. Nobody has asked it to. Why rely on a stranger abroad rather than a company you already work with?", "{{person.legal.name}} påpekar att kundföretaget som sålde uppgifterna har avtal med sajten och kan kräva borttagning i dag. Ingen har bett dem. Varför förlita sig på en okänd ägare utomlands i stället för ett företag ni redan samarbetar med?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The removal demand", "Kravet på borttagning"], [
+            io(["Gone overnight", "Borta över natten"], ["The client company threatens to end its contract, and by morning the listings you named are gone from the site. The shelter confirms its two residents no longer appear.", "Kundföretaget hotar att säga upp avtalet, och till morgonen är de poster ni pekat ut borta från sajten. Boendet bekräftar att dess två boende inte längre syns."], ["The site removed the listings it was told about overnight.", "Sajten tog bort de poster den fått besked om under natten."]),
+            io(["The court file", "Domstolens akt"], ["The court clerk calls: the urgent application lists the records to be removed, and a request to read the file has already come in. Unless it is sealed, the application itself becomes a list of protected people.", "Domstolens kansli ringer: den brådskande ansökan räknar upp de poster som ska tas bort, och en begäran om att få läsa akten har redan kommit in. Om den inte sekretessbeläggs blir ansökan själv en lista över skyddade personer."], ["The court application lists protected records; a request to read it is pending.", "Domstolsansökan räknar upp skyddade poster; en begäran att läsa den är under prövning."], { reopen: true }),
+            io(["Gone, or hidden?", "Borta, eller gömda?"], ["Name searches on the site now return nothing for the people you listed. But {{person.ciso.name}} is not sure the pages are deleted: they may simply be harder to find.", "Namnsökningar på sajten ger nu ingenting för de personer ni angett. Men {{person.ciso.name}} är inte säker på att sidorna är raderade: de kan bara vara svårare att hitta."], ["Name searches no longer show the listings; deletion is unconfirmed.", "Namnsökningar visar inte längre posterna; raderingen är obekräftad."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["The addresses stay up", "Adresserna ligger kvar"], [
+            io(["Down without a word", "Borta utan ett ord"], ["The next morning, the listings are gone. The site gives no reason and answers no questions. Nobody knows whether it acted because of you or for some reason of its own.", "Nästa morgon är posterna borta. Sajten ger inget skäl och svarar inte på frågor. Ingen vet om den agerade på grund av er eller av egna skäl."], ["The site took the listings down without saying why.", "Sajten tog ner posterna utan att säga varför."]),
+            io(["A third resident", "En tredje boende"], ["The shelter calls again: another of its residents has found her current address on the site, and staff are moving her tonight. Every hour the pages stay up costs someone a home.", "Boendet ringer igen: ytterligare en av deras boende har hittat sin nuvarande adress på sajten, och personalen flyttar henne i natt. Varje timme sidorna ligger kvar kostar någon ett hem."], ["A third shelter resident was found listed and moved that night.", "En tredje boende hittades på sajten och flyttades samma natt."], { reopen: true, meters: { trust: -1 } }),
+            io(["The client acts alone", "Kunden agerar på egen hand"], ["The client company that sold the data tells you it has ended its deal with the site, on its own initiative. It cannot say whether the site keeps what it already bought.", "Kundföretaget som sålde uppgifterna meddelar att det på eget initiativ har avslutat sitt avtal med sajten. Det kan inte säga om sajten behåller det den redan köpt."], ["The client company ended its data deal with the site on its own.", "Kundföretaget avslutade på eget initiativ sitt dataavtal med sajten."])
+          ])
+        ]
       }),
 
       pg("c3b", ["The quiet fix", "Den tysta rättningen"], [
@@ -235,7 +283,19 @@
               pb(["The review needs the clients", "Granskningen behöver kunderna"], ["The reviewers say they cannot finish without knowing what each client did with the addresses. The review you are waiting for depends on the clients you are not telling. How does this end?", "Granskarna säger att de inte kan bli klara utan att veta vad varje kund gjort med adresserna. Granskningen ni väntar på är beroende av kunderna ni inte berättar för. Hur slutar det här?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The clients are told", "Kunderna får veta"], [
+            io(["Deletions come in", "Raderingarna kommer in"], ["Most clients reply within a day: the addresses are deleted, and several thank you for telling them. It feels like the problem is closing.", "De flesta kunder svarar inom ett dygn: adresserna är raderade, och flera tackar för beskedet. Det känns som att problemet håller på att stängas."], ["Most clients confirmed deletion within a day of being told.", "De flesta kunder bekräftade radering inom ett dygn efter beskedet."]),
+            io(["The delay in writing", "Fördröjningen på papper"], ["A client's lawyer replies that the agency knew of the fault for days before telling anyone, and puts the dates in a letter copied to the regulator.", "En kunds jurist svarar att myndigheten kände till felet i flera dagar innan den berättade, och skriver in datumen i ett brev med kopia till tillsynsmyndigheten."], ["A client has told the regulator in writing about the days of silence.", "En kund har skriftligt informerat tillsynsmyndigheten om dagarna av tystnad."], { meters: { regulator: 1 } }),
+            io(["“Send us the list”", "”Skicka listan”"], ["One client asks for a list of exactly which records were protected, so it can find and delete them. Sending it would create one more copy of the very list you are trying to recover.", "En kund ber om en lista över exakt vilka poster som var skyddade, så att den kan hitta och radera dem. Att skicka den skulle skapa ännu en kopia av just den lista ni försöker få tillbaka."], ["A client asked for a list of protected records to delete them.", "En kund bad om en lista över skyddade poster för att kunna radera dem."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Still silent", "Fortfarande tyst"], [
+            io(["Nobody asks", "Ingen frågar"], ["Another day passes and no client mentions protection markers. The fix works, the service runs, and silence is starting to look like the easy option.", "Ännu ett dygn går och ingen kund nämner skyddsmarkeringar. Rättningen fungerar, tjänsten går, och tystnaden börjar se ut som det enkla alternativet."], ["No client has asked about the protection markers so far.", "Ingen kund har hittills frågat om skyddsmarkeringarna."]),
+            io(["Asked in public", "Frågat offentligt"], ["A developer at one client asks on a public developer forum why records from the agency's address service carry protection markers. Two others reply that they have seen the same. The silence is over, but not on your terms.", "En utvecklare hos en kund frågar i ett öppet utvecklarforum varför poster från myndighetens adresstjänst har skyddsmarkeringar. Två andra svarar att de sett samma sak. Tystnaden är bruten, men inte på era villkor."], ["A client's developer has asked publicly about protection-marked addresses.", "En kunds utvecklare har frågat offentligt om skyddsmarkerade adresser."], { reopen: true, meters: { media: 1 } }),
+            io(["Already sold on", "Redan vidaresålt"], ["{{person.dpo.name}} learns, informally, that one client delivered a batch of address data to a buyer last week. It may have included protected addresses. Nobody has asked that client.", "{{person.dpo.name}} får informellt veta att en kund levererade ett parti adressdata till en köpare förra veckan. Det kan ha innehållit skyddade adresser. Ingen har frågat den kunden."], ["One client sold on address data that may include protected addresses.", "En kund har sålt vidare adressdata som kan innehålla skyddade adresser."])
+          ])
+        ]
       }),
 
       pg("c4", ["Who to tell", "Vem som ska få veta"], [
@@ -275,7 +335,19 @@
               pb(["The banks came first", "Bankerna gick först"], ["A shelter adviser hears that the service is back while people are still waiting to be told their address leaked. To the shelters, the agency has put the banks first. How do you explain the timing to them?", "En rådgivare på ett skyddat boende får höra att tjänsten är igång igen medan folk fortfarande väntar på besked om att deras adress läckt. För boendena ser det ut som att myndigheten satt bankerna först. Hur förklarar ni tidpunkten för dem?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Personal contact begins", "Den personliga kontakten börjar"], [
+            io(["The first calls go well", "De första samtalen går bra"], ["The first highest-risk people are reached in person, with police present. Several say they had no idea, and are grateful to hear it from someone face to face.", "De första personerna med högst risk nås personligen, med polis närvarande. Flera säger att de inte hade en aning, och är tacksamma att få höra det av någon ansikte mot ansikte."], ["The first high-risk people were reached safely, with police present.", "De första personerna med högst risk nåddes säkert, med polis närvarande."]),
+            io(["Too slow", "För långsamt"], ["After two days, the team has reached a fraction of the list. At this pace, the last people will hear in two weeks, not one. {{person.securityOfficer.name}} asks whether the plan still holds.", "Efter två dagar har teamet nått en bråkdel av listan. I den takten får de sista beskedet om två veckor, inte en. {{person.securityOfficer.name}} frågar om planen fortfarande håller."], ["At the current pace, the last people will be reached in two weeks.", "I nuvarande takt nås de sista personerna om två veckor."], { reopen: true }),
+            io(["The wrong voice answers", "Fel röst svarar"], ["One call is answered by someone else in the household. The caller says it is about a parcel and hangs up. Nobody knows whether the person at risk will hear about the call, or from whom.", "Ett samtal besvaras av någon annan i hushållet. Den som ringer säger att det gäller ett paket och lägger på. Ingen vet om personen i riskzonen kommer att få höra om samtalet, eller av vem."], ["One call was answered by someone else in the household.", "Ett samtal besvarades av någon annan i hushållet."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["No personal contact", "Ingen personlig kontakt"], [
+            io(["A quiet first day", "En lugn första dag"], ["The first day passes without any new threat being reported. It is tempting to read that as a sign the approach is working.", "Den första dagen går utan att något nytt hot rapporteras. Det är lockande att läsa det som ett tecken på att upplägget fungerar."], ["No new threat was reported on the first day.", "Inget nytt hot rapporterades under den första dagen."]),
+            io(["The police want a list", "Polisen vill ha en lista"], ["The police ask for the people exposed, ranked by risk, so they can protect the most urgent first. There is no such list, and nobody has been assigned to make one. You need to think again about how people are reached.", "Polisen ber om de röjda personerna rangordnade efter risk, så att de kan skydda de mest brådskande först. Någon sådan lista finns inte, och ingen har fått i uppdrag att ta fram den. Ni behöver tänka om kring hur folk nås."], ["The police asked for a risk-ranked list; none exists yet.", "Polisen bad om en lista ordnad efter risk; någon sådan finns inte ännu."], { reopen: true }),
+            io(["Shelters step in", "Boendena kliver in"], ["Shelters start contacting their own residents without waiting for the agency. It helps some people. Nobody knows who has been reached twice and who not at all.", "Boendena börjar kontakta sina egna boende utan att vänta på myndigheten. Det hjälper en del. Ingen vet vem som nåtts två gånger och vem som inte nåtts alls."], ["Shelters began contacting residents themselves, uncoordinated with the agency.", "Boendena började själva kontakta sina boende, utan samordning med myndigheten."])
+          ])
+        ]
       }),
 
       pg("l2", ["The clients", "Kunderna"], [
@@ -299,7 +371,19 @@
               pb(["What the shelters will hear", "Vad boendena kommer att höra"], ["A shelter adviser asks what the agency did when two companies said no. The honest answer is “we asked politely”. Will the shelters accept that their residents' addresses are still sitting in those case files?", "En rådgivare på ett skyddat boende frågar vad myndigheten gjorde när två företag sa nej. Det ärliga svaret är ”vi bad artigt”. Kommer boendena att godta att deras boendes adresser fortfarande ligger i de där ärendena?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Access suspended", "Åtkomsten stängs av"], [
+            io(["They back down", "De backar"], ["Within two days, both debt collectors confirm deletion in writing and ask for their access back. The firm line seems to have worked.", "Inom två dygn bekräftar båda inkassoföretagen radering skriftligt och ber om att få tillbaka åtkomsten. Den hårda linjen verkar ha fungerat."], ["Both debt collectors confirmed deletion in writing after suspension.", "Båda inkassoföretagen bekräftade radering skriftligt efter avstängningen."]),
+            io(["Taken to court", "Till domstol"], ["One debt collector applies to court to restore its access, arguing that the agency is punishing it for the agency's own fault. {{person.legal.name}} gives the case even odds.", "Ett inkassoföretag ansöker hos domstol om att få tillbaka åtkomsten, med argumentet att myndigheten straffar företaget för myndighetens eget fel. {{person.legal.name}} bedömer chanserna som jämna."], ["One debt collector has gone to court to restore its access.", "Ett inkassoföretag har gått till domstol för att få tillbaka åtkomsten."], { reopen: true }),
+            io(["The silent company", "Företaget som teg"], ["The company that never answered turns out to have stopped trading last month. Its systems are with a liquidator, and nobody can say who now holds the addresses.", "Företaget som aldrig svarade visar sig ha upphört med sin verksamhet förra månaden. Dess system ligger hos en likvidator, och ingen kan säga vem som nu har adresserna."], ["The silent company has ceased trading; who holds its data is unknown.", "Företaget som teg har upphört; vem som har dess uppgifter är okänt."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Polite requests", "Artiga förfrågningar"], [
+            io(["The banks comply", "Bankerna rättar sig"], ["Every bank confirms deletion within a day. The two debt collectors repeat that they will keep the data. On paper, most of the problem is solved.", "Varje bank bekräftar radering inom ett dygn. De två inkassoföretagen upprepar att de behåller uppgifterna. På papperet är det mesta av problemet löst."], ["Every bank confirmed deletion; the two debt collectors did not.", "Varje bank bekräftade radering; de två inkassoföretagen gjorde det inte."]),
+            io(["A letter arrives", "Ett brev kommer fram"], ["A protected person calls in tears: a debt collection letter has arrived at her new address, the one that leaked. The debt collector used the data it refused to delete. Asking politely is no longer an answer.", "En skyddad person ringer gråtande: ett inkassobrev har kommit till hennes nya adress, den som läckte. Inkassoföretaget använde uppgifterna det vägrade radera. Att be artigt är inte längre ett svar."], ["A debt collector sent a letter to a protected person's leaked address.", "Ett inkassoföretag skickade ett brev till en skyddad persons läckta adress."], { reopen: true, meters: { trust: -1 } }),
+            io(["An internal check", "En intern kontroll"], ["The debt collector where the man worked says it has opened an internal check of his lookups. It will not say what it has found, or when it will share it.", "Inkassoföretaget där mannen arbetade säger att det har inlett en intern kontroll av hans sökningar. Det vill inte säga vad det hittat, eller när det tänker dela det."], ["The man's former employer is checking his lookups internally.", "Mannens tidigare arbetsgivare kontrollerar internt hans sökningar."])
+          ])
+        ]
       }),
 
       pg("c5", ["A second case", "Ett andra fall"], [
@@ -333,7 +417,19 @@
               pb(["Is that the policy?", "Är det policyn?"], ["A shelter adviser hears about the call and asks whether every exposed person will be told to call the police. If so, the shelters will be left with everything else. What is the agency's own role for the people its service exposed?", "En rådgivare på ett skyddat boende hör om samtalet och frågar om alla som röjts kommer att hänvisas till polisen. I så fall blir allt annat kvar hos boendena. Vilken är myndighetens egen roll för dem som dess tjänst röjt?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Emergency moves funded", "Akuta flyttar bekostas"], [
+            io(["Moved tonight", "Flyttad i kväll"], ["By evening he is in a short-term flat in another district, paid for by the agency. He calls once more, to say thank you.", "Till kvällen är han i en korttidslägenhet i en annan stadsdel, betald av myndigheten. Han ringer en gång till, för att tacka."], ["He moved that night, with the agency paying.", "Han flyttade samma kväll, med myndigheten som betalare."]),
+            io(["Payments frozen", "Betalningarna fryses"], ["The finance unit stops the payment: without a clear legal basis, it will not release money for private moves. The landlord is waiting for a deposit. You need another way, or another decision.", "Ekonomienheten stoppar betalningen: utan tydligt rättsligt stöd släpper den inga pengar till privata flyttar. Hyresvärden väntar på en deposition. Ni behöver en annan väg, eller ett annat beslut."], ["The finance unit froze relocation payments pending a legal opinion.", "Ekonomienheten frös betalningar för flyttar i väntan på ett juridiskt utlåtande."], { reopen: true }),
+            io(["Everyone calls", "Alla ringer"], ["Word spreads fast. By the next morning, dozens of the people exposed have asked for paid moves. Some are clearly in danger. For most, nobody can tell.", "Det sprids snabbt. Till nästa morgon har dussintals av dem som röjts bett om betalda flyttar. En del är tydligt i fara. För de flesta kan ingen avgöra det."], ["Dozens of exposed people have asked for paid moves.", "Dussintals av dem som röjts har bett om betalda flyttar."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["He has to wait", "Han får vänta"], [
+            io(["A quiet night", "En lugn natt"], ["He calls in the morning: nobody came, and the car did not return. He is still frightened, but the night passed without anything happening.", "Han ringer på morgonen: ingen kom, och bilen kom inte tillbaka. Han är fortfarande rädd, men natten gick utan att något hände."], ["The first night passed without any further approach.", "Den första natten gick utan att någon närmade sig igen."]),
+            io(["A second note", "En andra lapp"], ["He calls again from a friend's flat. A second note was in his mailbox this morning, this time with his current name. Whatever process you chose, it is not fast enough for him.", "Han ringer igen från en väns lägenhet. En andra lapp låg i brevlådan i morse, den här gången med hans nuvarande namn. Vilken process ni än valde går den inte tillräckligt fort för honom."], ["A second note appeared, this time with his current name.", "En andra lapp dök upp, den här gången med hans nuvarande namn."], { reopen: true, meters: { trust: -1 } }),
+            io(["He sends the bill", "Han skickar räkningen"], ["He moves on his own, to a relative's, and sends the agency the bill for the van and the first month's rent, with a short note: “Your leak, your cost.”", "Han flyttar på egen hand, till en släkting, och skickar räkningen för flyttbilen och första månadens hyra till myndigheten, med en kort rad: ”Er läcka, er kostnad.”"], ["He moved on his own and has sent the agency the bill.", "Han flyttade på egen hand och har skickat räkningen till myndigheten."])
+          ])
+        ]
       }),
 
       pg("l3", ["The ministry", "Departementet"], [
@@ -357,7 +453,19 @@
               pb(["Legal and comms disagree", "Juristen och kommunikatören är oense"], ["{{person.legal.name}} supports the narrow briefing; {{person.comms.name}} says a public document that leaves out known harm will become the story itself. Who decides, and on what grounds?", "{{person.legal.name}} stöder den smala lägesbilden; {{person.comms.name}} säger att en allmän handling som utelämnar känd skada själv blir nyheten. Vem avgör, och på vilka grunder?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The full briefing", "Den fullständiga lägesbilden"], [
+            io(["Accepted as written", "Godtagen som den är"], ["The ministry replies within the hour: it has what it needs, and the unknowns stay in. The state secretary thanks you for not making it look better than it is.", "Departementet svarar inom en timme: det har vad det behöver, och det okända får stå kvar. Statssekreteraren tackar för att ni inte fått det att se bättre ut än det är."], ["The ministry accepted the briefing with the unknowns left in.", "Departementet godtog lägesbilden med det okända kvar."]),
+            io(["She could be identified", "Hon kan identifieras"], ["The woman's lawyer has heard about the briefing. Even without her name, the details of the night would identify her to anyone who knows her. The lawyer asks you to take them out before it is filed.", "Kvinnans jurist har hört talas om lägesbilden. Även utan namn skulle detaljerna om natten peka ut henne för alla som känner henne. Juristen ber er ta bort dem innan den diarieförs."], ["Her lawyer says the briefing's details could identify her.", "Hennes jurist säger att detaljerna i lägesbilden kan peka ut henne."], { reopen: true }),
+            io(["A shorter version", "En kortare version"], ["The minister's office thanks you, then prepares its own shorter version for question time. The unknowns are not in it. Your briefing is still the one on file.", "Ministerns kansli tackar, och tar sedan fram en egen kortare version inför frågestunden. Det okända finns inte med i den. Er lägesbild är fortfarande den som är diarieförd."], ["The minister's office drafted its own version without the unknowns.", "Ministerns kansli skrev en egen version utan det okända."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Harm left out", "Skadan utelämnad"], [
+            io(["No questions back", "Inga motfrågor"], ["The ministry acknowledges the briefing without comment. Nobody asks about harm. For now, the narrow version has been accepted.", "Departementet bekräftar lägesbilden utan kommentar. Ingen frågar om skada. Tills vidare har den smala versionen godtagits."], ["The ministry did not ask about harm in its reply.", "Departementet frågade inte om skada i sitt svar."]),
+            io(["The police tell them", "Polisen berättar"], ["The ministry calls back: the police have told it directly about a woman who fled her home after her address leaked. It wants to know why that is not in your briefing.", "Departementet ringer tillbaka: polisen har direkt berättat om en kvinna som flydde sitt hem efter att hennes adress läckt. Departementet vill veta varför det inte står i er lägesbild."], ["The police told the ministry directly about the woman who was found.", "Polisen berättade direkt för departementet om kvinnan som hittades."], { reopen: true }),
+            io(["A dissent on file", "En avvikande mening"], ["{{person.comms.name}} puts a short note on the file: they disagreed with leaving out known harm. The note is a public document too.", "{{person.comms.name}} lägger en kort anteckning i akten: hen var emot att utelämna känd skada. Anteckningen är också en allmän handling."], ["{{person.comms.name}}'s written objection to the briefing is on file.", "{{person.comms.name}}s skriftliga invändning mot lägesbilden finns i akten."])
+          ])
+        ]
       }),
 
       pg("c6", ["The journalist", "Journalisten"], [
@@ -393,7 +501,19 @@
               pb(["The reporter will check", "Reportern kommer att kontrollera"], ["The reporter has already spoken to the shelter organisation, which has told them about residents moving in fear. If they check your statement with the shelters, what will they hear?", "Reportern har redan talat med organisationen för skyddade boenden, som berättat om boende som flyttat i rädsla. Om reportern stämmer av ert uttalande med boendena, vad får hen höra?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Risk confirmed", "Risken bekräftas"], [
+            io(["Run in full", "Publiceras i sin helhet"], ["The reporter says the agency's answer will run in full, numbers and risk warning together. {{person.comms.name}} thinks the article will be hard but fair.", "Reportern säger att myndighetens svar publiceras i sin helhet, siffror och riskvarning tillsammans. {{person.comms.name}} tror att artikeln blir hård men rättvis."], ["The reporter agreed to quote the agency's answer in full.", "Reportern lovade att citera myndighetens svar i sin helhet."]),
+            io(["Not yet told", "Ännu utan besked"], ["{{person.securityOfficer.name}} warns that many of the people exposed have not yet been contacted. Tomorrow they will learn the numbers from the paper, before hearing from you. Do you still give them tonight?", "{{person.securityOfficer.name}} varnar för att många av dem som röjts ännu inte kontaktats. I morgon får de veta siffrorna ur tidningen, innan de hört från er. Ger ni ändå ut dem i kväll?"], ["Many exposed people have not been contacted before the article runs.", "Många som röjts har inte kontaktats innan artikeln publiceras."], { reopen: true }),
+            io(["“A woman fled?”", "”Flydde en kvinna?”"], ["The reporter asks a follow-up: they have heard that a woman and her children fled their home. Can the agency confirm it? You said people were put at risk. Was anyone actually found?", "Reportern ställer en följdfråga: hen har hört att en kvinna och hennes barn flydde sitt hem. Kan myndigheten bekräfta det? Ni sa att människor utsatts för risk. Hittades någon faktiskt?"], ["The reporter has heard a woman fled and wants it confirmed.", "Reportern har hört att en kvinna flydde och vill ha det bekräftat."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Harm left unsaid", "Skadan förblir osagd"], [
+            io(["Back to the fault", "Tillbaka till felet"], ["The reporter's follow-up questions are all about the software and the supplier. Harm does not come up again. It feels as if the line has held.", "Reporterns följdfrågor handlar bara om programvaran och leverantören. Skada kommer inte upp igen. Det känns som att linjen har hållit."], ["The reporter's follow-up questions were about the fault, not harm.", "Reporterns följdfrågor gällde felet, inte skada."]),
+            io(["The shelters go on record", "Boendena uttalar sig"], ["The shelter organisation gives the reporter an on-record account of residents moving in the night because of the leak. Your answer on harm will now be printed next to theirs.", "Organisationen för skyddade boenden ger reportern ett citerbart vittnesmål om boende som flyttat mitt i natten på grund av läckan. Ert svar om skada kommer nu att tryckas bredvid deras."], ["The shelters gave the reporter an on-record account of night moves.", "Boendena gav reportern ett citerbart vittnesmål om flyttar mitt i natten."], { reopen: true, meters: { media: 1 } }),
+            io(["“Not my name on it”", "”Inte mitt namn”"], ["A member of the comms team asks not to be named as the contact on the statement. They will not say why, only that they would rather not.", "En medarbetare på kommunikationsavdelningen ber att inte stå som kontaktperson på uttalandet. Hen vill inte säga varför, bara att hen helst avstår."], ["A comms team member asked not to be named on the statement.", "En medarbetare på kommunikation bad att inte stå med på uttalandet."])
+          ])
+        ]
       }),
 
       pg("c7", ["The regulator", "Tillsynsmyndigheten"], [
@@ -416,7 +536,19 @@
               pb(["The DPO won't sign", "Dataskyddsombudet skriver inte under"], ["{{person.dpo.name}} says they will not sign a report that leaves out how long the fault went unnoticed. Do you overrule your own data protection officer, and put that on record too?", "{{person.dpo.name}} säger sig inte vilja skriva under en anmälan som utelämnar hur länge felet pågick obemärkt. Kör ni över ert eget dataskyddsombud, och dokumenterar ni det också?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The full report", "Den fullständiga anmälan"], [
+            io(["Candour noted", "Öppenheten noteras"], ["{{reg.dpaShort}} acknowledges the report the same day and notes its completeness. It asks for a follow-up in two weeks, and nothing more for now.", "{{reg.dpaShort}} bekräftar anmälan samma dag och noterar att den är fullständig. Den ber om en uppföljning om två veckor, och inget mer tills vidare."], ["{{reg.dpaShort}} acknowledged the full report and asked for a follow-up.", "{{reg.dpaShort}} bekräftade den fullständiga anmälan och bad om uppföljning."]),
+            io(["Past the deadline", "Efter tidsfristen"], ["The analysis of how long the fault went unnoticed is not finished in time. If you wait for it, the report will be late. {{person.dpo.name}} asks you to decide again what goes in today.", "Analysen av hur länge felet pågick obemärkt blir inte klar i tid. Om ni väntar på den blir anmälan sen. {{person.dpo.name}} ber er avgöra på nytt vad som ska med i dag."], ["The detection analysis was not finished by the reporting deadline.", "Analysen av upptäckten blev inte klar till anmälningsfristen."], { reopen: true, meters: { regulator: 1 } }),
+            io(["A lawyer requests it", "En jurist begär ut den"], ["Within days, a lawyer acting for several of the people exposed requests a copy of the report. It is not clear yet what they intend to do with it.", "Inom några dagar begär en jurist som företräder flera av dem som röjts ut en kopia av anmälan. Det är ännu oklart vad hen tänker göra med den."], ["A lawyer for exposed people has requested the report.", "En jurist för några av dem som röjts har begärt ut anmälan."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Detection left out", "Upptäckten utelämnad"], [
+            io(["Logged without query", "Registrerad utan frågor"], ["{{reg.dpaShort}} logs the report and sends an automatic acknowledgement. No questions come back in the first days.", "{{reg.dpaShort}} registrerar anmälan och skickar en automatisk bekräftelse. Inga frågor kommer tillbaka de första dagarna."], ["{{reg.dpaShort}} logged the report without immediate questions.", "{{reg.dpaShort}} registrerade anmälan utan omedelbara frågor."]),
+            io(["They have the police report", "De har polisens anmälan"], ["The case officer at {{reg.dpaShort}} calls: they have obtained the police report from the first morning, and it describes how the leak came to light. They ask why your report does not.", "Handläggaren hos {{reg.dpaShort}} ringer: de har fått polisens anmälan från första morgonen, och den beskriver hur läckan kom fram. De frågar varför er anmälan inte gör det."], ["{{reg.dpaShort}} has the police report describing how the leak was found.", "{{reg.dpaShort}} har polisens anmälan som beskriver hur läckan upptäcktes."], { reopen: true, meters: { regulator: 1 } }),
+            io(["A formal reservation", "En formell reservation"], ["{{person.dpo.name}} signs the report, but attaches a formal reservation: the detection story should have been included. The reservation goes into the file with it.", "{{person.dpo.name}} skriver under anmälan, men bifogar en formell reservation: berättelsen om upptäckten borde ha funnits med. Reservationen läggs i akten tillsammans med den."], ["{{person.dpo.name}} recorded a formal reservation about the report.", "{{person.dpo.name}} har lämnat en formell reservation mot anmälan."])
+          ])
+        ]
       }),
 
       pg("l4", ["The other agencies", "De andra myndigheterna"], [
@@ -440,7 +572,19 @@
               pb(["A shelter asks the same", "Ett boende frågar samma sak"], ["A shelter adviser asks whether protected addresses could also leak through tax or healthcare. You would have to answer that you assume not. Would you accept that answer from anyone else?", "En rådgivare på ett skyddat boende frågar om skyddade adresser också kan läcka via skatt eller sjukvård. Ni skulle få svara att ni utgår från att de inte gör det. Skulle ni godta det svaret från någon annan?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The joint check", "Den gemensamma kontrollen"], [
+            io(["Both copies clean", "Båda kopiorna rena"], ["Both agencies agree, and the joint check finds that their copies honour the protection flag, as documented. {{person.ciso.name}} is relieved, and a little uneasy at how relieved.", "Båda myndigheterna går med på det, och den gemensamma kontrollen visar att deras kopior respekterar skyddsmarkeringen, precis som dokumenterat. {{person.ciso.name}} är lättad, och lite obekväm med hur lättad."], ["The joint check found both copies honour the protection flag.", "Den gemensamma kontrollen visade att båda kopiorna respekterar skyddsmarkeringen."]),
+            io(["One says no", "En säger nej"], ["The healthcare agency agrees at once. The tax agency declines: its documentation is accurate, and it does not accept inspections from a peer that has just leaked.", "Sjukvårdsmyndigheten går med på det direkt. Skattemyndigheten avböjer: dess dokumentation stämmer, och den tar inte emot granskning från en myndighet som just har läckt."], ["The tax agency declined the joint check; healthcare agreed.", "Skattemyndigheten avböjde kontrollen; sjukvårdsmyndigheten gick med på den."]),
+            io(["Weeks, not days", "Veckor, inte dagar"], ["Both agencies agree, but their teams can only start in three weeks. Until then, nothing has been checked. Nothing has been found either.", "Båda myndigheterna går med på det, men deras team kan börja först om tre veckor. Till dess är inget kontrollerat. Inget har heller hittats."], ["The joint check cannot start for three weeks.", "Den gemensamma kontrollen kan inte börja förrän om tre veckor."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Trusting the documents", "Lita på dokumenten"], [
+            io(["No problems reported", "Inga problem rapporterade"], ["Both agencies confirm by e-mail that their copies honour the protection flag. Nobody sees a reason to look further.", "Båda myndigheterna bekräftar per e-post att deras kopior respekterar skyddsmarkeringen. Ingen ser någon anledning att titta närmare."], ["Both agencies confirmed by e-mail that their copies honour the flag.", "Båda myndigheterna bekräftade per e-post att kopiorna respekterar markeringen."]),
+            io(["The regulator asks", "Tillsynsmyndigheten frågar"], ["{{reg.dpaShort}} asks in writing whether other copies of the register have been checked, not just documented. You will need a better answer than “we read their documentation”.", "{{reg.dpaShort}} frågar skriftligt om andra kopior av registret har kontrollerats, inte bara dokumenterats. Ni kommer att behöva ett bättre svar än ”vi har läst deras dokumentation”."], ["{{reg.dpaShort}} asked in writing whether other register copies were checked.", "{{reg.dpaShort}} frågade skriftligt om andra kopior av registret kontrollerats."], { reopen: true, meters: { regulator: 1 } }),
+            io(["Old documentation", "Gammal dokumentation"], ["{{person.ciso.name}} notices that the healthcare agency's documentation is dated before its last system upgrade. It may still be accurate. Nobody has checked.", "{{person.ciso.name}} ser att sjukvårdsmyndighetens dokumentation är daterad före dess senaste systemuppgradering. Den kan fortfarande stämma. Ingen har kontrollerat det."], ["The healthcare agency's documentation predates its last system upgrade.", "Sjukvårdsmyndighetens dokumentation är äldre än dess senaste systemuppgradering."])
+          ])
+        ]
       }),
 
       pg("c8", ["The shelters", "De skyddade boendena"], [
@@ -474,7 +618,19 @@
               pb(["Which channel?", "Vilken kanal?"], ["Your contact centre does not know who handles requests from shelters; there is no normal channel for what they need. Where exactly are you referring them?", "Ert kontaktcenter vet inte vem som hanterar önskemål från skyddade boenden; det finns ingen vanlig kanal för det de behöver. Vart hänvisar ni dem, exakt?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Support agreed", "Stödet beviljas"], [
+            io(["Partners", "Partner"], ["The shelter organisation accepts, and offers to sit with the agency's team as residents are contacted. For the first time this week, the two sides are working on the same list.", "Organisationen för skyddade boenden tackar ja, och erbjuder sig att sitta med myndighetens team när de boende kontaktas. För första gången den här veckan arbetar båda sidor med samma lista."], ["The shelter organisation agreed to work alongside the agency.", "Organisationen för skyddade boenden gick med på att arbeta sida vid sida med myndigheten."], { meters: { trust: 1 } }),
+            io(["Cited as admission", "Åberopat som medgivande"], ["A lawyer acting for several of the people exposed writes that the funding shows the agency accepts liability. {{person.legal.name}} says: “I warned you.”", "En jurist som företräder flera av dem som röjts skriver att pengarna visar att myndigheten erkänner ansvar. {{person.legal.name}} säger: ”Jag varnade er.”"], ["A claimant's lawyer has cited the funding as an admission.", "En jurist för de drabbade har åberopat pengarna som ett medgivande."]),
+            io(["Others ask too", "Fler frågar"], ["Two victim support groups and a municipality ask for the same funding for their own extra work. Some of their claims are clearly fair. Others are less clear.", "Två brottsofferjourer och en kommun ber om samma pengar för sitt eget merarbete. En del av deras krav är tydligt rimliga. Andra är mindre tydliga."], ["Victim support groups and a municipality asked for the same funding.", "Brottsofferjourer och en kommun har bett om samma pengar."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Support held back", "Stödet hålls inne"], [
+            io(["They carry on", "De fortsätter"], ["The shelters keep working through the week without the agency's money. Their staff are exhausted, but no resident has been turned away.", "Boendena fortsätter arbeta hela veckan utan myndighetens pengar. Personalen är utmattad, men ingen boende har nekats hjälp."], ["The shelters kept working, for now, without the agency's money.", "Boendena fortsatte arbeta, tills vidare, utan myndighetens pengar."]),
+            io(["A shelter stops taking new cases", "Ett boende tar inte emot nya"], ["One regional shelter says it can no longer take new emergency placements: it has run out of staff and money moving people exposed by the leak. The national organisation asks you to think again.", "Ett regionalt boende meddelar att det inte längre kan ta emot nya akutplaceringar: personal och pengar har tagit slut efter alla flyttar av dem som röjts. Riksorganisationen ber er tänka om."], ["One regional shelter has stopped taking new emergency placements.", "Ett regionalt boende har slutat ta emot nya akutplaceringar."], { reopen: true, meters: { trust: -1 } }),
+            io(["An open letter", "Ett öppet brev"], ["The shelter organisation publishes an open letter to the agency, setting out what it asked for and what it got. It is polite. It is also widely shared.", "Organisationen för skyddade boenden publicerar ett öppet brev till myndigheten, med vad den bad om och vad den fick. Det är artigt. Det delas också flitigt."], ["The shelter organisation published an open letter to the agency.", "Organisationen för skyddade boenden publicerade ett öppet brev till myndigheten."], { meters: { media: 1 } })
+          ])
+        ]
       }),
 
       pg("c9", ["Why the test missed it", "Varför testet missade det"], [
@@ -497,7 +653,19 @@
               pb(["A supplier to the letter", "En leverantör enligt avtalets bokstav"], ["{{person.serviceOwner.name}} warns that a dispute will slow every fix you need from the supplier for months. Is the claim worth a supplier who now works strictly to the contract?", "{{person.serviceOwner.name}} varnar för att en tvist kommer att bromsa varje rättning ni behöver från leverantören i månader. Är kravet värt en leverantör som nu bara gör det avtalet kräver?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The new test rules", "De nya testreglerna"], [
+            io(["It catches something", "Det fångar något"], ["The first test run with synthetic protected records fails on a pending minor release: one report shows a protection marker it should hide. It is fixed before release. The change has already paid for itself.", "Den första testkörningen med syntetiska skyddade poster fallerar på en kommande mindre leverans: en rapport visar en skyddsmarkering den borde dölja. Det rättas före leverans. Ändringen har redan betalat sig."], ["Synthetic protected records caught a flaw in a pending release.", "Syntetiska skyddade poster fångade ett fel i en kommande leverans."]),
+            io(["The supplier reprices", "Leverantören höjer priset"], ["The supplier says the new rules add weeks to every release and sends a revised price for the contract. The ministry asks whether the agency can afford it.", "Leverantören säger att de nya reglerna lägger veckor på varje leverans och skickar ett nytt pris för avtalet. Departementet frågar om myndigheten har råd."], ["The supplier has demanded a higher price for every release.", "Leverantören har krävt ett högre pris för varje leverans."], { reopen: true }),
+            io(["Who reviews?", "Vem granskar?"], ["The second review is in the process, but nobody at the agency can read the supplier's code in depth. The first review is signed off in ten minutes.", "Den andra granskningen finns i processen, men ingen på myndigheten kan läsa leverantörens kod på djupet. Den första granskningen godkänns på tio minuter."], ["The second review has no qualified reviewer yet.", "Den andra granskningen har ännu ingen kvalificerad granskare."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Testing as before", "Testning som förut"], [
+            io(["The next release passes", "Nästa leverans går igenom"], ["The next routine release goes out, tested exactly as before, and nothing goes wrong. The claim against the supplier proceeds.", "Nästa rutinleverans går ut, testad precis som förut, och inget går fel. Kravet mot leverantören går vidare."], ["The next release went out, tested as before, without incident.", "Nästa leverans gick ut, testad som förut, utan problem."]),
+            io(["A near miss", "Nära ögat"], ["A later release briefly breaks the protection check on another route. A client spots it within hours and reports it. Nothing leaks this time, but the same gap let it through.", "En senare leverans sätter kort ur spel skyddskontrollen i en annan väg. En kund upptäcker det inom några timmar och rapporterar det. Inget läcker den här gången, men samma lucka släppte igenom det."], ["A later release briefly broke the protection check; a client caught it.", "En senare leverans satte kort ur spel skyddskontrollen; en kund upptäckte det."], { reopen: true, meters: { regulator: 1 } }),
+            io(["The supplier disputes it", "Leverantören bestrider"], ["The supplier formally rejects the claim, citing the agency's own rule against protected data in testing. {{person.legal.name}} thinks it may have a point.", "Leverantören avvisar formellt kravet och hänvisar till myndighetens egen regel mot skyddade uppgifter i test. {{person.legal.name}} tror att den kan ha en poäng."], ["The supplier disputes liability, citing the agency's own test rules.", "Leverantören bestrider ansvar och hänvisar till myndighetens egna testregler."])
+          ])
+        ]
       }),
 
       pg("c10", ["What changes", "Vad som ändras"], [
@@ -526,7 +694,19 @@
               pb(["The cause stays in place", "Orsaken finns kvar"], ["{{person.cio.name}} notes that the register still sends protected addresses to external callers whenever a filter works as intended. One more faulty update and it all repeats. Will the review accept training as the answer?", "{{person.cio.name}} konstaterar att registret fortfarande skickar skyddade adresser till externa anropare så länge ett filter fungerar som tänkt. En till felaktig uppdatering och allt upprepas. Kommer granskningen att godta utbildning som svaret?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Protected by design", "Skyddat av konstruktion"], [
+            io(["Clients adapt", "Kunderna anpassar sig"], ["After some complaints, most clients adapt to the “protected” response within weeks. Banks route those cases to a manual process, and nobody misses the addresses.", "Efter en del klagomål anpassar sig de flesta kunder till svaret ”skyddad” inom några veckor. Bankerna lägger de ärendena i en manuell process, och ingen saknar adresserna."], ["Most clients adapted to the “protected” response within weeks.", "De flesta kunder anpassade sig till svaret ”skyddad” inom några veckor."]),
+            io(["Court papers stall", "Delgivningar fastnar"], ["A district court reports that papers can no longer be served on some protected people, and asks what route the agency now offers. There is none yet.", "En tingsrätt rapporterar att handlingar inte längre kan delges en del skyddade personer, och frågar vilken väg myndigheten nu erbjuder. Det finns ingen ännu."], ["Courts report they cannot serve papers on some protected people.", "Domstolar rapporterar att de inte kan delge en del skyddade personer."], { reopen: true }),
+            io(["Brokers fill the gap", "Mäklarna fyller luckan"], ["Some clients stop asking the agency and buy addresses from data brokers instead. Whether those brokers hold protected addresses, nobody can say.", "En del kunder slutar fråga myndigheten och köper adresser från datamäklare i stället. Om de mäklarna har skyddade adresser kan ingen säga."], ["Some clients now buy addresses from data brokers instead.", "En del kunder köper nu adresser från datamäklare i stället."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["The register still sends", "Registret skickar fortfarande"], [
+            io(["A quiet month", "En lugn månad"], ["A month passes without any new leak. The chosen change is in place, and the address service runs as it always has.", "En månad går utan någon ny läcka. Den valda förändringen är på plats, och adresstjänsten går som den alltid gjort."], ["No new leak was found in the month after the fix.", "Ingen ny läcka hittades under månaden efter rättningen."]),
+            io(["Another single filter", "Ännu ett ensamt filter"], ["An audit finds a second endpoint whose protection also depends on one filter in one place. It works today. One faulty update would repeat everything. The crisis team is asked to reconsider its one change.", "En granskning hittar en andra funktion vars skydd också hänger på ett enda filter på ett enda ställe. Det fungerar i dag. En felaktig uppdatering skulle upprepa allt. Krisledningen ombeds tänka om kring sin enda förändring."], ["An audit found another endpoint relying on a single protection filter.", "En granskning hittade ännu en funktion som vilar på ett enda skyddsfilter."], { reopen: true }),
+            io(["Shelters unconvinced", "Boendena är inte övertygade"], ["The shelter organisation reads the plan and says it does not close the cause: protected addresses still leave the register whenever a filter works. It is not sure whether to say so publicly.", "Organisationen för skyddade boenden läser planen och säger att den inte täpper till orsaken: skyddade adresser lämnar fortfarande registret så fort ett filter fungerar. Den är osäker på om den ska säga det offentligt."], ["The shelter organisation says the change does not close the cause.", "Organisationen för skyddade boenden säger att förändringen inte stänger orsaken."])
+          ])
+        ]
       }),
 
       pg("r-end", ["Outcome", "Utfall"], ["Routing to the ending.", "Vidare till slutet."], {
@@ -583,11 +763,23 @@
               pb(["The worst possible answer", "Det sämsta tänkbara svaret"], ["The shelter organisation says that using a victim's request as cover is the worst answer the agency could give, and its residents are listening. Do you keep to this line?", "Organisationen för skyddade boenden säger att använda ett offers önskemål som skydd är det sämsta svar myndigheten kunde ge, och deras boende lyssnar. Håller ni fast vid den linjen?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The correction", "Rättelsen"], [
+            io(["Run alongside her", "Publicerad bredvid henne"], ["The correction and apology run prominently, next to her interview. Several commentators note that the agency at least admitted it quickly.", "Rättelsen och ursäkten publiceras stort, bredvid hennes intervju. Flera kommentatorer noterar att myndigheten åtminstone erkände snabbt."], ["The correction ran prominently alongside her account.", "Rättelsen publicerades stort bredvid hennes berättelse."]),
+            io(["Her lawyer objects", "Hennes jurist invänder"], ["Her lawyer calls: the public apology has drawn photographers to the town where she now lives. She asked to be left out, and the agency has made her the story again.", "Hennes jurist ringer: den offentliga ursäkten har lockat fotografer till orten där hon nu bor. Hon bad att få hållas utanför, och myndigheten har gjort henne till nyheten igen."], ["Her lawyer says the public apology drew more attention to her.", "Hennes jurist säger att den offentliga ursäkten drog mer uppmärksamhet till henne."], { reopen: true }),
+            io(["“How many others?”", "”Hur många fler?”"], ["The reporter thanks you for the correction, then asks how many other people have been harmed. The honest answer is that you do not know.", "Reportern tackar för rättelsen och frågar sedan hur många fler som kommit till skada. Det ärliga svaret är att ni inte vet."], ["The reporter is now asking how many others were harmed.", "Reportern frågar nu hur många fler som kommit till skada."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["No correction", "Ingen rättelse"], [
+            io(["It slips down the news", "Den glider ner i nyhetsflödet"], ["By evening, another story leads the news, and hers has slipped down the page. For now, the line has not been tested again.", "Till kvällen toppar en annan nyhet, och hennes har glidit ner på sidan. Tills vidare har linjen inte prövats igen."], ["By evening the story had dropped down the news, for now.", "Till kvällen hade nyheten glidit ner i flödet, tills vidare."]),
+            io(["The quote is replayed", "Citatet spelas upp igen"], ["The radio programme plays your original line, “nobody was harmed”, straight after her account. It is shared everywhere within the hour. You must decide again how to respond.", "Radioprogrammet spelar upp er ursprungliga mening, ”ingen har kommit till skada”, direkt efter hennes berättelse. Inom en timme delas den överallt. Ni måste avgöra på nytt hur ni svarar."], ["The radio aired the original quote alongside her account.", "Radion sände det ursprungliga citatet bredvid hennes berättelse."], { reopen: true, meters: { media: 1 } }),
+            io(["Unnamed staff speak", "Anonyma medarbetare talar"], ["The reporter says unnamed staff at the agency have told them the crisis team knew about her case before the statement. It is not clear who spoke, or how much they know.", "Reportern säger att anonyma medarbetare på myndigheten berättat att krisledningen kände till hennes fall före uttalandet. Det är oklart vem som talat, eller hur mycket de vet."], ["Unnamed staff told the reporter the agency knew of harm.", "Anonyma medarbetare har berättat för reportern att myndigheten kände till skada."])
+          ])
+        ]
       }),
       pg("x2", ["Parliament", "Riksdagen"], [
-        "At question time, the minister is asked whether the agency misled the public. The minister replies that the ministry was given the same information as the newspaper. The opposition calls for an independent inquiry.",
-        "Vid frågestunden får ministern frågan om myndigheten vilselett allmänheten. Ministern svarar att departementet fått samma information som tidningen. Oppositionen kräver en oberoende utredning."
+        "At question time, the minister is asked whether the agency misled the public. The minister says only that the agency will have to explain its statement to the newspaper. The opposition calls for an independent inquiry.",
+        "Vid frågestunden får ministern frågan om myndigheten vilselett allmänheten. Ministern säger bara att myndigheten får förklara sitt uttalande till tidningen. Oppositionen kräver en oberoende utredning."
       ], {
         choice: ask(["What do you do now?", "Vad gör ni nu?"], ["Gives the ministry and the inquiry the full facts at once.", "Ger departementet och utredningen alla fakta direkt."], [
                     opt(["Send the ministry the full facts, including what was known when you spoke to the press", "Skicka departementet alla fakta, även vad som var känt när ni talade med pressen"], "x3", ["It will reach the inquiry anyway.", "Det når utredningen ändå."], {
@@ -604,7 +796,19 @@
               pb(["A second cover-up?", "Ett andra mörkande?"], ["{{person.comms.name}} says that after “nobody was harmed”, silence will read as a second cover-up. Is procedure a good enough reason to stay quiet now?", "{{person.comms.name}} säger att efter ”ingen har kommit till skada” kommer tystnad att läsas som ett andra mörkande. Är formalia ett tillräckligt skäl att tiga nu?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Full facts sent", "Alla fakta skickade"], [
+            io(["The record corrected", "Protokollet rättas"], ["The ministry uses your facts to correct what the minister told parliament, the next morning, in writing. The opposition still wants its inquiry, but the ministry is no longer defending your line.", "Departementet använder era fakta för att rätta det ministern sa i riksdagen, nästa morgon, skriftligt. Oppositionen vill fortfarande ha sin utredning, men departementet försvarar inte längre er linje."], ["The ministry corrected the record in parliament the next morning.", "Departementet rättade uppgifterna i riksdagen nästa morgon."]),
+            io(["“Hold it a day”", "”Vänta en dag”"], ["The minister's office calls within minutes: the facts contradict what the minister has just said, and it asks you to hold them back for a day while it prepares. Do you agree?", "Ministerns kansli ringer inom några minuter: fakta motsäger det ministern just sagt, och kansliet ber er hålla inne dem en dag medan de förbereder sig. Går ni med på det?"], ["The minister's office asked the agency to hold the facts back.", "Ministerns kansli bad myndigheten hålla inne fakta."], { reopen: true }),
+            io(["It reaches the opposition", "Det når oppositionen"], ["By evening, an opposition member is quoting from the facts you sent the ministry. Nobody knows how they got them.", "Till kvällen citerar en oppositionspolitiker ur de fakta ni skickat till departementet. Ingen vet hur hen fått dem."], ["The facts sent to the ministry reached the opposition within hours.", "Fakta som skickades till departementet nådde oppositionen inom några timmar."], { meters: { media: 1 } })
+          ]),
+          ir("i2", { notChosen: "A" }, ["Waiting for questions", "Väntan på frågor"], [
+            io(["The ministry agrees", "Departementet går med på det"], ["The state secretary accepts, for now, that the agency will answer the inquiry rather than the ministry. It buys you a few days.", "Statssekreteraren godtar, tills vidare, att myndigheten svarar utredningen i stället för departementet. Det ger er några dagar."], ["The ministry agreed, for now, to wait for the inquiry.", "Departementet gick med på att vänta på utredningen, tills vidare."]),
+            io(["By tonight", "Före kvällen"], ["The state secretary calls back, sharper this time: the ministry wants every fact you hold by tonight, and will not accept waiting for the inquiry. You must decide again.", "Statssekreteraren ringer tillbaka, skarpare den här gången: departementet vill ha alla fakta ni har före kvällen och godtar inte att ni väntar på utredningen. Ni måste avgöra på nytt."], ["The state secretary has demanded all the facts by tonight.", "Statssekreteraren har krävt alla fakta före kvällen."], { reopen: true }),
+            io(["Your own papers", "Era egna papper"], ["An opposition member publishes the agency's earlier briefing to the ministry, a public document. While you wait, the story is being told with your own words.", "En oppositionspolitiker publicerar myndighetens tidigare lägesbild till departementet, som är en allmän handling. Medan ni väntar berättas historien med era egna ord."], ["The opposition has published the agency's earlier briefing.", "Oppositionen har publicerat myndighetens tidigare lägesbild."], { meters: { media: 1 } })
+          ])
+        ]
       }),
       pg("x3", ["The shelters walk away", "Boendena drar sig ur"], [
         "The national shelter organisation announces that it will no longer advise its residents to rely on the agency's protection. It tells them to use a post-box address and give nothing to any public body they do not have to.",
@@ -625,7 +829,19 @@
               pb(["What exactly is safe?", "Vad är det som är säkert?"], ["{{person.ciso.name}} asks what, specifically, the statement claims is safe: the register's protection is the same as it was before the leak. Can you prove the claim you are making?", "{{person.ciso.name}} frågar vad uttalandet egentligen påstår är säkert: registrets skydd är detsamma som före läckan. Kan ni bevisa det ni påstår?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["The meeting", "Mötet"], [
+            io(["A second meeting", "Ett andra möte"], ["The meeting is tense, but at the end the shelters agree to meet again in two weeks, with a list of what they need.", "Mötet är spänt, men till slut går boendena med på att träffas igen om två veckor, med en lista över vad de behöver."], ["The shelters agreed to a second meeting.", "Boendena gick med på ett andra möte."]),
+            io(["Their conditions", "Deras villkor"], ["The shelters will meet only if {{person.ceo.name}} attends in person and the minutes are made public. {{person.legal.name}} advises against public minutes of an admission.", "Boendena ställer upp på ett möte bara om {{person.ceo.name}} deltar personligen och protokollet blir offentligt. {{person.legal.name}} avråder från ett offentligt protokoll över ett medgivande."], ["The shelters require {{person.ceo.name}} in person and public minutes.", "Boendena kräver {{person.ceo.name}} på plats och offentligt protokoll."], { reopen: true }),
+            io(["The advice stands", "Rådet står kvar"], ["The shelters listen, thank you for coming, and say their advice to residents stays as it is until they see changes. They do not say what changes would be enough.", "Boendena lyssnar, tackar för att ni kom, och säger att rådet till de boende står kvar tills de ser förändringar. De säger inte vilka förändringar som skulle räcka."], ["The shelters still advise residents not to rely on the agency.", "Boendena råder fortfarande de boende att inte lita på myndigheten."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["The defence", "Försvaret"], [
+            io(["Some are reassured", "En del lugnas"], ["A few callers to the contact centre say the statement reassured them. The contact centre logs it as a good sign.", "Några som ringer kontaktcentret säger att uttalandet lugnade dem. Kontaktcentret noterar det som ett gott tecken."], ["Some callers said the statement reassured them.", "En del som ringde sa att uttalandet lugnade dem."]),
+            io(["Applications fall", "Ansökningarna minskar"], ["New applications for protected identity fall sharply this week. One shelter says its residents are choosing a post-box address and nothing more. Your statement has not brought them back.", "Nya ansökningar om skyddade personuppgifter minskar kraftigt den här veckan. Ett boende säger att dess boende väljer en boxadress och inget mer. Ert uttalande har inte fått dem att komma tillbaka."], ["Applications for protected identity fell sharply this week.", "Ansökningarna om skyddade personuppgifter minskade kraftigt den här veckan."], { reopen: true, meters: { trust: -1 } }),
+            io(["Side by side", "Sida vid sida"], ["The shelter organisation posts your statement next to the words “nobody was harmed”, without comment. It is unclear whether anyone outside the sector notices.", "Organisationen för skyddade boenden publicerar ert uttalande bredvid orden ”ingen har kommit till skada”, utan kommentar. Det är oklart om någon utanför branschen lägger märke till det."], ["The shelters posted the statement beside “nobody was harmed”.", "Boendena publicerade uttalandet bredvid ”ingen har kommit till skada”."])
+          ])
+        ]
       }),
       pg("x4", ["The inquiry", "Utredningen"], [
         "The independent inquiry begins. Its first question is not about the software fault. It is about why the agency told the public nobody was harmed when it knew of a woman who had fled her home in the night.",
@@ -646,7 +862,19 @@
               pb(["The shelters' verdict", "Boendenas dom"], ["The shelter organisation says the lawyers' answers confirm its advice to residents to avoid the agency. Fewer people may seek protection as a result. Is defending the agency worth that?", "Organisationen för skyddade boenden säger att juristernas svar bekräftar deras råd till de boende att undvika myndigheten. Färre kan söka skydd som följd. Är det värt det för att försvara myndigheten?"])
             ]
           })
-        ])
+        ]),
+        interrupts: [
+          ir("i1", { chosen: "A" }, ["Full answers", "Fullständiga svar"], [
+            io(["Cooperation noted", "Samarbetet noteras"], ["The inquiry thanks the agency for its full answers and notes its cooperation in the record. It does not soften its first question.", "Utredningen tackar myndigheten för de fullständiga svaren och noterar samarbetet i protokollet. Den mildrar inte sin första fråga."], ["The inquiry noted the agency's full cooperation.", "Utredningen noterade myndighetens fullständiga samarbete."]),
+            io(["A name, please", "Ett namn, tack"], ["The inquiry asks who, by name, approved the press line. Answering fully means naming a colleague who is in the room.", "Utredningen frågar vem, med namn, som godkände presslinjen. Att svara fullständigt innebär att namnge en kollega som sitter i rummet."], ["The inquiry has asked who approved the press line, by name.", "Utredningen har frågat vem som godkände presslinjen, med namn."], { reopen: true }),
+            io(["Claims follow", "Kraven följer"], ["Lawyers for several of the people exposed request the agency's answers to the inquiry. Nobody knows yet how many claims will follow.", "Jurister för flera av dem som röjts begär ut myndighetens svar till utredningen. Ingen vet ännu hur många krav som följer."], ["Lawyers for exposed people have requested the agency's answers.", "Jurister för dem som röjts har begärt ut myndighetens svar."])
+          ]),
+          ir("i2", { notChosen: "A" }, ["Through lawyers", "Via jurister"], [
+            io(["Accepted in writing", "Godtaget skriftligt"], ["The inquiry accepts the written answers for now and says it may call people in later. The lawyers are pleased.", "Utredningen godtar de skriftliga svaren tills vidare och säger att den kan kalla in personer senare. Juristerna är nöjda."], ["The inquiry accepted written answers, for now.", "Utredningen godtog skriftliga svar, tills vidare."]),
+            io(["Declined to appear", "Avböjde att medverka"], ["The inquiry records that the agency's leaders declined to appear in person, and says so in its first public update. You must decide again how to answer.", "Utredningen noterar att myndighetens ledning avböjt att medverka personligen, och skriver det i sin första offentliga lägesrapport. Ni måste avgöra på nytt hur ni svarar."], ["The inquiry has recorded that agency leaders declined to appear.", "Utredningen har noterat att myndighetens ledning avböjt att medverka."], { reopen: true, meters: { media: 1 } }),
+            io(["She will testify", "Hon vittnar"], ["The woman's lawyer confirms she will give evidence to the inquiry in person. It is not clear what she will say about the agency.", "Kvinnans jurist bekräftar att hon kommer att vittna inför utredningen personligen. Det är oklart vad hon kommer att säga om myndigheten."], ["The woman will give evidence to the inquiry in person.", "Kvinnan kommer att vittna personligen inför utredningen."])
+          ])
+        ]
       }),
       pg("e5", ["A year later", "Ett år senare"], ["The software fault was fixed in a day. The sentence “nobody was harmed” took the director general's job, and it is still the first thing the shelters mention when the agency is named.\n\nFewer people now apply for protection. Some of them needed it.", "Programfelet rättades på en dag. Meningen ”ingen kom till skada” kostade generaldirektören jobbet, och den är fortfarande det första de skyddade boendena nämner när myndigheten kommer på tal.\n\nFärre ansöker nu om skydd. En del av dem behövde det."], {
         ending: end(5, ["“Nobody was harmed”", "”Ingen kom till skada”"], [

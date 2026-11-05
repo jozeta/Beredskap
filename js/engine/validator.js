@@ -44,6 +44,35 @@
     });
   }
 
+  /**
+   * Interrupts: exactly two per decision point, each triggered by a chosen or not-chosen option, with
+   * 2–3 bilingual outcomes; together they must cover every option, so one always applies.
+   */
+  const METER_IDS = ["trust", "regulator", "media"];
+  function checkInterrupts(irs, options, where, list) {
+    const keys = (options || []).map((o) => o.key);
+    if (!keys.length) return;
+    if (!Array.isArray(irs) || irs.length !== 2) return issue(list, "interrupts", where, "count " + (Array.isArray(irs) ? irs.length : "?"));
+    const ids = new Set();
+    irs.forEach((ir) => {
+      const w = where + " › " + (ir && ir.id);
+      if (!ir || !ir.id || ids.has(ir.id)) return issue(list, "interrupts", w, "id");
+      ids.add(ir.id);
+      const k = ir.when && (ir.when.chosen || ir.when.notChosen);
+      if (!k || !keys.includes(k) || (ir.when.chosen && ir.when.notChosen)) issue(list, "interrupts", w, "when");
+      if (!isBilingual(ir.title)) issue(list, "interrupts", w, "title");
+      const outs = ir.outcomes || [];
+      if (outs.length < 2 || outs.length > 3) issue(list, "interrupts", w, "outcomes " + outs.length);
+      outs.forEach((o, i) => {
+        if (!o || !isBilingual(o.label) || !isBilingual(o.text) || !isBilingual(o.fact)) issue(list, "interrupts", w + " › " + (i + 1), "label/text/fact");
+        if (o && o.reopen != null && typeof o.reopen !== "boolean") issue(list, "interrupts", w + " › " + (i + 1), "reopen");
+        Object.entries((o && o.meters) || {}).forEach(([m, v]) => (METER_IDS.includes(m) && Number.isInteger(v) && Math.abs(v) <= 2) || issue(list, "interrupts", w + " › " + (i + 1), "meter " + m));
+      });
+    });
+    const applies = (ir, key) => (ir.when.chosen ? ir.when.chosen === key : ir.when.notChosen !== key);
+    keys.forEach((key) => irs.some((ir) => ir.when && applies(ir, key)) || issue(list, "interrupts", where, "no interrupt applies after option " + key));
+  }
+
   /** Every objective needs its clear text (facilitator) and a teaser (briefing slide) that does not give the plot away. */
   function checkObjectives(tpl, where, list) {
     (tpl.learningObjectives || []).forEach((lo) => {
@@ -222,6 +251,7 @@
         checkRole(d.authority, w + " › " + d.id);
         decisions[d.id] = { stageIdx: si, options: (d.options || []).map((op) => op.key) };
         checkPushback(d.options, w + " › " + d.id, list);
+        checkInterrupts(d.interrupts, d.options, w + " › " + d.id, list);
       } else if (!isBilingual(s.noDecision)) {
         issue(list, "decision", w, "decision or noDecision");
       }
@@ -356,6 +386,7 @@
         if (!isBilingual(pg.choice.strong)) issue(list, "branching", w, "choice needs a strong-team note");
         pg.choice.options.forEach((op) => isBilingual(op.why) || issue(list, "branching", w + " › " + op.key, "option needs a why note"));
         checkPushback(pg.choice.options, w, list);
+        checkInterrupts(pg.interrupts, pg.choice.options, w, list);
         // Pressure-meter effects: known meters, whole steps of at most two.
         pg.choice.options.forEach((op) =>
           Object.entries(op.effects || {}).forEach(([k, v]) => (["trust", "regulator", "media"].includes(k) && Number.isInteger(v) && Math.abs(v) <= 2) || issue(list, "branching", w + " › " + op.key, "effect " + k + " " + v))

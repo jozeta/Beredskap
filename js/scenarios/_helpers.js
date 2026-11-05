@@ -66,7 +66,8 @@
       uncertainties: (e.uncertainties || []).map(L),
       tradeoffs,
       evaluation: (e.evaluation || []).map(L),
-      discussionMinutes: e.minutes || 8
+      discussionMinutes: e.minutes || 8,
+      interrupts: e.interrupts || []
     };
   }
 
@@ -127,6 +128,22 @@
     return { title: L(title), text: L(text) };
   }
 
+  /**
+   * Interrupt: a twist the facilitator can play at a decision point, triggered by what the room
+   * chose there ({ chosen: "A" }) or did not choose ({ notChosen: "A" }) (authored option letters).
+   * Each has 2–3 outcomes to pick from; the chosen outcome is shown to the room and its `fact`
+   * stays in play for the rest of the exercise. Two per decision point, around the same option, so
+   * one always applies: dec(..., { interrupts: [...] }) or pg(..., { interrupts: [...] }).
+   */
+  function ir(id, when, title, outcomes) {
+    return { id, when, title: L(title), outcomes };
+  }
+
+  /** One interrupt outcome. extra: { reopen: true } makes the room decide again; { meters: { media: 1 } }. */
+  function io(label, text, fact, extra) {
+    return Object.assign({ label: L(label), text: L(text), fact: L(fact) }, extra || {});
+  }
+
   function end(grade, label, summary) {
     return { grade, label: L(label), summary: L(summary) };
   }
@@ -139,5 +156,5 @@
     return rules.map(([cond, to]) => ({ if: cond, to }));
   }
 
-  BK.scenarios.h = { L, q, ch, inj, dec, fac, act, avr, kpi, line, pg, ask, opt, pb, end, vr, rt };
+  BK.scenarios.h = { L, q, ch, inj, dec, fac, act, avr, kpi, line, pg, ask, opt, pb, ir, io, end, vr, rt };
 })();

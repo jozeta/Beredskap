@@ -340,7 +340,16 @@
             el("h2", { text: t("report.challenges", null, l) }),
             table(
               [t("csv.stage", null, l), t("csv.question", null, l), t("report.challengeCard", null, l), t("report.challengeOutcome", null, l)],
-              r.challenges.map((x) => [x.stage, x.question, x.card + ": " + x.text, x.outcome ? t("challenge.outcome." + x.outcome, null, l) : t("report.notRecorded", null, l)])
+              r.challenges.map((x) => [x.stage, x.question, x.card + ": " + x.text, (x.outcome ? t("challenge.outcome." + x.outcome, null, l) : t("report.notRecorded", null, l)) + (x.changed ? " (" + x.changed + ")" : "")])
+            )
+          ]
+        : null,
+      r.interrupts && r.interrupts.length
+        ? [
+            el("h2", { text: t("report.interrupts", null, l) }),
+            table(
+              [t("csv.stage", null, l), t("report.interruptTitle", null, l), t("report.interruptOutcome", null, l), t("report.interruptFact", null, l)],
+              r.interrupts.map((x) => [x.stage, x.title, x.outcome + ": " + x.text, x.fact])
             )
           ]
         : null,

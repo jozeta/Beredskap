@@ -269,7 +269,7 @@
       Object.keys(ses.challenges).forEach((k) => {
         const v = ses.challenges[k];
         need(
-          pointIds.has(k) && isObj(v) && typeof v.option === "string" && [0, 1, 2].includes(v.index) && optStr(v.shownAt) && (v.outcome == null || BK.engine.session.CHALLENGE_OUTCOMES.includes(v.outcome)),
+          pointIds.has(k) && isObj(v) && typeof v.option === "string" && [0, 1, 2].includes(v.index) && optStr(v.shownAt) && optStr(v.from) && optStr(v.changedTo) && (v.outcome == null || BK.engine.session.CHALLENGE_OUTCOMES.includes(v.outcome)),
           "reference",
           "challenge " + k
         );
@@ -277,6 +277,16 @@
     }
     need(ses.activeDeadline == null || !!(ses.deadlines && ses.deadlines[ses.activeDeadline]), "reference", "activeDeadline");
     need(ses.activeChallenge == null || !!(ses.challenges && ses.challenges[ses.activeChallenge]), "reference", "activeChallenge");
+    if (ses.interrupts != null) {
+      need(isObj(ses.interrupts), "shape", "interrupts");
+      Object.keys(ses.interrupts).forEach((ref) => {
+        const v = ses.interrupts[ref];
+        const pt = isObj(v) && (branching ? ex.pages.find((p) => p.id === v.key) : (ex.stages.find((s) => s.decision && s.decision.id === v.key) || {}).decision);
+        const ir = pt && (pt.interrupts || []).find((x) => x.id === v.id);
+        need(!!ir && ref === v.key + "/" + v.id && Number.isInteger(v.outcome) && !!ir.outcomes[v.outcome] && typeof v.at === "string" && typeof v.reopened === "boolean", "reference", "interrupt " + ref);
+      });
+    }
+    need(ses.activeInterrupt == null || !!(ses.interrupts && ses.interrupts[ses.activeInterrupt]), "reference", "activeInterrupt");
 
     const objectiveIds = new Set(ex.objectives.map((o) => o.id));
     Object.keys(ses.objectives).forEach((id) => need(objectiveIds.has(id), "reference", "objective " + id));

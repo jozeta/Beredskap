@@ -12,7 +12,7 @@
   "use strict";
 
   const BK = window.BK;
-  const { L, q, ch, inj, dec, fac, act, avr, kpi, pb } = BK.scenarios.h;
+  const { L, q, ch, inj, dec, fac, act, avr, kpi, pb, ir, io } = BK.scenarios.h;
 
   BK.scenarios.register({
     id: "s16-three-fires",
@@ -147,7 +147,19 @@
               pb(["One expert, two teams", "En expert, två team"], ["Your network lead is needed by the outage team and the security team at the same moment. Both teams claim priority, and there is no one above them to decide. Who settles it, and how long does it take?", "Er nätverksansvarige behövs av avbrottsteamet och säkerhetsteamet i samma ögonblick. Båda teamen kräver förtur, och det finns ingen över dem som kan avgöra. Vem löser det, och hur lång tid tar det?"]),
               pb(["Whose fire is it?", "Vems brand är det?"], ["The SOC thinks the odd admin activity is an IT matter, since it may be someone working from home. IT thinks it is a SOC matter. Nobody has called the account owner. Whose fire is it, and who decides that?", "SOC tycker att den konstiga administratörsaktiviteten är en IT-fråga, eftersom det kan vara någon som arbetar hemifrån. IT tycker att det är en SOC-fråga. Ingen har ringt kontots ägare. Vems brand är det, och vem avgör det?"])
             ]
-          }
+          },
+          interrupts: [
+            ir("i1", { chosen: "A" }, ["One on each fire", "En på varje brand"], [
+              io(["One picture", "En samlad bild"], ["Within fifteen minutes the commander has a short update from each fire, and for the first time someone holds all three at once.", "Inom en kvart har ledaren en kort lägesbild från varje brand, och för första gången har någon alla tre samtidigt framför sig."], ["One commander holds the picture of all three fires.", "En ledare har bilden av alla tre bränderna."]),
+              io(["The outage starves", "Avbrottet svälter"], ["The single engineer on the outage is still searching for a cause, and the customer phone queue is overflowing. The service owner says customers are being sacrificed.", "Den enda teknikern på avbrottet letar fortfarande efter orsaken, och kundtelefonkön svämmar över. Tjänsteägaren säger att kunderna offras."], ["The customer outage has one engineer, and the phone queue is overflowing.", "Kundavbrottet har en tekniker, och telefonkön svämmar över."], { reopen: true, meters: { trust: -1 } }),
+              io(["Owner out of reach", "Ägaren går inte att nå"], ["The person assigned to the admin account calls its owner twice and gets voicemail. The activity could still be them working from home.", "Personen som fått administratörskontot ringer ägaren två gånger och hamnar i röstbrevlådan. Aktiviteten kan fortfarande vara hen som arbetar hemifrån."], ["The admin account's owner could not be reached in the first hour.", "Administratörskontots ägare gick inte att nå under den första timmen."])
+            ]),
+            ir("i2", { notChosen: "A" }, ["Nobody on the account", "Ingen på kontot"], [
+              io(["It goes quiet", "Det blir tyst"], ["The SIEM shows no further activity from {{asset.adminAccount}} for twenty minutes. Perhaps it really was someone working from home.", "SIEM visar ingen mer aktivitet från {{asset.adminAccount}} på tjugo minuter. Kanske var det verkligen någon som arbetade hemifrån."], ["The admin account showed no activity for twenty minutes.", "Administratörskontot visade ingen aktivitet på tjugo minuter."]),
+              io(["Busy again", "Aktivt igen"], ["The SIEM flags {{asset.adminAccount}} again: it is now reading settings on several servers. Nobody is watching it.", "SIEM larmar om {{asset.adminAccount}} igen: kontot läser nu inställningar på flera servrar. Ingen bevakar det."], ["The admin account is reading settings on several servers, unwatched.", "Administratörskontot läser inställningar på flera servrar, utan bevakning."], { reopen: true }),
+              io(["Not my alert", "Inte mitt larm"], ["The SOC thinks the admin alert belongs to IT; IT thinks it belongs to the SOC. Both have seen it, and neither has acted.", "SOC tycker att administratörslarmet hör till IT; IT tycker att det hör till SOC. Båda har sett det, och ingen har agerat."], ["Nobody has formally taken ownership of the admin account alert.", "Ingen har formellt tagit ansvar för larmet om administratörskontot."])
+            ])
+          ]
         }),
         facilitator: fac(
           ["Overload is the point. Watch who takes command and who drifts to the loudest fire.", "Överbelastningen är poängen. Se vem som tar ledningen och vem som dras mot den högljuddaste branden."],
@@ -224,7 +236,19 @@
               pb(["The analyst won't move", "Analytikern vägrar flytta sig"], ["The SOC analyst refuses to leave the admin account: “I don't buy the coincidence.” Ordering them onto the outage means overruling the one person who sees a pattern. Do you?", "SOC-analytikern vägrar lämna administratörskontot: ”Jag köper inte sammanträffandet.” Att beordra hen till avbrottet innebär att köra över den enda person som ser ett mönster. Gör ni det?"]),
               pb(["More hands, same speed", "Fler händer, samma fart"], ["Operations confirms the rollback cannot go faster with more people; it is one job that has to run its course. Everyone you assigned to it will be waiting. What are they doing for two hours?", "Driften bekräftar att tillbakarullningen inte går fortare med fler personer; det är ett jobb som måste gå klart. Alla ni satte på det kommer att vänta. Vad gör de i två timmar?"])
             ]
-          }
+          },
+          interrupts: [
+            ir("i1", { chosen: "A" }, ["Hands moved to security", "Händer flyttade till säkerheten"], [
+              io(["The clicker list", "Listan över klickare"], ["With extra hands, the SOC builds a complete list of everyone who clicked the phishing link and when. It is the first solid ground in the security fires.", "Med fler händer tar SOC fram en fullständig lista över alla som klickade på nätfiskelänken och när. Det är den första fasta marken i säkerhetsbränderna."], ["The SOC has a full list of staff who clicked, with times.", "SOC har en fullständig lista över alla som klickade, med tidpunkter."]),
+              io(["The rollback restarts", "Tillbakarullningen börjar om"], ["Working alone, the engineer on the rollback skips a step and has to start again. The outage gets about an hour longer.", "Teknikern på tillbakarullningen arbetar ensam, hoppar över ett steg och måste börja om. Avbrottet blir ungefär en timme längre."], ["The rollback had to restart, adding about an hour to the outage.", "Tillbakarullningen fick börja om, vilket förlänger avbrottet med ungefär en timme."], { reopen: true, meters: { trust: -1 } }),
+              io(["Over your head", "Över ert huvud"], ["The service owner, unhappy that the outage now has one person, has gone straight to the CIO. Nobody knows yet what the CIO will do with it.", "Tjänsteägaren, missnöjd med att avbrottet nu har en person, har gått direkt till IT-chefen. Ingen vet ännu vad IT-chefen tänker göra med det."], ["The service owner has complained to the CIO about the staffing.", "Tjänsteägaren har klagat hos IT-chefen på bemanningen."])
+            ]),
+            ir("i2", { notChosen: "A" }, ["The outage keeps its people", "Avbrottet behåller sitt folk"], [
+              io(["Ahead of schedule", "Före tidsplanen"], ["With several people checking each step, the rollback runs smoothly and ahead of schedule. Customer support finally has good news to give.", "Med flera personer som kontrollerar varje steg går tillbakarullningen smidigt och före tidsplanen. Kundtjänst har äntligen goda nyheter att ge."], ["The rollback was ahead of schedule in its first hour.", "Tillbakarullningen låg före tidsplanen under sin första timme."]),
+              io(["More clicks", "Fler klick"], ["Reports of the phishing email keep arriving faster than they can be read, and the number of clickers has grown. The one person on it asks for help.", "Anmälningarna om nätfiskemejlet kommer snabbare än de hinner läsas, och antalet som klickat har ökat. Den enda personen på det ber om hjälp."], ["More staff have clicked, and the phishing desk is falling behind.", "Fler anställda har klickat, och nätfiskebordet hinner inte med."], { reopen: true }),
+              io(["The analyst alone", "Analytikern ensam"], ["The SOC analyst is working the admin account alone and says they may have “something”, but need another hour to be sure.", "SOC-analytikern arbetar ensam med administratörskontot och säger att hen kanske har ”något”, men behöver en timme till för att vara säker."], ["The SOC analyst is working the admin account alone.", "SOC-analytikern arbetar ensam med administratörskontot."])
+            ])
+          ]
         }),
         facilitator: fac(
           ["A coincidence, confirmed. The skill is letting go of the visible fire.", "Ett sammanträffande, bekräftat. Konsten är att släppa den synliga branden."],
@@ -295,7 +319,19 @@
               pb(["Not the account they made", "Inte kontot de skapade"], ["Resetting the clickers' passwords does not touch the new administrator the attacker created, which never clicked anything. Your plan removes the door but not the person already inside. What removes them?", "Att byta lösenord för dem som klickade påverkar inte den nya administratören som angriparen skapade, och den har aldrig klickat på något. Er plan tar bort dörren men inte den som redan är inne. Vad tar bort hen?"]),
               pb(["A service desk buried", "En servicedesk som drunknar"], ["Resetting {{num.clickers}} passwords will flood the service desk with calls tonight, while the outage is still running. The service desk is also where the phished administrator works. Who handles the calls, and can you trust the process?", "Att byta {{num.clickers}} lösenord kommer att översvämma servicedesken med samtal i kväll, medan avbrottet fortfarande pågår. Servicedesken är också där den nätfiskade administratören arbetar. Vem tar samtalen, och kan ni lita på rutinen?"])
             ]
-          }
+          },
+          interrupts: [
+            ir("i1", { chosen: "A" }, ["Accounts disabled, sessions revoked", "Kontona spärrade, sessionerna återkallade"], [
+              io(["Cut off", "Avskurna"], ["Sign-ins from {{asset.attackerIp}} stop, and the incident-response partner is on the call within the hour. The room breathes out.", "Inloggningarna från {{asset.attackerIp}} upphör, och incidentpartnern är med i samtalet inom en timme. Rummet andas ut."], ["No sign-ins from the attacker's address were seen in the first hour after containment.", "Inga inloggningar från angriparens adress syntes under den första timmen efter begränsningen."]),
+              io(["Logged out mid-call", "Utloggade mitt i samtal"], ["Revoking sessions logs out clickers in customer-facing roles in the middle of calls, during the outage. Customers are left on hold while staff wait for new passwords.", "När sessionerna återkallas loggas klickare i kundnära roller ut mitt i samtal, under avbrottet. Kunderna får vänta medan personalen väntar på nya lösenord."], ["Customer-facing staff were logged out mid-call during the outage.", "Kundnära personal loggades ut mitt i samtal under avbrottet."], { meters: { trust: -1 } }),
+              io(["Keys for the partner", "Nycklar till partnern"], ["The partner can start remotely, but needs administrator access to do anything. You have just disabled two admin accounts, and agreeing how to grant a third takes time.", "Partnern kan börja på distans, men behöver administratörsbehörighet för att göra något. Ni har just spärrat två administratörskonton, och att komma överens om hur en tredje ska ges tar tid."], ["The response partner's start was delayed while access was agreed.", "Incidentpartnerns start försenades medan åtkomsten förhandlades."])
+            ]),
+            ir("i2", { notChosen: "A" }, ["Partial containment", "Delvis begränsning"], [
+              io(["Nothing new", "Inget nytt"], ["The SIEM shows nothing new for the next half hour. It looks as if what you did was enough.", "SIEM visar inget nytt under den följande halvtimmen. Det ser ut som att det ni gjorde räckte."], ["The SIEM showed nothing new in the half hour after your decision.", "SIEM visade inget nytt under halvtimmen efter ert beslut."]),
+              io(["The new admin signs in", "Den nya administratören loggar in"], ["The account the attacker added to the administrator group signs in from outside and starts listing servers. Nothing you did touched it.", "Kontot som angriparen lade till i administratörsgruppen loggar in utifrån och börjar lista servrar. Inget av det ni gjorde påverkade det."], ["The attacker-created admin account has signed in from outside.", "Administratörskontot som angriparen skapade har loggat in utifrån."], { reopen: true }),
+              io(["Still signed in?", "Fortfarande inloggad?"], ["The SOC lead points out that sessions already open from {{asset.attackerIp}} may still be alive. Nobody can confirm either way.", "SOC-ansvarig påpekar att sessioner som redan är öppna från {{asset.attackerIp}} fortfarande kan vara aktiva. Ingen kan bekräfta det ena eller det andra."], ["Nobody can confirm whether the attacker's sessions are closed.", "Ingen kan bekräfta om angriparens sessioner är stängda."])
+            ])
+          ]
         }),
         facilitator: fac(
           ["The fires connect. Watch for relief that one was a coincidence turning into complacency.", "Bränderna hänger ihop. Se upp så att lättnaden över sammanträffandet inte blir till självbelåtenhet."],
@@ -372,7 +408,19 @@
               pb(["The CEO picks the visible fire", "Vd väljer den synliga branden"], ["The CEO decides for the customer outage, because that is what the board is asking about. The security responders say it is the wrong call. Do you follow a decision you asked for but disagree with?", "Vd beslutar för kundavbrottet, eftersom det är det styrelsen frågar om. De som arbetar med säkerheten säger att det är fel beslut. Följer ni ett beslut som ni bad om men inte håller med om?"]),
               pb(["Every conflict goes up", "Varje konflikt går uppåt"], ["Half an hour later there is a new disagreement, and the responders wait for the CEO again. Each escalation costs time you do not have. Is the CEO now your incident commander?", "En halvtimme senare uppstår en ny oenighet, och personerna väntar på vd igen. Varje eskalering kostar tid som ni inte har. Är vd nu er incidentledare?"])
             ]
-          }
+          },
+          interrupts: [
+            ir("i1", { chosen: "A" }, ["One commander confirmed", "En ledare bekräftad"], [
+              io(["Leaders step back", "Cheferna backar"], ["After a short, tense exchange both leaders agree to give their priorities to the commander. The responders visibly relax.", "Efter en kort, spänd ordväxling går båda cheferna med på att ge sina prioriteringar till ledaren. De som arbetar med incidenten slappnar synbart av."], ["Both leaders now route their priorities through the commander.", "Båda cheferna ger nu sina prioriteringar via ledaren."]),
+              io(["A separate briefing", "En separat genomgång"], ["The CIO briefs the board directly, with different numbers and a different priority from the commander's. The chair asks which version is the organisation's.", "IT-chefen informerar styrelsen direkt, med andra siffror och en annan prioritering än ledarens. Ordföranden frågar vilken version som är organisationens."], ["The board has had a separate briefing from the CIO.", "Styrelsen har fått en separat genomgång från IT-chefen."], { reopen: true }),
+              io(["“Your call”", "”Ditt beslut”"], ["Asked to back the commander, the CEO replies with two words: “Your call.” Both leaders read it as support for their own side.", "När vd ombeds stötta ledaren svarar vd med två ord: ”Ditt beslut.” Båda cheferna tolkar det som stöd för sin egen sida."], ["The CEO replied only “your call”, and both leaders claim it.", "Vd svarade bara ”ditt beslut”, och båda cheferna tar det till intäkt."])
+            ]),
+            ir("i2", { notChosen: "A" }, ["No single line of command", "Ingen enda ledningslinje"], [
+              io(["A calmer bridge", "Ett lugnare samtal"], ["The arguing stops and the bridge call goes quiet. Work seems to flow again, at least for now.", "Grälet tystnar och samtalet blir lugnt. Arbetet verkar flyta igen, åtminstone för tillfället."], ["The bridge call has gone quiet for now.", "Samtalet har blivit lugnt för tillfället."]),
+              io(["Work falls between", "Arbete hamnar mittemellan"], ["Nobody has sent staff a warning about the phishing, and nobody has updated the status page in hours. Each side assumed the other had it.", "Ingen har skickat en varning om nätfisket till personalen, och ingen har uppdaterat driftstatussidan på flera timmar. Varje sida utgick från att den andra hade det."], ["By the fourth hour, nobody had warned staff or updated the status page.", "Vid den fjärde timmen hade ingen varnat personalen eller uppdaterat driftstatussidan."], { reopen: true, meters: { trust: -1 } }),
+              io(["Two sets of numbers", "Två uppsättningar siffror"], ["The board receives two briefings with different numbers and different priorities. Neither is wrong, exactly.", "Styrelsen får två genomgångar med olika siffror och olika prioriteringar. Ingen av dem är direkt fel."], ["The board has received two briefings with different numbers.", "Styrelsen har fått två genomgångar med olika siffror."])
+            ])
+          ]
         }),
         facilitator: fac(
           ["Classic command failure. Let the tension land before resolving it.", "Klassiskt ledningsfel. Låt spänningen landa innan den löses."],
@@ -442,7 +490,19 @@
               pb(["Next in the queue", "Nästa i kön"], ["Vendor support logs your call and says the next engineer is free in about four hours. Nobody can say whether that is before the deletion runs. Do you wait, or pull your own person off the rollback after all?", "Leverantörens support registrerar ärendet och säger att nästa tekniker är ledig om ungefär fyra timmar. Ingen kan säga om det är före raderingen. Väntar ni, eller tar ni ändå er egen person från tillbakarullningen?"]),
               pb(["“Done”, says the email", "”Klart”, står det i mejlet"], ["The vendor emails that retention is restored. Nobody inside has time to check the console. Do you trust an email for the one thing you cannot afford to get wrong?", "Leverantören mejlar att lagringstiden är återställd. Ingen internt har tid att kontrollera administrationen. Litar ni på ett mejl i den enda fråga ni inte har råd att få fel?"])
             ]
-          }
+          },
+          interrupts: [
+            ir("i1", { chosen: "A" }, ["Backups first", "Säkerhetskopiorna först"], [
+              io(["Retention restored", "Lagringstiden återställd"], ["Retention is back to normal and the backup team confirms the restore points are intact. Whatever else happens tonight, you can recover.", "Lagringstiden är normal igen och backupteamet bekräftar att återställningspunkterna är intakta. Vad som än händer i natt kan ni återställa."], ["Backup retention is restored and the restore points are intact.", "Lagringstiden är återställd och återställningspunkterna är intakta."]),
+              io(["Stopping costs hours", "Att stoppa kostar timmar"], ["The rollback could not be paused, only stopped. Restarting it adds about two hours, and the service owner wants to know who tells the customers.", "Tillbakarullningen gick inte att pausa, bara att stoppa. Att starta om den lägger till ungefär två timmar, och tjänsteägaren vill veta vem som berättar det för kunderna."], ["Stopping the rollback added about two hours to the outage.", "Att stoppa tillbakarullningen förlängde avbrottet med ungefär två timmar."], { meters: { trust: -1 } }),
+              io(["Already marked?", "Redan markerade?"], ["The backup vendor says some restore points may already have been marked for deletion, and changing the policy back may not unmark them. They cannot say which.", "Backupleverantören säger att vissa återställningspunkter kanske redan har markerats för radering, och att det kanske inte räcker att ändra tillbaka policyn. De kan inte säga vilka."], ["Some restore points may still be marked for deletion.", "Vissa återställningspunkter kan fortfarande vara markerade för radering."], { reopen: true })
+            ]),
+            ir("i2", { notChosen: "A" }, ["Backups wait", "Säkerhetskopiorna får vänta"], [
+              io(["Plenty of margin", "Gott om marginal"], ["The backup team checks the schedule: the deletion job runs in the small hours. There seems to be more time than anyone feared.", "Backupteamet kontrollerar schemat: raderingsjobbet körs under småtimmarna. Det verkar finnas mer tid än någon hade befarat."], ["The deletion job is scheduled for the small hours.", "Raderingsjobbet är schemalagt till småtimmarna."]),
+              io(["Nobody knows when", "Ingen vet när"], ["Nobody can find when the deletion job runs. It could be at midnight, or in an hour. The backups are waiting on a clock nobody can read.", "Ingen kan hitta när raderingsjobbet körs. Det kan vara vid midnatt, eller om en timme. Säkerhetskopiorna väntar på en klocka som ingen kan läsa."], ["Nobody knows exactly when the deletion job runs.", "Ingen vet exakt när raderingsjobbet körs."], { reopen: true }),
+              io(["The CISO dissents", "Säkerhetschefen reserverar sig"], ["The CISO formally records disagreement: “We are betting our ability to recover on something that can wait.” The CIO backs your order.", "Säkerhetschefen reserverar sig formellt: ”Vi satsar vår förmåga att återställa på något som kan vänta.” IT-chefen står bakom er ordning."], ["The CISO has formally recorded disagreement with the order.", "Säkerhetschefen har formellt reserverat sig mot ordningen."])
+            ])
+          ]
         }),
         facilitator: fac(
           ["The coincidental fire now competes with the real one for the same person.", "Branden som var ett sammanträffande konkurrerar nu med den verkliga om samma person."],
@@ -515,7 +575,19 @@
               pb(["A pause with no end", "En paus utan slut"], ["Operations cannot say how long it will take to repair a half-rolled-back database. It might be hours, it might be tomorrow. How long is your pause, and who decides when it ends?", "Driften kan inte säga hur lång tid det tar att laga en halvvägs tillbakarullad databas. Det kan ta timmar, det kan bli i morgon. Hur lång är er paus, och vem bestämmer när den slutar?"]),
               pb(["The partner objects", "Partnern invänder"], ["Your incident-response partner says they cannot be responsible for containment if every action has to wait for operations. They ask to be released or allowed to act. Which do you choose?", "Er incidentpartner säger att de inte kan ansvara för att begränsa angreppet om varje åtgärd måste vänta på driften. De ber att få avsluta uppdraget eller få agera. Vilket väljer ni?"])
             ]
-          }
+          },
+          interrupts: [
+            ir("i1", { chosen: "A" }, ["One action log", "En gemensam åtgärdslogg"], [
+              io(["A collision caught", "En krock upptäckt"], ["Within the hour, an announced firewall change is flagged by operations: it would have cut the database team off mid-repair. It is rescheduled.", "Inom en timme flaggar driften en meddelad brandväggsändring: den skulle ha stängt ute databasteamet mitt i lagningen. Den flyttas."], ["The action log has already caught one conflicting change.", "Åtgärdsloggen har redan fångat en ändring som skulle ha krockat."]),
+              io(["The block waited", "Blockeringen fick vänta"], ["The SOC announced a block on a suspicious address and waited for objections. Meanwhile the address probed the VPN. The SOC lead says the log gave it a head start.", "SOC meddelade en blockering av en misstänkt adress och väntade på invändningar. Under tiden sonderade adressen VPN. SOC-ansvarig säger att loggen gav den ett försprång."], ["A suspicious address probed the VPN while a block waited in the log.", "En misstänkt adress sonderade VPN medan en blockering väntade i loggen."], { reopen: true }),
+              io(["Falling behind", "Halkar efter"], ["Nobody was given the job of keeping the log. Entries are an hour old, and people have started to skip it when in a hurry.", "Ingen fick uppdraget att föra loggen. Posterna är en timme gamla, och folk har börjat hoppa över den när det är bråttom."], ["The action log is already falling behind.", "Åtgärdsloggen halkar redan efter."])
+            ]),
+            ir("i2", { notChosen: "A" }, ["No shared log", "Ingen gemensam logg"], [
+              io(["No more collisions", "Inga fler krockar"], ["Nothing else breaks over the next hour. Perhaps the revocation was a one-off.", "Inget annat går sönder under den följande timmen. Kanske var återkallandet en engångsföreteelse."], ["No further collisions were seen in the next hour.", "Inga fler krockar syntes under den följande timmen."]),
+              io(["Another collision", "Ännu en krock"], ["Operations restarts a server to clear the stuck rollback while the SOC is still collecting its logs. The logs the SOC needed are gone.", "Driften startar om en server för att få loss den fastnade tillbakarullningen medan SOC fortfarande samlar in dess loggar. Loggarna som SOC behövde är borta."], ["An operations restart wiped logs the SOC needed.", "En omstart från driften raderade loggar som SOC behövde."], { reopen: true }),
+              io(["Hidden dependencies", "Dolda beroenden"], ["Asked which other jobs depend on accounts that are now disabled, nobody on either team can answer. There may be none, or several.", "När någon frågar vilka andra jobb som är beroende av konton som nu är spärrade kan ingen i något av teamen svara. Det kan vara inga, eller flera."], ["Nobody knows which other jobs depend on disabled accounts.", "Ingen vet vilka andra jobb som är beroende av spärrade konton."])
+            ])
+          ]
         }),
         facilitator: fac(
           ["Response actions are changes too. Make that explicit.", "Åtgärder är också ändringar. Gör det uttalat."],
@@ -596,7 +668,19 @@
               pb(["“So next time it's me again?”", "”Så nästa gång är det jag igen?”"], ["The administrator who entered their password asks whether anything will change, or whether the next person to click will simply be blamed too. Your decision says nothing will. What do you tell them?", "Administratören som angav sitt lösenord frågar om något kommer att ändras, eller om nästa person som klickar också bara kommer att få skulden. Ert beslut säger att ingenting ändras. Vad säger ni till hen?"]),
               pb(["Attackers read, staff don't", "Angriparna läser, personalen inte"], ["You accept that attackers will read the page anyway. Staff still do not know that outages bring themed phishing. Is “they'll read it anyway” a reason to do nothing for the people inside?", "Ni accepterar att angriparna ändå läser sidan. Personalen vet fortfarande inte att avbrott för med sig nätfiske med avbrottet som tema. Är ”de läser den ändå” ett skäl att inte göra något för dem som finns inne i organisationen?"])
             ]
-          }
+          },
+          interrupts: [
+            ir("i1", { chosen: "A" }, ["Open page, staff warning", "Öppen sida, varning till personalen"], [
+              io(["Reported in minutes", "Anmält på minuter"], ["In a trial run of the warning, staff report a test lure within minutes. The SOC says it is the fastest reporting they have seen.", "I en provkörning av varningen anmäler personalen ett testmejl inom några minuter. SOC säger att det är den snabbaste rapportering de har sett."], ["Staff reported a test lure within minutes of the trial warning.", "Personalen anmälde ett testmejl inom några minuter efter provvarningen."]),
+              io(["Customers get lures", "Kunderna får lockbeten"], ["A customer forwards an email themed on your outage, asking them to “re-verify” their account. The warning protects staff; nobody warned the customers.", "En kund vidarebefordrar ett mejl med ert avbrott som tema, som ber hen att ”verifiera” sitt konto igen. Varningen skyddar personalen; ingen varnade kunderna."], ["A customer has forwarded a lure themed on your outage.", "En kund har vidarebefordrat ett lockbete med ert avbrott som tema."], { reopen: true, meters: { trust: -1 } }),
+              io(["Whose message?", "Vems meddelande?"], ["Operations writes the status page; the SOC writes security warnings. Each assumes the other will send the automatic warning.", "Driften skriver driftstatussidan; SOC skriver säkerhetsvarningarna. Var och en utgår från att den andra skickar den automatiska varningen."], ["No one yet owns sending the automatic warning.", "Ingen äger ännu utskicket av den automatiska varningen."])
+            ]),
+            ir("i2", { notChosen: "A" }, ["No staff warning", "Ingen varning till personalen"], [
+              io(["No new lures", "Inga nya lockbeten"], ["The partner sees no new outage-themed phishing this evening. It may have been a one-time opportunity.", "Partnern ser inget nytt nätfiske med avbrottet som tema i kväll. Det kanske var ett engångstillfälle."], ["No new outage-themed phishing was seen this evening.", "Inget nytt nätfiske med avbrottet som tema syntes i kväll."]),
+              io(["Staff still unaware", "Personalen vet fortfarande inte"], ["A quick check by the partner shows most staff still do not know that outages bring themed phishing. The next outage will find them just as open.", "En snabb kontroll från partnern visar att de flesta i personalen fortfarande inte vet att avbrott för med sig nätfiske med avbrottet som tema. Nästa avbrott hittar dem lika öppna."], ["Most staff still do not know outages bring themed phishing.", "De flesta i personalen vet fortfarande inte att avbrott för med sig riktat nätfiske."], { reopen: true }),
+              io(["“What changes?”", "”Vad ändras?”"], ["The administrator who entered their password asks what will be different next time. The answer they hear is not much.", "Administratören som angav sitt lösenord frågar vad som kommer att vara annorlunda nästa gång. Svaret hen får är: inte mycket."], ["The phished administrator has asked what will change.", "Den nätfiskade administratören har frågat vad som kommer att ändras."])
+            ])
+          ]
         }),
         facilitator: fac(
           ["Coincidences can be exploited. That's the nuance here.", "Sammanträffanden kan utnyttjas. Det är nyansen här."],
@@ -666,7 +750,19 @@
               pb(["HR says stop", "HR säger stopp"], ["HR says the hours already break working-time rules and must be reported. Continuing means overriding HR on the record. Do you, and who signs it?", "HR säger att timmarna redan bryter mot arbetstidsreglerna och måste rapporteras. Att fortsätta innebär att köra över HR, och det dokumenteras. Gör ni det, och vem skriver under?"]),
               pb(["When is everything closed?", "När är allt stängt?"], ["Nobody can say what “closed” means: the attacker is only probably out, and the database still needs checking. Without an end point, keeping going has no end either. When do you stop?", "Ingen kan säga vad ”stängt” betyder: angriparen är bara troligen ute, och databasen behöver fortfarande kontrolleras. Utan en slutpunkt har det inte heller något slut att fortsätta. När slutar ni?"])
             ]
-          }
+          },
+          interrupts: [
+            ir("i1", { chosen: "A" }, ["Handover and home", "Överlämning och hem"], [
+              io(["A clean handover", "En ren överlämning"], ["The partner and the fresh shift take over, and the team goes home. The first hour of the new shift is quiet.", "Partnern och det nya skiftet tar över, och teamet går hem. Den första timmen för det nya skiftet är lugn."], ["The fresh shift has taken over and the team has gone home.", "Det nya skiftet har tagit över och teamet har gått hem."]),
+              io(["The shift is lost", "Skiftet är vilset"], ["The fresh shift does not know which accounts are disabled or why, and the handover notes are patchy. They are already ringing a responder who has just got home.", "Det nya skiftet vet inte vilka konton som är spärrade eller varför, och överlämningsanteckningarna är bristfälliga. De ringer redan en av personerna som just har kommit hem."], ["The fresh shift lacks a clear record of which accounts are disabled.", "Det nya skiftet saknar en tydlig bild av vilka konton som är spärrade."], { reopen: true }),
+              io(["An odd alert", "Ett konstigt larm"], ["Shortly after handover an alert fires that the fresh shift cannot explain. It might be nothing; nobody who would know is awake.", "Strax efter överlämningen går ett larm som det nya skiftet inte kan förklara. Det kan vara ingenting; ingen som skulle veta är vaken."], ["An unexplained alert is waiting for the morning team.", "Ett oförklarat larm väntar på morgonteamet."])
+            ]),
+            ir("i2", { notChosen: "A" }, ["The tired team stays", "Det trötta teamet stannar"], [
+              io(["They pull through", "De tar sig igenom"], ["The team closes several open items over the next hours without new errors. Perhaps they had more left than anyone thought.", "Teamet stänger flera öppna punkter under de följande timmarna utan nya fel. Kanske hade de mer kvar än någon trodde."], ["The team closed several open items without new errors.", "Teamet stängde flera öppna punkter utan nya fel."]),
+              io(["A near miss", "Nära ögat"], ["A responder almost re-enables one of the disabled accounts by mistake. A colleague catches it by luck.", "En av personerna återaktiverar nästan ett av de spärrade kontona av misstag. En kollega upptäcker det av ren tur."], ["A tired responder nearly re-enabled a disabled account.", "En trött person återaktiverade nästan ett spärrat konto."], { reopen: true }),
+              io(["HR on record", "HR dokumenterar"], ["HR records that the hours already break working-time rules. It does not stop the work, but someone will have to answer for it.", "HR dokumenterar att timmarna redan bryter mot arbetstidsreglerna. Det stoppar inte arbetet, men någon kommer att få stå till svars för det."], ["HR has recorded a breach of working-time rules.", "HR har dokumenterat ett brott mot arbetstidsreglerna."])
+            ])
+          ]
         }),
         facilitator: fac(
           ["End on people and capacity. This is where many plans are silent.", "Avsluta med människor och kapacitet. Det är här många planer är tysta."],

@@ -74,6 +74,8 @@
       activeDeadline: null,
       challenges: {},
       activeChallenge: null,
+      interrupts: {},
+      activeInterrupt: null,
       objectives: {},
       scorecard: {},
       notes: "",
@@ -185,13 +187,13 @@
       const pg = B().page(inst, key);
       if (!pg || !pg.choice) return null;
       const ceo = (inst.entities.people || {}).ceo;
-      return { key, question: pg.choice.question, options: pg.choice.options, log, chosen: log ? pg.choice.options.find((o) => o.key === log.option) || null : null, owner: ceo ? ceo.name : null, ownerRole: ceo ? "ceo" : null, num: B().seenNum(sess, key) };
+      return { key, question: pg.choice.question, options: pg.choice.options, interrupts: pg.interrupts || [], log, chosen: log ? pg.choice.options.find((o) => o.key === log.option) || null : null, owner: ceo ? ceo.name : null, ownerRole: ceo ? "ceo" : null, num: B().seenNum(sess, key) };
     }
     if (isCustom(sess)) return null;
     const st = inst.stages.find((x) => x.decision && x.decision.id === key);
     if (!st) return null;
     const d = st.decision;
-    return { key, question: d.question, options: d.options, log, chosen: log && log.option ? d.options.find((o) => o.key === log.option) || null : null, owner: d.authorityName || null, ownerRole: d.authority || null, stageId: st.id };
+    return { key, question: d.question, options: d.options, interrupts: d.interrupts || [], log, chosen: log && log.option ? d.options.find((o) => o.key === log.option) || null : null, owner: d.authorityName || null, ownerRole: d.authority || null, stageId: st.id };
   }
 
   /** The option the clock picks when the room runs out of time: seeded, so a re-run picks the same one. */
@@ -229,6 +231,83 @@
     const dp = decisionPoint(sess, key);
     if (!dp || !dp.chosen) return [];
     return (dp.chosen.pushback || []).map((c, index) => ({ index, title: L(c.title, lang), text: L(c.text, lang) }));
+  }
+
+  // ---- Interrupts ---------------------------------------------------------------------------------
+  // Twists the facilitator plays at decision points the room has reached. Each is triggered by what
+  // the room chose there, or did not choose; until the room has decided, both are offered with their
+  // trigger, so the facilitator can step in mid-discussion. A played outcome is shown to the room and
+  // its fact stays in play; it can reopen the decision and move the pressure meters.
+
+  /** Decision points reached so far, current first: discussion decisions up to this stage, or visited branching pages. */
+  function reachedPoints(sess) {
+    if (isCustom(sess)) return [];
+    if (isBranching(sess)) {
+      const seen = [];
+      sess.route.filter((r) => !r.auto).forEach((r) => seen.includes(r.pageId) || seen.push(r.pageId));
+      return seen.reverse().filter((id) => (B().page(sess.instance, id) || {}).choice);
+    }
+    const { slide } = locate(sess);
+    const stage = slide && slide.stageId ? stageById(sess, slide.stageId) : null;
+    const upto = stage ? stage.index : -1;
+    return sess.instance.stages.filter((s, i) => i <= upto && s.decision).map((s) => s.decision.id).reverse();
+  }
+
+  const authoredKey = (o) => (o ? o.authored || o.key : null);
+
+  /** Whether an interrupt fits what the room chose at its decision point (null while undecided). */
+  function interruptApplies(ir, dp) {
+    if (!dp.chosen) return null;
+    const k = authoredKey(dp.chosen);
+    return ir.when && ir.when.chosen ? ir.when.chosen === k : !!(ir.when && ir.when.notChosen) && ir.when.notChosen !== k;
+  }
+
+  /** Every interrupt the facilitator can play now (or has played), for the presenter. */
+  function interruptOptions(sess, lang) {
+    const out = [];
+    reachedPoints(sess).forEach((key, n) => {
+      const dp = decisionPoint(sess, key);
+      if (!dp) return;
+      (dp.interrupts || []).forEach((ir) => {
+        const used = (sess.interrupts || {})[key + "/" + ir.id] || null;
+        const fits = interruptApplies(ir, dp);
+        if (fits === false && !used) return;
+        const trig = dp.options.find((o) => authoredKey(o) === (ir.when.chosen || ir.when.notChosen));
+        out.push({
+          key,
+          id: ir.id,
+          ref: key + "/" + ir.id,
+          current: n === 0,
+          decided: fits !== null,
+          question: L(dp.question, lang),
+          where: dp.stageId ? stageNumber(sess, dp.stageId) : dp.num,
+          trigger: { kind: ir.when.chosen ? "chosen" : "notChosen", option: trig ? L(trig.text, lang) : "" },
+          title: L(ir.title, lang),
+          used: used ? used.outcome : null,
+          outcomes: (ir.outcomes || []).map((o, index) => ({ index, label: L(o.label, lang), text: L(o.text, lang), fact: L(o.fact, lang), reopen: !!o.reopen, meters: o.meters || {} }))
+        });
+      });
+    });
+    return out;
+  }
+
+  /** A played interrupt's content: title, what the room is told, and the fact that stays in play. */
+  function interruptContent(sess, ref, lang) {
+    const entry = (sess.interrupts || {})[ref];
+    const dp = entry && decisionPoint(sess, entry.key);
+    const ir = dp && (dp.interrupts || []).find((x) => x.id === entry.id);
+    const o = ir && ir.outcomes[entry.outcome];
+    if (!o) return null;
+    return { ref, key: entry.key, title: L(ir.title, lang), label: L(o.label, lang), text: L(o.text, lang), fact: L(o.fact, lang), reopened: !!entry.reopened, at: entry.at, where: dp.stageId ? stageNumber(sess, dp.stageId) : dp.num, question: L(dp.question, lang) };
+  }
+
+  /** Facts in play from played interrupts, oldest first (public: the room has been told them). */
+  function standingFacts(sess, lang) {
+    return Object.keys(sess.interrupts || {})
+      .map((ref) => interruptContent(sess, ref, lang))
+      .filter(Boolean)
+      .sort((a, b) => (a.at < b.at ? -1 : 1))
+      .map((c) => c.fact);
   }
 
   const ACTION_STATUS = ["open", "progress", "done", "dropped"];
@@ -439,8 +518,9 @@
     let step = 0;
     if (n > 0) step = forward ? Math.max(1, slide.type === "timeline" ? releasedCount(sess, slide.stageId) : 1) : n;
     sess.position = { slideId: slide.id, step: Math.min(step, n), index: slide.index };
-    // A challenge is about the moment it was played: moving to another slide takes it off the stage.
+    // A challenge or interrupt is about the moment it was played: moving to another slide takes it off the stage.
     sess.activeChallenge = null;
+    sess.activeInterrupt = null;
   }
 
   // ---- Reducer ------------------------------------------------------------------------------------
@@ -471,6 +551,7 @@
       case "next": {
         sess.activeDeadline = null;
         sess.activeChallenge = null;
+        sess.activeInterrupt = null;
         const n = stepCount(sess, slide);
         if (sess.position.step < n) sess.position.step++;
         else if (idx < list.length - 1) moveTo(sess, list, idx + 1, true);
@@ -479,6 +560,7 @@
       case "prev": {
         sess.activeDeadline = null;
         sess.activeChallenge = null;
+        sess.activeInterrupt = null;
         const min = slide && slide.type === "timeline" ? 1 : slide && stepCount(sess, slide) ? 1 : 0;
         if (sess.position.step > min) sess.position.step--;
         else if (idx > 0) moveTo(sess, list, idx - 1, false);
@@ -667,6 +749,79 @@
         sess.log.push({ at: new Date(at).toISOString(), type: "challenge", decisionId: cmd.key, option: dp.chosen.key, index: cmd.index });
         break;
       }
+      case "challengeChange": {
+        // The room changes its mind after a challenge: record the new option (branching: undo the
+        // choice and take the new one). Later consequences follow the new choice.
+        const ch = (sess.challenges || {})[cmd.key];
+        const dp = ch && decisionPoint(sess, cmd.key);
+        const to = dp && dp.options.find((o) => o.key === cmd.option);
+        if (ended || !to || !dp.chosen || to.key === dp.chosen.key) return prev;
+        const from = dp.chosen.key;
+        if (isBranching(sess)) {
+          const last = sess.route.slice().reverse().find((r) => r.option);
+          if (!last || last.pageId !== cmd.key) return prev;
+          B().unchoose(sess, at);
+          const offered = B().offered(B().page(sess.instance, cmd.key).choice, sess.flags);
+          if (!offered.some((o) => o.key === to.key)) return prev;
+          const target = B().choose(sess, to.key, at);
+          const fresh = slides(sess);
+          const i = fresh.findIndex((x) => x.id === target);
+          if (i >= 0) moveTo(sess, fresh, i, true);
+        } else {
+          sess.decisions[cmd.key] = Object.assign({}, sess.decisions[cmd.key], { option: to.key, at: new Date(at).toISOString() });
+        }
+        const entry = sess.challenges[cmd.key];
+        entry.outcome = "changed";
+        entry.from = entry.from || from;
+        entry.changedTo = to.key;
+        sess.activeChallenge = null;
+        sess.log.push({ at: new Date(at).toISOString(), type: "challengeChange", decisionId: cmd.key, from, to: to.key });
+        break;
+      }
+      case "interruptFire": {
+        const ref = cmd.key + "/" + cmd.id;
+        const avail = interruptOptions(sess, sess.lang).find((x) => x.ref === ref);
+        if (ended || !avail || avail.used != null || !avail.outcomes[cmd.outcome]) return prev;
+        const dp = decisionPoint(sess, cmd.key);
+        const ir = dp.interrupts.find((x) => x.id === cmd.id);
+        const o = ir.outcomes[cmd.outcome];
+        const entry = { key: cmd.key, id: cmd.id, outcome: cmd.outcome, at: new Date(at).toISOString(), reopened: false };
+        // The pressure meters move as the outcome says (clamped like a facilitator adjustment).
+        Object.entries(o.meters || {}).forEach(([m, v]) => {
+          const meter = METERS.find((x) => x.id === m);
+          if (!meter || !Number.isInteger(v)) return;
+          const cur = meterValues(sess).find((x) => x.id === m).value;
+          const next = Math.max(0, Math.min(METER_MAX, cur + v));
+          sess.meters = Object.assign({}, sess.meters || {}, { [m]: ((sess.meters || {})[m] || 0) + (next - cur) });
+        });
+        // Reopen: the room has to decide again (branching: only the most recent choice can be reopened).
+        if (o.reopen && dp.log) {
+          if (isBranching(sess)) {
+            const last = sess.route.slice().reverse().find((r) => r.option);
+            if (last && last.pageId === cmd.key) {
+              const target = B().unchoose(sess, at);
+              const fresh = slides(sess);
+              const i = fresh.findIndex((x) => x.id === target);
+              if (i >= 0) moveTo(sess, fresh, i, false);
+              entry.reopened = true;
+            }
+          } else if (dp.log.option) {
+            sess.decisions[cmd.key] = Object.assign({}, dp.log, { option: null, reopenedFrom: dp.log.option, at: new Date(at).toISOString() });
+            entry.reopened = true;
+          }
+        }
+        sess.interrupts = Object.assign({}, sess.interrupts || {}, { [ref]: entry });
+        sess.activeInterrupt = ref;
+        sess.log.push({ at: new Date(at).toISOString(), type: "interrupt", decisionId: cmd.key, id: cmd.id, outcome: cmd.outcome });
+        break;
+      }
+      case "interruptShow":
+        if (!(sess.interrupts || {})[cmd.ref]) return prev;
+        sess.activeInterrupt = cmd.ref;
+        break;
+      case "interruptHide":
+        sess.activeInterrupt = null;
+        break;
       case "challengeHide":
         sess.activeChallenge = null;
         break;
@@ -800,10 +955,19 @@
     return card ? { id: card.id, category: t("complication.cat." + card.cat, null, lang), title: L(card.title, lang), text: L(card.text, lang) } : null;
   }
 
+  /** The interrupt on stage: what happened, and whether the room must decide again. */
+  function publicInterrupt(sess, lang) {
+    const c = interruptContent(sess, sess.activeInterrupt, lang);
+    return c ? { ref: c.ref, title: c.title, text: c.text, reopened: c.reopened } : null;
+  }
+
   /** The challenge card on stage: title and text only (the outcome is the facilitator's note). */
   function publicChallenge(sess, lang) {
     const c = challengeContent(sess, sess.activeChallenge, lang);
-    return c ? { key: c.key, index: c.index, title: c.title, text: c.text } : null;
+    if (!c) return null;
+    // The room's current choice, so it can stand by it or change it.
+    const dp = decisionPoint(sess, c.key);
+    return { key: c.key, index: c.index, title: c.title, text: c.text, choice: dp && dp.chosen ? { key: isBranching(sess) ? "" : dp.chosen.key, text: L(dp.chosen.text, lang) } : null };
   }
 
   /** A person source as { name, title } so artefacts can lay the two out separately; null otherwise. */
@@ -1031,6 +1195,8 @@
       complication: publicComplication(sess, lang),
       deadline: sess.activeDeadline ? deadlineContent(sess, sess.activeDeadline, lang) : null,
       challenge: sess.activeChallenge ? publicChallenge(sess, lang) : null,
+      interrupt: sess.activeInterrupt ? publicInterrupt(sess, lang) : null,
+      facts: standingFacts(sess, lang),
       slide: slideContent(sess, slide, sess.position.step, lang)
     };
   }
@@ -1046,6 +1212,7 @@
     // Moving on clears the deadline and challenge cards, so the preview of what comes next shows neither.
     p.deadline = null;
     p.challenge = null;
+    p.interrupt = null;
     return p;
   }
 
@@ -1247,6 +1414,9 @@
     deadlineContent,
     challengeContent,
     challengeChoices,
+    interruptOptions,
+    interruptContent,
+    standingFacts,
     CHALLENGE_OUTCOMES,
     CHOICE_DEADLINE_MINUTES,
     ACTION_STATUS,

@@ -183,7 +183,17 @@
             el("p", { class: "muted small", text: t("report.challengesIntro", null, l) }),
             table(
               [t("csv.stage", null, l), t("csv.question", null, l), t("report.challengeCard", null, l), t("report.challengeOutcome", null, l)],
-              r.challenges.map((x) => [x.stage, x.question, el("span", null, el("strong", { text: x.card }), el("br"), x.text), x.outcome ? t("challenge.outcome." + x.outcome, null, l) : c.badge(t("report.notRecorded", null, l), "warn", "warning")])
+              r.challenges.map((x) => [x.stage, x.question, el("span", null, el("strong", { text: x.card }), el("br"), x.text), x.outcome ? t("challenge.outcome." + x.outcome, null, l) + (x.changed ? " (" + x.changed + ")" : "") : c.badge(t("report.notRecorded", null, l), "warn", "warning")])
+            )
+          )
+        : null,
+      r.interrupts && r.interrupts.length
+        ? section(
+            t("report.interrupts", null, l),
+            el("p", { class: "muted small", text: t("report.interruptsIntro", null, l) }),
+            table(
+              [t("csv.stage", null, l), t("report.interruptTitle", null, l), t("report.interruptOutcome", null, l), t("report.interruptFact", null, l)],
+              r.interrupts.map((x) => [x.stage, x.title, el("span", null, el("strong", { text: x.outcome }), el("br"), x.text), x.fact + (x.reopened ? " · " + t("interrupt.reopens", null, l) : "")])
             )
           )
         : null,

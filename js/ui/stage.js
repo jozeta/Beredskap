@@ -52,6 +52,14 @@
 
   const R = {};
 
+  /** Slides where the room weighs a decision show the facts that played interrupts left in play. */
+  const FACT_SLIDES = new Set(["discussion", "decision", "choice"]);
+  function factsStrip(p, lang) {
+    const facts = (p.facts || []).slice(-3);
+    if (!facts.length) return null;
+    return el("div", { class: "s-facts" }, el("p", { class: "s-facts__label" }, svgIcon("route", { size: 24 }), el("span", { text: t("interrupt.inPlay", null, lang) })), el("ul", { class: "s-facts__list" }, facts.map((f) => el("li", { text: f }))));
+  }
+
   R.title = (s, p, lang) =>
     el(
       "div",
@@ -453,7 +461,7 @@
     const canvas = el(
       "div",
       { class: ["stage", "stage--" + s.type, s.variant && "stage--" + s.variant, opts && opts.preview && "stage--preview", opts && opts.animate && "is-entering"], "data-theme": p.theme, lang },
-      el("div", { class: "s-slide" }, renderer(s, p, lang)),
+      el("div", { class: "s-slide" }, renderer(s, p, lang), FACT_SLIDES.has(s.type) ? factsStrip(p, lang) : null),
       s.type === "title" ? null : rail(p, lang)
     );
     if (!p.paused && p.screen === "normal") {
@@ -480,8 +488,22 @@
             dl.option ? el("p", { class: "s-complication__choice", text: (dl.branching ? "" : dl.option.key + " — ") + dl.option.text }) : null
           ])
         );
+      } else if (p.interrupt) {
+        canvas.appendChild(
+          card("interrupt", "route", t("interrupt.title", null, lang), p.interrupt.title, [
+            el("p", { class: "s-complication__text", text: p.interrupt.text }),
+            p.interrupt.reopened ? el("p", { class: "s-complication__choice", text: t("interrupt.decideAgain", null, lang) }) : null
+          ])
+        );
       } else if (p.challenge) {
-        canvas.appendChild(card("challenge", "scale", t("challenge.title", null, lang), p.challenge.title, el("p", { class: "s-complication__text", text: p.challenge.text })));
+        canvas.appendChild(
+          card("challenge", "scale", t("challenge.title", null, lang), p.challenge.title, [
+            el("p", { class: "s-complication__text", text: p.challenge.text }),
+            p.challenge.choice
+              ? el("p", { class: "s-complication__choice" }, el("span", { class: "s-complication__ask", text: t("challenge.standOrChange", null, lang) }), (p.challenge.choice.key ? p.challenge.choice.key + " — " : "") + p.challenge.choice.text)
+              : null
+          ])
+        );
       } else if (p.complication) {
         canvas.appendChild(card(null, "dice", t("complication.title", null, lang) + " · " + p.complication.category, p.complication.title, el("p", { class: "s-complication__text", text: p.complication.text })));
       }
@@ -655,7 +677,7 @@
 
   function draw(sess) {
     const p = BK.engine.session.project(sess, Date.now());
-    const key = [p.slide.id, p.slide.step, p.lang, p.theme, p.paused, p.screen, p.ended, p.rev, p.complication && p.complication.id, p.deadline && p.deadline.key, p.challenge && p.challenge.key + ":" + p.challenge.index].join("|");
+    const key = [p.slide.id, p.slide.step, p.lang, p.theme, p.paused, p.screen, p.ended, p.rev, p.complication && p.complication.id, p.deadline && p.deadline.key, p.challenge && p.challenge.key + ":" + p.challenge.index, p.interrupt && p.interrupt.ref, (p.facts || []).length].join("|");
     if (key === view.lastKey) {
       tick(view.canvas, p);
       return;

@@ -533,7 +533,8 @@
       uncertainties: R.resolveDeep(decision.uncertainties || [], ctx, missing),
       tradeoffs: R.resolveDeep(decision.tradeoffs || {}, ctx, missing),
       evaluation: R.resolveDeep(decision.evaluation || [], ctx, missing),
-      discussionMinutes: decision.discussionMinutes || null
+      discussionMinutes: decision.discussionMinutes || null,
+      interrupts: R.resolveDeep(decision.interrupts || [], ctx, missing)
     };
   }
 
@@ -628,6 +629,7 @@
         skipTo: pg.skipTo || null,
         title: R.resolveText(pg.title, ctx, missing),
         narrative: R.resolveText(pg.narrative, ctx, missing),
+        interrupts: R.resolveDeep(pg.interrupts || [], ctx, missing),
         // A variant is its own gamebook passage, with its own number.
         variants: (pg.variants || []).map((v) => ({ if: v.if, num: pool[next++], narrative: R.resolveText(v.narrative, ctx, missing), because: v.because ? R.resolveText(v.because, ctx, missing) : null })),
         injects,

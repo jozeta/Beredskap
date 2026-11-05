@@ -12,7 +12,7 @@
   "use strict";
 
   const BK = window.BK;
-  const { L, q, ch, inj, dec, fac, act, avr, kpi, line, pb } = BK.scenarios.h;
+  const { L, q, ch, inj, dec, fac, act, avr, kpi, line, pb, ir, io } = BK.scenarios.h;
 
   BK.scenarios.register({
     id: "s12-benign-or-breach",
@@ -125,6 +125,18 @@
             reputational: ["A false alarm costs trust in the SOC.", "Ett falsklarm kostar förtroende för SOC."]
           },
           evaluation: [["Checks the benign explanation rather than accepting it", "Kontrollerar den harmlösa förklaringen i stället för att godta den"]],
+          interrupts: [
+            ir("i1", { chosen: "B" }, ["Closed as maintenance", "Stängt som underhåll"], [
+              io(["Nobody objects", "Ingen invänder"], ["The shift log takes the closure without comment, and the colleague who suggested it thanks you for not waking anyone.", "Skiftloggen tar emot stängningen utan kommentarer, och kollegan som föreslog den tackar er för att ni inte väckte någon."], ["The alert was closed without anyone questioning it.", "Larmet stängdes utan att någon ifrågasatte det."]),
+              io(["The SOC lead reopens it", "SOC-ansvarig öppnar igen"], ["The SOC lead, checking in from home, sees a burst of lateral-movement detections closed without a single host checked. They reopen it and ask who decided.", "SOC-ansvarig, som kollar in hemifrån, ser en mängd detektioner av lateral rörelse som stängts utan att en enda dator kontrollerats. Hen öppnar ärendet igen och frågar vem som beslutade."], ["The SOC lead has reopened the alert and questioned the closure.", "SOC-ansvarig har öppnat larmet igen och ifrågasatt stängningen."], { reopen: true }),
+              io(["No reply yet", "Inget svar än"], ["As a courtesy, the analyst messages the application team about the closed alert. Nobody replies; they are presumably busy with the upgrade.", "Som en artighet skickar analytikern ett meddelande till applikationsteamet om det stängda larmet. Ingen svarar; de är förmodligen upptagna med uppgraderingen."], ["The application team did not reply to the SOC's first message.", "Applikationsteamet svarade inte på SOC:s första meddelande."])
+            ]),
+            ir("i2", { notChosen: "B" }, ["Alert kept open", "Larmet hålls öppet"], [
+              io(["A lull", "Ett andrum"], ["Detections slow down for a few minutes. Your SOC colleague says that was a maintenance step finishing, and that the lull proves it.", "Detektionerna avtar i några minuter. Er kollega i SOC säger att det var ett underhållssteg som blev klart, och att avbrottet bevisar det."], ["Detections slowed briefly; a colleague calls it a maintenance step.", "Detektionerna avtog en kort stund; en kollega kallar det ett underhållssteg."]),
+              io(["An annoyed team", "Ett irriterat team"], ["The application team lead complains that the SOC is slowing a tight maintenance window, and copies their manager.", "Applikationsteamets ansvarige klagar på att SOC bromsar ett snävt underhållsfönster, och sätter sin chef på kopia."], ["The application team lead has complained about the SOC's interference.", "Applikationsteamets ansvarige har klagat på att SOC lägger sig i."]),
+              io(["The owner wants grounds", "Ägaren vill ha skäl"], ["The service owner hears that the SOC is holding up the maintenance and demands to know on what grounds, with month-end close only hours away.", "Tjänsteägaren får höra att SOC håller upp underhållet och kräver att få veta på vilka grunder, med månadsbokslutet bara några timmar bort."], ["The service owner has demanded the grounds for holding the alert open.", "Tjänsteägaren har krävt att få veta skälen till att larmet hålls öppet."], { reopen: true })
+            ])
+          ],
           pushback: {
             A: [
               pb(["Not now, we're busy", "Inte nu, vi är upptagna"], ["The application team lead doesn't answer, and the engineer who does is mid-upgrade and promises the host list “after the window”. The detections keep coming. Do you wait for them, or escalate and interrupt their maintenance?", "Applikationsteamets ansvarige svarar inte, och teknikern som svarar är mitt i uppgraderingen och lovar listan över datorer ”efter fönstret”. Detektionerna fortsätter komma. Väntar ni på dem, eller eskalerar ni och avbryter deras underhåll?"]),
@@ -209,6 +221,18 @@
             reputational: ["Questioning a colleague's work needs tact.", "Att ifrågasätta en kollegas arbete kräver fingertoppskänsla."]
           },
           evaluation: [["Keeps the anomaly open while accepting the maintenance", "Håller avvikelsen öppen samtidigt som underhållet godtas"]],
+          interrupts: [
+            ir("i1", { chosen: "A" }, ["Looking closer", "En närmare titt"], [
+              io(["Quietly under way", "I det tysta"], ["The network team agrees to pull flows and identity logs for the odd host without touching the server. The maintenance carries on undisturbed.", "Nätverksteamet går med på att hämta flöden och identitetsloggar för den udda datorn utan att röra servern. Underhållet fortsätter ostört."], ["Logs for the odd host are being pulled without disturbing the maintenance.", "Loggar för den udda datorn hämtas utan att störa underhållet."]),
+              io(["The queue waits", "Kön får vänta"], ["While the only night analyst digs into the odd host, a separate alert about a phishing click waits an hour unanswered. The SOC lead asks whether this is the right use of the night.", "Medan den enda nattanalytikern gräver i den udda datorn väntar ett annat larm, om ett klick på ett nätfiskemejl, en timme utan svar. SOC-ansvarig frågar om det här är rätt sätt att använda natten."], ["Another alert waited an hour while the analyst investigated.", "Ett annat larm väntade en timme medan analytikern utredde."], { reopen: true }),
+              io(["A plausible owner", "En rimlig ägare"], ["Someone in IT says the host belongs to a colleague who sometimes works late. It would explain a lot, if it is true.", "Någon på IT säger att datorn tillhör en kollega som ibland jobbar sent. Det skulle förklara mycket, om det stämmer."], ["IT says the odd host belongs to a colleague who sometimes works late.", "IT säger att den udda datorn tillhör en kollega som ibland jobbar sent."])
+            ]),
+            ir("i2", { notChosen: "A" }, ["The odd host left alone", "Den udda datorn lämnas ifred"], [
+              io(["It goes quiet", "Den tystnar"], ["The odd host produces no detections for twenty minutes. The six per cent starts to look like a blip.", "Den udda datorn ger inga detektioner på tjugo minuter. De sex procenten börjar se ut som en tillfällighet."], ["The odd host produced no detections for twenty minutes.", "Den udda datorn gav inga detektioner på tjugo minuter."]),
+              io(["The analyst escalates", "Analytikern eskalerar"], ["The analyst who spotted the odd host calls the SOC lead at home. The SOC lead wants it checked independently before anything else is closed.", "Analytikern som upptäckte den udda datorn ringer SOC-ansvarig hemma. SOC-ansvarig vill att den kontrolleras oberoende innan något mer stängs."], ["The SOC lead wants the odd host checked independently.", "SOC-ansvarig vill att den udda datorn kontrolleras oberoende."], { reopen: true }),
+              io(["Logged as noise", "Loggad som brus"], ["A senior SOC colleague writes the odd host off as normal noise in the shift log. To anyone reading later, the matter looks settled.", "En erfaren kollega i SOC skriver av den udda datorn som normalt brus i skiftloggen. För den som läser senare ser saken avgjord ut."], ["The odd host is logged as normal noise in the shift log.", "Den udda datorn är loggad som normalt brus i skiftloggen."])
+            ])
+          ],
           pushback: {
             A: [
               pb(["The rest of the queue", "Resten av kön"], ["The odd host has limited sensor coverage, and pulling network flows at night takes an hour. Your only night analyst is now spending the shift on six per cent of one alert. Who covers everything else in the queue while they do?", "Den udda datorn har begränsad sensortäckning, och att hämta nätverksflöden på natten tar en timme. Er enda nattanalytiker ägnar nu passet åt sex procent av ett enda larm. Vem tar hand om allt annat i kön under tiden?"]),
@@ -285,6 +309,18 @@
           },
           evaluation: [["Contains the actor precisely, not the whole business", "Begränsar aktören träffsäkert, inte hela verksamheten"]],
           minutes: 10,
+          interrupts: [
+            ir("i1", { chosen: "C" }, ["Watching them", "Under bevakning"], [
+              io(["A map of their moves", "En karta över rörelserna"], ["Watching pays off: the analyst builds a list of every host the account touches tonight, which any containment will need.", "Bevakningen lönar sig: analytikern sammanställer en lista över varje dator som kontot rör i natt, något som en begränsning kommer att behöva."], ["Watching produced a list of hosts the account touched tonight.", "Bevakningen gav en lista över datorer som kontot rörde i natt."]),
+              io(["The CISO calls a halt", "Säkerhetschefen stoppar det"], ["The CISO is woken and hears that an intruder is being watched on a system holding personal data, with no approval. They order it ended and want to know who decided.", "Säkerhetschefen väcks och får höra att en inkräktare bevakas i ett system med personuppgifter, utan godkännande. Hen beordrar att det avslutas och vill veta vem som beslutade."], ["The CISO has ordered the watching to end.", "Säkerhetschefen har beordrat att bevakningen avslutas."], { reopen: true }),
+              io(["The session ends", "Sessionen tar slut"], ["The actor's session ends abruptly. Nobody can tell whether they noticed you, finished their work, or simply logged off for the night.", "Aktörens session tar plötsligt slut. Ingen kan avgöra om de märkte er, blev klara med sitt arbete eller bara loggade ut för natten."], ["The actor's session ended abruptly while being watched.", "Aktörens session tog plötsligt slut under bevakningen."])
+            ]),
+            ir("i2", { notChosen: "C" }, ["Cut off", "Avskurna"], [
+              io(["Activity stops", "Aktiviteten upphör"], ["After your action, no further activity from the actor is seen on the business system. The room starts to talk about the incident in the past tense.", "Efter er åtgärd syns ingen mer aktivitet från aktören i affärssystemet. Rummet börjar prata om incidenten i dåtid."], ["No new activity from the actor has been seen since your action.", "Ingen ny aktivitet från aktören har setts sedan er åtgärd."]),
+              io(["Another try", "Ett nytt försök"], ["An hour later, a different account tries to sign in from {{asset.attackerIp}} and fails. Whoever this is has more than one key to try.", "En timme senare försöker ett annat konto logga in från {{asset.attackerIp}} och misslyckas. Den som ligger bakom har fler än en nyckel att pröva."], ["A different account tried and failed to sign in from {{asset.attackerIp}}.", "Ett annat konto försökte logga in från {{asset.attackerIp}} och misslyckades."], { reopen: true }),
+              io(["The owner denies it", "Ägaren förnekar"], ["The service-desk employee whose account was used is reached by phone. They insist they were asleep, and their manager vouches for them.", "Den anställda på servicedesken vars konto användes nås per telefon. Hen insisterar på att hen sov, och chefen går i god för hen."], ["The account's owner denies involvement; their manager vouches for them.", "Kontots ägare förnekar inblandning; chefen går i god för hen."])
+            ])
+          ],
           pushback: {
             A: [
               pb(["The account's real owner", "Kontots verkliga ägare"], ["Disabling the service-desk account also locks out the employee it belongs to, who starts work in a few hours and, as far as anyone knows, has done nothing wrong. Do you tell them why, and what if they turn out to be involved?", "När kontot från servicedesken spärras låses också den anställda ute som kontot tillhör, som börjar jobba om några timmar och, så vitt någon vet, inte har gjort något fel. Berättar ni varför, och vad gör ni om hen visar sig vara inblandad?"]),
@@ -372,6 +408,18 @@
             reputational: ["The board will ask why monitoring was switched off.", "Styrelsen kommer att fråga varför bevakningen var avstängd."]
           },
           evaluation: [["Makes suppression precise rather than broad", "Gör undertryckningen precis i stället för bred"]],
+          interrupts: [
+            ir("i1", { chosen: "C" }, ["The rules stay", "Reglerna blir kvar"], [
+              io(["The review works", "Granskningen fungerar"], ["The first morning-after review runs on time and finds nothing. The SOC lead says the process works.", "Den första granskningen morgonen efter görs i tid och hittar ingenting. SOC-ansvarig säger att processen fungerar."], ["The first morning-after review ran on time and found nothing.", "Den första granskningen morgonen efter gjordes i tid och hittade ingenting."]),
+              io(["The audit committee asks", "Revisionsutskottet frågar"], ["The audit committee hears that alerts on the business system will still be muted during maintenance, and asks why a known blind spot was kept.", "Revisionsutskottet får höra att larmen på affärssystemet fortfarande ska tystas under underhåll, och frågar varför en känd blind fläck behölls."], ["The audit committee has asked why the muted windows were kept.", "Revisionsutskottet har frågat varför de tystade fönstren behölls."], { reopen: true }),
+              io(["Later this week", "Senare i veckan"], ["Another maintenance window on the same server is scheduled for later this week. The rule will be in force again.", "Ett nytt underhållsfönster på samma server är inplanerat senare i veckan. Regeln gäller då igen."], ["Another maintenance window on the server is scheduled this week.", "Ett nytt underhållsfönster på servern är inplanerat den här veckan."])
+            ]),
+            ir("i2", { notChosen: "C" }, ["The rules change", "Reglerna ändras"], [
+              io(["The first window", "Det första fönstret"], ["The first maintenance window under the new setup surfaces two alerts, both explained within minutes. The analysts are cautiously pleased.", "Det första underhållsfönstret med det nya upplägget ger två larm, båda förklarade inom några minuter. Analytikerna är försiktigt nöjda."], ["The first window under the new rules surfaced two alerts, both explained.", "Det första fönstret med de nya reglerna gav två larm, båda förklarade."]),
+              io(["Swamped", "Översvämmade"], ["The night analysts are swamped by alerts the old rule used to hide. One asks, in writing, for the old rule back until there are more people.", "Nattanalytikerna dränks i larm som den gamla regeln brukade dölja. En av dem ber skriftligt om att få tillbaka den gamla regeln tills det finns mer personal."], ["The night analysts were swamped and asked for the old rule back.", "Nattanalytikerna dränktes i larm och bad om att få tillbaka den gamla regeln."], { reopen: true }),
+              io(["Slower changes", "Långsammare ändringar"], ["Change tickets now take longer to approve, and one team postpones its maintenance rather than list every host. Nobody is sure whether that is safer.", "Ändringsärenden tar nu längre tid att godkänna, och ett team skjuter upp sitt underhåll hellre än att lista varje dator. Ingen är säker på om det är säkrare."], ["Changes now take longer; one team postponed its maintenance.", "Ändringar tar nu längre tid; ett team har skjutit upp sitt underhåll."])
+            ])
+          ],
           pushback: {
             A: [
               pb(["Vague tickets", "Vaga ärenden"], ["Most change tickets don't list hosts or accounts; the application team writes “the ERP environment”. Precise suppression needs precise tickets. Who makes every team write them, starting with the next window?", "De flesta ändringsärenden listar inte datorer eller konton; applikationsteamet skriver ”ERP-miljön”. Precis undertryckning kräver precisa ärenden. Vem får varje team att skriva dem så, med början i nästa fönster?"]),
@@ -441,6 +489,18 @@
             reputational: ["Fraudulent payments would be far worse than a delay.", "Bedrägliga betalningar vore mycket värre än en försening."]
           },
           evaluation: [["Makes risk acceptance explicit and owned", "Gör riskacceptansen uttalad och ägd"]],
+          interrupts: [
+            ir("i1", { chosen: "B" }, ["Close postponed", "Bokslutet uppskjutet"], [
+              io(["The bank gives a day", "Banken ger en dag"], ["The bank grants a one-day extension. Payroll can still go out, a day late, and {{person.cfo.name}} grudgingly accepts.", "Banken beviljar en dags förlängning. Lönerna kan fortfarande gå ut, en dag sent, och {{person.cfo.name}} godtar det motvilligt."], ["The bank granted a one-day extension for the close.", "Banken beviljade en dags förlängning för bokslutet."]),
+              io(["The CEO overrules", "Vd kör över"], ["Briefed by {{person.cfo.name}}, the CEO orders the close to start within two hours, with or without security sign-off.", "Efter en dragning av {{person.cfo.name}} beordrar vd att bokslutet ska börja inom två timmar, med eller utan säkerhetens godkännande."], ["The CEO has ordered the close to start within two hours.", "Vd har beordrat att bokslutet ska börja inom två timmar."], { reopen: true }),
+              io(["Staff find out", "Personalen får veta"], ["Word gets out that salaries will be late. HR is fielding calls, and nobody has agreed what to say about why.", "Det sprids att lönerna blir sena. HR tar emot samtal, och ingen har kommit överens om vad som ska sägas om varför."], ["Staff know salaries will be late; HR has no agreed explanation.", "Personalen vet att lönerna blir sena; HR har ingen överenskommen förklaring."])
+            ]),
+            ir("i2", { notChosen: "B" }, ["The close runs", "Bokslutet körs"], [
+              io(["Nothing unusual", "Inget ovanligt"], ["The first hours of the close show nothing unusual. Finance says security worried for nothing.", "Bokslutets första timmar visar inget ovanligt. Ekonomi säger att säkerhet oroade sig i onödan."], ["The first hours of the close showed nothing unusual.", "Bokslutets första timmar visade inget ovanligt."]),
+              io(["Audit wants it in writing", "Revisionen vill ha det skriftligt"], ["Internal audit asks who accepted the risk of running the close on a system under investigation, and wants it in writing before payments are released.", "Internrevisionen frågar vem som accepterade risken att köra bokslutet på ett system under utredning, och vill ha det skriftligt innan betalningarna släpps."], ["Internal audit wants written risk acceptance before payments are released.", "Internrevisionen vill ha en skriftlig riskacceptans innan betalningarna släpps."], { reopen: true }),
+              io(["Too many alerts", "För många larm"], ["The close produces a wave of alerts on normal finance activity. The SOC cannot easily tell which ones, if any, matter.", "Bokslutet ger en våg av larm på normal ekonomiaktivitet. SOC kan inte enkelt avgöra vilka, om några, som spelar roll."], ["The close is producing alerts the SOC struggles to triage.", "Bokslutet ger larm som SOC har svårt att sortera."])
+            ])
+          ],
           pushback: {
             A: [
               pb(["Nobody will sign", "Ingen vill skriva under"], ["Neither {{person.cfo.name}} nor the CISO wants to be the named risk owner; each says it is the other's call. The close starts within the hour. Who signs, and what happens if nobody does?", "Varken {{person.cfo.name}} eller säkerhetschefen vill vara utsedd riskägare; båda säger att det är den andras beslut. Bokslutet börjar inom en timme. Vem skriver under, och vad händer om ingen gör det?"]),
@@ -528,6 +588,18 @@
             reputational: ["Staff will judge you on how they hear about it.", "Personalen kommer att döma er efter hur de får veta det."]
           },
           evaluation: [["Reports in time and informs employees promptly", "Anmäler i tid och informerar de anställda snabbt"]],
+          interrupts: [
+            ir("i1", { chosen: "A" }, ["Staff told today", "Personalen informerad i dag"], [
+              io(["A calm response", "Ett lugnt mottagande"], ["Staff take the news calmly, and HR is thanked for being straight. Several employees check their own accounts and find nothing wrong.", "Personalen tar emot beskedet lugnt, och HR får tack för att de var raka. Flera anställda kontrollerar sina egna konton och hittar inget fel."], ["Staff responded calmly; early self-checks found nothing wrong.", "Personalen reagerade lugnt; de första egna kontrollerna hittade inget fel."]),
+              io(["In the local news", "I lokala nyheter"], ["Within hours, a local news site reports a payroll data breach at the company, quoting an employee. Journalists want a statement.", "Inom några timmar rapporterar en lokal nyhetssajt om en läcka av löneuppgifter på företaget och citerar en anställd. Journalister vill ha en kommentar."], ["Local media is reporting a payroll data breach.", "Lokala medier rapporterar om en läcka av löneuppgifter."], { meters: { media: 1 } }),
+              io(["The union steps in", "Facket kliver in"], ["The union asks the company to pay for fraud protection for every affected employee and to commission an independent review.", "Facket kräver att företaget betalar för bedrägeriskydd åt varje berörd anställd och beställer en oberoende granskning."], ["The union is demanding fraud protection and an independent review.", "Facket kräver bedrägeriskydd och en oberoende granskning."])
+            ]),
+            ir("i2", { notChosen: "A" }, ["Not told yet", "Inte informerade än"], [
+              io(["Two quiet days", "Två lugna dagar"], ["No new reports of misuse come in over the next two days. Legal says waiting looks justified.", "Inga nya rapporter om missbruk kommer in de närmaste två dagarna. Juristen säger att väntan ser motiverad ut."], ["No new reports of misuse came in over the next two days.", "Inga nya rapporter om missbruk kom in de följande två dagarna."]),
+              io(["A direct question", "En direkt fråga"], ["An employee emails HR asking whether the rumoured payroll breach is real. HR has been told to say nothing, and says exactly that.", "En anställd mejlar HR och frågar om ryktet om en löneläcka stämmer. HR har blivit tillsagd att inte säga något, och säger just det."], ["HR was asked directly about a payroll breach and could not answer.", "HR fick en direkt fråga om en löneläcka och kunde inte svara."], { reopen: true }),
+              io(["The union has heard", "Facket har hört"], ["The union representative has heard something about payroll data and asks for a meeting tomorrow. They do not say how much they know.", "Fackets representant har hört något om löneuppgifter och begär ett möte i morgon. Hen säger inte hur mycket hen vet."], ["The union has heard about the payroll data and wants a meeting.", "Facket har hört talas om löneuppgifterna och vill ha ett möte."])
+            ])
+          ],
           pushback: {
             A: [
               pb(["Questions you can't answer", "Frågor ni inte kan besvara"], ["Telling employees today brings hundreds of questions you can't answer yet: was my account changed, will I be paid, should I call my bank? HR has two people free. Who answers, and with what?", "Att informera de anställda i dag ger hundratals frågor som ni inte kan besvara än: har mitt konto ändrats, får jag lön, ska jag ringa min bank? HR har två personer lediga. Vem svarar, och med vad?"]),
@@ -598,6 +670,18 @@
             reputational: ["Showing investment rebuilds staff trust.", "Att visa på investeringar bygger upp personalens förtroende igen."]
           },
           evaluation: [["Addresses capacity, not only configuration", "Tar itu med kapacitet, inte bara konfiguration"]],
+          interrupts: [
+            ir("i1", { chosen: "A" }, ["Investing in people", "Investering i människor"], [
+              io(["The board backs it", "Styrelsen står bakom"], ["The board approves the investment in full, and the night analysts hear it from the CIO in person.", "Styrelsen godkänner hela investeringen, och nattanalytikerna får höra det av it-chefen personligen."], ["The board approved the investment; the SOC team knows it.", "Styrelsen godkände investeringen; SOC-teamet vet om det."]),
+              io(["Something else is cut", "Något annat stryks"], ["Finance says the money comes from next year's projects, and a planned upgrade is cut. Its owner is furious and wants the decision reopened.", "Ekonomi säger att pengarna tas från nästa års projekt, och en planerad uppgradering stryks. Dess ägare är rasande och vill att beslutet tas upp igen."], ["Funding the plan means cutting another planned project.", "Att finansiera planen innebär att ett annat planerat projekt stryks."], { reopen: true }),
+              io(["A slow market", "En trög marknad"], ["The first job advert gets three applicants. The recruiter estimates six months before the new analysts are in place.", "Den första platsannonsen får tre sökande. Rekryteraren bedömer att det dröjer sex månader innan de nya analytikerna är på plats."], ["Hiring the new analysts is expected to take about six months.", "Rekryteringen av de nya analytikerna väntas ta ungefär sex månader."])
+            ]),
+            ir("i2", { notChosen: "A" }, ["No new capacity", "Ingen ny kapacitet"], [
+              io(["Noted favourably", "Positivt noterat"], ["Your insurer notes the quick changes favourably at renewal. The CIO calls it proof that a big budget was not needed.", "Ert försäkringsbolag noterar de snabba ändringarna positivt vid förnyelsen. It-chefen kallar det ett bevis på att det inte behövdes någon stor budget."], ["The insurer noted your changes favourably at renewal.", "Försäkringsbolaget noterade era ändringar positivt vid förnyelsen."]),
+              io(["An analyst resigns", "En analytiker säger upp sig"], ["One of the three night analysts resigns, saying nothing will change for the people doing the work.", "En av de tre nattanalytikerna säger upp sig och säger att inget kommer att förändras för dem som gör jobbet."], ["One of the three night analysts has resigned.", "En av de tre nattanalytikerna har sagt upp sig."], { reopen: true }),
+              io(["Another listing", "En ny annons"], ["Threat intelligence spots another credential for sale that claims to come from your service desk. Nobody knows yet whether it is real.", "Hotunderrättelser hittar ännu ett konto till salu som påstås komma från er servicedesk. Ingen vet ännu om det är äkta."], ["Another credential claiming to be from your service desk is for sale.", "Ännu ett konto som påstås komma från er servicedesk är till salu."])
+            ])
+          ],
           pushback: {
             A: [
               pb(["Months to hire", "Månader att rekrytera"], ["Recruiting experienced analysts takes months, and the next maintenance window is next week. The capacity you are paying for will not exist when you need it. What covers the gap?", "Att rekrytera erfarna analytiker tar månader, och nästa underhållsfönster är nästa vecka. Kapaciteten ni betalar för finns inte när ni behöver den. Vad täcker glappet?"]),
